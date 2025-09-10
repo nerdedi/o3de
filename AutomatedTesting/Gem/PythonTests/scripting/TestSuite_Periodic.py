@@ -16,7 +16,6 @@ imports.init()
 import hydra_test_utils as hydra
 import ly_test_tools.environment.file_system as file_system
 from ly_test_tools.o3de.editor_test import EditorBatchedTest, EditorTestSuite
-from ly_test_tools import LAUNCHERS
 from base import TestAutomationBase
 
 TEST_DIRECTORY = os.path.dirname(__file__)
@@ -210,12 +209,12 @@ class TestScriptCanvasTests(object):
             "Open file window triggered successfully: True"
         ]
         hydra.launch_and_validate_results(
-            request, 
-            TEST_DIRECTORY, 
-            editor, 
-            "FileMenu_Default_NewAndOpen.py", 
-            expected_lines, 
-            auto_test_mode=False, 
+            request,
+            TEST_DIRECTORY,
+            editor,
+            "FileMenu_Default_NewAndOpen.py",
+            expected_lines,
+            auto_test_mode=False,
             timeout=60,
         )
 

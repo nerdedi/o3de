@@ -7,7 +7,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 
 import os
 import shutil
-import zipfile
 
 import pytest
 from ly_test_tools.environment import file_system

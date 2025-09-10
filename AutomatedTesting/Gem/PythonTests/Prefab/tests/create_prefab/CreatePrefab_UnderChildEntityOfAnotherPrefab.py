@@ -74,7 +74,7 @@ def CreatePrefab_UnderChildEntityOfAnotherPrefab():
     # Verify hierarchy of entities:
     # Outer_prefab
     # |- ParentEntity
-    # |  |- Inner_prefab 
+    # |  |- Inner_prefab
     # |  |  |- ChildEntity
     assert child_entity_on_inner_instance.get_parent_id() == inner_instance.container_entity.id
     assert inner_instance.container_entity.get_parent_id() == parent_entity_on_outer_instance.id

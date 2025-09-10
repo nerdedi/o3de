@@ -70,13 +70,13 @@ def Terrain_World_ConfigurationWorks():
     with Tracer() as section_tracer:
         # 2) Load the level
         hydra.open_base_level()
-        
+
         # 3) Load the level components
         terrain_world_component = hydra.add_level_component("Terrain World")
         terrain_world_renderer = hydra.add_level_component("Terrain World Renderer")
-        Report.critical_result(Tests.level_components_added, 
+        Report.critical_result(Tests.level_components_added,
             terrain_world_component is not None and  terrain_world_renderer is not None)
- 
+
         # 4) Create 2 test entities, one parent at 512.0, 512.0, 50.0 and one child at the default position and add the required components
         entity1_components_to_add = ["Axis Aligned Box Shape", "Terrain Layer Spawner", "Terrain Height Gradient List", "Terrain Physics Heightfield Collider"]
         entity2_components_to_add = ["Shape Reference", "Gradient Transform Modifier", "FastNoise Gradient"]
@@ -109,7 +109,7 @@ def Terrain_World_ConfigurationWorks():
         terrain_spawner_entity.get_set_test(0, "Axis Aligned Box Shape|Box Configuration|Dimensions", box_dimensions)
         box_shape_dimensions = hydra.get_component_property_value(terrain_spawner_entity.components[0], "Axis Aligned Box Shape|Box Configuration|Dimensions")
         Report.result(Tests.box_dimensions_changed, box_dimensions == box_shape_dimensions)
-        
+
         # 7) Set the Shape Reference to terrain_spawner_entity
         height_provider_entity.get_set_test(0, "Configuration|Shape Entity Id", terrain_spawner_entity.id)
         entityId = hydra.get_component_property_value(height_provider_entity.components[0], "Configuration|Shape Entity Id")
@@ -154,7 +154,7 @@ def Terrain_World_ConfigurationWorks():
         general.idle_wait_frames(1)
         height2, exists2 = terrain.TerrainDataRequestBus(bus.Broadcast, 'GetHeight', azmath.Vector3(10.5, 10.5, 0.0), CLAMP)
         Report.result(Tests.values_not_the_same, not math.isclose(height1, height2, abs_tol = 0.000000001))
-        
+
     helper.wait_for_condition(lambda: section_tracer.has_errors or section_tracer.has_asserts, 1.0)
     for error_info in section_tracer.errors:
         Report.info(f"Error: {error_info.filename} {error_info.function} | {error_info.message}")

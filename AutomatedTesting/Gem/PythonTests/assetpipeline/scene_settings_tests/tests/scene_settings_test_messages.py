@@ -11,14 +11,14 @@ class Test_Messages:
         "Found the test asset used for this test.",
         "Could not find the test asset needed for this test."
     )
-    
+
     # This test verifies that saving the scene settings creates a new manifest,
     # so it has to first make sure the manifest doesn't exist.
     scene_settings_scene_settings_not_created_yet = (
         "Verified the scene manifest does not yet exist.",
         "The scene manifest for the test asset already exists, when it should not. Make sure the test is running in a clean environment."
     )
-    
+
     # Some tests use an existing manifest and modify it
     scene_settings_test_asset_manifest_exists = (
         "Verified the scene manifest for this test already exists.",
@@ -48,12 +48,12 @@ class Test_Messages:
         "Scene settings card was dismissed on click.",
         "Scene settings card was not dismissed on click."
     )
-    
+
     scene_settings_found_update_materials_row = (
         "Found Update materials root object.",
         "Failed to find Update materials root object."
     )
-    
+
     scene_settings_found_advanced_settings_row = (
         "Found 'use advanced settings' root object.",
         "Failed to find 'use advanced settings' root object."
@@ -63,17 +63,17 @@ class Test_Messages:
         "Found the expected interface element in the scene settings UI.",
         "Unable to find the expected interface element in the scene settings UI."
     )
-            
+
     scene_settings_found_only_one_checkbox = (
         "Found single checkbox object.",
         "Checkbox count is incorrect."
     )
-    
+
     scene_settings_read_only_checked = (
         "Verified checkbox was checked.",
         "Checkbox was not checked."
     )
-    
+
     scene_settings_read_only_disabled = (
         "Verified checkbox was not enabled.",
         "Checkbox was enabled when it was expected to be read-only."
@@ -101,12 +101,12 @@ class Test_Messages:
         "Found Ignore Y-Axis Transition root object.",
         "Failed to find Ignore Y-Axis Transition root object."
     )
-    
+
     scene_settings_y_axis_check_box_found = (
         "Found Ignore Y-Axis Transition checkbox object.",
         "Failed to find Ignore Y-Axis Transition checkbox object."
     )
-    
+
     scene_settings_y_axis_check_box_len_one = (
         "Found single Ignore Y-Axis Transition checkbox object.",
         "Ignore Y-Axis Transition checkbox count is incorrect."
@@ -116,7 +116,7 @@ class Test_Messages:
         "Add procedural prefab group button initially disabled due to existing prefab group.",
         "Add procedural prefab group button not initially disabled."
     )
-    
+
     scene_settings_add_button_enabled = (
         "Add procedural prefab group button enabled correctly when group removed.",
         "Add procedural prefab group button not enabled when group removed."
@@ -136,12 +136,12 @@ class Test_Messages:
         "The prefab generated mesh group is disabled.",
         "The prefab generated mesh group is enabled, but should be disabled."
     )
-    
+
     scene_settings_expected_mesh_groups_found = (
         "The expected mesh groups were found.",
         "The expected mesh groups were not found."
     )
-    
+
     scene_settings_expected_mesh_groups_removed = (
         "The expected mesh groups were removed.",
         "The expected mesh groups were not removed."
@@ -151,7 +151,7 @@ class Test_Messages:
         "The expected mesh group was found.",
         "The expected mesh group was not found."
     )
-    
+
     scene_settings_has_unsaved_changes = (
         "The scene has the expected unsaved changes.",
         "The scene is not registered as having unsaved changes."
@@ -161,4 +161,3 @@ class Test_Messages:
         "Clearing unsaved changes worked correctly.",
         "Unsaved changes did not clear correctly as expected, scene appears to still have unsaved changes."
     )
-    

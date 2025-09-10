@@ -38,7 +38,7 @@ class EditorTestHelper:
             else:
                 self.test_success = False
                 self.log(f"Expected command-line args:  {args}")
-                self.log(f"Check that cfg_args were passed into the test class")
+                self.log("Check that cfg_args were passed into the test class")
 
     # Test Setup
     # Set helpers

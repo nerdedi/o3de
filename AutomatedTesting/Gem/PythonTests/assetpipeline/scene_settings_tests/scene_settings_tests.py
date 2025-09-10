@@ -10,7 +10,6 @@ import pytest
 import shutil
 import ly_test_tools.environment.file_system as file_system
 from ly_test_tools.o3de.editor_test import EditorTestSuite, EditorSingleTest
-import tempfile
 
 
 def cleanup_test_files(workspace, test_file_names):
@@ -47,7 +46,7 @@ class TestAutomation(EditorTestSuite):
             cleanup_test_files(workspace, self.test_file_names)
 
         from .tests import scene_settings_tests_in_editor as test_module
-        
+
     class scene_settings_clear_unsaved_changes(EditorSingleTest):
         @classmethod
         def setup(self, instance, request, workspace):
@@ -82,7 +81,7 @@ class TestAutomation(EditorTestSuite):
             cleanup_test_files(workspace, self.test_file_names)
 
         from .tests import scene_settings_readonly_rule_test as test_module
-        
+
 
     class scene_settings_procedural_mesh_groups_test(EditorSingleTest):
         @classmethod

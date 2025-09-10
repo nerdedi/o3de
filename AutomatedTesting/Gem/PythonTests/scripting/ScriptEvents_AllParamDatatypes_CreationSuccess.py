@@ -67,4 +67,3 @@ if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
 
     Report.start_test(TestScriptEvents_AllParamDatatypes_CreationSuccess)
-    

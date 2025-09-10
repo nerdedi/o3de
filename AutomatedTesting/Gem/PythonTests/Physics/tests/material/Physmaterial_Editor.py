@@ -80,7 +80,7 @@ class Physmaterial_Editor:
         # Turn parsed xml into usable form
         self.root = self.dom.getroot()
         # Check if file is a material library
-        asset_typename = self.root[0].get('name') 
+        asset_typename = self.root[0].get('name')
         if not asset_typename == "MaterialLibraryAsset":
             if asset_typename:
                 print("Given file is a {} file".format(self.root[0].get('name')))
@@ -96,7 +96,7 @@ class Physmaterial_Editor:
         except Exception as e:
             print(e)
             print("Failed to save changes to script")
-        
+
         # Temporary fix, will need to use OnAssetReloaded callbacks
         general.idle_wait(0.5)
 

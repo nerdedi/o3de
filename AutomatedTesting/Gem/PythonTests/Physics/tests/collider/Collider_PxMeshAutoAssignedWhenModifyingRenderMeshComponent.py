@@ -50,7 +50,6 @@ def Collider_PxMeshAutoAssignedWhenModifyingRenderMeshComponent():
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity as Entity
     from editor_python_test_tools.utils import Report
-    from editor_python_test_tools.utils import TestHelper as helper
     from editor_python_test_tools.asset_utils import Asset
     from consts.physics import PHYSX_MESH_COLLIDER
 

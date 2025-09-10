@@ -24,9 +24,7 @@ def EditorWorkflow_EditorCameraGameModeTransitionWithMultipleCamerasReportsNoErr
 
     import azlmbr.bus as bus
     import azlmbr.camera as camera
-    import azlmbr.components as components
     import azlmbr.legacy.general as general
-    import azlmbr.math as math
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity
     from editor_python_test_tools.editor_test_helper import EditorTestHelper

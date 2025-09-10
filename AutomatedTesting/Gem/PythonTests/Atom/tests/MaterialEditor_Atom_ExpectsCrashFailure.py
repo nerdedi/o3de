@@ -28,7 +28,7 @@ def MaterialEditor_TestsTimeoutCrashFailure():
     """
 
     import Atom.atom_utils.atom_tools_utils as atom_tools_utils
-    from editor_python_test_tools.utils import Report, TestHelper
+    from editor_python_test_tools.utils import Report
 
     # 1. Start the MaterialEditor then force a crash and verify it fails through pytext.mark.xfail result.
     Report.result(Tests.material_editor_test_crashed, atom_tools_utils.crash())

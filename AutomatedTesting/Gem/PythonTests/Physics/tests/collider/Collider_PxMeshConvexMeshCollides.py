@@ -16,7 +16,7 @@ class Tests():
     mesh_added               = ("Added Mesh component",                "Failed to add Mesh component")
     physx_collider_added     = ("Added PhysX Mesh Collider component", "Failed to add PhysX Mesh Collider component")
     physx_rigid_body_added   = ("Added PhysX Rigid Body component",    "Failed to add PhysX Rigid Body component")
-    assign_fbx_mesh          = ("Assigned fbx mesh",                   "Failed to assign fbx mesh") 
+    assign_fbx_mesh          = ("Assigned fbx mesh",                   "Failed to assign fbx mesh")
     create_terrain           = ("Terrain entity created successfully", "Failed to create Terrain Entity")
     add_physx_shape_collider = ("Added PhysX Shape Collider",          "Failed to add PhysX Shape Collider")
     add_box_shape            = ("Added Box Shape",                     "Failed to add Box Shape")
@@ -109,7 +109,7 @@ def Collider_PxMeshConvexMeshCollides():
     box_shape_component = terrain.add_component("Box Shape")
     Report.result(Tests.add_box_shape, terrain.has_component("Box Shape"))
 
-    box_shape_component.set_component_property_value("Box Shape|Box Configuration|Dimensions", 
+    box_shape_component.set_component_property_value("Box Shape|Box Configuration|Dimensions",
                                                      math.Vector3(1024.0, 1024.0, 1.0))
     # 6) Enter game mode
     helper.enter_game_mode(Tests.enter_game_mode)

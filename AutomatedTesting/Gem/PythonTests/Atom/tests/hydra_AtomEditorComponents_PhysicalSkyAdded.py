@@ -198,7 +198,7 @@ def AtomEditorComponents_PhysicalSky_AddedToEntity():
             Tests.intensity_mode_set_to_nit,
             physical_sky_component.get_component_property_value(
                 AtomComponentProperties.physical_sky('Intensity Mode')) == PHYSICAL_SKY_INTENSITY_MODE["Nit"])
-    
+
         physical_sky_component.set_component_property_value(
             AtomComponentProperties.physical_sky('Intensity Mode'), PHYSICAL_SKY_INTENSITY_MODE["Ev100"])
         general.idle_wait_frames(1)

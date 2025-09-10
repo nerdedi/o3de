@@ -206,7 +206,7 @@ def AtomGPU_LightComponent_AreaLightScreenshotsMatchGoldenImages():
             image_diff_outcome = compare_screenshot_to_golden_image(FOLDER_PATH, screenshot_name, screenshot_name)
             screenshot_compare_execution = (
                     f"Screenshot {screenshot_name} comparison succeeded.",
-                    f"Screenshot {screenshot_name} comparison failed.");
+                    f"Screenshot {screenshot_name} comparison failed.")
             Report.result(
                 screenshot_compare_execution,
                 image_diff_outcome.IsSuccess()

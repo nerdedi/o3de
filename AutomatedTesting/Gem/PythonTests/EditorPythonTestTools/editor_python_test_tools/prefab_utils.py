@@ -34,7 +34,7 @@ import pyside_utils
 def get_prefab_file_path(prefab_path):
     if not path.isabs(prefab_path):
         prefab_path = path.join(general.get_file_alias("@projectroot@"), prefab_path)
-    
+
     # Append prefab if it doesn't contain .prefab on it
     name, ext = path.splitext(prefab_path)
     if ext != ".prefab":
@@ -86,7 +86,7 @@ class PrefabInstance:
 
         if not is_at_position:
             Report.info(f"Prefab Instance Container Entity '{self.container_entity.id.ToString()}'\'s expected position: {expected_position.ToString()}, actual position: {actual_position.ToString()}")
-        
+
         return is_at_position
 
     async def ui_reparent_prefab_instance(self, parent_entity_id: EntityId):
@@ -118,9 +118,9 @@ class PrefabInstance:
         original_parent_after_reparent_children_ids = {child_id.ToString(): child_id for child_id in original_parent.get_children_ids()}
         assert len(original_parent_after_reparent_children_ids) == len(original_parent_before_reparent_children_ids) - 1, \
             "The children count of the Prefab Instance's original parent should be decreased by 1."
-        assert not container_entity_id_before_reparent in original_parent_after_reparent_children_ids, \
+        assert container_entity_id_before_reparent not in original_parent_after_reparent_children_ids, \
             "This Prefab Instance is still a child entity of its original parent entity."
-       
+
         new_parent_after_reparent_children_ids = {child_id.ToString(): child_id for child_id in new_parent.get_children_ids()}
         assert len(new_parent_after_reparent_children_ids) == len(new_parent_before_reparent_children_ids) + 1, \
             "The children count of the Prefab Instance's new parent should be increased by 1."
@@ -189,9 +189,9 @@ class Prefab:
         """
         for entry in Prefab.existing_prefabs:
             Report.info(f"PrefabPath: '{entry}'")
-        
+
         return get_prefab_file_path(file_path) in Prefab.existing_prefabs
-    
+
     @classmethod
     def prefab_exists(cls, file_path: str) -> bool:
         """
@@ -237,8 +237,8 @@ class Prefab:
         container_entity = EditorEntity(container_entity_id)
         children_entity_ids = container_entity.get_children_ids()
 
-        assert len(children_entity_ids) == len(entities), f"Entity count of created prefab instance does *not* match the count of given entities."
-        
+        assert len(children_entity_ids) == len(entities), "Entity count of created prefab instance does *not* match the count of given entities."
+
         PrefabWaiter.wait_for_propagation()
 
         new_prefab_instance = PrefabInstance(new_prefab.file_path, EditorEntity(container_entity_id))
@@ -271,7 +271,7 @@ class Prefab:
         PrefabWaiter.wait_for_propagation()
 
         entity_ids_after_delete = set(get_all_entity_ids())
-        
+
         for entity_id_removed in entity_ids_to_remove:
             if entity_id_removed in entity_ids_after_delete:
                 assert False, "Not all entities and descendants in target prefabs are deleted."
@@ -360,12 +360,12 @@ class Prefab:
         parent = EditorEntity(prefab_instance.container_entity.get_parent_id())
         parent_children_ids_before_detach = set([child_id.ToString() for child_id in parent.get_children_ids()])
 
-        assert prefab_instance.has_editor_prefab_component(), f"Container entity should have EditorPrefabComponent before detachment."
+        assert prefab_instance.has_editor_prefab_component(), "Container entity should have EditorPrefabComponent before detachment."
 
         detach_prefab_result = prefab.PrefabPublicRequestBus(bus.Broadcast, 'DetachPrefab', prefab_instance.container_entity.id)
         assert detach_prefab_result.IsSuccess(), f"Prefab operation 'DetachPrefab' failed. Error: {detach_prefab_result.GetError()}"
 
-        assert not prefab_instance.has_editor_prefab_component(), f"Container entity should *not* have EditorPrefabComponent after detachment."
+        assert not prefab_instance.has_editor_prefab_component(), "Container entity should *not* have EditorPrefabComponent after detachment."
 
         parent_children_ids_after_detach = set([child_id.ToString() for child_id in parent.get_children_ids()])
 
@@ -402,7 +402,7 @@ class Prefab:
         PrefabWaiter.wait_for_propagation()
 
         new_prefab_instance = PrefabInstance(self.file_path, EditorEntity(container_entity_id))
-        assert not new_prefab_instance in self.instances, "This prefab instance already existed before this instantiation."
+        assert new_prefab_instance not in self.instances, "This prefab instance already existed before this instantiation."
         if name:
             new_prefab_instance.container_entity.set_name(name)
 

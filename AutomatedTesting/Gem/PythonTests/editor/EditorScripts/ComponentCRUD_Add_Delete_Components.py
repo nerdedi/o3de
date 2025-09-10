@@ -95,7 +95,7 @@ def ComponentCRUD_Add_Delete_Components():
             tree.expand(component_index)
             tree.setCurrentIndex(component_index)
             QtTest.QTest.keyClick(tree, Qt.Key_Enter, Qt.NoModifier)
-        
+
         def select_entity_by_name(entity_name):
             searchFilter = entity.SearchFilter()
             searchFilter.names = [entity_name]

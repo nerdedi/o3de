@@ -4,20 +4,18 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_ObjectStringRepresentation_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests the PythonProxyObject __str__ and __repr__
-    
+
     @staticmethod
     def test():
-        import azlmbr.bus as bus
-        import azlmbr.editor as editor
         import azlmbr.entity as entity
-        import azlmbr.object
 
         test_id = entity.EntityId()
         test_id_repr = repr(test_id)

@@ -8,7 +8,10 @@ import azlmbr.asset
 import azlmbr.asset.builder
 import azlmbr.bus
 import azlmbr.math
-import os, traceback, binascii, sys
+import os
+import traceback
+import binascii
+import sys
 
 jobKeyName = 'Mock Asset'
 

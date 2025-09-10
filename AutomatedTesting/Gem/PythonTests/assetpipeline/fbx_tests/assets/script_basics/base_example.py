@@ -15,13 +15,13 @@ def clear_sceneJobHandler():
     # would cause a crash.
     sceneJobHandler.disconnect()
 
-def on_prepare_for_export(args): 
-    print (f'on_prepare_for_export')
+def on_prepare_for_export(args):
+    print ('on_prepare_for_export')
 
     import azlmbr.scene
     import azlmbr.object
     import azlmbr.paths
-    import json, os
+    import os
     import azlmbr.math
 
     scene = args[0] # azlmbr.scene.Scene
@@ -53,7 +53,7 @@ def on_prepare_for_export(args):
     return exportProductList
 
 def on_update_manifest(args):
-    print (f'on_update_manifest')
+    print ('on_update_manifest')
     data = """{
         "values": [
             {
@@ -69,7 +69,7 @@ def on_update_manifest(args):
 # try to create SceneAPI handler for processing
 try:
     import azlmbr.scene as sceneApi
-    
+
     sceneJobHandler = sceneApi.ScriptBuildingNotificationBusHandler()
     sceneJobHandler.connect()
     sceneJobHandler.add_callback('OnUpdateManifest', on_update_manifest)

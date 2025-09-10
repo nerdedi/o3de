@@ -14,7 +14,6 @@ import logging
 import os
 
 # Import LyTestTools
-import ly_test_tools.builtin.helpers as helpers
 
 # Import fixtures
 from ..ap_fixtures.asset_processor_fixture import asset_processor as asset_processor

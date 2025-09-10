@@ -48,7 +48,7 @@ def Multiplayer_AutoComponent_RPC():
 
     helper.init_idle()
     general.set_cvar_integer('editorsv_port', 33453)
-    
+
     # 1) Open Level
     helper.open_level("Multiplayer", level_name)
 

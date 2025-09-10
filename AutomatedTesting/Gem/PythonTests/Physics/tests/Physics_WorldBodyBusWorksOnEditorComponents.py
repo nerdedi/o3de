@@ -23,7 +23,7 @@ class Tests():
     find_box                  = ("Found Box",                            "Failed to find Box")
     find_capsule              = ("Found Capsule",                        "Failed to find Capsule")
     find_mesh                 = ("Found Mesh",                           "Failed to find Mesh")
-    
+
     aabb_staticshapebox       = ("Correct AABB for StaticShapeBox",      "Incorrect AABB for StaticShapeBox")
     aabb_staticsphere         = ("Correct AABB for StaticSphere",        "Incorrect AABB for StaticSphere")
     aabb_staticbox            = ("Correct AABB for StaticBox",           "Incorrect AABB for StaticBox")
@@ -34,7 +34,7 @@ class Tests():
     aabb_box                  = ("Correct AABB for Box",                 "Incorrect AABB for Box")
     aabb_capsule              = ("Correct AABB for Capsule",             "Incorrect AABB for Capsule")
     aabb_mesh                 = ("Correct AABB for Mesh",                "Incorrect AABB for Mesh")
-        
+
     raycast_staticshapebox    = ("Correct raycast for StaticShapeBox",   "Incorrect raycast for StaticShapeBox")
     raycast_staticsphere      = ("Correct raycast for StaticSphere",     "Incorrect raycast for StaticSphere")
     raycast_staticbox         = ("Correct raycast for StaticBox",        "Incorrect raycast for StaticBox")
@@ -80,8 +80,6 @@ def Physics_WorldBodyBusWorksOnEditorComponents():
     
     :return:
     """
-    import os
-    import sys
     import azlmbr.legacy.general as general
     import azlmbr.bus
     import math
@@ -89,23 +87,23 @@ def Physics_WorldBodyBusWorksOnEditorComponents():
     from editor_python_test_tools.utils import TestHelper as helper
     from editor_python_test_tools.utils import vector3_str, aabb_str
 
-    AABB_THRESHOLD = 0.01 # Entities won't move in the simulation 
-                                                      
+    AABB_THRESHOLD = 0.01 # Entities won't move in the simulation
+
     helper.init_idle()
     helper.open_level("Physics", "Physics_WorldBodyBusWorksOnEditorComponents")
-    
+
     def create_aabb(aabb_min_tuple, aabb_max_tuple):
         return azlmbr.math.Aabb_CreateFromMinMax(azlmbr.math.Vector3(aabb_min_tuple[0], aabb_min_tuple[1], aabb_min_tuple[2]),
                                                  azlmbr.math.Vector3(aabb_max_tuple[0], aabb_max_tuple[1], aabb_max_tuple[2]))
-    
+
     class EntityData:
         def __init__(self, name, target_aabb):
             self.name = name
             self.target_aabb = target_aabb
-    
+
     def get_test_tuple_for_entity(testprefix, entity_name):
         return Tests.__dict__[testprefix.lower() + "_" + entity_name.lower()]
-    
+
     ENTITY_DATA = [ EntityData("ShapeBox",          create_aabb((509.82, 523.08, 32.81), (510.82, 524.08, 33.81))),
                     EntityData("Sphere",            create_aabb((509.82, 526.39, 32.81), (510.82, 527.39, 33.81))),
                     EntityData("Box",               create_aabb((509.82, 529.66, 32.81), (510.82, 530.66, 33.81))),
@@ -116,19 +114,19 @@ def Physics_WorldBodyBusWorksOnEditorComponents():
                     EntityData("StaticBox",         create_aabb((512.08, 529.66, 32.81), (513.08, 530.66, 33.81))),
                     EntityData("StaticCapsule",     create_aabb((512.33, 533.70, 32.81), (512.83, 534.20, 33.81))),
                     EntityData("StaticMesh",        create_aabb((511.74, 536.30, 33.31), (513.42, 540.38, 34.38))) ] # AABB data obtained by observation
-                    
-              
+
+
     for entity_data in ENTITY_DATA:
-        entity_id = general.find_editor_entity(entity_data.name);
+        entity_id = general.find_editor_entity(entity_data.name)
         Report.result(get_test_tuple_for_entity("find", entity_data.name), entity_id.IsValid())
-        if entity_id.IsValid():            
+        if entity_id.IsValid():
             # AABB test
             aabb = azlmbr.physics.WorldBodyRequestBus(azlmbr.bus.Event, "GetAabb", entity_id)
             Report.info("%s AABB -> %s" % (entity_data.name, aabb_str(aabb)))
             Report.info("%s expected AABB -> %s" % (entity_data.name, aabb_str(entity_data.target_aabb)))
             is_expected_aabb_size = aabb.min.IsClose(entity_data.target_aabb.min, AABB_THRESHOLD) and aabb.max.IsClose(entity_data.target_aabb.max, AABB_THRESHOLD)
             Report.result(get_test_tuple_for_entity("aabb", entity_data.name), is_expected_aabb_size)
-            
+
             # Raycast test
             entity_pos = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTM", entity_id).GetPosition()
             raycast_request = azlmbr.physics.RayCastRequest()
@@ -144,8 +142,8 @@ def Physics_WorldBodyBusWorksOnEditorComponents():
                 Report.result(get_test_tuple_for_entity("raycast", entity_data.name), has_hit)
             else:
                 Report.failure(get_test_tuple_for_entity("raycast", entity_data.name))
-        
-        
+
+
 
 
 if __name__ == "__main__":

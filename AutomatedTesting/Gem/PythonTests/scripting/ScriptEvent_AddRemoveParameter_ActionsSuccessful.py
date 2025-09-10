@@ -29,11 +29,6 @@ def ScriptEvent_AddRemoveParameter_ActionsSuccessful():
     """
 
     # Preconditions
-    import os
-    from PySide2 import QtWidgets
-    from editor_python_test_tools.utils import Report
-    import pyside_utils
-    import scripting_utils.scripting_tools as tools
     import azlmbr.legacy.general as general
     from editor_python_test_tools.QtPy.QtPyO3DEEditor import QtPyO3DEEditor
     from scripting_utils.scripting_constants import (ASSET_EDITOR_UI, SCRIPT_EVENT_UI)
@@ -68,4 +63,3 @@ if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
 
     Report.start_test(ScriptEvent_AddRemoveParameter_ActionsSuccessful)
-    

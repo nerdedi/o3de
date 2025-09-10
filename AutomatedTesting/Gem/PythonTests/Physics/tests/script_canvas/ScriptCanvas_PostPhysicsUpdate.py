@@ -73,8 +73,6 @@ def ScriptCanvas_PostPhysicsUpdate():
     :return: None
     """
 
-    import os
-    import sys
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
 

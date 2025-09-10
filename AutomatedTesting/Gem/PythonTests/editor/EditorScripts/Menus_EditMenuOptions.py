@@ -65,9 +65,9 @@ def Menus_EditMenuOptions_Work():
     # until the menu bar has been populated
     general.idle_enable(True)
     general.idle_wait_frames(1)
-    
+
     # 2) Some menu items will not display when no entity is selected (For example, Delete or Duplicate)
-    # We create an entity as it's the quickest way to have a selection (new entities are selected by default).    
+    # We create an entity as it's the quickest way to have a selection (new entities are selected by default).
     EditorEntity.create_editor_entity()
     general.idle_wait_frames(1)
 

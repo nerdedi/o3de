@@ -4,21 +4,18 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_UtilityCommandsLegacy_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests the Python API from PythonEditorFuncs.cpp while the Editor is running
-    
+
     @staticmethod
     def test():
-        import azlmbr.bus as bus
-        import azlmbr.editor as editor
         import azlmbr.legacy.general
-        import azlmbr.entity as entity
-        import azlmbr.legacy.settings as settings
 
         def testing_cvar_legacy(setMethod, methodName, label, value, compare):
             setMethod(label, value)
@@ -43,13 +40,13 @@ class Editor_UtilityCommandsLegacy_Works(BaseClass):
 
         # ----- Test Axis Constraints
 
-        testing_axis_constraints_legacy("X") 
+        testing_axis_constraints_legacy("X")
         testing_axis_constraints_legacy("Y")
-        testing_axis_constraints_legacy("Z") 
+        testing_axis_constraints_legacy("Z")
         testing_axis_constraints_legacy("XY")
-        testing_axis_constraints_legacy("XZ") 
+        testing_axis_constraints_legacy("XZ")
         testing_axis_constraints_legacy("YZ")
-        testing_axis_constraints_legacy("XYZ") 
+        testing_axis_constraints_legacy("XYZ")
         testing_axis_constraints_legacy("TERRAIN")
         testing_axis_constraints_legacy("TERRAINSNAP")
 

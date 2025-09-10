@@ -4,7 +4,8 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import uuid,  os
+import uuid
+import os
 import azlmbr.scene as sceneApi
 import azlmbr.scene.graph
 from scene_api import scene_data as sceneData

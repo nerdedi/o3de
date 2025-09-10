@@ -34,7 +34,7 @@ import ly_test_tools.environment.process_utils as process_utils
 # For example, with the value of 35, the editor will wait 630 seconds (10.5 minutes) before giving up.
 
 # also note that the editor stops trying to connect the moment it is successful so its better for automated testing to set this to a very
-# large number rather than a borderline number.  10.5 minutes of still not appearing should be a very high confidence indicator that the 
+# large number rather than a borderline number.  10.5 minutes of still not appearing should be a very high confidence indicator that the
 # server is not going to appear even on a very busy machine, and it's better to have a reliable indicator of failure than to have a borderline
 # wait time that could be failing just because it's a busy machine.
 MULIPLAYER_SERVER_RECONNECT_ATTEMPTS = 35
@@ -110,7 +110,7 @@ class TestHelper:
                 Report.info("{} was already opened".format(level))
             else:
                 assert False, "Failed to open level: {} does not exist or is invalid".format(level)
-                
+
         # FIX-ME: Expose call for checking when has been finished loading and change this frame waiting
         # Jira: LY-113761
         general.idle_wait_frames(200)
@@ -124,7 +124,7 @@ class TestHelper:
         """
         Report.info("Entering game mode")
         general.enter_game_mode()
-        
+
         TestHelper.wait_for_condition(lambda : general.is_in_game_mode(), 1.0)
         Report.critical_result(msgtuple_success_fail, general.is_in_game_mode())
 
@@ -195,7 +195,7 @@ class TestHelper:
 
         return matching_lines >= expected_lines
 
-    
+
     EditorServerMode = Enum('EditorServerMode', ['DEDICATED_SERVER', 'CLIENT_SERVER'])
 
     @staticmethod
@@ -208,7 +208,7 @@ class TestHelper:
         Report.info("Entering game mode")
 
         with MultiplayerHelper() as multiplayer_helper:
-            # enter game-mode. 
+            # enter game-mode.
             # game-mode in multiplayer will also launch ServerLauncher.exe and connect to the editor
             general.set_cvar_integer('editorsv_max_connection_attempts', MULIPLAYER_SERVER_RECONNECT_ATTEMPTS)
 
@@ -293,7 +293,7 @@ class TestHelper:
                     general.idle_wait_frames(1)
                 except:
                     Report.info("WARNING: Couldn't wait for frame")
-                    
+
                 if t.timed_out:
                     return False
 
@@ -365,7 +365,7 @@ class Report:
         general.test_output(f"Starting test {test_function.__name__}...\n")
         try:
             test_function()
-        except Exception as ex:
+        except Exception:
             Report._exception = traceback.format_exc()
 
         success, report_str = Report.get_report(test_function)
@@ -386,7 +386,7 @@ class Report:
         report = f"Test {test_function.__name__} finished.\nReport:\n"
         # report_dict is a JSON that can be used to parse test run information from a external runner
         # The regular report string is intended to be used for manual debugging
-        filename = os.path.splitext(os.path.basename(test_function.__code__.co_filename))[0] 
+        filename = os.path.splitext(os.path.basename(test_function.__code__.co_filename))[0]
         report_dict = {'name' : filename, 'success' : True, 'exception' : None}
         for result in Report._results:
             passed, info = result
@@ -515,7 +515,7 @@ class Tracer:
         self.has_errors = False
         self.has_asserts = False
         self.handler = None
-    
+
     class WarningInfo:
         def __init__(self, args):
             self.window = args[0]
@@ -523,13 +523,13 @@ class Tracer:
             self.line = args[2]
             self.function = args[3]
             self.message = args[4]
-            
+
         def __str__(self):
             return f"Warning: [{self.filename}:{self.function}:{self.line}]: [{self.window}] {self.message}"
-            
+
         def __repr__(self):
             return f"[Warning: {self.message}]"
-            
+
     class ErrorInfo:
         def __init__(self, args):
             self.window = args[0]
@@ -537,13 +537,13 @@ class Tracer:
             self.line = args[2]
             self.function = args[3]
             self.message = args[4]
-            
+
         def __str__(self):
             return f"Error: [{self.filename}:{self.function}:{self.line}]: [{self.window}] {self.message}"
-        
+
         def __repr__(self):
             return f"[Error: {self.message}]"
-    
+
     class AssertInfo:
         def __init__(self, args):
             self.filename = args[0]
@@ -596,7 +596,7 @@ class Tracer:
         self.handler.add_callback("OnPreError", self._on_error)
         self.handler.add_callback("OnPrintf", self._on_printf)
         return self
-        
+
     def __exit__(self, type, value, traceback):
         self.handler.disconnect()
         self.handler = None
@@ -660,7 +660,7 @@ class MultiplayerHelper:
         self.handler.add_callback("OnEditorSendingLevelData", self._on_editor_sending_level_data)
         self.handler.add_callback("OnConnectToSimulationSuccess", self._on_connect_to_simulation_success)
         return self
-        
+
     def __exit__(self, type, value, traceback):
         self.handler.disconnect()
         self.handler = None
@@ -669,11 +669,11 @@ class MultiplayerHelper:
     def _on_server_launched(self, args):
         self.serverLaunched = True
         return False
-    
+
     def _on_editor_connection_attempt(self, args):
         self.editorConnectionAttemptCount = args[0]
         return False
-    
+
     def _on_editor_sending_level_data(self, args):
         self.editorSendingLevelData = True
         return False

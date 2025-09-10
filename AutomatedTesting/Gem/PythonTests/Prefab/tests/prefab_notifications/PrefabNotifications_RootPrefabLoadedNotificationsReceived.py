@@ -9,7 +9,6 @@ rootPrefabLoaded = False
 
 def PrefabNotifications_RootPrefabLoadedNotificationsReceived():
 
-    from pathlib import Path
 
     import azlmbr.prefab as prefab
 

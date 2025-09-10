@@ -56,7 +56,7 @@ def TerrainHeightGradientList_AddRemoveGradientWorks():
         entity.create_entity(math.Vector3(x, y, z), components_to_add)
 
         return entity
-        
+
     def on_terrain_changed(args):
         nonlocal terrain_changed_call_count
 
@@ -85,22 +85,22 @@ def TerrainHeightGradientList_AddRemoveGradientWorks():
 
     # Open a level.
     hydra.open_base_level()
-    
+
     general.idle_wait_frames(1)
 
     # Add a terrain world component
     world_component = hydra.add_level_component("Terrain World")
 
     aabb_height = 1024.0
-    box_dimensions = math.Vector3(1.0, 1.0, aabb_height);
+    box_dimensions = math.Vector3(1.0, 1.0, aabb_height)
 
     # Create a main entity with a LayerSpawner, AAbb and HeightGradientList.
     main_entity = create_entity_at("entity2", [layerspawner_component_name, gradientlist_component_name, aabb_component_name], 0.0, 0.0, aabb_height/2.0)
 
     # Create three gradient entities.
-    gradient_entity1 = create_entity_at("Constant Gradient1", ["Constant Gradient"], 0.0, 0.0, 0.0);
-    gradient_entity2 = create_entity_at("Constant Gradient2", ["Constant Gradient"], 0.0, 0.0, 0.0);
-    gradient_entity3 = create_entity_at("Constant Gradient3", ["Constant Gradient"], 0.0, 0.0, 0.0);
+    gradient_entity1 = create_entity_at("Constant Gradient1", ["Constant Gradient"], 0.0, 0.0, 0.0)
+    gradient_entity2 = create_entity_at("Constant Gradient2", ["Constant Gradient"], 0.0, 0.0, 0.0)
+    gradient_entity3 = create_entity_at("Constant Gradient3", ["Constant Gradient"], 0.0, 0.0, 0.0)
 
     # Give everything a chance to finish initializing.
     general.idle_wait_frames(1)

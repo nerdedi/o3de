@@ -4,13 +4,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0 OR MIT+
 import typing
-import azlmbr.asset as AzAsset
 import azlmbr.math as Math
 from editor_python_test_tools.utils import Report
 from editor_python_test_tools.editor_entity_utils import EditorComponent
 from consts.general import ComponentPropertyVisibilityStates as PropertyVisibility
 from editor_python_test_tools.asset_utils import Asset
-from editor_python_test_tools.editor_component.editor_script_canvas import VariableState, Path
+from editor_python_test_tools.editor_component.editor_script_canvas import VariableState
 from typing import Any
 
 def compare_vec3(expected: Math.Vector3, actual: Math.Vector3) -> bool:
@@ -205,14 +204,14 @@ def validate_script_canvas_graph_file(get_script_canvas_graph_file: typing.Calla
     sc_file_path: the path on disk where the graph file exists
 
     """
-    Report.info(f"Validating Script Canvas component's file source field can be set.")
+    Report.info("Validating Script Canvas component's file source field can be set.")
 
     old_value = get_script_canvas_graph_file()
 
     set_script_canvas_graph_file(sc_file_path)
 
     set_value = get_script_canvas_graph_file()
-    assert (set_value != old_value) and set_value is not None, f"Graph file could not be set!"
+    assert (set_value != old_value) and set_value is not None, "Graph file could not be set!"
 
 
 def validate_script_canvas_variable_changed(get_variable_value: typing.Callable, set_variable_value: typing.Callable,
@@ -229,8 +228,8 @@ def validate_script_canvas_variable_changed(get_variable_value: typing.Callable,
 
 
     """
-    Report.info(f"Validating Script Canvas component's variable can be set. This will seek out the variable in the "
-                f"script canvas component's exposed variable list and set data to it.")
+    Report.info("Validating Script Canvas component's variable can be set. This will seek out the variable in the "
+                "script canvas component's exposed variable list and set data to it.")
 
     set_variable_value(variable_name, variable_state, expected_variable_value)
 

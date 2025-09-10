@@ -100,7 +100,6 @@ def AtomEditorComponents_HDRColorGrading_AddedToEntity():
     """
 
     import azlmbr.legacy.general as general
-    import azlmbr.math as math
     import azlmbr.render as render
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity

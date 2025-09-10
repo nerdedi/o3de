@@ -9,7 +9,7 @@ import os
 import pytest
 
 import ly_test_tools.environment.file_system as file_system
-from ly_test_tools.o3de.editor_test import EditorSingleTest, EditorBatchedTest, EditorParallelTest, EditorTestSuite
+from ly_test_tools.o3de.editor_test import EditorSingleTest, EditorBatchedTest, EditorTestSuite
 
 
 @pytest.mark.SUITE_main
@@ -24,7 +24,7 @@ class TestAutomation(EditorTestSuite):
 
     class test_AltitudeFilter_Component(EditorBatchedTest):
         from .EditorScripts import AltitudeFilter_ComponentAndOverrides_InstancesPlantAtSpecifiedAltitude as test_module
-    
+
     @pytest.mark.skip(reason="https://github.com/o3de/o3de/issues/17337")
     class test_AltitudeFilter_Toggle(EditorBatchedTest):
         from .EditorScripts import AltitudeFilter_FilterStageToggle as test_module

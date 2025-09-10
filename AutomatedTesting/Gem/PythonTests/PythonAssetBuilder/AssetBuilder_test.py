@@ -8,15 +8,12 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # This launches the AssetProcessor and Editor then attempts to find the expected
 # assets created by a Python Asset Builder and the output of a scene pipeline script
 #
-import sys
 import os
 import pytest
 import logging
-import re
 import sqlite3
 pytest.importorskip('ly_test_tools')
 
-import ly_test_tools.environment.file_system as file_system
 import ly_test_tools.log.log_monitor
 import ly_test_tools.environment.waiter as waiter
 

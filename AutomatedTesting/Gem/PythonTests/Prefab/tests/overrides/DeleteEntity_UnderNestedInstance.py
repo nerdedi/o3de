@@ -61,7 +61,7 @@ def DeleteEntity_UnderNestedInstance():
     # Create a back wheel instance.
     back_wheel_instance = wheel_prefab.instantiate(name=BACK_WHEEL_NAME)
     assert back_wheel_instance.is_valid(), f"Failed to instantiate instance: {BACK_WHEEL_NAME}."
-    
+
     # Create a car prefab and the first car instance from two wheels.
     car_prefab_entities = [front_wheel_instance.container_entity, back_wheel_instance.container_entity]
     car_prefab, car_instance_1 = Prefab.create_prefab(car_prefab_entities, CAR_PREFAB_FILE_NAME, \
@@ -123,7 +123,7 @@ def DeleteEntity_UnderNestedInstance():
     PrefabWaiter.wait_for_propagation() # propagate source template changes after focusing on
 
     prefab_test_utils.check_entity_children_count(front_wheel_in_car_instance_1.id, 1)
-    
+
     # Note: This should be 3 because the tire entity inside the front wheel under the second car is still deleted.
     prefab_test_utils.validate_count_for_named_editor_entity(TIRE_ENTITY_NAME, 3)
 

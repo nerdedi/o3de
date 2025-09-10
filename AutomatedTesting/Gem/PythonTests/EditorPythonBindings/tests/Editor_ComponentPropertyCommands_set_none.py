@@ -4,19 +4,19 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_ComponentPropertyCommands_set_none(BaseClass):
-    # Description: 
+    # Description:
     # Tests setting property values that are asset values to None
-    
+
     @staticmethod
     def test():
         import azlmbr.bus as bus
         import azlmbr.editor as editor
-        import azlmbr.legacy.general
         import azlmbr.entity as entity
 
         # toggle the entity system to use visibility enforcement rules

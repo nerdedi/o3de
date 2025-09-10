@@ -7,7 +7,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 
 import azlmbr.physics as physics
 import azlmbr.math as math
-import azlmbr.asset as azasset
 
 from editor_python_test_tools.editor_entity_utils import EditorEntity
 from editor_python_test_tools.editor_component.editor_component_validation import \

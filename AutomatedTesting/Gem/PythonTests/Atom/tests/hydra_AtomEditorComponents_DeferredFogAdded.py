@@ -127,7 +127,7 @@ class Tests:
     fog_density_clamp_max = (
         "Fog Density Clamp set to maximum value",
         "P1: Fog Density Clamp failed to be set to maximum value")
-    
+
 
 
 def AtomEditorComponents_DeferredFog_AddedToEntity():

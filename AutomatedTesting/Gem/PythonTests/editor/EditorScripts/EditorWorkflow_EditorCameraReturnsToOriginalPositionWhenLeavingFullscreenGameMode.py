@@ -27,15 +27,11 @@ def EditorWorkflow_EditorCameraReturnsToOriginalPositionWhenLeavingFullscreenGam
     Editor camera view returns to original editor camera position after leaving game mode fullscreen preview
     """
 
-    import azlmbr.bus as bus
-    import azlmbr.editor as editor
-    import azlmbr.components as components
     import azlmbr.legacy.general as general
     import azlmbr.math as math
 
-    from editor_python_test_tools.editor_entity_utils import EditorEntity
     from editor_python_test_tools.editor_test_helper import EditorTestHelper
-    from editor_python_test_tools.utils import Report, TestHelper
+    from editor_python_test_tools.utils import Report
 
     def get_current_view_position_as_vector3() -> math.Vector3:
         view_position = general.get_current_view_position()

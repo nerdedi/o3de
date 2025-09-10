@@ -4,14 +4,15 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_EntitySelectionCommands_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests the Entity Selection Python API while the Editor is running
-    
+
     @staticmethod
     def test():
         import azlmbr.bus as bus
@@ -21,7 +22,7 @@ class Editor_EntitySelectionCommands_Works(BaseClass):
 
         def createTestEntities(count):
             testEntityIds = []
-    
+
             for i in range(count):
                 entityId = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', EntityId())
                 testEntityIds.append(entityId)

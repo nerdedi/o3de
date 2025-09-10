@@ -22,8 +22,6 @@ def OpenLevel_ContainingTwoEntities():
     - EntityWithPxCollider has a PhysXMeshCollider component
     """
 
-    import os
-    import sys
 
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
@@ -47,7 +45,7 @@ def OpenLevel_ContainingTwoEntities():
         if entityIds[0].IsValid():
             return entityIds[0]
         return None
-    
+
     # Checks for an entity called "EmptyEntity"
     helper.wait_for_condition(lambda: find_entity("EmptyEntity").IsValid(), 5.0)
     empty_entity_id = find_entity("EmptyEntity")

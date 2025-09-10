@@ -4,14 +4,15 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_ComponentCommands_BuildComponentTypeNameList(BaseClass):
-    # Description: 
+    # Description:
     # Regression test for crash with BuildComponentTypeNameList command
-    
+
     @staticmethod
     def test():
         import azlmbr.bus as bus

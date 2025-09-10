@@ -111,7 +111,7 @@ class TestSoundBankMetadataGenerator:
             test_assets_folder)
         os.rmdir(test_assets_folder)
 
-        assert error_code is 2, 'Metadata was generated when there were fewer than two banks in the target directory.'
+        assert error_code == 2, 'Metadata was generated when there were fewer than two banks in the target directory.'
 
     def test_NoMetadataNoContentBank_NoMetadataGenerated(self, workspace, soundbank_metadata_generator_setup_fixture):
         """
@@ -145,8 +145,8 @@ class TestSoundBankMetadataGenerator:
         bank_info = get_bank_info(workspace)
         expected_dependencies = {'Content.bnk': {'dependencies': [bank_info.init_bank_path], 'events': []},}
         success_case_test(test_assets_folder, expected_dependencies, get_bank_info(workspace))
-        
-    def test_NoMetadataOneContentBank_StreamedFiles_MultipleDependencies(self, workspace, 
+
+    def test_NoMetadataOneContentBank_StreamedFiles_MultipleDependencies(self, workspace,
                                                                          soundbank_metadata_generator_setup_fixture):
         """
         When no Wwise metadata is present, and there is only one content bank in the target directory with wem files

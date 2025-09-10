@@ -8,7 +8,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 
 import os
 import logging
-import sys
 import pytest
 import time
 
@@ -20,7 +19,6 @@ import ly_test_tools.environment.waiter as waiter
 
 from ly_test_tools.o3de.asset_processor import AssetProcessor
 from ly_test_tools.launchers.exceptions import WaitTimeoutError
-from ly_test_tools.log.log_monitor import LogMonitor, LogMonitorException
 from ly_test_tools.o3de.editor_test_utils import compile_test_case_name_from_request
 
 class TestRunError():
@@ -31,16 +29,16 @@ class TestRunError():
 class TestAutomationBase:
     MAX_TIMEOUT = 180 # 3 minutes max for a test to run
     WAIT_FOR_CRASH_LOG = 20 # Seconds for waiting for a crash log
-    TEST_FAIL_RETCODE = 0xF # Return code for test failure 
-        
+    TEST_FAIL_RETCODE = 0xF # Return code for test failure
+
     test_times = {}
-    asset_processor = None 
-        
+    asset_processor = None
+
     def setup_class(cls):
         cls.test_times = {}
         cls.editor_times = {}
         cls.asset_processor = None
-        
+
     def teardown_class(cls):
         logger = logging.getLogger(__name__)
         # Report times
@@ -48,7 +46,7 @@ class TestAutomationBase:
         for testcase_name, t in cls.test_times.items():
             editor_t = cls.editor_times[testcase_name]
             time_info_str += f"{testcase_name}: (Full:{t} sec, Editor:{editor_t} sec)\n"
-            
+
         logger.info(time_info_str)
         if cls.asset_processor is not None:
             cls.asset_processor.teardown()
@@ -62,7 +60,7 @@ class TestAutomationBase:
         self.logger = logging.getLogger(__name__)
         errors = []
         testcase_name = os.path.basename(testcase_module.__file__)
-        
+
         #########
         # Setup #
         if self.asset_processor is None:
@@ -90,10 +88,10 @@ class TestAutomationBase:
         if os.path.exists(workspace.paths.editor_log()):
             self.logger.debug("Creating backup for existing editor log before test run.")
             file_system.create_backup(workspace.paths.editor_log(), workspace.paths.project_log())
-            
+
         ############
-        # Run test # 
-        
+        # Run test #
+
         editor_starttime = time.time()
         self.logger.debug("Running automated test")
         testcase_module_filepath = self._get_testcase_module_filepath(testcase_module)
@@ -117,16 +115,16 @@ class TestAutomationBase:
         except WaitTimeoutError:
             errors.append(TestRunError("TIMEOUT", f"Editor did not close after {TestAutomationBase.MAX_TIMEOUT} seconds, verify the test is ending and the application didn't freeze"))
             editor.stop()
-            
+
         output = editor.get_output()
         self.logger.debug("Test output:\n" + output)
         return_code = editor.get_returncode()
-        
+
         self.editor_times[testcase_name] = time.time() - editor_starttime
-        
+
         ###################
         # Validate result #
-        
+
         if return_code != 0:
             if output:
                 error_str = "Test failed, output:\n" + output.replace("\n", "\n  ")
@@ -139,9 +137,9 @@ class TestAutomationBase:
 
                 try:
                     waiter.wait_for(lambda: os.path.exists(crash_log), timeout=TestAutomationBase.WAIT_FOR_CRASH_LOG)
-                except AssertionError:                    
+                except AssertionError:
                     pass
-                    
+
                 try:
                     with open(crash_log) as f:
                         crash_info = f.read()
@@ -151,12 +149,12 @@ class TestAutomationBase:
                 return_code_str = f"0x{return_code:0X}" if isinstance(return_code, int) else "None"
                 error_str = f"Editor.exe crashed, return code: {return_code_str}\n\nCrash log:\n{crash_info}"
                 errors.append(TestRunError("CRASH", error_str))
-        
+
         self.test_times[testcase_name] = time.time() - test_starttime
-        
+
         ###################
         # Error reporting #
-        
+
         if errors:
             error_str = "Error list:\n"
             longest_title = max([len(e.title) for e in errors])
@@ -169,19 +167,19 @@ class TestAutomationBase:
                 error_str += header_decoration
                 for line in e.content.split("\n"):
                     error_str += f"  {line}\n"
-                
+
             error_str += header_decoration
             error_str += "Editor log:\n"
             try:
                 with open(workspace.paths.editor_log()) as f:
                     log_basename = os.path.basename(workspace.paths.editor_log())
                     for line in f.readlines():
-                        error_str += f"|{log_basename}| {line}"                        
+                        error_str += f"|{log_basename}| {line}"
             except Exception as ex:
                 error_str += f"-- No log available ({ex})--"
 
-            pytest.fail(error_str)     
-        
+            pytest.fail(error_str)
+
     @staticmethod
     def _kill_ly_processes(include_asset_processor=True):
         LY_PROCESSES = [
@@ -191,12 +189,12 @@ class TestAutomationBase:
             'AssetProcessor', 'AssetProcessorBatch', 'AssetBuilder', 'CrySCompileServer',
             'rc'  # Resource Compiler
         ]
-        
+
         if include_asset_processor:
             process_utils.kill_processes_named(LY_PROCESSES+AP_PROCESSES, ignore_extensions=True)
         else:
             process_utils.kill_processes_named(LY_PROCESSES, ignore_extensions=True)
-    
+
     @staticmethod
     def _get_testcase_module_filepath(testcase_module):
         # type: (Module) -> str

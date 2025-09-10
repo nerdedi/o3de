@@ -51,13 +51,10 @@ def CharacterController_SwitchLevels():
     3) Close editor
     """
 
-    import os
-    import sys
 
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
     import azlmbr.legacy.general as general
-    import azlmbr.bus
     import editor_python_test_tools.hydra_editor_utils as hydra
 
     # Constants

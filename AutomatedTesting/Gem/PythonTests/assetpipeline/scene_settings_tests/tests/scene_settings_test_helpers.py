@@ -6,10 +6,8 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
 def prepare_scene_ui_for_test(test_file_name, manifest_should_exist, should_create_manifest):
-    import asyncio
     from editor_python_test_tools.utils import Report
     import os
-    import PySide2
     from PySide2 import QtWidgets
     import azlmbr.bus
     import azlmbr.editor as editor
@@ -19,20 +17,20 @@ def prepare_scene_ui_for_test(test_file_name, manifest_should_exist, should_crea
     project_root_folder = editor.EditorToolsApplicationRequestBus(azlmbr.bus.Broadcast, 'GetGameFolder')
     path_to_test_asset = os.path.join(project_root_folder, test_file_name)
     path_to_manifest = path_to_test_asset + ".assetinfo"
-    
+
     # Make sure the test asset exists
     Report.critical_result(tm.Test_Messages.scene_settings_test_asset_exists, os.path.exists(path_to_test_asset))
-    
+
     # Make sure the scene settings file doesn't yet exist
     manifest_expected_error_message = tm.Test_Messages.scene_settings_scene_settings_not_created_yet
     if manifest_should_exist:
         manifest_expected_error_message = tm.Test_Messages.scene_settings_test_asset_manifest_exists
     Report.critical_result(manifest_expected_error_message, os.path.exists(path_to_manifest) == manifest_should_exist)
     window_id = azlmbr.qt.SceneSettingsAssetImporterForScriptRequestBus(azlmbr.bus.Broadcast, "EditImportSettings", path_to_test_asset)
-    
+
     # This test needs to pause between some operations to let asynchronous operations finish.
     general.idle_enable(True)
-    
+
     # The window doesn't immediately populate when opened, so wait a few frames for it to
     # generate the interface using the reflected property system.
     general.idle_wait_frames(30)
@@ -44,7 +42,7 @@ def prepare_scene_ui_for_test(test_file_name, manifest_should_exist, should_crea
         Report.critical_result(tm.Test_Messages.scene_settings_update_disabled_on_launch, not has_unsaved_changes)
 
         card_layout_area = widget_main_window.findChild(QtWidgets.QWidget, "m_cardAreaLayoutWidget")
-    
+
         # On initial launch of the Scene Settings UI, it will generate one processing event to load the requested file.
         # Find the card for this processing event and close it.
         first_card_push_buttons = card_layout_area.findChildren(QtWidgets.QPushButton,"")
@@ -59,17 +57,15 @@ def prepare_scene_ui_for_test(test_file_name, manifest_should_exist, should_crea
         # Verify the button no longer exists
         first_card_push_buttons = card_layout_area.findChildren(QtWidgets.QPushButton,"")
         Report.critical_result(tm.Test_Messages.scene_setting_card_dismissed_on_click, len(first_card_push_buttons) == 0)
-    
+
     reflected_property_root = widget_main_window.findChild(QtWidgets.QWidget, "m_rootWidget")
 
     return path_to_manifest, widget_main_window, reflected_property_root
 
 
 def save_and_verify_manifest(path_to_manifest, widget_main_window):
-    import asyncio
     from editor_python_test_tools.utils import Report
     import os
-    import PySide2
     from PySide2 import QtWidgets
     import azlmbr.bus
     import azlmbr.legacy.general as general
@@ -80,7 +76,7 @@ def save_and_verify_manifest(path_to_manifest, widget_main_window):
 
     save_button = widget_main_window.findChild(QtWidgets.QPushButton, "m_saveButton")
     save_button.click()
-    
+
     # All other assets should already be processed, and this is a simple update, so it should be processed quickly.
     # Processing is done when the scene settings card with the save status can be closed.
     time_out_frames_on_scene_settings_updated = 3000
@@ -105,12 +101,12 @@ def save_and_verify_manifest(path_to_manifest, widget_main_window):
         time_out_frames_on_scene_settings_updated = time_out_frames_on_scene_settings_updated - frames_to_wait_between_checks
         # idle_wait_frames is used instead of idle_wait because idle_wait was not functional for this test.
         general.idle_wait_frames(frames_to_wait_between_checks)
-    
+
     Report.critical_result(tm.Test_Messages.scene_settings_saved_successfully, saving_completed)
 
     # Make sure that the scene settings UI has updated this file to no longer be considered dirty.
     has_unsaved_changes = azlmbr.qt.SceneSettingsRootDisplayScriptRequestBus(azlmbr.bus.Broadcast, "HasUnsavedChanges")
     Report.critical_result(tm.Test_Messages.scene_settings_file_update_disabled_after_save, not has_unsaved_changes)
-        
+
     # Make sure the manifest was actually created
     Report.critical_result(tm.Test_Messages.scene_settings_file_created, os.path.exists(path_to_manifest))

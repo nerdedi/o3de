@@ -46,7 +46,6 @@ def GradientPreviewSettings_ClearingPinnedEntitySetsPreviewToOrigin():
 
     import editor_python_test_tools.hydra_editor_utils as hydra
     from editor_python_test_tools.utils import Report
-    from editor_python_test_tools.utils import TestHelper as helper
 
     WORLD_ORIGIN = math.Vector3(0.0, 0.0, 0.0)
     EXPECTED_SIZE = math.Vector3(1.0, 1.0, 1.0)

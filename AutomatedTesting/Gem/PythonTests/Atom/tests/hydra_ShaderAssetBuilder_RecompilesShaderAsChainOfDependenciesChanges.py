@@ -43,9 +43,9 @@ def ShaderAssetBuilder_RecompilesShaderAsChainOfDependenciesChanges():
         # The script drives the execution of the test, to return the flow back to the editor,
         # we will tick it one time
         general.idle_wait_frames(1)
- 
+
         # This is the order in which the source assets should be deployed
-        # to avoid source dependency issues with the old MCPP-based CreateJobs. 
+        # to avoid source dependency issues with the old MCPP-based CreateJobs.
         file_list = [
             "Test2Color.azsli",
             "Test3Color.azsli",

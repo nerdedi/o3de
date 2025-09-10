@@ -89,8 +89,6 @@ def ScriptCanvas_SetKinematicTargetTransform():
     :return: None
     """
     # Setup path
-    import os
-    import sys
     import azlmbr.legacy.general as general
     import azlmbr.bus
     import azlmbr.components

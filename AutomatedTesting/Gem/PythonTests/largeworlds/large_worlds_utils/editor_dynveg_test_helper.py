@@ -109,13 +109,13 @@ def create_temp_prefab_vegetation_area(name, center_point, box_size_x, box_size_
                                                                                           box_size_z))
     # Get the in-memory spawnable asset id if exists
     spawnable_name = Path(target_prefab.file_path).stem
-    spawnable_asset_id = prefab.PrefabPublicRequestBus(bus.Broadcast, 'GetInMemorySpawnableAssetId', 
+    spawnable_asset_id = prefab.PrefabPublicRequestBus(bus.Broadcast, 'GetInMemorySpawnableAssetId',
                                                       spawnable_name)
 
     # Create the in-memory spawnable asset from given prefab if the spawnable does not exist
     if not spawnable_asset_id.is_valid():
-        create_spawnable_result = prefab.PrefabPublicRequestBus(bus.Broadcast, 'CreateInMemorySpawnableAsset', 
-                                                                target_prefab.file_path, 
+        create_spawnable_result = prefab.PrefabPublicRequestBus(bus.Broadcast, 'CreateInMemorySpawnableAsset',
+                                                                target_prefab.file_path,
                                                                 spawnable_name)
         assert create_spawnable_result.IsSuccess(), \
             f"Prefab operation 'CreateInMemorySpawnableAssets' failed. Error: {create_spawnable_result.GetError()}"

@@ -8,7 +8,7 @@ Object to house all the Qt Objects and behavior used in testing the asset editor
 """
 
 from editor_python_test_tools.utils import TestHelper as helper
-from PySide2 import QtWidgets, QtCore
+from PySide2 import QtWidgets
 import pyside_utils
 import azlmbr.editor as editor
 import azlmbr.bus as bus
@@ -249,4 +249,4 @@ class QtPyAssetEditor(QtPyCommon):
         add_event.click()
         # refresh our handle on the asset editor widget since the qt object structure has changed
         self.__refresh_qt_references()
-        
+

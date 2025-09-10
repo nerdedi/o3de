@@ -19,9 +19,7 @@ def MetadataRelocation_ReferenceValidAfterRename():
     from editor_python_test_tools.utils import TestHelper as helper
     # All exposed python bindings are in azlmbr
     import azlmbr.bus as bus
-    import azlmbr.editor as editor
     import azlmbr.legacy.general as general
-    import azlmbr.globals as globals
     import azlmbr.default
     import azlmbr.render
     import azlmbr.asset

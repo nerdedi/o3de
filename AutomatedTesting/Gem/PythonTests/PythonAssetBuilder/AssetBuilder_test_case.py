@@ -21,7 +21,7 @@ def on_notify_editor_initialized(args):
     if (assetId.is_valid() is False):
         print(f'Mock AssetId is not valid! Got {assetId.to_string()} instead')
     else:
-        print(f'Mock AssetId is valid!')
+        print('Mock AssetId is valid!')
 
     assetIdString = assetId.to_string()
     if (assetIdString.endswith(':528cca58') is False):

@@ -11,7 +11,7 @@ def check_result(result, msg):
         raise Exception(msg + " : FAILED")
 
 def Editor_ComponentPropertyCommands_containers():
-    # Description: 
+    # Description:
     # Tests component properties that are containers
 
     from editor_python_test_tools.utils import Report
@@ -98,7 +98,7 @@ def Editor_ComponentPropertyCommands_containers():
     pteOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'BuildComponentPropertyTreeEditor', tagList)
     #check_result(pteOutcome.IsSuccess(), 'BuildComponentPropertyTreeEditor')
     #pte = pteOutcome.GetValue()
-        
+
     ## Test BuildComponentPropertyList
     #paths = pte.build_paths_list()
     #print(f'Paths {paths}')

@@ -55,11 +55,11 @@ def TerrainPhysicsCollider_ChangesSizeWithAxisAlignedBoxShapeChanges():
     # Our box is being created at (0,0), so it goes from (-2.5,-3) to (2.5,3)
     # The default terrain grid step size is 1, and we expect our physics heightfield to be aligned to the grid,
     # so the heightfield should go from (-2, -3) to (2, 3).
-    # The heightfield is also expected to create final vertex endpoints in each direction, so we expect the 
+    # The heightfield is also expected to create final vertex endpoints in each direction, so we expect the
     # X axis to create (-2, -1, 0, 1, 2) = 5 points, and the Y axis to create (-3, -2, -1, 0, 1, 2, 3) = 7 points
     EXPECTED_COLUMN_SIZE = 5
     EXPECTED_ROW_SIZE = 7
-    
+
     # 1) Load the level
     hydra.open_base_level()
 

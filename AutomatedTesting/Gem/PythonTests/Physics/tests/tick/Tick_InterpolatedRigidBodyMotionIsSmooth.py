@@ -37,13 +37,11 @@ def Tick_InterpolatedRigidBodyMotionIsSmooth():
     :return: None
     """
     # imports
-    import os
     import azlmbr.legacy.general as general
     import azlmbr.math as math
     from editor_python_test_tools.editor_entity_utils import EditorEntity as Entity
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
-    from editor_python_test_tools.asset_utils import Asset
     import numpy as np
 
     # constants

@@ -36,7 +36,7 @@ def EditorWorkflow_EditorCameraInBeThisCameraReturnsToOriginalPositionWhenLeavin
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity
     from editor_python_test_tools.editor_test_helper import EditorTestHelper
-    from editor_python_test_tools.utils import Report, TestHelper
+    from editor_python_test_tools.utils import Report
 
     def get_current_view_position_as_vector3() -> math.Vector3:
         view_position = general.get_current_view_position()
@@ -75,7 +75,7 @@ def EditorWorkflow_EditorCameraInBeThisCameraReturnsToOriginalPositionWhenLeavin
     # trigger 'Be this camera'
     camera.EditorCameraViewRequestBus(
         bus.Event, "ToggleCameraAsActiveView", camera_entity.id)
-    
+
     general.idle_wait_frames(1)
 
     # note: this will match the entity transform

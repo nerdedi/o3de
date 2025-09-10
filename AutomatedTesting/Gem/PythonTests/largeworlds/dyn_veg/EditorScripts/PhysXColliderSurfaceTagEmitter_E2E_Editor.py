@@ -189,12 +189,12 @@ def PhysXColliderSurfaceTagEmitter_E2E_Editor():
     # (We use a small query box to only check for one placed instance point)
     Report.info("Starting PhysX Mesh Collider Test")
     on_collider_top_point_count = (
-        f"Expected number of instances found on the top point for a PhysX Mesh",
-        f"Found an unexpected number of instances on the top point for a PhysX Mesh"
+        "Expected number of instances found on the top point for a PhysX Mesh",
+        "Found an unexpected number of instances on the top point for a PhysX Mesh"
     )
     on_collider_baseline_count = (
-        f"Expected number of instances found on the baseline point for a PhysX Mesh",
-        f"Found an unexpected number of instances on the baseline point for a PhysX Mesh"
+        "Expected number of instances found on the baseline point for a PhysX Mesh",
+        "Found an unexpected number of instances on the baseline point for a PhysX Mesh"
     )
     hydra.get_set_test(collider_entity, component_index=0, path="Configuration|Generated Tags", value=[surface_tag])
     hydra.get_set_test(collider_entity, component_index=0, path="Configuration|Extended Tags", value=[invalid_tag])

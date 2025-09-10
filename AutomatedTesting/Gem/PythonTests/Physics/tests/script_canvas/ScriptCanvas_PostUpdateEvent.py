@@ -59,7 +59,6 @@ def ScriptCanvas_PostUpdateEvent():
 
     :return: None
     """
-    import os
     import sys
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
@@ -92,7 +91,7 @@ def ScriptCanvas_PostUpdateEvent():
         @property
         def position(self):
             return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
-        
+
         @property
         def velocity(self):
                 return azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "GetLinearVelocity", self.id)

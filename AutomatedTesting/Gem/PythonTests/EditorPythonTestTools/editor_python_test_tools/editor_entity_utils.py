@@ -252,7 +252,7 @@ class EditorComponent:
             get_component_property_outcome.IsSuccess()
         ), f"Failure: Could not get value from {self.get_component_name()} : {component_property_path}"
         return get_component_property_outcome.GetValue()
-    
+
     def check_component_property_value(self, component_property_path: str) -> tuple[bool, object]:
         """
         Similar as get_component_property_value, but does not assert.
@@ -264,7 +264,7 @@ class EditorComponent:
         )
         if get_component_property_outcome.IsSuccess():
             return True, get_component_property_outcome.GetValue()
-        return False, None 
+        return False, None
 
     def set_component_property_value(self, component_property_path: str, value: object):
         """
@@ -490,7 +490,7 @@ class EditorEntity:
         """
         :return: List of EditorEntity children. Type: [EditorEntity]
         """
-        return [EditorEntity(child_id) for child_id in self.get_children_ids()] 
+        return [EditorEntity(child_id) for child_id in self.get_children_ids()]
 
     def add_component(self, component_name: str) -> EditorComponent:
         """

@@ -123,13 +123,13 @@ class TestBenchmarkAssetLoads(object):
         source_directory = os.path.join(os.path.dirname(__file__), 'assets')
         logger.debug(f'Creating directory: {dest_directory}')
         os.makedirs(dest_directory, exist_ok=True)
-        
+
         # For each Benchmark object, either just copy the .benchmarksettings file as-is with the same name
         # if we only want one copy, or else append _<num> to the name for each copy if we want multiples.
         for benchmark in benchmarks:
             if benchmark.num_copies > 1:
                 for asset_num in range (0, benchmark.num_copies):
-                    shutil.copy(os.path.join(source_directory, f'{benchmark.base_name}.benchmarksettings'), 
+                    shutil.copy(os.path.join(source_directory, f'{benchmark.base_name}.benchmarksettings'),
                                 os.path.join(dest_directory, f'{benchmark.base_name}_{asset_num}.benchmarksettings'))
             else:
                 shutil.copy(os.path.join(source_directory, f'{benchmark.base_name}.benchmarksettings'), dest_directory)
@@ -143,13 +143,13 @@ class TestBenchmarkAssetLoads(object):
         :return True if assets were found and removed, False if they weren't
         """
         return delete_check(dest_directory)
-        
+
 
     def set_cvar(self, remote_console_instance, cvar_name, cvar_value):
         """
         Helper function to set a CVar value and wait for confirmation.
-        """        
-        send_command_and_expect_response(remote_console_instance, f"{cvar_name} {cvar_value}", 
+        """
+        send_command_and_expect_response(remote_console_instance, f"{cvar_name} {cvar_value}",
                                          f"{cvar_name} : {cvar_value}", timeout=remote_command_timeout)
 
 
@@ -163,14 +163,14 @@ class TestBenchmarkAssetLoads(object):
         """
         # The root benchmark asset is the one with sub ID 1, so it has '_00000001' at the end of the base name.
         name_suffix='_00000001.benchmark'
-    
+
         for trial in range (0, num_trials):
             # Set a unique log label to make it easier to parse for the results
             self.set_cvar(remote_console_instance, 'benchmarkLoadAssetLogLabel', f"{benchmark.base_name}_{trial}")
 
             # Clear the list of assets to load for the benchmark
-            send_command_and_expect_response(remote_console_instance, 
-                f"benchmarkClearAssetList", 
+            send_command_and_expect_response(remote_console_instance,
+                "benchmarkClearAssetList",
                 f"({benchmark.base_name}_{trial}) - Benchmark asset list cleared.", timeout=remote_command_timeout)
 
             # Build up the load asset command.
@@ -178,25 +178,25 @@ class TestBenchmarkAssetLoads(object):
             # if we have too many assets.
             max_params_per_line = 50
             if benchmark.num_copies > 1:
-                benchmark_command = f"benchmarkAddAssetsToList"
+                benchmark_command = "benchmarkAddAssetsToList"
                 for asset_num in range (0, benchmark.num_copies):
                     benchmark_command += f" benchmark/{benchmark.base_name}_{asset_num}{name_suffix}"
                     if (asset_num % max_params_per_line == (max_params_per_line - 1)) or (asset_num == benchmark.num_copies - 1):
-                        send_command_and_expect_response(remote_console_instance, 
-                            benchmark_command, 
+                        send_command_and_expect_response(remote_console_instance,
+                            benchmark_command,
                             f"({benchmark.base_name}_{trial}) - All requested assets added.", timeout=remote_command_timeout)
-                        benchmark_command = f"benchmarkAddAssetsToList"
+                        benchmark_command = "benchmarkAddAssetsToList"
             else:
-                send_command_and_expect_response(remote_console_instance, 
-                    f"benchmarkAddAssetsToList benchmark/{benchmark.base_name}{name_suffix}", 
+                send_command_and_expect_response(remote_console_instance,
+                    f"benchmarkAddAssetsToList benchmark/{benchmark.base_name}{name_suffix}",
                     f"({benchmark.base_name}_{trial}) - All requested assets added.", timeout=remote_command_timeout)
 
             # Attempt to clear the Windows file cache between each run
             self.clear_windows_file_cache()
 
             # Send it and wait for the benchmark to complete
-            send_command_and_expect_response(remote_console_instance, 
-                f"benchmarkLoadAssetList", 
+            send_command_and_expect_response(remote_console_instance,
+                "benchmarkLoadAssetList",
                 f"({benchmark.base_name}_{trial}) - Benchmark run complete.", timeout=remote_command_timeout)
 
     def move_artifact(self, artifact_manager, artifact_name):
@@ -274,8 +274,8 @@ class TestBenchmarkAssetLoads(object):
         # Get the token for the currently-running process
         token_handle = HANDLE()
         result = windll.advapi32.OpenProcessToken(
-            windll.kernel32.GetCurrentProcess(), 
-            TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, 
+            windll.kernel32.GetCurrentProcess(),
+            TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES,
             byref(token_handle))
         if (result == 0):
             logger.error('Failed on the OpenProcessToken call')
@@ -339,7 +339,7 @@ class TestBenchmarkAssetLoads(object):
         benchmarks = [
             # The choice of 650 MB as the benchmark size is arbitrary.  It was picked as large enough to get reasonably stable
             # and measureable results even when running on an SSD, and because the "balanced tree" test causes a total size
-            # of (2^N + 1)*AssetSize.  Working with that constraint, and a base asset size of 10 MB, the main contenders were 
+            # of (2^N + 1)*AssetSize.  Working with that constraint, and a base asset size of 10 MB, the main contenders were
             # either 330 MB, 650 MB, or 1290 MB.
 
             # The first set of benchmarks measures the load time effects of different asset dependency hierarchies.
@@ -402,9 +402,9 @@ class TestBenchmarkAssetLoads(object):
             for benchmark in benchmarks:
                 self.run_benchmark(remote_console_instance, benchmark_trials, benchmark)
 
-            # Give the launcher a chance to quit before forcibly stopping it.  
+            # Give the launcher a chance to quit before forcibly stopping it.
             # This way our game.log will contain all the information we want instead of potentially truncating early.
-            send_command_and_expect_response(remote_console_instance, f"quit", "Executing console command 'quit'", 
+            send_command_and_expect_response(remote_console_instance, "quit", "Executing console command 'quit'",
                                                 timeout=remote_command_timeout)
             launcher.stop()
             remote_console_instance.stop()
@@ -419,8 +419,8 @@ class TestBenchmarkAssetLoads(object):
         # Generate a CSV of the min/max/avg results for each test.
         results_csv = f'load_benchmark_{level}_{streamer_mode}.csv'
         with open(results_csv, 'w') as csv_file:
-            csv_file.write(f'"Test Name","Num Assets Loaded","First Time(ms)","Last Time(ms)","Max Time(ms)","Min Time (ms)",'+
-                            f'"Avg Time (ms)","Median Time (ms)"\n')
+            csv_file.write('"Test Name","Num Assets Loaded","First Time(ms)","Last Time(ms)","Max Time(ms)","Min Time (ms)",'+
+                            '"Avg Time (ms)","Median Time (ms)"\n')
             for benchmark in benchmarks:
                 csv_file.write(f'{benchmark.base_name},{benchmark.num_copies},{benchmark.load_times[0]},{benchmark.load_times[-1]},'+
                                 f'{max(benchmark.load_times)},{min(benchmark.load_times)},{mean(benchmark.load_times)},'+

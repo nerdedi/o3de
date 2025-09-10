@@ -9,7 +9,6 @@
 # lines that would appear in the console or various log files. These lines can then be
 # picked up via console/log monitoring or log parsing for automated/manual testing
 
-import azlmbr.legacy.general as general
 
 class Report:
     @staticmethod

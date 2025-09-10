@@ -16,7 +16,7 @@ class Tests():
     enter_game_mode   = ("Entered game mode",            "Failed to enter game mode")
     find_sphere       = ("SphereRigidBody found",        "SphereRigidBody not found")
     find_force_region = ("ForceRegionPrefabEntity found", "ForceRegionPrefabEntity not found")
-    sphere_dropped    = ("Sphere dropped down",          "Sphere did not drop down") 
+    sphere_dropped    = ("Sphere dropped down",          "Sphere did not drop down")
     sphere_bounced    = ("Sphere bounced up vertically", "Sphere did not bounce up vertically")
     exit_game_mode    = ("Exited game mode",             "Couldn't exit game mode")
 # fmt: on
@@ -61,8 +61,6 @@ def ForceRegion_PrefabFileInstantiates():
     :return: None
     """
 
-    import os
-    import sys
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
 

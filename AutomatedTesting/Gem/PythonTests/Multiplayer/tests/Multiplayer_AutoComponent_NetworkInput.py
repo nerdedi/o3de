@@ -69,7 +69,7 @@ def Multiplayer_AutoComponent_NetworkInput():
         WAIT_TIME_CLIENT_RECEIVED_INCORRECT_INPUT = 1.0
         helper.fail_if_log_line_found("Script", "AutoComponent_NetworkInput received bad fwdback!", section_tracer.prints, WAIT_TIME_CLIENT_RECEIVED_INCORRECT_INPUT)
         helper.fail_if_log_line_found("Script", "AutoComponent_NetworkInput received bad leftright!", section_tracer.prints, WAIT_TIME_CLIENT_RECEIVED_INCORRECT_INPUT)
-    
+
     # Exit game mode
     helper.exit_game_mode(Tests.exit_game_mode)
 

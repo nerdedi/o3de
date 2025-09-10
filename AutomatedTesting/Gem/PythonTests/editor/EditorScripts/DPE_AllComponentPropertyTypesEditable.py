@@ -122,7 +122,7 @@ def DPE_AllComponentPropertyTypesEditable():
         # String Property Type
         edit_component_property_value(debug_text_component,  'Text element settings|Text', "Hello")
         """
-        
+
         # Look for errors and asserts
         TestHelper.wait_for_condition(lambda: error_tracer.has_errors or error_tracer.has_asserts, 1.0)
         for error_info in error_tracer.errors:

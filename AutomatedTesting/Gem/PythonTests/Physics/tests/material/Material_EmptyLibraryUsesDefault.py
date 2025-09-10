@@ -64,8 +64,6 @@ def Material_EmptyLibraryUsesDefault():
 
     :return: None
     """
-    import os
-    import sys
     import azlmbr.legacy.general as general
     import azlmbr.bus as bus
     import azlmbr.components

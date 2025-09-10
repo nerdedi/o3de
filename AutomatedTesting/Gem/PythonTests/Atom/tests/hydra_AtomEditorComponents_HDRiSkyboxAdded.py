@@ -102,7 +102,7 @@ def AtomEditorComponents_HDRiSkybox_AddedToEntity():
         # 1. Create an HDRi Skybox with no components.
         hdri_skybox_entity = EditorEntity.create_editor_entity(
             AtomComponentProperties.hdri_skybox())
-        Report.critical_result(Tests.hdri_skybox_entity_creation, 
+        Report.critical_result(Tests.hdri_skybox_entity_creation,
                                hdri_skybox_entity.exists())
 
         # 2. Add an HDRi Skybox component to HDRi Skybox.

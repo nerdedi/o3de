@@ -16,8 +16,6 @@ from _pytest.mark import ParameterSet
 from ly_test_tools._internal.managers.workspace import AbstractWorkspaceManager
 from ly_test_tools.o3de.asset_processor import ASSET_PROCESSOR_PLATFORM_MAP
 
-from assetpipeline.ap_fixtures.asset_processor_fixture import asset_processor
-from assetpipeline.ap_fixtures.ap_setup_fixture import ap_setup_fixture
 
 import assetpipeline.scene_tests_fixtures.scene_test_debug_compare as parse_and_compare
 import assetpipeline.scene_tests_fixtures.scene_test_builder as test_builder
@@ -143,7 +141,7 @@ class TestScene_AllPlatforms(object):
 
         self.run_ap_debug_skip_atom_output(asset_processor)
 
-        logger.info(f"Validating assets.")
+        logger.info("Validating assets.")
         # Get a list of the expected product assets and compare it with the actual product assets in cache.
         expected_product_list = parse_and_compare.populate_expected_product_assets(assets_to_validate)
         cache_folder = get_cache_folder(asset_processor)

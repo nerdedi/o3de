@@ -4,12 +4,13 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_ComponentPropertyCommands_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests a portion of the Component Property Get/Set Python API while the Editor is running
 
     @staticmethod
@@ -46,11 +47,9 @@ class Editor_ComponentPropertyCommands_Works(BaseClass):
         newValueCompared = pte.compare_value(path, newValue)
         isOldNewValueSame = pte.compare_value(path, oldValue)
         BaseClass.check_result(not(newValue == oldValue and oldValueCompared and newValueCompared and not isOldNewValueSame), "PteTest " + path)
-    
+
     @staticmethod
     def test():
-        import azlmbr.legacy.general
-        import azlmbr.prefab
         import azlmbr.bus as bus
         import azlmbr.editor as editor
         import azlmbr.entity as entity
@@ -76,7 +75,7 @@ class Editor_ComponentPropertyCommands_Works(BaseClass):
         check_result(hasComponent, "Entity has an Quad Shape component")
 
         # Test BuildComponentPropertyList
-        paths = editor.EditorComponentAPIBus(bus.Broadcast, 'BuildComponentPropertyList', component)    
+        paths = editor.EditorComponentAPIBus(bus.Broadcast, 'BuildComponentPropertyList', component)
         check_result(len(paths) > 1, f"BuildComponentPropertyList {len(paths)}")
 
         # Tests for GetComponentProperty/SetComponentProperty
@@ -97,7 +96,7 @@ class Editor_ComponentPropertyCommands_Works(BaseClass):
         # Tests for BuildComponentPropertyTreeEditor
         pteObj = editor.EditorComponentAPIBus(bus.Broadcast, 'BuildComponentPropertyTreeEditor', component)
         check_result(pteObj.IsSuccess(), "BuildComponentPropertyTreeEditor")
-     
+
         pte = pteObj.GetValue()
 
         PteTest(pte, path_visible, True)

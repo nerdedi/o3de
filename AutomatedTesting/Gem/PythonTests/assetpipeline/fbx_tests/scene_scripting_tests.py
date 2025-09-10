@@ -7,7 +7,9 @@
 #
 
 
-import pytest, logging, os
+import pytest
+import logging
+import os
 
 # Import fixtures
 from ..ap_fixtures.asset_processor_fixture import asset_processor as asset_processor

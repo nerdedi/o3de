@@ -11,11 +11,10 @@ import os
 import sys
 
 from .utils.FileManagement import FileManagement as fm
-from ly_test_tools.o3de.editor_test import EditorSingleTest, EditorBatchedTest, EditorTestSuite
+from ly_test_tools.o3de.editor_test import EditorBatchedTest, EditorTestSuite
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../automatedtesting_shared')
 
-from base import TestAutomationBase
 
 revert_physics_config = fm.file_revert_list(['physxdebugconfiguration.setreg', 'physxdefaultsceneconfiguration.setreg', 'physxsystemconfiguration.setreg'], 'AutomatedTesting/Registry')
 

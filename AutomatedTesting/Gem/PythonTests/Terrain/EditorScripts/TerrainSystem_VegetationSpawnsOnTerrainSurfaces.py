@@ -6,38 +6,38 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 
 class VegetationTests:
     vegetation_on_gradient_1 = (
-        "Vegetation detected at correct position on Gradient1", 
+        "Vegetation detected at correct position on Gradient1",
         "Vegetation not detected at correct position on Gradient1"
     )
     vegetation_on_gradient_2 = (
-        "Vegetation detected at correct position on Gradient2", 
+        "Vegetation detected at correct position on Gradient2",
         "Vegetation not detected at correct position on Gradient2"
     )
     unfiltered_vegetation_count_correct = (
-        "Unfiltered vegetation spawn count correct", 
+        "Unfiltered vegetation spawn count correct",
         "Unfiltered vegetation spawn count incorrect"
     )
 
     testTag2_excluded_vegetation_count_correct = (
-        "TestTag2 filtered vegetation count correct", 
+        "TestTag2 filtered vegetation count correct",
         "TestTag2 filtered vegetation count incorrect"
     )
     testTag2_excluded_vegetation_z_correct = (
-        "TestTag2 filtered vegetation spawned in correct position", 
+        "TestTag2 filtered vegetation spawned in correct position",
         "TestTag2 filtered vegetation failed to spawn in correct position"
     )
 
     testTag3_excluded_vegetation_count_correct = (
-        "TestTag3 filtered vegetation count correct", 
+        "TestTag3 filtered vegetation count correct",
         "TestTag3 filtered vegetation count incorrect"
     )
     testTag3_excluded_vegetation_z_correct = (
-        "TestTag3 filtered vegetation spawned in correct position", 
+        "TestTag3 filtered vegetation spawned in correct position",
         "TestTag3 filtered vegetation failed to spawn in correct position"
     )
 
     cleared_exclusion_vegetation_count_correct = (
-        "Cleared filter vegetation count correct", 
+        "Cleared filter vegetation count correct",
         "Cleared filter vegetation count incorrect"
     )
 
@@ -86,7 +86,7 @@ def TerrainSystem_VegetationSpawnsOnTerrainSurfaces():
 
     # Open an empty level.
     hydra.open_base_level()
-    
+
     general.idle_wait_frames(1)
 
     box_height = 20.0
@@ -144,11 +144,11 @@ def TerrainSystem_VegetationSpawnsOnTerrainSurfaces():
     general.set_current_view_rotation(-15.0, 0.0, 0.0)
 
     # Expected item counts under conditions to be tested.
-    # By default, vegetation spawns at a density of 20 items per 16 meters, so in a 20m square, there should 
-    # be (20 m * (20/16)) ^ 2 , or 25 ^ 2 instances. However, there's a final spawn point that lands directly on the max edge 
+    # By default, vegetation spawns at a density of 20 items per 16 meters, so in a 20m square, there should
+    # be (20 m * (20/16)) ^ 2 , or 25 ^ 2 instances. However, there's a final spawn point that lands directly on the max edge
     # of the 20 m box so vegetation actually spawns 26 ^ 2 = 676 instances. This is how many instances we expect with no filtering.
     expected_no_filtering_item_count = 676
-    
+
     # When filtering to the 'terrain' tag, any points that fall on non-existent terrain (a hole) get filtered out.
     # The terrain excludes the max edges of the AABB for a spawner, so points that fall on or interpolate to the max edge will get
     # filtered out. The setup for this level is two adjacent terrain spawners that cover an area of (-10, 0) to (30, 20),
@@ -158,7 +158,7 @@ def TerrainSystem_VegetationSpawnsOnTerrainSurfaces():
     expected_terrain_included_item_count = 650
 
     # When filtering to the 'test_tag2' tag, we're only keeping points in the vegetation area of (0, 0) to (20, 20) that come from the
-    # first terrain spawner, which is (-10, 0) to (10, 20). The overlap box is (0, 0) to (10, 20), which contains 
+    # first terrain spawner, which is (-10, 0) to (10, 20). The overlap box is (0, 0) to (10, 20), which contains
     # (10 m * (20/16)) = 12.5 points in X, but since we can't have half points, it only contains 12 points
     # In Y, we have (20 m * (20/16)) = 25 points. Both X and Y would have an additional point on the max boundary, but since the terrain
     # spawner ends on both max boundaries, those are excluded and aren't a part of the spawner's surface points.
@@ -166,8 +166,8 @@ def TerrainSystem_VegetationSpawnsOnTerrainSurfaces():
     expected_tag2_included_item_count = 300
 
     # When filtering to the 'test_tag3' tag, we're only keeping points in the vegetation area of (0, 0) to (20, 20) that come from the
-    # second terrain spawner, which is (10, 0) to (30, 20). The overlap box is (10, 0) to (20, 20), which again contains 
-    # 12.5 points in X and 25 points in Y. Due to where the boundaries start, the half point *is* contained in this box, so 
+    # second terrain spawner, which is (10, 0) to (30, 20). The overlap box is (10, 0) to (20, 20), which again contains
+    # 12.5 points in X and 25 points in Y. Due to where the boundaries start, the half point *is* contained in this box, so
     # X has 13 points. Also, the max X boundary isn't the max spawner boundary, so it also has a 14th point. Y is still 25 points.
     # The expected count is 14 * 25 = 350 instances.
     expected_tag3_included_item_count = 350
@@ -183,7 +183,7 @@ def TerrainSystem_VegetationSpawnsOnTerrainSurfaces():
 
     # Find the z positions of the items with the lowest and highest x values, this will avoid the overlap area where z values are blended between the surface heights.
     highest_z, lowest_z = FindHighestAndLowestZValuesInArea(test_aabb)
-    
+
     # Check that the z values are as expected.
     Report.result(VegetationTests.vegetation_on_gradient_1, sys_math.isclose(lowest_z, box_height * gradient_value_1, abs_tol=0.01))
     Report.result(VegetationTests.vegetation_on_gradient_2, sys_math.isclose(highest_z, box_height * gradient_value_2, abs_tol=0.01))
@@ -196,7 +196,7 @@ def TerrainSystem_VegetationSpawnsOnTerrainSurfaces():
     # include only the instances on the upper terrain_entity_2.
     vegetation_entity.get_set_test(3, "Configuration|Inclusion|Surface Tags", [surface_data.SurfaceTag()])
     vegetation_entity.get_set_test(3, "Configuration|Inclusion|Surface Tags|[0]", surface_data.SurfaceTag("test_tag3"))
-  
+
     # Wait for the vegetation to respawn and check z values.
     helper.wait_for_condition(lambda: vegetation.VegetationSpawnerRequestBus(bus.Event, "GetAreaProductCount", vegetation_entity.id) == expected_tag3_included_item_count, 5.0)
 

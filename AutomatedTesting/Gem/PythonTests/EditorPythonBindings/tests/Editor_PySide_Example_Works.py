@@ -4,16 +4,17 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../automatedtesting_shared')
 from Editor_TestClass import BaseClass
 
 class Editor_PySide_Example_Works(BaseClass):
-    # Description: 
+    # Description:
     # This test shows how to use PySide2 inside an Editor Python Bindings test.
     # For PySide details see automatedtesting_shared/pyside_utils.py and automatedtesting_shared/pyside_component_utils.py
-    
+
     @staticmethod
     def test():
         import azlmbr.bus as bus

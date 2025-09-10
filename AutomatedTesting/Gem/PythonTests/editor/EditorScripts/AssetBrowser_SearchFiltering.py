@@ -122,7 +122,7 @@ def AssetBrowser_SearchFiltering():
         # 4) Click the "X" in the search bar.
         clear_search = asset_browser.findChild(QtWidgets.QToolButton, "ClearToolButton")
         clear_search.click()
-        
+
         # 5) Select an asset type to filter by (Animation)
         tool_button = asset_browser.findChild(QtWidgets.QToolButton, "assetTypeSelector")
         pyside_utils.click_button_async(tool_button)
@@ -149,7 +149,7 @@ def AssetBrowser_SearchFiltering():
 
         # 7) Remove one of the filtered asset types from the list of applied filters
         filter_layout = asset_browser.findChild(QtWidgets.QFrame, "containerLayout")
-        
+
         animation_close_button = filter_layout.children()[4]
         first_close_button = animation_close_button.findChild(QtWidgets.QPushButton, "closeTag")
         first_close_button.click()

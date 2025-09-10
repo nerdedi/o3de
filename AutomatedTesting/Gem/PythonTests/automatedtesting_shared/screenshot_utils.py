@@ -144,7 +144,7 @@ def download_qa_golden_images(project_name, destination_dir, platform):
     except ImportError:
         raise Exception("Failed to import s3_utils")
     # end s3_utils import
-        
+
     bucket_name = 'ly-qae-jenkins-configs'
     path = 'golden-images/{}/{}/'.format(project_name, platform)
 

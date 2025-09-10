@@ -11,11 +11,9 @@ General Asset Processor Batch Tests
 import pytest
 import logging
 import os
-import subprocess
 
 # Import LyTestTools
 
-from ly_test_tools.o3de.asset_processor import AssetProcessor
 from ly_test_tools.o3de import asset_processor as asset_processor_utils
 import ly_test_tools.environment.file_system as fs
 
@@ -25,7 +23,7 @@ from ..ap_fixtures.ap_setup_fixture import ap_setup_fixture as ap_setup_fixture
 
 
 # Import LyShared
-from ly_test_tools.o3de.ap_log_parser import APLogParser, APOutputParser
+from ly_test_tools.o3de.ap_log_parser import APLogParser
 import ly_test_tools.o3de.pipeline_utils as utils
 
 # Use the following logging pattern to hook all test logging together:
@@ -210,7 +208,7 @@ class TestsAssetProcessorBatch_Windows(object):
         asset_processor.create_temp_asset_root()
         # Start the processor
         # using -ap_disableAssetTreeView=true to skip the UI building of the Asset Tree for this test
-        asset_processor.gui_process(quitonidle=False, connect_to_ap=True, extra_params=[f'-ap_disableAssetTreeView=true'])
+        asset_processor.gui_process(quitonidle=False, connect_to_ap=True, extra_params=['-ap_disableAssetTreeView=true'])
         asset_processor.stop()
 
         # fmt:off

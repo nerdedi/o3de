@@ -19,7 +19,7 @@ class Tests:
     exit_game_mode_0                 = ("Exited game mode 0",                            "Couldn't exit game mode 0")
     enter_game_mode_1                = ("Entered game mode 1",                           "Failed to enter game mode 1")
     exit_game_mode_1                 = ("Exited game mode 1",                            "Couldn't exit game mode 1")
-    
+
     # targets
     terrain_found                    = ("Terrain found in each test",                    "TERRAIN NOT FOUND in a test")
     target_character_rubber_found    = ("target_character_rubber found in each test",    "target_character_rubber NOT FOUND in a test")
@@ -29,31 +29,31 @@ class Tests:
     rubber_sphere_found              = ("rubber_sphere found in each test",              "rubber_sphere NOT FOUND in a test in a test")
     rubber_sphere_trigger_found      = ("rubber_sphere_trigger found in each test",      "rubber_sphere_trigger NOT FOUND in a test")
     rubber_sphere_collided           = ("rubber_sphere collided in each test",           "rubber_sphere DIDN'T COLLIDE in a test")
-    
+
     concrete_sphere_found            = ("concrete_sphere found in each test",            "concrete_sphere NOT FOUND in a test")
     concrete_sphere_trigger_found    = ("concrete_sphere_trigger found in each test",    "concrete_sphere_trigger NOT FOUND in a test")
     concrete_sphere_collided         = ("concrete_sphere collided in each test",         "concrete_sphere DIDN'T COLLIDE in a test")
-    
+
     character_rubber_found           = ("character_rubber found in each test",           "character_rubber NOT FOUND in a test")
     character_rubber_trigger_found   = ("character_rubber_trigger found in each test",   "character_rubber_trigger NOT FOUND in a test")
     character_rubber_collided        = ("character_rubber collided in each test",        "character_rubber DIDN'T COLLIDE in a test")
-    
+
     character_concrete_found         = ("character_concrete found in each test",         "character_concrete NOT FOUND in a test")
     character_concrete_trigger_found = ("character_concrete_trigger found in each test", "character_concrete_trigger NOT FOUND in a test")
     character_concrete_collided      = ("character_concrete collided in each test",      "character_concrete DIDN'T COLLIDE in a test")
-    
+
     terrain_rubber_found             = ("terrain_rubber found in each test",             "terrain_rubber NOT FOUND in a test")
     terrain_rubber_trigger_found     = ("terrain_rubber_trigger found in each test",     "terrain_rubber_trigger NOT FOUND in a test")
     terrain_rubber_collided          = ("terrain_rubber collided in each test",          "terrain_rubber DIDN'T COLLIDE in a test")
-    
+
     terrain_concrete_found           = ("terrain_concrete found in each test",           "terrain_concrete NOT FOUND in a test")
     terrain_concrete_trigger_found   = ("terrain_concrete_trigger found in each test",   "terrain_concrete_trigger NOT FOUND in a test")
     terrain_concrete_collided        = ("terrain_concrete collided in each test",        "terrain_concrete DIDN'T COLLIDE in a test")
-    
+
     ragdoll_rubber_found             = ("ragdoll_rubber found in each test",             "ragdoll_rubber NOT FOUND in a test")
     ragdoll_rubber_trigger_found     = ("ragdoll_rubber_trigger found in each test",     "ragdoll_rubber_trigger NOT FOUND in a test")
     ragdoll_rubber_collided          = ("ragdoll_rubber collided in each test",          "ragdoll_rubber DIDN'T COLLIDE in a test")
-    
+
     ragdoll_concrete_found           = ("ragdoll_concrete found in each test",           "ragdoll_concrete NOT FOUND in a test")
     ragdoll_concrete_trigger_found   = ("ragdoll_concrete_trigger found in each test",   "ragdoll_concrete_trigger NOT FOUND in a test")
     ragdoll_concrete_collided        = ("ragdoll_concrete collided in each test",        "ragdoll_concrete DIDN'T COLLIDE in a test")
@@ -105,8 +105,6 @@ def Material_DefaultMaterialLibraryChangesWork():
     6) Exit Game Mode
     """
 
-    import os
-    import sys
 
 
     from editor_python_test_tools.utils import Report
@@ -171,7 +169,7 @@ def Material_DefaultMaterialLibraryChangesWork():
         def activate_trigger(self):
             azlmbr.entity.GameEntityContextRequestBus(azlmbr.bus.Broadcast, "ActivateGameEntity", self.trigger.id)
             Report.info("{} activated".format(self.trigger.name))
-        
+
         # Sets up trigger and activates it post-collision with target
         def setup_trigger(self):
             if Entity.current_test == 0:
@@ -225,7 +223,7 @@ def Material_DefaultMaterialLibraryChangesWork():
         # 1) Enter Game Mode
         helper.enter_game_mode(get_test("enter_game_mode_", str(index)))
 
-        # 2) Validate target Ids 
+        # 2) Validate target Ids
         terrain.validate_id()
         target_character_concrete.validate_id()
         target_character_rubber.validate_id()

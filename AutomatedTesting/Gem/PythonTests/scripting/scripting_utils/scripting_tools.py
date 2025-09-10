@@ -206,7 +206,7 @@ def get_node_inspector_node_titles(self, sc_graph_node_inspector, sc_graph):
     titles = []
     for background in node_inspector_backgrounds:
         background_title = background.findChild(QtWidgets.QLabel, NODE_INSPECTOR_TITLE_KEY)
-        if background_title.text() is not "":
+        if background_title.text() != "":
             titles.append(background_title.text())
     return titles
 

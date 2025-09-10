@@ -63,7 +63,7 @@ def Multiplayer_SimpleNetworkLevelEntity():
         SCRIPTGRAPH_ENABLED_WAIT_TIME_SECONDS = 0.25
         helper.succeed_if_log_line_found('EditorServer', "Script: SimpleNetworkLevelEntity: On Graph Start", section_tracer.prints, SCRIPTGRAPH_ENABLED_WAIT_TIME_SECONDS)
 
-    
+
     # Exit game mode
     helper.exit_game_mode(TestSuccessFailTuples.exit_game_mode)
 

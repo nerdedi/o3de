@@ -9,26 +9,18 @@ Automated scripts for testing the AssetProcessorBatch's missing dependency scann
 """
 
 import pytest
-import subprocess
 import logging
 import os
 from typing import List, Tuple
 
-from ..ap_fixtures.asset_processor_fixture import asset_processor
-from ..ap_fixtures.ap_setup_fixture import ap_setup_fixture
 from ly_test_tools.o3de.asset_processor import ASSET_PROCESSOR_PLATFORM_MAP
-from ly_test_tools.o3de import asset_processor as asset_processor_utils
 
 # fmt:off
-from ..ap_fixtures.ap_missing_dependency_fixture \
-    import ap_missing_dependency_fixture as missing_dep_helper
 # fmt:on
 
 # Import LyTestTools
-import ly_test_tools.builtin.helpers as helpers
 
 # Import LyShared
-import ly_test_tools.o3de.pipeline_utils as utils
 from automatedtesting_shared import asset_database_utils as db_utils
 
 # Use the following logging pattern to hook all test logging together:
@@ -59,7 +51,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         self._asset_processor = asset_processor
         self._missing_dep_helper = missing_dep_helper
         self._asset_processor.create_temp_asset_root()
-        self._asset_processor.add_source_folder_assets(f"AutomatedTesting\\TestAssets")
+        self._asset_processor.add_source_folder_assets("AutomatedTesting\\TestAssets")
         missing_dep_helper.asset_db = os.path.join(asset_processor.temp_asset_root(), self._workspace.project, "Cache",
                                                    "assetdb.sqlite")
         self._asset_processor.add_source_folder_assets(f"{self._workspace.project}\\Prefabs")
@@ -119,7 +111,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to the txt file with missing dependencies
-        expected_product = f"testassets\\validuuidsnotdependency.txt"
+        expected_product = "testassets\\validuuidsnotdependency.txt"
         # Expected missing dependencies
         expected_dependencies = [
             #            String                                      Asset                     #
@@ -160,7 +152,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         3. Execute test
         """
         # Relative path to the txt file with invalid UUIDs
-        expected_product = f"testassets\\invaliduuidnoreport.txt"
+        expected_product = "testassets\\invaliduuidnoreport.txt"
         expected_dependencies = []  # No expected missing dependencies
 
         self.do_missing_dependency_test(expected_product, expected_dependencies,
@@ -180,7 +172,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to the txt file with valid asset ids but not dependencies
-        expected_product = f"testassets\\validassetidnotdependency.txt"
+        expected_product = "testassets\\validassetidnotdependency.txt"
 
         # Expected missing dependencies
         expected_dependencies = [
@@ -210,7 +202,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to the txt file with invalid asset IDs
-        expected_product = f"testassets\\invalidassetidnoreport.txt"
+        expected_product = "testassets\\invalidassetidnoreport.txt"
         expected_dependencies = []
 
         self.do_missing_dependency_test(expected_product, expected_dependencies,
@@ -232,7 +224,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to the txt file with missing dependencies as source paths
-        expected_product = f"testassets\\relativesourcepathsnotdependencies.txt"
+        expected_product = "testassets\\relativesourcepathsnotdependencies.txt"
 
         # Expected missing dependencies
         expected_dependencies = [
@@ -262,7 +254,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to the txt file with invalid relative paths
-        expected_product = f"testassets\\invalidrelativepathsnoreport.txt"
+        expected_product = "testassets\\invalidrelativepathsnoreport.txt"
         expected_dependencies = []
 
         self.do_missing_dependency_test(expected_product, expected_dependencies,
@@ -283,7 +275,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         3. Execute test
         """
         # Relative path to the txt file with missing dependencies as product paths
-        expected_product = f"testassets\\relativeproductpathsnotdependencies.txt"
+        expected_product = "testassets\\relativeproductpathsnotdependencies.txt"
         expected_dependencies = [
             #            String                                 Asset                     #
             ('textures/_dev_purple.tif.streamingimage', '{A2482826-053D-5634-A27B-084B1326AAE5}:3e8'),
@@ -328,8 +320,8 @@ class TestsMissingDependencies_WindowsAndMac(object):
         helper = self._missing_dep_helper
 
         # Relative paths to the txt file with no missing dependencies
-        expected_product_1 = f"testassets\\wildcardscantest1.txt"
-        expected_product_2 = f"testassets\\wildcardscantest2.txt"
+        expected_product_1 = "testassets\\wildcardscantest1.txt"
+        expected_product_2 = "testassets\\wildcardscantest2.txt"
         expected_dependencies = []  # Neither file has expected missing dependencies
 
         # Run missing dependency scanner and validate results for both files
@@ -361,7 +353,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         3. Execute test
         """
         # Relative path to target test file
-        expected_product = f"testassets\\reportonemissingdependency.txt"
+        expected_product = "testassets\\reportonemissingdependency.txt"
 
         # The only expected missing dependency
         expected_dependencies = [('6BDE282B49C957F7B0714B26579BCA9A', '{6BDE282B-49C9-57F7-B071-4B26579BCA9A}:0'),]
@@ -382,7 +374,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         3. Execute test
         """
         # Relative path to file that references itself via relative path
-        expected_product = f"testassets\\selfreferencepath.txt"
+        expected_product = "testassets\\selfreferencepath.txt"
         expected_dependencies = []
 
         self.do_missing_dependency_test(expected_product, expected_dependencies,
@@ -402,7 +394,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to file that references itself via its UUID
-        expected_product = f"testassets\\selfreferenceuuid.txt"
+        expected_product = "testassets\\selfreferenceuuid.txt"
         expected_dependencies = []
 
         self.do_missing_dependency_test(expected_product, expected_dependencies,
@@ -422,7 +414,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to file that references itself via its Asset ID
-        expected_product = f"testassets\\selfreferenceassetid.txt"
+        expected_product = "testassets\\selfreferenceassetid.txt"
         expected_dependencies = []
 
         self.do_missing_dependency_test(expected_product, expected_dependencies,
@@ -444,7 +436,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to file that has a missing dependency at 31 iterations deep
-        expected_product = f"testassets\\maxiteration31deep.txt"
+        expected_product = "testassets\\maxiteration31deep.txt"
         expected_dependencies = []
 
         self.do_missing_dependency_test(expected_product, expected_dependencies,
@@ -466,7 +458,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to file that has a missing dependency at 31 iterations deep
-        expected_product = f"testassets\\maxiteration31deep.txt"
+        expected_product = "testassets\\maxiteration31deep.txt"
 
         # Expected missing dependency hiding 31 dependencies deep
         expected_dependencies = [
@@ -493,7 +485,7 @@ class TestsMissingDependencies_WindowsAndMac(object):
         """
 
         # Relative path to text file with varying length UUID references
-        expected_product = f"testassets\\onlymatchescorrectlengthuuids.txt"
+        expected_product = "testassets\\onlymatchescorrectlengthuuids.txt"
         # Expected dependencies with valid lengths from file
         expected_dependencies = [
             # String                              Asset ID

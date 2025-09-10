@@ -12,7 +12,6 @@ import sqlite3
 import os
 from typing import List
 
-import ly_test_tools.o3de.pipeline_utils as pipeline_utils
 
 # Index for ProductID in Products table in DB
 PRODUCT_ID_INDEX = 0
@@ -34,7 +33,7 @@ def do_select(asset_db_path, cmd):
 
 def get_active_platforms_from_db(asset_db_path) -> List[str]:
     """Returns a list of platforms that are active in the database, based on what jobs were run"""
-    platform_rows = do_select(asset_db_path, f"select distinct Platform from Jobs")
+    platform_rows = do_select(asset_db_path, "select distinct Platform from Jobs")
     # Condense this into a single list of platforms.
     platforms = [platform[0] for platform in platform_rows]
     return platforms

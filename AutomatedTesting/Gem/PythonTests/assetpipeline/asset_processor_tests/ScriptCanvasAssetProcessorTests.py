@@ -61,14 +61,14 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
 
         missing_assets, existing_assets = asset_processor.compare_assets_with_cache()
         assert not missing_assets
-        
+
         expected_assets = ['graphwithmultipleentities-1', 'graphwithmultipleentities-2', 'graphwithmultipleentities-3', 'graphwithmultipleentities-4', 'graphwithmultipleentities', 'test_mathexpression_complex' ]
-        
+
         expected_assets.sort()
         existing_assets.sort()
 
         assert existing_assets == expected_assets, f'Following assets were found in cache: {existing_assets}, but expected {expected_assets}'
-        
+
         for processing_count in range(0, 5):
             result, output = asset_processor.batch_process(capture_output=True, fastscan=False)
             assert result, "AP Batch failed"

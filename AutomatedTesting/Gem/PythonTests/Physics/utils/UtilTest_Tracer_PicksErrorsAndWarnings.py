@@ -27,36 +27,33 @@ def run():
         When opening the level, the collider should raise an Error.
         
     """
-    
-    import os
-    import sys
-    import azlmbr.legacy.general as general
+
 
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
     from editor_python_test_tools.utils import Tracer
 
     helper.init_idle()
-    
+
     with Tracer() as entity_warning_tracer:
         def has_scriptcanvas_warning():
             return entity_warning_tracer.has_warnings and any('Script Canvas' in warningInfo.window for warningInfo in entity_warning_tracer.warnings)
-    
+
         helper.open_level("Utils", "Tracer_WarningEntity")
         helper.enter_game_mode(Tests.enter_game_mode)
         helper.wait_for_condition(has_scriptcanvas_warning, 1.0)
         helper.exit_game_mode(Tests.exit_game_mode)
-    
+
     Report.result(Tests.warning_found, has_scriptcanvas_warning())
-    
+
     with Tracer() as entity_error_tracer:
         def has_physx_error():
             return entity_error_tracer.has_errors and any('PhysX' in errorInfo.window for errorInfo in entity_error_tracer.errors)
-    
+
         helper.open_level("Utils", "Tracer_ErrorEntity")
         helper.wait_for_condition(has_physx_error, 1.0)
-    
+
     Report.result(Tests.error_found, has_physx_error())
-    
+
 if __name__ == "__main__":
     run()

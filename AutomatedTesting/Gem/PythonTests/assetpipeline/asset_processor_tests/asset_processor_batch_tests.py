@@ -14,7 +14,6 @@ import pytest
 import logging
 import os
 from pprint import pformat
-import stat
 import shutil
 
 from ly_test_tools.o3de import asset_processor as asset_processor_utils
@@ -27,7 +26,7 @@ import assetpipeline.assetpipeline_utils.assetpipeline_constants as CONSTANTS
 from ..ap_fixtures.asset_processor_fixture import asset_processor as asset_processor
 from ..ap_fixtures.ap_setup_fixture import ap_setup_fixture as ap_setup_fixture
 
-from ly_test_tools.o3de.ap_log_parser import APLogParser, APOutputParser
+from ly_test_tools.o3de.ap_log_parser import APOutputParser
 import ly_test_tools.o3de.pipeline_utils as utils
 
 # Use the following logging pattern to hook all test logging together:
@@ -217,7 +216,7 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         # Checking the number of jobs is equal to 1
         num_processed_assets = asset_processor_utils.get_num_processed_assets(output)
 
-        # Print the output if the test is going to fail, to make it easier to debug.        
+        # Print the output if the test is going to fail, to make it easier to debug.
         if num_processed_assets != 1:
             for output_line in output:
                 logger.info(f"{output_line}\n")
@@ -294,7 +293,7 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         assert result, "Asset processor batch failed"
 
         num_failed_assets = asset_processor_utils.get_num_failed_processed_assets(output)
-        assert num_failed_assets is 0, 'Wrong number of failed assets'
+        assert num_failed_assets == 0, 'Wrong number of failed assets'
 
         # Checking if number of jobs were two after reprocessing the prefabs
         #    There are possible asset updates we should allow such as bootstrap.cfg for the branch token
@@ -304,7 +303,7 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         #    or an expected behavior has changed.  Processing bootstrap.cfg sometimes but not other times should not
         #    cause a failure in this test.
         num_processed_assets = asset_processor_utils.get_num_processed_assets(output)
-        assert num_processed_assets >= 2, f'Wrong number of successfully processed assets found in output: '\
+        assert num_processed_assets >= 2, 'Wrong number of successfully processed assets found in output: '\
                                           '{num_processed_assets}'
 
         missing_assets, _ = asset_processor.compare_assets_with_cache()
@@ -369,7 +368,7 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         assert result, "AssetProcessorBatch failed when it should have succeeded after renaming output."
 
         num_failed_assets = asset_processor_utils.get_num_failed_processed_assets(output)
-        assert num_failed_assets is 0, 'Expected no failed assets.'
+        assert num_failed_assets == 0, 'Expected no failed assets.'
 
         expected_assets = ['a.actor', 'b.actor']
         missing_assets, _ = utils.compare_assets_with_cache(expected_assets, asset_processor.project_test_cache_folder())

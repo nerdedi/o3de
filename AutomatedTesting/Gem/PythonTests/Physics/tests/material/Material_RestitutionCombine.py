@@ -94,8 +94,6 @@ def Material_RestitutionCombine():
 
     :return: None
     """
-    import os
-    import sys
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
 

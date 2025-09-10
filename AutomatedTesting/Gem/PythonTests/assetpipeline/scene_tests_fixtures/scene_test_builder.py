@@ -51,10 +51,10 @@ def build_test(scenetest_file: object) -> BlackboxAssetTest:
     """
     A function that reads the contents of a scenetest json file to create a test.
     Returns the test parameters and data as an instance of the BlackboxAssetTest dataclass.
-    Scene Test json template example at '\assetpipeline\scene_tests\tests\template.json'
+    Scene Test json template example at '\assetpipeline\\scene_tests\tests\template.json'
     :param scenetest_file: A json formatted file that provides the data required to drive a test.
     :return: Test data to be parametrized using pytest.param() from within the test runner module in
-    '\assetpipeline\scene_tests\scene_tests.py'.
+    '\assetpipeline\\scene_tests\\scene_tests.py'.
     """
 
     # Open the json file and load it into a variable.

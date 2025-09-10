@@ -49,7 +49,7 @@ def DeleteEntity_UnderImmediateInstance():
     # Create the second car instance.
     car_instance_2 = car_prefab.instantiate(name=SECOND_CAR_NAME)
     assert car_instance_2.is_valid(), f"Failed to instantiate instance: {SECOND_CAR_NAME}."
-    
+
     # Delete the tire entity in the first car. Note: Level prefab is currently being focused by default during deletion.
     tire_entities_in_car_instance_1 = car_instance_1.get_direct_child_entities()
     tire_entity_in_car_instance_1 = tire_entities_in_car_instance_1[0]

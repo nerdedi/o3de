@@ -95,7 +95,7 @@ def Terrain_SupportsPhysics():
         terrain_spawner_entity.get_set_test(0, "Axis Aligned Box Shape|Box Configuration|Dimensions", box_dimensions)
         box_shape_dimensions = hydra.get_component_property_value(terrain_spawner_entity.components[0], "Axis Aligned Box Shape|Box Configuration|Dimensions")
         Report.result(Tests.box_dimensions_changed, box_dimensions == box_shape_dimensions)
-        
+
         # 5) Set the Reference Shape to TestEntity1
         height_provider_entity.get_set_test(0, "Configuration|Shape Entity Id", terrain_spawner_entity.id)
         entityId = hydra.get_component_property_value(height_provider_entity.components[0], "Configuration|Shape Entity Id")
@@ -116,7 +116,7 @@ def Terrain_SupportsPhysics():
         # 7a) Disable and Enable the Terrain Height Gradient List so that the change to the container is recognized
         editor.EditorComponentAPIBus(bus.Broadcast, 'EnableComponents', [terrain_spawner_entity.components[2]])
         PrefabWaiter.wait_for_propagation()
-        
+
         # 8) Set the PhysX Primitive Collider to Sphere mode
         shape = 0
         hydra.get_set_test(ball, 1, "Shape Configuration|Shape", shape)
@@ -138,7 +138,7 @@ def Terrain_SupportsPhysics():
             touched_ground = False
 
         terrain_id = general.find_game_entity("TestEntity1")
- 
+
         def on_collision_persist(args):
             other_id = args[0]
             if other_id.Equal(terrain_id):
@@ -160,7 +160,7 @@ def Terrain_SupportsPhysics():
         Report.info(f"Error: {error_info.filename} {error_info.function} | {error_info.message}")
     for assert_info in section_tracer.asserts:
         Report.info(f"Assert: {assert_info.filename} {assert_info.function} | {assert_info.message}")
-    
+
 
 if __name__ == "__main__":
 

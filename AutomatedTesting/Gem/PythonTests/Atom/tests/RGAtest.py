@@ -25,7 +25,7 @@ def RGAtest():
 
     def _file_exists(file_path):
         return os.path.exists(file_path)
-    
+
     # Required for automated tests
     helper.init_idle()
 
@@ -40,15 +40,15 @@ def RGAtest():
         # The script drives the execution of the test, to return the flow back to the editor,
         # we will tick it one time
         general.idle_wait_frames(1)
- 
+
         # This is the order in which the source assets should be deployed
-        # to avoid source dependency issues with the old MCPP-based CreateJobs. 
+        # to avoid source dependency issues with the old MCPP-based CreateJobs.
         file_list = [
             "RgaShader.shadervariantlist",
             "RgaShader.shader",
             "RgaShader.azsl"
         ]
-        
+
         # Check if rga executable exist
         if sys.platform == 'win32':
             rga_path = os.path.join(game_build_path, "_deps", "rga-src", "rga.exe")
@@ -56,7 +56,7 @@ def RGAtest():
             rga_path = os.path.join(game_build_path, "_deps", "rga-src", "rga")
         Report.critical_result(Tests.rga_file_exist, _file_exists(rga_path))
 
-        # Remove files 
+        # Remove files
         ShaderAssetTestHelper.remove_files(game_asset_path, file_list)
 
         # Wait here until the azshader doesn't exist anymore.

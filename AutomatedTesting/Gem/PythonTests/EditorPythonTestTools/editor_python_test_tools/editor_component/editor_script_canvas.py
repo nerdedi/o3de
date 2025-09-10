@@ -8,13 +8,7 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 from editor_python_test_tools.editor_entity_utils import EditorEntity, EditorComponent
 import azlmbr.scriptcanvas as scriptcanvas
 from enum import Enum
-import azlmbr.math as math
 from consts.scripting import (SCRIPT_CANVAS_UI)
-import azlmbr.bus as bus
-import azlmbr.editor as editor
-import azlmbr.entity as entity
-import azlmbr.legacy.general as general
-import azlmbr.object
 
 
 class VariableState(Enum):

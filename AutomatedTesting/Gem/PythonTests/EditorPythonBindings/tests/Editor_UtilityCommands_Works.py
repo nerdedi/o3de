@@ -4,20 +4,18 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_UtilityCommands_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests the Python API from PythonEditorFuncs.cpp while the Editor is running
-    
+
     @staticmethod
     def test():
         import azlmbr.bus as bus
-        import azlmbr.editor as editor
-        import azlmbr.legacy.general
-        import azlmbr.entity as entity
         import azlmbr.python_editor_funcs as python_editor_funcs
 
         def testing_cvar(setMethod, methodName, label, value, compare):
@@ -43,13 +41,13 @@ class Editor_UtilityCommands_Works(BaseClass):
 
         # ----- Test Axis Constraints
 
-        testing_axis_constraints("X") 
+        testing_axis_constraints("X")
         testing_axis_constraints("Y")
-        testing_axis_constraints("Z") 
+        testing_axis_constraints("Z")
         testing_axis_constraints("XY")
-        testing_axis_constraints("XZ") 
+        testing_axis_constraints("XZ")
         testing_axis_constraints("YZ")
-        testing_axis_constraints("XYZ") 
+        testing_axis_constraints("XYZ")
         testing_axis_constraints("TERRAIN")
         testing_axis_constraints("TERRAINSNAP")
 

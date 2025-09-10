@@ -54,7 +54,7 @@ class TestsAssetProcessorBatch_PeriodicSerial_AllPlatforms(object):
         6. Verify from the log output that the given list of assets processed in the correct order.
         """
         asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "test_reprocessFileList_processesInOrder")
-        
+
         source_folder = asset_processor._test_assets_source_folder
         # Skip a few files, to prove that it isn't reprocessing files not in the list.
         reprocess_file_list = [

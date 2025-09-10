@@ -98,7 +98,7 @@ def AtomEditorComponents_OcclusionCullingPlane_AddedToEntity():
         # 1. Create a occlusion culling plane entity with no components.
         occlusion_culling_plane_entity = EditorEntity.create_editor_entity(
             AtomComponentProperties.occlusion_culling_plane())
-        Report.critical_result(Tests.occlusion_culling_plane_entity_creation, 
+        Report.critical_result(Tests.occlusion_culling_plane_entity_creation,
                                occlusion_culling_plane_entity.exists())
 
         # 2. Add a occlusion culling plane component to occlusion culling plane entity.

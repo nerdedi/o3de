@@ -11,11 +11,11 @@ def check_result(result, msg):
         raise Exception(msg + " : FAILED")
 
 def Editor_LayerEntity_Works():
-    # Description: 
+    # Description:
     # Tests AZ Layer creation, property modification and interaction with entity CRUD operations in the editor
 
     from editor_python_test_tools.utils import Report
-    from editor_python_test_tools.utils import TestHelper    
+    from editor_python_test_tools.utils import TestHelper
     import azlmbr.layers as layers
     import azlmbr.editor as editor
     import azlmbr.bus as bus
@@ -48,7 +48,7 @@ def Editor_LayerEntity_Works():
     check_result(False, '[FAIL] layer was not created')
 
     # Test getting and setting the name property for the layer
-    name = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', layerId);
+    name = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', layerId)
     if(name):
         print('[PASS] Get name request succeeded')
     check_result(False, '[FAIL] Get name request failed')

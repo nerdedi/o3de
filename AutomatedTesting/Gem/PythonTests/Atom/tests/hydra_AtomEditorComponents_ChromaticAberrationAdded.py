@@ -126,7 +126,6 @@ def AtomEditorComponents_ChromaticAberration_AddedToEntity():
     """
 
     import azlmbr.legacy.general as general
-    import azlmbr.math as math
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity
     from editor_python_test_tools.wait_utils import PrefabWaiter

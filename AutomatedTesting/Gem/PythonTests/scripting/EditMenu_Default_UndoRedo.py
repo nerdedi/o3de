@@ -58,7 +58,7 @@ def EditMenu_Default_UndoRedo():
     # 4) Delete the variable and verify it's removed in Variable Manager
     variable_manager.delete_variable(VARIABLE_NAME)
     variable_manager.validate_variable_count(VARIABLE_COUNT_AFTER)
-    
+
     # 5) Trigger undo action and verify if variable is re-added in Variable Manager
     sc_editor.trigger_undo_action()
     variable_manager.validate_variable_count(VARIABLE_COUNT_BEFORE)

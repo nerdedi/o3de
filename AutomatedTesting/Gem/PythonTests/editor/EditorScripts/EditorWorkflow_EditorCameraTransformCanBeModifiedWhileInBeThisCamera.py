@@ -30,7 +30,7 @@ def EditorWorkflow_EditorCameraTransformCanBeModifiedWhileInBeThisCamera():
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity
     from editor_python_test_tools.editor_test_helper import EditorTestHelper
-    from editor_python_test_tools.utils import Report, TestHelper
+    from editor_python_test_tools.utils import Report
 
     def get_current_view_position_as_vector3() -> math.Vector3:
         view_position = general.get_current_view_position()

@@ -72,7 +72,7 @@ def DeletePrefab_UnderNestedInstance():
     # Create a back wheel instance.
     back_wheel_instance = wheel_prefab.instantiate(name=BACK_WHEEL_NAME)
     assert back_wheel_instance.is_valid(), f"Failed to instantiate instance: {BACK_WHEEL_NAME}."
-    
+
     # Create a car prefab and the first car instance from two wheels.
     car_prefab_entities = [front_wheel_instance.container_entity, back_wheel_instance.container_entity]
     car_prefab, car_instance_1 = Prefab.create_prefab(car_prefab_entities, CAR_PREFAB_FILE_NAME, FIRST_CAR_NAME)
@@ -81,7 +81,7 @@ def DeletePrefab_UnderNestedInstance():
     # Create a second car instance.
     car_instance_2 = car_prefab.instantiate(name=SECOND_CAR_NAME)
     assert car_instance_2.is_valid(), f"Failed to instantiate instance: {SECOND_CAR_NAME}."
-    
+
     # Focus on the first car instance.
     car_instance_1.container_entity.focus_on_owning_prefab()
 
@@ -109,7 +109,7 @@ def DeletePrefab_UnderNestedInstance():
     # Validate undo on instance deletion.
     general.undo()
     PrefabWaiter.wait_for_propagation()
-    
+
     prefab_test_utils.validate_count_for_named_editor_entity(TIRE_PREFAB_NAME, 4)
     prefab_test_utils.validate_count_for_named_editor_entity(TIRE_ENTITY_NAME, 4)
 
@@ -122,7 +122,7 @@ def DeletePrefab_UnderNestedInstance():
 
     prefab_test_utils.validate_count_for_named_editor_entity(TIRE_PREFAB_NAME, 2)
     prefab_test_utils.validate_count_for_named_editor_entity(TIRE_ENTITY_NAME, 2)
-    
+
     prefab_test_utils.validate_child_count_for_named_editor_entity(FRONT_WHEEL_NAME, 0)
     prefab_test_utils.validate_child_count_for_named_editor_entity(BACK_WHEEL_NAME, 1)
 

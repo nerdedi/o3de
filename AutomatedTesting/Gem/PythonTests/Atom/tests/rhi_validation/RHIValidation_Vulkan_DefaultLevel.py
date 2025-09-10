@@ -11,15 +11,15 @@ class Checks:
     exit_game_mode                 = ("Exited game mode",               "Failed to exit game mode")
 
 def RHIValidation_Vulkan_DefaultLevel():
-    
+
     import azlmbr.legacy.general as general
-    
+
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
     from editor_python_test_tools.utils import Tracer
-    
+
     from vulkan_skip_errors import VulkanValidationErrors
-    
+
     # Constants
     FRAMES_IN_GAME_MODE = 200
 
@@ -32,10 +32,10 @@ def RHIValidation_Vulkan_DefaultLevel():
 
         # 3) Enter game mode
         helper.enter_game_mode(Checks.enter_game_mode)
-        
+
         # 4) Wait in game mode some frames to let cloth simulation run
         general.idle_wait_frames(FRAMES_IN_GAME_MODE)
-        
+
         # 5) Exit game mode
         helper.exit_game_mode(Checks.exit_game_mode)
 

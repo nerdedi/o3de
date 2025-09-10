@@ -105,7 +105,6 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
 
     :return: None
     """
-    import os
     import sys
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
@@ -264,7 +263,7 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
         # 7) Further evaluate that sphere entities exist
         entity.activate_entity()
         entity.get_initial_position_and_velocity()
-        
+
         # 8) Validate Initial Positions and Velocities
         entity.values_found()
         entity.validate_sphere_velocity()

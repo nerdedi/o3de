@@ -48,8 +48,6 @@ def ShapeCollider_CylinderShapeCollides():
 
     :return:
     """
-    import os
-    import sys
 
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity
@@ -63,34 +61,34 @@ def ShapeCollider_CylinderShapeCollides():
     # Global time out
     TIME_OUT = 1.0
 
-    # 1) Open level 
+    # 1) Open level
     helper.init_idle()
     helper.open_level("Physics", "ShapeCollider_CylinderShapeCollides")
-    
-    # Create terrain entity 
+
+    # Create terrain entity
     terrain = EditorEntity.create_editor_entity_at([30.0, 30.0, 33.96], "Terrain")
     terrain.add_component("PhysX Static Rigid Body")
     Report.result(Tests.create_terrain, terrain.id.IsValid())
-    
+
     terrain.add_component(PHYSX_SHAPE_COLLIDER)
     Report.result(Tests.add_physx_shape_collider, terrain.has_component(PHYSX_SHAPE_COLLIDER))
 
     box_shape_component = terrain.add_component("Box Shape")
     Report.result(Tests.add_box_shape, terrain.has_component("Box Shape"))
 
-    box_shape_component.set_component_property_value("Box Shape|Box Configuration|Dimensions", 
+    box_shape_component.set_component_property_value("Box Shape|Box Configuration|Dimensions",
                                                      math.Vector3(1024.0, 1024.0, 0.01))
-    
+
     # 2)Enter game mode
     helper.enter_game_mode(Tests.enter_game_mode)
 
     # 3) Retrieve entities and positions
     cylinder_id = general.find_game_entity("PhysX_Cylinder")
     Report.critical_result(Tests.find_cylinder, cylinder_id.IsValid())
-    
-    
+
+
     terrain_id = general.find_game_entity("Terrain")
-    Report.critical_result(Tests.find_terrain, terrain_id.IsValid())    
+    Report.critical_result(Tests.find_terrain, terrain_id.IsValid())
 
 
     cylinder_pos = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", cylinder_id)

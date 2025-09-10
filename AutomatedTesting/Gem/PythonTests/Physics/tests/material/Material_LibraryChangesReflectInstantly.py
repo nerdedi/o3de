@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
 # Test case ID : 4044455
-# Test Case Title : Verify that any change in any of the values including the name of the material, 
+# Test Case Title : Verify that any change in any of the values including the name of the material,
 #   once saved, is immediately reflected in the component and functionality
 
 
@@ -171,8 +171,6 @@ def Material_LibraryChangesReflectInstantly():
     :return: None
     """
 
-    import os
-    import sys
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
 
@@ -235,7 +233,7 @@ def Material_LibraryChangesReflectInstantly():
             # Type ([]) -> None
             if Entity.terrain_id.equal(args[0]):
                 self.collision_happened = True
-    
+
     class Sphere(Entity):
         def __init__(self, name, test_index):
             Entity.__init__(self, name, test_index)

@@ -52,7 +52,6 @@ def ShapeCollider_InactiveWhenNoShapeComponent():
     # Helper Imports
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.editor_entity_utils import EditorEntity
-    from editor_python_test_tools.utils import TestHelper as helper
     from consts.physics import PHYSX_SHAPE_COLLIDER
 
     import editor_python_test_tools.hydra_editor_utils as hydra

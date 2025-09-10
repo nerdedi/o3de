@@ -52,7 +52,7 @@ def CreatePrefab_ComponentConfigurationRetained():
     assert box_shape_dimensions == prefab_box_shape_dimensions, \
         f"Found unexpected values on the Box Shape component after prefab creation. Expected {box_shape_dimensions}, " \
         f"Found {prefab_box_shape_dimensions}."
-    
+
     # Test undo/redo on prefab creation
     prefab_test_utils.validate_undo_redo_on_prefab_creation(test_instance, original_parent_id)
 

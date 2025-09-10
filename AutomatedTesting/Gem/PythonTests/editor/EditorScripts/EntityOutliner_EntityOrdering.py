@@ -31,7 +31,7 @@ def EntityOutliner_EntityOrdering():
     """
 
     from PySide2 import QtCore
-    
+
     import editor_python_test_tools.hydra_editor_utils as hydra
     import pyside_utils
     from editor_python_test_tools.utils import Report

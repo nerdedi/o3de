@@ -39,15 +39,14 @@ def NvCloth_AddClothSimulationToActor():
 
     :return: None
     """
-    
+
     import azlmbr.legacy.general as general
-    
-    from editor_python_test_tools.editor_entity_utils import EditorEntity
+
     from editor_python_test_tools.utils import Report
 
     from editor_python_test_tools.utils import TestHelper as helper
     from editor_python_test_tools.utils import Tracer
-    
+
     # Constants
     FRAMES_IN_GAME_MODE = 200
     CLOTH_GEM_ERROR_WARNING_LIST = ["Cloth", "NvCloth", "ClothComponentMesh", "ActorClothSkinning", "ActorClothSkinning", "TangentSpaceHelper", "MeshAssetHelper", "ActorAssetHelper", "ClothDebugDisplay"]
@@ -60,7 +59,7 @@ def NvCloth_AddClothSimulationToActor():
     with Tracer() as section_tracer:
         # 3) Enter game mode
         helper.enter_game_mode(Tests.enter_game_mode)
-        
+
         # 4) Wait in game mode some frames to let cloth simulation run
         general.idle_wait_frames(FRAMES_IN_GAME_MODE)
 

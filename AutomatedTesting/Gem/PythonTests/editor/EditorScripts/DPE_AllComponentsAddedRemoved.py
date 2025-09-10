@@ -327,7 +327,7 @@ def DPE_AllComponentsAddedRemoved():
         entity.remove_component(component_name)
         component_removed = TestHelper.wait_for_condition(lambda: not entity.has_component(component_name), 5.0)
         assert component_removed, f"Failed to remove {component_name} from entity"
-        
+
         # Undo the removal and validate
         general.undo()
         undo_readds_component = TestHelper.wait_for_condition(lambda: entity.has_component(component_name), 5.0)

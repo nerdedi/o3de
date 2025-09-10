@@ -11,8 +11,8 @@ from editor_python_test_tools.utils import TestHelper as helper
 from editor_python_test_tools.utils import Report
 import azlmbr.legacy.general as general
 import scripting_utils.scripting_tools as scripting_tools
-from scripting_utils.scripting_constants import WAIT_TIME_3, SCRIPT_CANVAS_UI, NODE_PALETTE_UI, NODE_PALETTE_QT,\
-    TREE_VIEW_QT, NODE_CATEGORY_MATH
+from scripting_utils.scripting_constants import WAIT_TIME_3, SCRIPT_CANVAS_UI, NODE_PALETTE_QT,\
+    NODE_CATEGORY_MATH
 
 
 # fmt: off

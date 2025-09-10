@@ -13,7 +13,7 @@ def CreatePrefab_UnderAnotherPrefab():
     - Creates a prefab "Inner_prefab" inside "Outer_prefab" based the entity contained inside of it
     Checks that the entity is correctly handled by the prefab system checking the name and that it contains the physx collider
     """
-    
+
     from pathlib import Path
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity
@@ -56,7 +56,7 @@ def CreatePrefab_UnderAnotherPrefab():
 
     # Verify hierarchy of entities:
     # Outer_prefab
-    # |- Inner_prefab 
+    # |- Inner_prefab
     # |  |- TestEntity
     assert entity.get_parent_id() == inner_instance.container_entity.id
     assert inner_instance.container_entity.get_parent_id() == outer_instance.container_entity.id

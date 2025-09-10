@@ -4,18 +4,17 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_LevelPathsCommands_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests a portion of the Python API from CryEdit.cpp while the Editor is running
-    
+
     @staticmethod
     def test():
-        import azlmbr.bus as bus
-        import azlmbr.editor as editor
         import azlmbr.legacy.general as general
 
         # Get level path
@@ -33,7 +32,7 @@ class Editor_LevelPathsCommands_Works(BaseClass):
         # Remove Levels folder from path
         parent, levels = os.path.split(path)
         BaseClass.check_result(levels == "Levels", "The level is in the Levels folder")
-    
+
         # Get game folder
         gamefolder = general.get_game_folder()
 

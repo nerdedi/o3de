@@ -34,7 +34,6 @@ def GradientSampling_GradientReferencesAddRemoveSuccessfully():
 
     import editor_python_test_tools.hydra_editor_utils as hydra
     from editor_python_test_tools.utils import Report
-    from editor_python_test_tools.utils import TestHelper as helper
 
     def modifier_pin_clear_to_gradiententityid(modifier):
         entity_position = math.Vector3(125.0, 136.0, 32.0)

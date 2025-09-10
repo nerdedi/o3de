@@ -4,15 +4,13 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
-from Editor_TestClass import BaseClass
 
 def validate_component_property_apis(levelEntityComponentIdPair, componentName, componentUuid):
-    import azlmbr.legacy.general as general
     import azlmbr.bus as bus
     import azlmbr.editor as editor
-    from azlmbr.entity import EntityType
 
     propertyTreeOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'BuildComponentPropertyTreeEditor', levelEntityComponentIdPair)
     if not propertyTreeOutcome.IsSuccess():
@@ -32,7 +30,7 @@ def validate_component_property_apis(levelEntityComponentIdPair, componentName, 
         if not propOutcome.IsSuccess():
             print("ERROR: Failed to get component property={} for component with name={}, uuid={}".format(propName, componentName, componentUuid))
             return False
-        if not propName in propList2:
+        if propName not in propList2:
             print("ERROR: Failed to find component property={} in propList2 for component with name={}, uuid={}".format(propName, componentName, componentUuid))
             return False
     return True
@@ -41,7 +39,6 @@ def validate_level_component_api(componentName, componentUuid):
     import azlmbr.legacy.general as general
     import azlmbr.bus as bus
     import azlmbr.editor as editor
-    from azlmbr.entity import EntityType
 
     if componentName == "PhysX Terrain":
         #Skip physX. It has issues now that the Legacy Terrain is a component.
@@ -51,7 +48,7 @@ def validate_level_component_api(componentName, componentUuid):
         return False
     if editor.EditorLevelComponentAPIBus(bus.Broadcast, 'CountComponentsOfType', componentUuid) > 0:
         print("ERROR: Component with name={}, uuid={} was already present".format(componentName, componentUuid))
-        return False       
+        return False
     addComponentsOutcome = editor.EditorLevelComponentAPIBus(bus.Broadcast, 'AddComponentsOfType', [componentUuid])
     if not addComponentsOutcome.IsSuccess():
         print("ERROR: Failed to add Component with name={}, uuid={}".format(componentName, componentUuid))
@@ -93,7 +90,7 @@ def validate_level_component_api(componentName, componentUuid):
             return False
         print("SUCCESS: pre-enabled component with name={}, uuid={} ".format(componentName, componentUuid))
         general.idle_wait(3.0)
-        
+
     if not editor.EditorComponentAPIBus(bus.Broadcast, 'IsComponentEnabled', componentId):
         print("ERROR. Expecting enabled component with name={}, uuid={}".format(componentName, componentUuid))
         return False
@@ -114,7 +111,7 @@ def validate_level_component_api(componentName, componentUuid):
     if not validate_component_property_apis(componentId, componentName, componentUuid):
         print("ERROR. Failed to validate_component_property_apis for component with name={}, uuid={}".format(componentName, componentUuid))
         return False
-    
+
     if not editor.EditorComponentAPIBus(bus.Broadcast, 'RemoveComponents', [componentId]):
         print("ERROR. Failed to remove component with name={}, uuid={}".format(componentName, componentUuid))
         return False
@@ -127,7 +124,7 @@ def validate_level_component_api(componentName, componentUuid):
     return True
 
 def Editor_LevelComponentCommands_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests a portion of the Component CRUD Python API while the Editor is running
 
     @staticmethod

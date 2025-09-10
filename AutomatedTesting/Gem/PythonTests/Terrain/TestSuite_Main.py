@@ -24,7 +24,7 @@ class TestAutomation(EditorTestSuite):
 
     class test_TerrainHeightGradientList_AddRemoveGradientWorks(EditorBatchedTest):
         from .EditorScripts import TerrainHeightGradientList_AddRemoveGradientWorks as test_module
-        
+
     class test_TerrainSystem_VegetationSpawnsOnTerrainSurfaces(EditorBatchedTest):
         from .EditorScripts import TerrainSystem_VegetationSpawnsOnTerrainSurfaces as test_module
 

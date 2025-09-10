@@ -10,18 +10,14 @@ def Scene_Settings_Tests_Max_Prefab_Groups_Is_One():
 
     @pyside_utils.wrap_async
     async def run_test():
-        import asyncio
         from editor_python_test_tools.utils import Report
-        import PySide2
         from PySide2 import QtWidgets
-        import azlmbr.bus as bus
-        import azlmbr.legacy.general as general
         import scene_settings_test_messages as tm
         import scene_settings_test_helpers as scene_test_helpers
-        
+
         path_to_manifest, widget_main_window, reflected_property_root = \
             scene_test_helpers.prepare_scene_ui_for_test(test_file_name="auto_test_fbx.fbx", manifest_should_exist=False, should_create_manifest=False)
-            
+
         tab_bar = widget_main_window.findChild(QtWidgets.QTabBar,"")
         PREFAB_TAB_INDEX = 3
         tab_bar.setCurrentIndex(PREFAB_TAB_INDEX)
@@ -50,7 +46,7 @@ def Scene_Settings_Tests_Max_Prefab_Groups_Is_One():
         # Briefly pause so all events get posted
         await pyside_utils.wait_for_condition(lambda: add_button.isEnabled() == False, timeout=PREFAB_BUTTON_WAIT_TIMEOUT)
         Report.critical_result(tm.Test_Messages.scene_settings_add_button_disabled_after_adding, add_button.isEnabled() == False)
-        
+
         scene_test_helpers.save_and_verify_manifest(path_to_manifest, widget_main_window)
         widget_main_window.close()
 

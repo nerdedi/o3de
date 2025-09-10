@@ -87,7 +87,7 @@ def CreatePrefab_WithNestedEntitiesAndNestedPrefabs():
             f"not '{child_entity_on_inner_instance.get_parent_id()}'"
         parent_prefab_container_entity_on_instance = child_entity_on_inner_instance
         child_entity_on_inner_instance = child_entity_on_inner_instance.get_children()[0]
-    
+
     assert child_entity_on_inner_instance.id.IsValid(), \
         f"Entity '{child_entity_on_inner_instance.get_name()}' is not valid"
     assert child_entity_on_inner_instance.get_name() == NESTED_PREFABS_TEST_ENTITY_NAME, \

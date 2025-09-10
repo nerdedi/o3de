@@ -24,7 +24,7 @@ def InstantiatePrefab_ContainingASingleEntity():
 
     # Instantiates a new car prefab instance
     test_prefab = Prefab.get_prefab(EXISTING_TEST_PREFAB_FILE_NAME)
-    test_instance = test_prefab.instantiate( 
+    test_instance = test_prefab.instantiate(
         prefab_position=INSTANTIATED_TEST_PREFAB_POSITION)
 
     # Get parent entity and container id for verifying successful Undo/Redo operations
@@ -32,7 +32,7 @@ def InstantiatePrefab_ContainingASingleEntity():
     instance = test_instance.container_entity
 
     prefab_test_utils.check_entity_children_count(
-        test_instance.container_entity.id, 
+        test_instance.container_entity.id,
         EXPECTED_TEST_PREFAB_CHILDREN_COUNT)
 
     # Undo the instantiation

@@ -101,7 +101,7 @@ class FileManagement:
         # If backup directory DNE, make one
         if not os.path.exists(backup_path):
             os.mkdir(backup_path)
-            
+
         # Find my next storage name (myFile_1.txt)
         backup_file_name = FileManagement._next_available_name(file_name, file_map)
         if backup_file_name is None:
@@ -141,7 +141,7 @@ class FileManagement:
         if src_file in file_map:
             backup_file_name = file_map[src_file]
             backup_file = "{}.bak".format(os.path.join(backup_path, backup_file_name))
-            
+
             fs.unlock_file(src_file)
             if fs.restore_backup(src_file, backup_path, backup_file_name):
                 fs.delete([backup_file], True, False)

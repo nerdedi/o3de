@@ -11,8 +11,8 @@ class VulkanValidationErrors:
     # List to add vulkan validation errors that will be ignored.
     # For example, to ignore the following error
     #
-    # [vkDebugMessage] [ERROR][Validation] Validation Error: [ VUID-VkMemoryAllocateInfo-flags-03331 ] Object 0: handle = 0x24c6516baa0, 
-    # type = VK_OBJECT_TYPE_DEVICE; | MessageID = 0xf972dfbf | If VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT is set, bufferDeviceAddress must be enabled. 
+    # [vkDebugMessage] [ERROR][Validation] Validation Error: [ VUID-VkMemoryAllocateInfo-flags-03331 ] Object 0: handle = 0x24c6516baa0,
+    # type = VK_OBJECT_TYPE_DEVICE; | MessageID = 0xf972dfbf | If VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT is set, bufferDeviceAddress must be enabled.
     # The Vulkan spec states: If VkMemoryAllocateFlagsInfo::flags includes VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, the bufferDeviceAddress feature
     # must be enabled (https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#VUID-VkMemoryAllocateInfo-flags-03331)
     #
@@ -27,4 +27,3 @@ class VulkanValidationErrors:
                     return False # Skip error
             return True # Found error
         return False # Not a Vulkan error
-        

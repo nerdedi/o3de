@@ -32,7 +32,7 @@ def local_resources(request, workspace, ap_setup_fixture):
 @pytest.mark.usefixtures("local_resources")
 @pytest.mark.parametrize("project", ["AutomatedTesting"])
 @pytest.mark.SUITE_main
-class TestsPythonAssetProcessing_APBatch(object):   
+class TestsPythonAssetProcessing_APBatch(object):
 
     @property
     def asset_processor_extra_params(self):
@@ -74,7 +74,7 @@ class TestsPythonAssetProcessing_APBatch(object):
         # to the temp folder. This is the easiest way to have the internal Python there communicate with this test.
         expected_path = os.path.join(asset_processor.project_test_source_folder(), "a_simple_box_with_script_fbx.log")
         unexpected_path = os.path.join(asset_processor.project_test_source_folder(), "b_simple_box_no_script_fbx.log")
-        
+
         # Simple check to make sure the Python script in the scene manifest ran on the file it should have ran on.
         assert os.path.exists(expected_path), f"Did not find expected output test asset {expected_path}"
         # If this test fails here, it means the Python script from the first processed FBX file is being run
@@ -98,7 +98,7 @@ class TestsPythonAssetProcessing_APBatch(object):
     def compute_asset_debug_file(self, workspace, asset_processor, debug_filename, folder_name, ap_setup_fixture):
         # computes the file name of the debug file for a UserDefinedProperties test file
 
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], folder_name)        
+        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], folder_name)
         result, _ = asset_processor.batch_process(extra_params=self.asset_processor_extra_params)
         assert result, "AP Batch failed"
 

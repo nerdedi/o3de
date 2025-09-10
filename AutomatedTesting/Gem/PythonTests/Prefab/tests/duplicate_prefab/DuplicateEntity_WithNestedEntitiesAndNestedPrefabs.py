@@ -89,7 +89,7 @@ def DuplicateEntity_WithNestedEntitiesAndNestedPrefabs():
         f"Failed to duplicate nested entity hierarchy with root entity {parent_entity.get_name()}"
     PrefabWaiter.wait_for_propagation()
     validate_duplicated_hierarchy()
-    
+
     # Test undo/redo on entity hierarchy duplication
     general.undo()
     PrefabWaiter.wait_for_propagation()

@@ -8,17 +8,13 @@ General Asset Processor GUI Tests
 """
 
 # Import builtin libraries
-import psutil
 import pytest
 import logging
 import os
 import time
-import configparser
 from pathlib import Path
 
 # Import LyTestTools
-import ly_test_tools
-import ly_test_tools.builtin.helpers as helpers
 import ly_test_tools.environment.waiter as waiter
 import ly_test_tools.environment.file_system as fs
 import ly_test_tools.environment.process_utils as process_utils
@@ -26,7 +22,6 @@ import ly_test_tools.launchers.launcher_helper as launcher_helper
 from ly_test_tools.o3de.asset_processor import ASSET_PROCESSOR_PLATFORM_MAP, ASSET_PROCESSOR_SETTINGS_ROOT_KEY
 
 # Import fixtures
-from ..ap_fixtures.ap_fast_scan_setting_backup_fixture import ap_fast_scan_setting_backup_fixture
 from ..ap_fixtures.asset_processor_fixture import asset_processor as asset_processor
 from ..ap_fixtures.ap_setup_fixture import ap_setup_fixture as ap_setup_fixture
 from ..ap_fixtures.ap_idle_fixture import TimestampChecker

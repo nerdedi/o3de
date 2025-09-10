@@ -4,14 +4,15 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_EntityCRUDCommands_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests a portion of the Entity CRUD Python API while the Editor is running
-    
+
     @staticmethod
     def test():
         import azlmbr.bus as bus
@@ -22,7 +23,7 @@ class Editor_EntityCRUDCommands_Works(BaseClass):
 
         parentEntityId = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', EntityId())
         childEntityId = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', EntityId())
-        levelEntityId = editor.ToolsApplicationRequestBus(bus.Broadcast, 'GetCurrentLevelEntityId') 
+        levelEntityId = editor.ToolsApplicationRequestBus(bus.Broadcast, 'GetCurrentLevelEntityId')
 
         # Test SetParent/GetParent
 

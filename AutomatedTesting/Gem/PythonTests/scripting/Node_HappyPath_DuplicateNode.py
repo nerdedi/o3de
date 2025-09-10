@@ -12,8 +12,7 @@ from editor_python_test_tools.utils import TestHelper as helper
 import pyside_utils
 import azlmbr.legacy.general as general
 import scripting_utils.scripting_tools as scripting_tools
-from scripting_utils.scripting_constants import (SCRIPT_CANVAS_UI, NODE_INSPECTOR_QT, NODE_INSPECTOR_UI,
-                                                 WAIT_TIME_3, WAIT_FRAMES)
+from scripting_utils.scripting_constants import (SCRIPT_CANVAS_UI, WAIT_TIME_3, WAIT_FRAMES)
 
 
 COMMAND_LINE_ARGS = "add_node Print"

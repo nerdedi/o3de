@@ -49,7 +49,6 @@ def ShapeCollider_CanBeAddedWitNoWarnings():
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity as Entity
     from editor_python_test_tools.utils import Report
-    from editor_python_test_tools.utils import TestHelper as helper
     from editor_python_test_tools.utils import Tracer
     from consts.physics import PHYSX_PRIMITIVE_COLLIDER
     from consts.physics import PHYSX_SHAPE_COLLIDER
@@ -58,7 +57,6 @@ def ShapeCollider_CanBeAddedWitNoWarnings():
     import editor_python_test_tools.hydra_editor_utils as hydra
 
     # Open 3D Engine Imports
-    import azlmbr.legacy.general as general
 
     # 1) Load the empty level
     hydra.open_base_level()
@@ -80,7 +78,7 @@ def ShapeCollider_CanBeAddedWitNoWarnings():
         # 5) Add the PhysX Primitive Collider component
         collider_entity.add_component(PHYSX_PRIMITIVE_COLLIDER)
         Report.result(Tests.add_physx_primitive_collider, collider_entity.has_component(PHYSX_PRIMITIVE_COLLIDER))
-        
+
         # 6) Add the PhysX Mesh Collider component
         collider_entity.add_component(PHYSX_MESH_COLLIDER)
         Report.result(Tests.add_physx_mesh_collider, collider_entity.has_component(PHYSX_MESH_COLLIDER))

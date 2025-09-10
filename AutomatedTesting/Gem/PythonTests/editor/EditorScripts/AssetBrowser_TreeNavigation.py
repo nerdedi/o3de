@@ -48,14 +48,13 @@ def AssetBrowser_TreeNavigation():
     :return: None
     """
 
-    from PySide2 import QtWidgets, QtTest, QtCore
+    from PySide2 import QtWidgets
 
     import azlmbr.legacy.general as general
 
     import pyside_utils
     import editor_python_test_tools.hydra_editor_utils as hydra
     from editor_python_test_tools.utils import Report
-    from editor_python_test_tools.utils import TestHelper as helper
 
     def collapse_expand_and_verify(model_index, hierarchy_level):
         tree.collapse(model_index)

@@ -29,56 +29,56 @@ class Tests:
         "UNDO Light component removal success",
         "P0: UNDO Light component removal failed")
     edit_light_color = (
-        f"Light color updated",
-        f"P1: Light color failed to update")
+        "Light color updated",
+        "P1: Light color failed to update")
     edit_intensity_value = (
-        f"Intensity updated",
-        f"P1: Intensity failed to update")
+        "Intensity updated",
+        "P1: Intensity failed to update")
     edit_attenuation_radius = (
-        f"Attenuation radius Radius updated",
-        f"P1: Attenuation radius Radius failed to update")
+        "Attenuation radius Radius updated",
+        "P1: Attenuation radius Radius failed to update")
     enable_shadows = (
-        f"Shadows enabled",
-        f"P1: Shadows failed to be enabled")
+        "Shadows enabled",
+        "P1: Shadows failed to be enabled")
     disable_shadows = (
-        f"Shadows disabled",
-        f"P1: Shadows failed to be disabled")
+        "Shadows disabled",
+        "P1: Shadows failed to be disabled")
     edit_shadow_bias = (
-        f"Shadow Bias updated",
-        f"P1: Shadow Bias failed to be updated")
+        "Shadow Bias updated",
+        "P1: Shadow Bias failed to be updated")
     edit_normal_bias = (
-        f"Normal shadow bias updated",
-        f"P1: Normal shadow bias failed to update")
+        "Normal shadow bias updated",
+        "P1: Normal shadow bias failed to update")
     edit_filtering_sample_count = (
-        f"Filtering sample count updated",
-        f"P1: Filtering sample count failed to update")
+        "Filtering sample count updated",
+        "P1: Filtering sample count failed to update")
     edit_esm_exponent = (
-        f"ESM exponent updated",
-        f"P1: ESM exponent failed to update")
+        "ESM exponent updated",
+        "P1: ESM exponent failed to update")
     edit_inner_angle = (
-        f"Shutters Inner angle updated",
-        f"P1: Inner angle failed to update")
+        "Shutters Inner angle updated",
+        "P1: Inner angle failed to update")
     edit_outer_angle = (
-        f"Shutters Outer angle updated",
-        f"P1: Outer angle failed to update")
+        "Shutters Outer angle updated",
+        "P1: Outer angle failed to update")
     disable_shutters = (
-        f"Shutters disabled",
-        f"P1: Shutters failed to be disabled")
+        "Shutters disabled",
+        "P1: Shutters failed to be disabled")
     enable_shutters = (
-        f"Shutters enabled",
-        f"P1: Shutters failed to be enabled")
+        "Shutters enabled",
+        "P1: Shutters failed to be enabled")
     enable_both_directions = (
-        f"Both directions enabled",
-        f"P1: Both directions failed to be enabled")
+        "Both directions enabled",
+        "P1: Both directions failed to be enabled")
     disable_both_directions = (
-        f"Both directions disabled",
-        f"P1: Both directions failed to be disabled")
+        "Both directions disabled",
+        "P1: Both directions failed to be disabled")
     enable_fast_approximation = (
-        f"Fast approximation enabled",
-        f"P1: Fast approximation failed to be enabled")
+        "Fast approximation enabled",
+        "P1: Fast approximation failed to be enabled")
     disable_fast_approximation = (
-        f"Fast approximation disabled",
-        f"P1: Fast approximation failed to be disabled")
+        "Fast approximation disabled",
+        "P1: Fast approximation failed to be disabled")
     enter_game_mode = (
         "Entered game mode",
         "P0: Failed to enter game mode")

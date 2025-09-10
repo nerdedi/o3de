@@ -43,7 +43,6 @@ def SubID_WarningReported_AssetRemoved():
     import os
     import shutil
     import time
-    from pathlib import Path
 
     import azlmbr.bus
     import azlmbr.editor as editor

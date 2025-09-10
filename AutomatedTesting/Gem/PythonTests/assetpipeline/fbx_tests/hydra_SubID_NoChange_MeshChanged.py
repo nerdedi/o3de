@@ -4,7 +4,6 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import assetpipeline.ap_fixtures.ap_idle_fixture
 
 
 class Tests:
@@ -38,7 +37,6 @@ def SubID_NoChange_MeshChanged():
     import os
     import shutil
     import time
-    from pathlib import Path
 
     import azlmbr.bus
     import azlmbr.editor as editor

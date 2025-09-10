@@ -147,7 +147,7 @@ class TestAutomation(EditorTestSuite):
 
         def teardown(self, request, workspace, editor_test_results):
             self.cleanup_temp_levels(workspace)
-        
+
         from .EditorScripts import EditorWorkflow_EditorCameraBeThisCameraIsClearedWhenChangingLevel as test_module
 
 

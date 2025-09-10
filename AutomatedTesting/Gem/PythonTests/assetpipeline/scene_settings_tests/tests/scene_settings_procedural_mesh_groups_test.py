@@ -4,7 +4,7 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-    
+
 def Scene_Settings_Procedural_Mesh_Groups_Test():
     import pyside_utils
 
@@ -16,17 +16,14 @@ def Scene_Settings_Procedural_Mesh_Groups_Test():
     # 6. Repeat 2-5, because there have been cases where these operations fail on the second attempt.
     @pyside_utils.wrap_async
     async def run_test():
-        import asyncio
         from editor_python_test_tools.utils import Report
-        import PySide2
         from PySide2 import QtWidgets
-        import azlmbr.bus as bus
         import azlmbr.legacy.general as general
         import ly_test_tools.o3de.pipeline_utils as utils
         import scene_settings_test_messages as tm
         import scene_settings_test_helpers as scene_test_helpers
         general.idle_enable(True)
-        
+
         path_to_manifest, widget_main_window, reflected_property_root = \
             scene_test_helpers.prepare_scene_ui_for_test(test_file_name="auto_test_fbx.fbx", manifest_should_exist=False, should_create_manifest=False)
 
@@ -41,11 +38,11 @@ def Scene_Settings_Procedural_Mesh_Groups_Test():
         ]
 
         TEST_REPEAT_COUNT = 3
-        
+
         MESH_TAB_INDEX = 0
         PREFAB_TAB_INDEX = 3
-        PREFAB_BUTTON_INDEX = 3        
-        
+        PREFAB_BUTTON_INDEX = 3
+
         PAUSE_TIME_IN_FRAMES = 30
         tab_bar = widget_main_window.findChild(QtWidgets.QTabBar,"")
 
@@ -54,7 +51,7 @@ def Scene_Settings_Procedural_Mesh_Groups_Test():
             general.idle_wait_frames(PAUSE_TIME_IN_FRAMES)
 
             found_mesh_names = []
-            
+
             # First, make sure the mesh groups added by the procedural prefab exists
             name_mesh_labels = widget_main_window.findChildren(QtWidgets.QFrame, "Name mesh")
             for name_mesh_label in name_mesh_labels:
@@ -70,7 +67,7 @@ def Scene_Settings_Procedural_Mesh_Groups_Test():
             expected_diff, found_diff = utils.get_differences_between_lists(expected_mesh_names, found_mesh_names)
 
             Report.critical_result(tm.Test_Messages.scene_settings_expected_mesh_groups_found, len(expected_diff) == 0 and len(found_diff) == 0)
-        
+
             # Next, go to the prefab tab
             tab_bar.setCurrentIndex(PREFAB_TAB_INDEX)
 
@@ -82,17 +79,17 @@ def Scene_Settings_Procedural_Mesh_Groups_Test():
                     delete_button = ui_header.findChild(QtWidgets.QToolButton, "m_deleteButton")
                     delete_button.click()
                     break
-                
+
             # Go back to the first tab
             tab_bar.setCurrentIndex(MESH_TAB_INDEX)
 
             # Briefly pause so all events get posted. Not using wait_for_condition because it's not a simple condition to check for.
             general.idle_wait_frames(PAUSE_TIME_IN_FRAMES)
-        
+
             # Verify the groups are gone now
-        
+
             # Verify the prefab created groups are gone now and the remaining mesh group is the expected non-prefab one.
-            # Qt keeps objects around and can throw off searches. To work around that, examine the contents of the labels directly.        
+            # Qt keeps objects around and can throw off searches. To work around that, examine the contents of the labels directly.
             new_found_mesh_names = []
             name_mesh_labels = widget_main_window.findChildren(QtWidgets.QFrame, "Name mesh")
             for name_mesh_label in name_mesh_labels:
@@ -104,14 +101,14 @@ def Scene_Settings_Procedural_Mesh_Groups_Test():
             Report.critical_result(tm.Test_Messages.scene_settings_expected_mesh_groups_removed, len(new_found_mesh_names) == 1)
 
             Report.critical_result(tm.Test_Messages.scene_settings_expected_mesh_group_found, editable_mesh_group_name == new_found_mesh_names[0])
-        
+
             tab_bar.setCurrentIndex(PREFAB_TAB_INDEX)
             general.idle_wait_frames(PAUSE_TIME_IN_FRAMES)
             add_buttons = widget_main_window.findChildren(QtWidgets.QPushButton, "m_addButton")
             prefab_add_button = add_buttons[PREFAB_BUTTON_INDEX]
             prefab_add_button.click()
             general.idle_wait_frames(PAUSE_TIME_IN_FRAMES)
-            
+
         general.idle_wait_frames(PAUSE_TIME_IN_FRAMES)
         # Clear unsaved changes and wait briefly so that the window will close without issues
         clear_unsaved_changes_action = widget_main_window.findChild(QtWidgets.QAction, "m_actionClearUnsavedChanges")

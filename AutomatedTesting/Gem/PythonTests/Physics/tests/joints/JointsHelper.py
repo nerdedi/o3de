@@ -5,18 +5,17 @@ For complete copyright and license terms please see the LICENSE at the root of t
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
-from editor_python_test_tools.utils import Report
 import azlmbr.legacy.general as general
 import azlmbr.bus
 
 def vector3SmallerThanScalar(vec3Value, scalarValue):
-    return (vec3Value.x < scalarValue and 
-        vec3Value.y < scalarValue and 
+    return (vec3Value.x < scalarValue and
+        vec3Value.y < scalarValue and
         vec3Value.z < scalarValue)
 
 def vector3LargerThanScalar(vec3Value, scalarValue):
-    return (vec3Value.x > scalarValue and 
-        vec3Value.y > scalarValue and 
+    return (vec3Value.x > scalarValue and
+        vec3Value.y > scalarValue and
         vec3Value.z > scalarValue)
 
 def getRelativeVector(vecA, vecB):
@@ -46,7 +45,7 @@ class JointEntity:
 class JointEntityCollisionAware(JointEntity):
     def on_collision_begin(self, args):
         self.collided = True
-    
+
     def on_collision_persist(self, args):
         self.collided = True
 

@@ -148,7 +148,7 @@ def AtomEditorComponents_Stars_AddedToEntity():
         stars_component.set_component_property_value(
             AtomComponentProperties.stars('Stars Asset'), None)
         general.idle_wait_frames(1)
-        
+
         # Set 'Stars Asset' back to the default.stars Asset.id
         stars_component.set_component_property_value(
             AtomComponentProperties.stars('Stars Asset'), default_stars.id)

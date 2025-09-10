@@ -19,8 +19,6 @@ from ..ap_fixtures.ap_setup_fixture import ap_setup_fixture as ap_setup_fixture
 
 # Import LyShared
 from automatedtesting_shared import file_utils as file_utils
-from ly_test_tools.o3de.ap_log_parser import APLogParser, APOutputParser
-import ly_test_tools.o3de.pipeline_utils as utils
 
 # Use the following logging pattern to hook all test logging together:
 logger = logging.getLogger(__name__)
@@ -64,20 +62,20 @@ class TestsAssetProcessorBatch_DependencyTests(object):
         7. Verify that there are no longer missing dependencies
         """
         import shutil
-        
+
         file_scan_pattern = "--dsp=%font_with_dependency.xml"
 
         # Verifies the XML schema can be used to address a missing dependency
         asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "test_xml_schema")
         _, ap_batch_output = asset_processor.batch_process(capture_output=True, extra_params=file_scan_pattern)
-        
+
         font_lines = [line for line in ap_batch_output if "Scanning for missing" in line]
         missing_lines = [line for line in ap_batch_output if "Missing dependency" in line]
-        
+
         # If the test is going to fail, print the log output from AP to assist in debugging.
         # Skip printing otherwise, to keep the tests from slowing down due to excessive logging.
         if len(font_lines) == 0 or len(missing_lines) == 0:
-            logger.info(f"Asset Processor Output:\n")
+            logger.info("Asset Processor Output:\n")
             for log_line in ap_batch_output:
                 logger.info(log_line)
 
@@ -87,7 +85,7 @@ class TestsAssetProcessorBatch_DependencyTests(object):
         # Copy the schema out of the engine, so if the font schema changes, this test will use the most current schema.
         # Don't use the engine folder directly, to keep test run time fast.
         engine_schema_path = os.path.join(workspace.paths.engine_root(), "Assets", "Engine", "Schema", "Font.xmlschema")
-        
+
         # The project_test_source_folder is the source folder for the test assets, and not the test project,
         # so use a directory change marker to go up one folder.
         # This is because the XML schema files have to be in a very specific relative path location to be used.
@@ -96,16 +94,16 @@ class TestsAssetProcessorBatch_DependencyTests(object):
         shutil.copy(engine_schema_path, os.path.join(target_schema_folder, "Font.xmlschema"))
 
         _, ap_batch_output_second = asset_processor.batch_process(capture_output=True, extra_params=file_scan_pattern)
-        
+
         font_lines_second = [line for line in ap_batch_output_second if "Scanning for missing" in line]
         missing_lines_second = [line for line in ap_batch_output_second if "Missing dependency" in line]
 
         if len(font_lines_second) != len(font_lines) or len(missing_lines_second) != 0:
             # If the test is going to fail, print the before and after logs for asset processor, having both assists in debugging.
-            logger.info(f"Asset Processor Output:\n")
+            logger.info("Asset Processor Output:\n")
             for log_line in ap_batch_output:
                 logger.info(log_line)
-            logger.info(f"Second Run Asset Processor Output:\n")
+            logger.info("Second Run Asset Processor Output:\n")
             for log_line in ap_batch_output_second:
                 logger.info(log_line)
 

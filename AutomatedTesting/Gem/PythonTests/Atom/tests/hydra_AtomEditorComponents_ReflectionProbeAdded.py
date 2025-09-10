@@ -134,7 +134,6 @@ def AtomEditorComponents_ReflectionProbe_AddedToEntity():
     """
 
     import azlmbr.legacy.general as general
-    import azlmbr.render as render
 
     from azlmbr.math import Math_IsClose
     from editor_python_test_tools.editor_entity_utils import EditorEntity

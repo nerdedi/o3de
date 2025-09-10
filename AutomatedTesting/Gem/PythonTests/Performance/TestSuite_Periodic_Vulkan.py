@@ -9,8 +9,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # This suite consists of all test cases that are passing and have been verified.
 
 import pytest
-import os
-import sys
 
 from ly_test_tools.o3de.editor_test import EditorTestSuite, EditorSingleTest
 

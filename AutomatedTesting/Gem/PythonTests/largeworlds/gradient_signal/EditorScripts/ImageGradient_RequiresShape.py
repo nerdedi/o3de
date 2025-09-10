@@ -44,7 +44,6 @@ def ImageGradient_RequiresShape():
 
     import editor_python_test_tools.hydra_editor_utils as hydra
     from editor_python_test_tools.utils import Report
-    from editor_python_test_tools.utils import TestHelper as helper
 
     # Open an existing simple level
     hydra.open_base_level()

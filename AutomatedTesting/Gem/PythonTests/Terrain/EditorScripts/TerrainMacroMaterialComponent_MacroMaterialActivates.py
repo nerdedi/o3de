@@ -7,27 +7,27 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 
 class MacroMaterialTests:
     setup_test = (
-        "Setup successful", 
+        "Setup successful",
         "Setup failed"
     )
     material_changed_not_called_when_inactive = (
-        "OnTerrainMacroMaterialRegionChanged not called successfully", 
+        "OnTerrainMacroMaterialRegionChanged not called successfully",
         "OnTerrainMacroMaterialRegionChanged called when component inactive."
     )
     material_created = (
-        "MaterialCreated called successfully", 
+        "MaterialCreated called successfully",
         "MaterialCreated failed"
     )
     material_destroyed = (
-        "MaterialDestroyed called successfully", 
+        "MaterialDestroyed called successfully",
         "MaterialDestroyed failed"
     )
     material_recreated = (
-        "MaterialCreated called successfully on second test", 
+        "MaterialCreated called successfully on second test",
         "MaterialCreated failed on second test"
     )
     material_changed_call_on_aabb_change = (
-        "OnTerrainMacroMaterialRegionChanged called successfully", 
+        "OnTerrainMacroMaterialRegionChanged called successfully",
         "Timed out waiting for OnTerrainMacroMaterialRegionChanged"
     )
 
@@ -64,7 +64,7 @@ def TerrainMacroMaterialComponent_MacroMaterialActivates():
             entity.add_component(component)
 
         return entity
-        
+
     def on_macro_material_created(args):
         nonlocal material_created_called
         material_created_called = True
@@ -83,7 +83,7 @@ def TerrainMacroMaterialComponent_MacroMaterialActivates():
 
     # Open a level.
     hydra.open_base_level()
-    
+
     general.idle_wait_frames(1)
 
     # Set up a handler to wait for notifications from the TerrainSystem.
@@ -103,7 +103,7 @@ def TerrainMacroMaterialComponent_MacroMaterialActivates():
     # Find the aabb component.
     aabb_component_type_id_type = azlmbr.editor.EditorComponentAPIBus(azlmbr.bus.Broadcast, 'FindComponentTypeIdsByEntityType', ["Axis Aligned Box Shape"], 0)[0]
     aabb_component_id = azlmbr.editor.EditorComponentAPIBus(azlmbr.bus.Broadcast, 'GetComponentOfType', macro_material_entity.id, aabb_component_type_id_type).GetValue()
-    
+
     # Change the aabb dimensions
     material_region_changed_called = False
     box_dimensions_path = "Axis Aligned Box Shape|Box Configuration|Dimensions"
@@ -120,7 +120,7 @@ def TerrainMacroMaterialComponent_MacroMaterialActivates():
     # Find a color image asset.
     color_image_path = os.path.join("assets", "textures", "image.png.streamingimage")
     color_image_asset = asset.AssetCatalogRequestBus(bus.Broadcast, "GetAssetIdByPath", color_image_path, math.Uuid(), False)
-    
+
     # Assign the image to the MacroMaterial component, which should result in a created message.
     material_created_called = False
     color_texture_path = "Configuration|Color Texture"

@@ -4,20 +4,21 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_EntityCommands_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests the Python API for Entity CRUD while the Editor is running
-    
+
     @staticmethod
     def test():
         import azlmbr.bus as bus
         import azlmbr.editor as editor
         from azlmbr.entity import EntityId
-        import azlmbr.legacy.general    
+        import azlmbr.legacy.general
         import azlmbr.entity
         check_result = BaseClass.check_result
 
@@ -77,22 +78,22 @@ class Editor_EntityCommands_Works(BaseClass):
         entityId = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', EntityId())
 
         # Get current name
-        oldName = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', entityId);
+        oldName = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', entityId)
 
         # Set a new name
         editor.EditorEntityAPIBus(bus.Event, 'SetName', entityId, "TestName")
 
         # Get new name
-        newName = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', entityId);
+        newName = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', entityId)
         check_result(not(oldName == newName), "GetName and SetName work")
 
         # Create new Entity
         parentId = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', EntityId())
- 
+
         # Create new Entity with parentId as parent
         childId = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', parentId)
 
-        getId = editor.EditorEntityInfoRequestBus(bus.Event, 'GetParent', childId);
+        getId = editor.EditorEntityInfoRequestBus(bus.Event, 'GetParent', childId)
         check_result(getId.Equal(parentId), "GetParent works")
 
         # Find the entity in the scene

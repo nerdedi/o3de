@@ -24,7 +24,7 @@ def C28798177_WhiteBox_AddComponentToEntity():
     import azlmbr.editor as editor
     import azlmbr.legacy.general as general
     import WhiteBoxInit as init
-    
+
     from editor_python_test_tools.utils import Report
 
     # open level

@@ -44,7 +44,6 @@ def PhysX_Primitive_Collider_Component_CRUD():
         COLLIDER_RADIUS_TESTS, CYLINDER_HEIGHT_TESTS, CONTACT_OFFSET_TESTS,
         REST_OFFSET_TESTS, CYLINDER_SUBDIVISION_TESTS)
 
-    from consts.general import Strings
     from consts.physics import PHYSX_PRIMITIVE_COLLIDER
 
     # 0) Pre-conditions

@@ -50,7 +50,7 @@ class TestAutomation(EditorTestSuite):
         def setup(cls, instance, request, workspace):
             save_multiplayer_level_cache_folder_artifact(workspace, "autocomponent_rpc")
 
-        
+
     class test_Multiplayer_SimpleNetworkLevelEntity(EditorSingleTest):
         from .tests import Multiplayer_SimpleNetworkLevelEntity as test_module
 
@@ -68,13 +68,13 @@ class TestAutomation(EditorTestSuite):
         server_launcher = launcher_helper.create_server_launcher(workspace)
         server_launcher.args.extend(['+host', '-rhi=Null'])
         server_launcher.start()
-        waiter.wait_for(lambda: process_utils.process_exists(f"AutomatedTesting.ServerLauncher.exe", ignore_extensions=True))
+        waiter.wait_for(lambda: process_utils.process_exists("AutomatedTesting.ServerLauncher.exe", ignore_extensions=True))
 
         # Start the AutomatedTesting.GameLauncher.exe in client mode, no rendering mode, and wait for it to exist
         game_launcher = launcher_helper.create_game_launcher(workspace)
         game_launcher.args.extend(['+connect', '-rhi=Null'])
         game_launcher.start()
-        waiter.wait_for(lambda: process_utils.process_exists(f"AutomatedTesting.GameLauncher.exe", ignore_extensions=True))
+        waiter.wait_for(lambda: process_utils.process_exists("AutomatedTesting.GameLauncher.exe", ignore_extensions=True))
 
         # Verify that the GameLauncher.exe was able to connect to the ServerLauncher.exe by checking the logs
         game_launcher_log_file = os.path.join(game_launcher.workspace.paths.project_log(), 'Game.log')

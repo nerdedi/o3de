@@ -40,7 +40,6 @@ def PhysX_Mesh_Collider_Component_CRUD():
     from editor_python_test_tools.editor_component.test_values.phsyx_collider_test_values import (
         CONTACT_OFFSET_TESTS, REST_OFFSET_TESTS)
 
-    from consts.general import Strings
     from consts.physics import PHYSX_MESH_COLLIDER
 
     # 0) Pre-conditions

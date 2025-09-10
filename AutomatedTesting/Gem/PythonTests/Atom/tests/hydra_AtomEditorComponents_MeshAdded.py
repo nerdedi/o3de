@@ -147,7 +147,7 @@ def AtomEditorComponents_Mesh_AddedToEntity():
     class OnModelReadyHelper:
         def __init__(self):
             self.isModelReady = False
-        
+
         def model_is_ready_predicate(self):
             """
             A predicate function what will be used in wait_for_condition.
@@ -164,9 +164,9 @@ def AtomEditorComponents_Mesh_AddedToEntity():
             self.onModelReadyHandler = azlmbr.bus.NotificationHandler('MeshComponentNotificationBus')
             self.onModelReadyHandler.connect(entityId)
             self.onModelReadyHandler.add_callback('OnModelReady', self.on_model_ready)
-            
+
             waitCondition = partial(self.model_is_ready_predicate)
-            
+
             mesh_component.set_component_property_value(AtomComponentProperties.mesh('Model Asset'), model_id)
             if TestHelper.wait_for_condition(waitCondition, 20.0):
                 return True
@@ -324,7 +324,7 @@ def AtomEditorComponents_Mesh_AddedToEntity():
         mesh_entity.set_visibility_state(True)
         general.idle_wait_frames(1)
         Report.result(Tests.is_visible, mesh_entity.is_visible() is True)
-        
+
         # 21. Test that vertex welding is functioning
         model_path = os.path.join('testdata', 'objects', 'tube.fbx.azmodel')
         model = Asset.find_asset_by_path(model_path)

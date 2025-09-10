@@ -61,7 +61,6 @@ def AssetPicker_UI_UX():
 
         import editor_python_test_tools.hydra_editor_utils as hydra
         from editor_python_test_tools.utils import Report
-        from editor_python_test_tools.utils import TestHelper as helper
 
         file_path = ["AutomatedTesting", "Assets", "Objects", "Foliage"]
 
@@ -70,7 +69,7 @@ def AssetPicker_UI_UX():
             searchFilter.names = [entity_name]
             entities = entity.SearchBus(bus.Broadcast, 'SearchEntities', searchFilter)
             editor.ToolsApplicationRequestBus(bus.Broadcast, 'MarkEntitySelected', entities[0])
-            
+
         def is_asset_assigned(component, interaction_option):
             path = os.path.join("assets", "objects", "foliage", "cedar.fbx.azmodel")
             expected_asset_id = asset.AssetCatalogRequestBus(bus.Broadcast, 'GetAssetIdByPath', path, math.Uuid(),

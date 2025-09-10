@@ -50,7 +50,7 @@ def launch_and_validate_results(request, test_directory, editor, editor_script, 
     request.addfinalizer(lambda: teardown_editor(editor))
     logger.debug("Running automated test: {}".format(editor_script))
     compiled_test_case_name = compile_test_case_name_from_request(request)
-    editor.args.extend(["--skipWelcomeScreenDialog", "--regset=/Amazon/Settings/EnableSourceControl=false", 
+    editor.args.extend(["--skipWelcomeScreenDialog", "--regset=/Amazon/Settings/EnableSourceControl=false",
                         run_python, test_case,
                         "--regset=/Amazon/Preferences/EnablePrefabSystem=true",
                         f"--regset-file={os.path.join(editor.workspace.paths.engine_root(), 'Registry', 'prefab.test.setreg')}",
@@ -110,7 +110,7 @@ def launch_and_validate_results_launcher(launcher, level, remote_console_instanc
             if 'port={}'.format(port) in str(conn):
                 port_listening = True
         return port_listening
-        
+
     if null_renderer:
         launcher.args.extend(["-rhi=Null"])
 

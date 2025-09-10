@@ -4,24 +4,24 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 
 class Editor_ViewportTitleDlgCommands_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests the ViewportTitleDlg Python API from ViewportTitleDlg.cpp while the Editor is running
-    
+
     @staticmethod
     def test():
-        import azlmbr.math
         import azlmbr.legacy.general as general
 
-        # Get the current state of our helpers toggle.  
+        # Get the current state of our helpers toggle.
         initial_state = general.is_helpers_shown()
 
         # Toggle it once and verify it changed
-        general.toggle_helpers() 
+        general.toggle_helpers()
         BaseClass.check_result(initial_state != general.is_helpers_shown(), "Toggle it once and verify it changed")
 
         # Toggle it a second time and verify it changed back to the original setting.

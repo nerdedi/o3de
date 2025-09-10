@@ -8,8 +8,6 @@ import os
 import platform
 
 from setuptools import setup, find_packages
-from setuptools.command.develop import develop
-from setuptools.command.build_py import build_py
 
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 

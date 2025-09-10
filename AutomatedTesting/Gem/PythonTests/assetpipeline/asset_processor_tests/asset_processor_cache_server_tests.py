@@ -16,13 +16,7 @@ import tempfile
 import hashlib
 
 # Import LyTestTools
-import ly_test_tools.builtin.helpers as helpers
-import ly_test_tools.environment.waiter as waiter
-import ly_test_tools.environment.file_system as fs
-import ly_test_tools.environment.process_utils as process_utils
-import ly_test_tools.launchers.launcher_helper as launcher_helper
 from ly_test_tools.o3de.asset_processor import ASSET_PROCESSOR_PLATFORM_MAP
-from ly_test_tools.o3de.asset_processor import StopReason
 
 # Import fixtures
 from ..ap_fixtures.asset_processor_fixture import asset_processor as asset_processor
@@ -141,9 +135,9 @@ class TestsAssetProcessorGUI_AllPlatforms(object):
         # 2. Process a source asset
         # 3. Stop Asset Processor
         self.cycle_asset_processor(
-            asset_processor, 
-            cache_mode='Server', 
-            cache_folder=asset_cache_folder, 
+            asset_processor,
+            cache_mode='Server',
+            cache_folder=asset_cache_folder,
             cache_pattern_name='Atom Image Builder')
 
         # check that product entries exist (sanity checks)
@@ -168,9 +162,9 @@ class TestsAssetProcessorGUI_AllPlatforms(object):
         # 6. The source asset is processed again, new fingerprint for local change
         # 7. Stop Asset Processor
         self.cycle_asset_processor(
-            asset_processor, 
-            cache_mode='Server', 
-            cache_folder=asset_cache_folder, 
+            asset_processor,
+            cache_mode='Server',
+            cache_folder=asset_cache_folder,
             cache_pattern_name='Atom Image Builder')
 
         # Result(s):

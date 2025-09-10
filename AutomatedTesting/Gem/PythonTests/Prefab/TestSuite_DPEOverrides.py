@@ -17,9 +17,9 @@ class TestAutomationOverridesEnabled(EditorTestSuite):
 
     # These tests will execute with Outliner Overrides/Inspector DPE/Inspector Overrides enabled
     EditorTestSuite.global_extra_cmdline_args.extend(
-        [f"--regset=/O3DE/Autoexec/ConsoleCommands/ed_enableOutlinerOverrideManagement=true",
-         f"--regset=/O3DE/Autoexec/ConsoleCommands/ed_enableInspectorOverrideManagement=true",
-         f"--regset=/O3DE/Autoexec/ConsoleCommands/ed_enableDPEInspector=true"])
+        ["--regset=/O3DE/Autoexec/ConsoleCommands/ed_enableOutlinerOverrideManagement=true",
+         "--regset=/O3DE/Autoexec/ConsoleCommands/ed_enableInspectorOverrideManagement=true",
+         "--regset=/O3DE/Autoexec/ConsoleCommands/ed_enableDPEInspector=true"])
 
     # Add Entity Tests
     class test_AddEntity_UnderAnotherEntity(EditorBatchedTest):

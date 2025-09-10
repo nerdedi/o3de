@@ -64,7 +64,7 @@ def validate_linear_nested_entities(nested_entities_root, expected_level_count, 
     assert expected_level_count > 0, "Can't validate nested entities with less than one layer"
     assert nested_entities_root.get_parent_id().IsValid(), \
         "Root of nested entities should have a valid parent entity"
-    
+
     current_entity = nested_entities_root
     level_count = 1
     while True:
@@ -88,7 +88,7 @@ def validate_linear_nested_entities(nested_entities_root, expected_level_count, 
             f"Entity '{child_entity.get_name()}' should be under entity '{current_entity.get_name()}'"
 
         current_entity = child_entity
-        
+
     assert level_count == expected_level_count, \
         f"Number of levels of nested entities should be {expected_level_count}, not {level_count}"
 
@@ -117,7 +117,7 @@ def create_linear_nested_prefabs(entities, nested_prefabs_file_name_prefix, nest
 
     for current_level in range(0, level_count):
         current_prefab, current_prefab_instance = Prefab.create_prefab(
-            entities, get_linear_nested_items_name(nested_prefabs_file_name_prefix, current_level), 
+            entities, get_linear_nested_items_name(nested_prefabs_file_name_prefix, current_level),
             prefab_instance_name=get_linear_nested_items_name(nested_prefabs_instance_name_prefix, current_level))
         created_prefabs.append(current_prefab)
         created_prefab_instances.append(current_prefab_instance)
@@ -125,7 +125,7 @@ def create_linear_nested_prefabs(entities, nested_prefabs_file_name_prefix, nest
 
         # Focus on the newly created prefab instance before next creation to perform a prefab edit rather than override edit.
         current_prefab_instance.container_entity.focus_on_owning_prefab()
-    
+
     # Switch focus back on the originally focused instance.
     parent_entity = EditorEntity(created_prefab_instances[0].container_entity.get_parent_id())
     parent_entity.focus_on_owning_prefab()
@@ -178,7 +178,7 @@ def validate_linear_nested_prefab_instances_hierarchy(nested_prefab_instances):
     direct_child_entities = most_inner_prefab_instance.get_direct_child_entities()
     for entity in direct_child_entities:
         assert entity.get_parent_id() == most_inner_prefab_instance_container_entity.id, \
-            f"Entity '{entity.get_name()}' should be under prefab '{most_inner_prefab_instance_container_entity.get_name()}'" 
+            f"Entity '{entity.get_name()}' should be under prefab '{most_inner_prefab_instance_container_entity.get_name()}'"
 
 
 def check_entity_children_count(entity_id, expected_children_count):

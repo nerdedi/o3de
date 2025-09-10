@@ -12,7 +12,7 @@ from ly_test_tools.o3de.editor_test import EditorBatchedTest, EditorTestSuite
 @pytest.mark.parametrize("project", ["AutomatedTesting"])
 @pytest.mark.parametrize("launcher_platform", ['windows_editor'])
 class TestAutomation(EditorTestSuite):
-        
+
     @pytest.mark.test_case_id("C36530722")
     class Editor_levelLoad_Atom_hermanubis(EditorBatchedTest):
         from Atom.tests import levelLoad_Atom_hermanubis as test_module

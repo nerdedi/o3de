@@ -52,7 +52,6 @@ def MeshSurfaceTagEmitter_DependentOnMeshComponent():
 
     import editor_python_test_tools.hydra_editor_utils as hydra
     from editor_python_test_tools.utils import Report
-    from editor_python_test_tools.utils import TestHelper as helper
 
     def is_component_enabled(EntityComponentIdPair):
         return editor.EditorComponentAPIBus(bus.Broadcast, "IsComponentEnabled", EntityComponentIdPair)

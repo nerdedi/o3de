@@ -4,22 +4,21 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
 from EditorPythonTestTools.consts.physics import PHYSX_MESH_COLLIDER
 
 class Editor_ComponentCommands_Works(BaseClass):
-    # Description: 
+    # Description:
     # Tests a portion of the Component CRUD Python API while the Editor is running
-    
+
     @staticmethod
     def test():
         import azlmbr.bus as bus
         import azlmbr.entity as entity
         import azlmbr.editor as editor
-        import azlmbr.object
-        import azlmbr.math
         from azlmbr.entity import EntityId
 
         def CompareComponentEntityIdPairs(component1, component2):
@@ -126,7 +125,7 @@ class Editor_ComponentCommands_Works(BaseClass):
         meshColliderComponent = meshColliderComponentOutcome.GetValue()
         getMeshColliderComponentOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'GetComponentOfType', newEntityId, meshColliderComponentTypeId)
 
-        BaseClass.check_result(getMeshColliderComponentOutcome.IsSuccess(), f"getMeshColliderComponentOutcome.IsSuccess()")
+        BaseClass.check_result(getMeshColliderComponentOutcome.IsSuccess(), "getMeshColliderComponentOutcome.IsSuccess()")
         BaseClass.check_result(CompareComponentEntityIdPairs(meshColliderComponent[0], getMeshColliderComponentOutcome.GetValue()), "PhysX Mesh Collider component retrieved from entity")
 
         editor.EditorComponentAPIBus(bus.Broadcast, 'RemoveComponents', [meshColliderComponent[0]])
