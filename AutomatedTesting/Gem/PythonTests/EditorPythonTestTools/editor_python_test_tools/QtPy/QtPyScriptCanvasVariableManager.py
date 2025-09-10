@@ -17,7 +17,7 @@ from consts.general import (WAIT_TIME_SEC_3)
 
 """
 Basic variable types.
-These are str-str kv pairings so they can be used with SimpleNamespace class easily or as an iterable type.  
+These are str-str kv pairings so they can be used with SimpleNamespace class easily or as an iterable type.
 """
 VARIABLE_TYPES_DICT = {
     "Boolean": "Boolean",

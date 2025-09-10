@@ -61,7 +61,7 @@ def AltitudeFilter_FilterStageToggle():
     dynveg.create_surface_entity("Surface_Entity_Parent", position, 16.0, 16.0, 1.0)
 
     # Add entity with Mesh to replicate creation of hills
-    hill_entity = dynveg.create_mesh_surface_entity_with_slopes("hill", position, 10.0)
+    dynveg.create_mesh_surface_entity_with_slopes("hill", position, 10.0)
 
     # Set a Min Altitude of 38 and Max of 40 in Vegetation Altitude Filter
     vegetation.get_set_test(3, "Configuration|Altitude Min", 38.0)

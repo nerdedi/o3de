@@ -201,14 +201,14 @@ class TestEditorTest:
                 class test_pass(EditorSharedTest):
                     import EditorTest_That_Passes as test_module
                     is_parallelizable = False
-                
+
                 class test_fail(EditorSharedTest):
                     import EditorTest_That_Fails as test_module
-                    is_parallelizable = False                
-                
+                    is_parallelizable = False
+
                 class test_crash(EditorSharedTest):
                     import EditorTest_That_Crashes as test_module
-                    is_parallelizable = False   
+                    is_parallelizable = False
             """
         )
         # 2 Fail, 1 Passes + 1(batch runner)
@@ -237,14 +237,14 @@ class TestEditorTest:
                 class test_pass(EditorSharedTest):
                     import EditorTest_That_Passes as test_module
                     is_batchable = False
-                
+
                 class test_fail(EditorSharedTest):
                     import EditorTest_That_Fails as test_module
-                    is_batchable = False                
-                
+                    is_batchable = False
+
                 class test_crash(EditorSharedTest):
                     import EditorTest_That_Crashes as test_module
-                    is_batchable = False   
+                    is_batchable = False
             """
         )
         # 2 Fail, 1 Passes + 1(parallel runner)
@@ -270,10 +270,10 @@ class TestEditorTest:
             """
                 class test_pass(EditorSharedTest):
                     import EditorTest_That_Passes as test_module
-                
+
                 class test_fail(EditorSharedTest):
                     import EditorTest_That_Fails as test_module
-                
+
                 class test_crash(EditorSharedTest):
                     import EditorTest_That_Crashes as test_module
             """
@@ -287,10 +287,10 @@ class TestEditorTest:
             """
                 class test_pass(EditorSharedTest):
                     import EditorTest_That_Passes as test_module
-                
+
                 class test_fail(EditorSharedTest):
                     import EditorTest_That_Fails as test_module
-                
+
                 class test_crash(EditorSharedTest):
                     import EditorTest_That_Crashes as test_module
             """, extra_cmd_line=["-k", "fail"]

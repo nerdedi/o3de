@@ -67,7 +67,7 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
         the -x direction: has a sphere shaped PhysX Collider, a PhysX Rigid Body, and a Sphere Shape.
     Sphere 2 - This entity is inline with the perface entity on the x axis and heading torward it with a velocity in
         the +x direction: has a sphere shaped PhysX Collider, a PhysX Rigid Body, and a Sphere Shape.
-    
+
     Materials:
     Bounce - All three spheres and the Perface mesh area lined up with Sphere 1 have the Bounce material applied to
         them. This material interacts with other materials by bouncing with the restitution factor of an average of
@@ -228,9 +228,9 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
 
     def vector_valid(vector, can_be_zero):
         if can_be_zero:
-            return vector != None
+            return vector is not None
         else:
-            return vector != None and not vector.IsZero()
+            return vector is not None and not vector.IsZero()
 
     # Main Script
     helper.init_idle()

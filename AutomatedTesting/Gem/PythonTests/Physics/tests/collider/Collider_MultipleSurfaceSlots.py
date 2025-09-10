@@ -39,7 +39,7 @@ def Collider_MultipleSurfaceSlots():
      3) Add Mesh and Physics collider components
      4) Assign the fbx file in PhysX Mesh and Mesh component
      5) Check if multiple material slots show up under Materials section in the PhysX Mesh Collider component
-     
+
     :return: None
     """
     # Builtins

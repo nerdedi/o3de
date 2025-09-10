@@ -82,10 +82,10 @@ def DPE_AllComponentPropertyTypesEditable():
         dither_component = dither_entity.add_component("Dither Gradient Modifier")
         light_component = light_entity.add_component("Light")
         mesh_component = mesh_entity.add_component("Mesh")
-        debug_text_component = debug_text_entity.add_component("DebugDraw Text")
-        gradient_component = pick_me_entity.add_component("Perlin Noise Gradient")
-        box_shape_component = box_shape_entity.add_component("Box Shape")
-        compound_shape_component = container_entity.add_component("Compound Shape")
+        debug_text_entity.add_component("DebugDraw Text")
+        pick_me_entity.add_component("Perlin Noise Gradient")
+        box_shape_entity.add_component("Box Shape")
+        container_entity.add_component("Compound Shape")
 
         # Edit each component property type and validate
 

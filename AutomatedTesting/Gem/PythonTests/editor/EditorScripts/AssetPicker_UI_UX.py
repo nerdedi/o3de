@@ -19,7 +19,7 @@ def AssetPicker_UI_UX():
         Expected Behavior:
         The asset picker opens and is labeled appropriately ("Pick Model Asset" in this instance).
         The Asset Picker window can be resized and moved around the screen.
-        The file tree expands/retracts appropriately and a scroll bar is present when the menus extend 
+        The file tree expands/retracts appropriately and a scroll bar is present when the menus extend
         beyond the length of the window.
         The assets are limited to a valid type for the field selected (model assets in this instance)
         The asset picker is closed and the selected asset is assigned to the mesh component.

@@ -33,8 +33,8 @@ def ScriptCanvas_PreUpdateEvent():
     Follow_Sphere - Directly next to Lead_Sphere on the -x axis; has rigid body (gravity disabled, kinematic
         enabled), sphere shape collider, sphere shape, script canvas
 
-    Script Canvas - Before every frame of PhysX calculation the Follow_Sphere is moved directly next to the 
-        Lead_Sphere, then PhysX calculates and moves the Lead_Sphere to a new position before presenting to 
+    Script Canvas - Before every frame of PhysX calculation the Follow_Sphere is moved directly next to the
+        Lead_Sphere, then PhysX calculates and moves the Lead_Sphere to a new position before presenting to
         the viewer
     PhysX Configuration - The PhysX configuration file was modified to lower the frame rate to 20 Hz for visual debug
 

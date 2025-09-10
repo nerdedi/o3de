@@ -80,7 +80,7 @@ class Editor_ComponentCommands_Works(BaseClass):
 
         getCommentComponentsOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'GetComponentsOfType', newEntityId, commentComponentTypeId)
         BaseClass.check_result(getCommentComponentsOutcome.IsSuccess(), "GetComponentsOfType")
-        getCommentComponents = getCommentComponentsOutcome.GetValue()
+        getCommentComponentsOutcome.GetValue()
 
         getComponentOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'GetComponentOfType', newEntityId, meshComponentTypeId)
 

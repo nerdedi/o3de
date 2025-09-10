@@ -59,7 +59,7 @@ def Entity_HappyPath_AddScriptCanvasComponent():
     Report.result(Tests.entity_created, editor_entity.id.IsValid())
 
     # 3) Start Tracer
-    with Tracer() as section_tracer:
+    with Tracer():
 
         # 4) Add Script Canvas component to test entity and check for errors
         editor_entity.add_component(SCRIPT_CANVAS_UI)

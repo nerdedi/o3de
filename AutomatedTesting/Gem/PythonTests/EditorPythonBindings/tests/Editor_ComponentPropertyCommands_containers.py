@@ -95,7 +95,7 @@ def Editor_ComponentPropertyCommands_containers():
     components = componentOutcome.GetValue()
     tagList = components[0]
 
-    pteOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'BuildComponentPropertyTreeEditor', tagList)
+    editor.EditorComponentAPIBus(bus.Broadcast, 'BuildComponentPropertyTreeEditor', tagList)
     #check_result(pteOutcome.IsSuccess(), 'BuildComponentPropertyTreeEditor')
     #pte = pteOutcome.GetValue()
 

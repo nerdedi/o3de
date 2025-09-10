@@ -1364,7 +1364,7 @@ class TestsAssetRelocator_WindowsAndMac(object):
         # Build primary AP Batch parameter value and destination paths
         param_val = test["src_rel_path"]
         if test["primary"] == "move":
-            output_assets_targeted = [os.path.split(item)[-1] for item in src_full_paths_targeted]
+            [os.path.split(item)[-1] for item in src_full_paths_targeted]
             dst_rel_path = os.path.join("MoveOutput", src_path_end)
             dst_path_root = os.path.join(source_folder, "MoveOutput")
             param_val = f"{test['src_rel_path']},{dst_rel_path}"
@@ -1382,7 +1382,7 @@ class TestsAssetRelocator_WindowsAndMac(object):
         # Validate resulting file paths in source and output directories
         if test["primary"] =="move":
             src_assets_unchanged = utils.get_relative_file_paths(source_folder)
-            src_unchanged = utils.compare_lists(src_assets_unchanged, src_rel_paths_initial)
+            utils.compare_lists(src_assets_unchanged, src_rel_paths_initial)
             assert src_assets_unchanged.sort() == src_assets_untargeted.sort(), "Asset relocator moved an unexpected asset"
 
             src_assets_changed = utils.get_relative_file_paths(dst_path_root)

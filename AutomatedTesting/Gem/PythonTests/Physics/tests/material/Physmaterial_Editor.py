@@ -104,7 +104,7 @@ class Physmaterial_Editor:
         # type: (str) -> bool
         # Deletes a material from the library
         index = self._find_material_index(material)
-        if index != None:
+        if index is not None:
             self.root[0][1].remove(self.root[0][1][index])
             return True
         else:
@@ -117,7 +117,7 @@ class Physmaterial_Editor:
         index = self._find_material_index(material)
         attribute_index = Physmaterial_Editor._get_attribute_index(attribute)
         formated_value = Physmaterial_Editor._value_formater(value, 'Restitution' == attribute, 'Combine' in attribute)
-        if index != None:
+        if index is not None:
             self.root[0][1][index][0][attribute_index].set('value', formated_value)
             return True
         else:
@@ -132,7 +132,7 @@ class Physmaterial_Editor:
 
     def _set_path(self):
         # type: (str) -> str
-        if self.document_filename == None:
+        if self.document_filename is None:
             self.document_filename = os.path.join(self.project_folder, "assets", "physics", "surfacetypemateriallibrary.physmaterial")
         else:
             for (root, directories, root_files) in os.walk(self.project_folder):

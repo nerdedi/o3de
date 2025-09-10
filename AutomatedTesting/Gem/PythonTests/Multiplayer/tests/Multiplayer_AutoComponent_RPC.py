@@ -25,16 +25,16 @@ def Multiplayer_AutoComponent_RPC():
     Level Description:
     - Dynamic
         1. Although the level is nearly empty, when the server and editor connect the server will spawn and replicate the player network prefab.
-           a. The player network prefab has a NetworkTestPlayerComponent.AutoComponent and a script canvas attached which sends and receives various RPCs.  
-               Print logs occur upon sending and receiving the RPCs; we are testing to make sure the expected events and values are received. 
+           a. The player network prefab has a NetworkTestPlayerComponent.AutoComponent and a script canvas attached which sends and receives various RPCs.
+               Print logs occur upon sending and receiving the RPCs; we are testing to make sure the expected events and values are received.
     - Static
         1. NetLevelEntity. This is a networked entity which has a script attached. Used for cross-entity communication. The net-player prefab will send this level entity Server->Authority RPCs
-    
-                    
+
+
     Expected Outcome:
     We should see editor logs stating that RPCs have been sent and received.
     However, if the script receives unexpected values for the Process event we will see print logs for bad data as well.
-    
+
     :return:
     """
     import azlmbr.legacy.general as general

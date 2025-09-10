@@ -44,9 +44,9 @@ class VegetationTests:
 def TerrainSystem_VegetationSpawnsOnTerrainSurfaces():
     """
     Summary:
-    Load an empty level, 
+    Load an empty level,
     Create two entities with constant gradient components with different values.
-    Create two non-overlapping entities with TerrainLayerSpawners in adjacent 20 m x 20 m boxes. 
+    Create two non-overlapping entities with TerrainLayerSpawners in adjacent 20 m x 20 m boxes.
       Each spawner has a different constant height.
     Create an entity to spawn vegetation in a 20 m x 20 m boxes where 10 m overlaps the first spawner, and 10 m overlaps the second.
     Ensure that vegetation spawns at the correct heights.

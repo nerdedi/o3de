@@ -15,17 +15,17 @@ class Tests():
 
 def run():
     """
-    Summary: 
+    Summary:
     Checks that Tracer and the Trace notification EBus works propoerly.
-    
+
     Level Tracer_WarningEntity:
         Contains an Entity with a Script Canvas component with non-connected nodes.
         When entering into gamemode, Script Canvas should raise a Warning.
-        
+
     Level Tracer_ErrorEntity:
         Contains an Entity with a PhysX Collider Box with invalid extent (0, 1, 1).
         When opening the level, the collider should raise an Error.
-        
+
     """
 
 

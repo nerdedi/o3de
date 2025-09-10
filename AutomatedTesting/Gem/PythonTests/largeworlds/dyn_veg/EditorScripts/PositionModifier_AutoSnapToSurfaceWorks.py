@@ -83,7 +83,7 @@ def PositionModifier_AutoSnapToSurfaceWorks():
         spawner_entity.get_set_test(3, path, 0)
 
     # 3) Create a spherical planting surface
-    hill_entity = dynveg.create_mesh_surface_entity_with_slopes("Planting Surface", spawner_center_point, 5.0)
+    dynveg.create_mesh_surface_entity_with_slopes("Planting Surface", spawner_center_point, 5.0)
 
     # 4) Verify initial instance counts pre-filter
     num_expected = 29

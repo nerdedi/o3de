@@ -19,7 +19,7 @@ def ShaderAssetBuilder_RecompilesShaderAsChainOfDependenciesChanges():
     It creates source assets to compile a particular shader.
     1- The first phase generates the source assets out of order and slowly. The AP should
        wakeup each time one of the source dependencies appears but will fail each time. Only when the
-       last dependency appears then the shader should build successfully. 
+       last dependency appears then the shader should build successfully.
     2- The second phase is similar as above, except that all source assets will be created
        at once and We also expect that in the end the shader is built successfully.
     """

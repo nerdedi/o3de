@@ -362,14 +362,14 @@ def get_script_event_parameter_type_combobox(self):
 
 def located_expected_tracer_lines(self, section_tracer, lines):
     """
-    function for parsing game mode's console output for expected test lines. requires section_tracer. duplicates lines 
+    function for parsing game mode's console output for expected test lines. requires section_tracer. duplicates lines
     and error lines are not handled by this function
-    
+
     param self: The script calling this function
     param section_tracer: python editor tracer object
     param lines: list of expected lines
-    
-    
+
+
     returns true if all the expected lines were detected in the parsed output
     """
     found_lines = [printInfo.message.strip() for printInfo in section_tracer.prints]

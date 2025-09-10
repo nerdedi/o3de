@@ -30,13 +30,16 @@ class Editor_UtilityCommands_Works(BaseClass):
 
         # ----- Test cvar
 
-        compare = lambda lhs, rhs: rhs == float(lhs)
+        def compare(lhs, rhs):
+            return rhs == float(lhs)
         testing_cvar('SetCVarFromFloat', 'SetCVarFromFloat', 'sv_DedicatedCPUVariance', 501.0, compare)
 
-        compare = lambda lhs, rhs: rhs == lhs
+        def compare(lhs, rhs):
+            return rhs == lhs
         testing_cvar('SetCVarFromString', 'SetCVarFromString', 'g_TemporaryLevelName', 'jpg', compare)
 
-        compare = lambda lhs, rhs: rhs == int(lhs)
+        def compare(lhs, rhs):
+            return rhs == int(lhs)
         testing_cvar('SetCVarFromInteger', 'SetCVarFromInteger', 'ed_backgroundUpdatePeriod', 33, compare)
 
         # ----- Test Axis Constraints

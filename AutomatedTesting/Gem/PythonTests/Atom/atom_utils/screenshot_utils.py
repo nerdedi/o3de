@@ -82,7 +82,7 @@ class ScreenshotHelper(object):
 
     def wait_until_screenshot(self):
         frames_waited = 0
-        while self.done == False:
+        while not self.done:
             self.idle_wait_frames_callback(1)
             if frames_waited > self.max_frames_to_wait:
                 general.log("timeout while waiting for the screenshot to be written")

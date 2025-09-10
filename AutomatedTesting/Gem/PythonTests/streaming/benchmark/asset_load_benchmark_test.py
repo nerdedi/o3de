@@ -6,9 +6,9 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
 """
-This file generates automated asset load benchmark timings for different asset loading scenarios.  It uses the launcher 
+This file generates automated asset load benchmark timings for different asset loading scenarios.  It uses the launcher
 so that it can be run on any platform.  The test works as follows:
-- Starts with a series of predefined "benchmarksettings" asset files that are used by the Asset Processor to generate 
+- Starts with a series of predefined "benchmarksettings" asset files that are used by the Asset Processor to generate
   "benchmark" files for loading
 - These get copied to the current project, where AssetProcessor will process them
 - After they're processed, the Launcher is launched and tries to load each set of benchmark assets N times in a row
@@ -47,12 +47,12 @@ logger = logging.getLogger(__name__)
 benchmark_trials = 5
 
 class Benchmark:
-    """ 
+    """
     Data structure used to define the list of benchmark tests we want to run.
-    
-    :attr base_name: The base name of the .benchmarksettings test file. This is also used as 
+
+    :attr base_name: The base name of the .benchmarksettings test file. This is also used as
                      a tag when logging.
-    :attr num_copies: Number of copies to make of the .benchmarksettings test file; the 
+    :attr num_copies: Number of copies to make of the .benchmarksettings test file; the
                       generated .benchmark files will all get loaded separately in parallel.
     :attr load_times: The set of load times that have been captured.
     """
@@ -101,10 +101,10 @@ class TestBenchmarkAssetLoads(object):
             self.run_ap_batch(workspace.asset_processor)
 
     def run_ap_batch(self, asset_processor):
-        """ 
+        """
         Run AssetProcessorBatch to process any changed assets.
-        
-        :param asset_processor: The asset processor object 
+
+        :param asset_processor: The asset processor object
         """
         process_assets_success = asset_processor.batch_process(timeout=600, fastscan=True)
         assert process_assets_success, 'Assets did not process correctly'
@@ -114,7 +114,7 @@ class TestBenchmarkAssetLoads(object):
         return os.path.join(workspace.paths.engine_root(), workspace.project, 'benchmark')
 
     def create_benchmark_assets(self, dest_directory, benchmarks):
-        """ 
+        """
         Create a directory of benchmarksettings assets in the selected project.
 
         :param dest_direcotry: The path of the temporary directory to create the benchmark assets in
@@ -136,7 +136,7 @@ class TestBenchmarkAssetLoads(object):
 
 
     def remove_benchmark_assets(self, dest_directory):
-        """ 
+        """
         Remove the project/benchmark directory that we created.
 
         :param dest_directory: The path to the temp directory that we created the source benchmarks assets in
@@ -200,7 +200,7 @@ class TestBenchmarkAssetLoads(object):
                 f"({benchmark.base_name}_{trial}) - Benchmark run complete.", timeout=remote_command_timeout)
 
     def move_artifact(self, artifact_manager, artifact_name):
-        """ 
+        """
         Move the artifact to our TestResults.
         """
         # Save the artifact to be examined later

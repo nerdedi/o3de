@@ -64,21 +64,21 @@ class PrefabInstance:
 
     def is_valid(self) -> bool:
         """
-        See if this instance is valid to be used with other prefab operations. 
+        See if this instance is valid to be used with other prefab operations.
         :return: Whether the target instance is valid or not.
         """
         return self.container_entity.id.IsValid() and self.prefab_file_path in Prefab.existing_prefabs
 
     def has_editor_prefab_component(self) -> bool:
         """
-        Check if the instance's container entity contains EditorPrefabComponent. 
+        Check if the instance's container entity contains EditorPrefabComponent.
         :return: Whether the container entity of target instance has EditorPrefabComponent in it or not.
         """
         return editor.EditorComponentAPIBus(bus.Broadcast, "HasComponentOfType", self.container_entity.id, azlmbr.globals.property.EditorPrefabComponentTypeId)
 
     def is_at_position(self, expected_position):
         """
-        Check if the instance's container entity is at expected position given. 
+        Check if the instance's container entity is at expected position given.
         :return: Whether the container entity of target instance is at expected position or not.
         """
         actual_position = components.TransformBus(bus.Event, "GetWorldTranslation", self.container_entity.id)
@@ -91,7 +91,7 @@ class PrefabInstance:
 
     async def ui_reparent_prefab_instance(self, parent_entity_id: EntityId):
         """
-        Reparent this instance to target parent entity. 
+        Reparent this instance to target parent entity.
         The function will also check pop up dialog ui in editor to see if there's prefab cyclical dependency error while reparenting prefabs.
         :param parent_entity_id: The id of the entity this instance should be a child of in the transform hierarchy next.
         """
@@ -397,7 +397,7 @@ class Prefab:
         assert instantiate_prefab_result.IsSuccess(), f"Prefab operation 'InstantiatePrefab' failed. Error: {instantiate_prefab_result.GetError()}"
 
         container_entity_id = instantiate_prefab_result.GetValue()
-        container_entity = EditorEntity(container_entity_id)
+        EditorEntity(container_entity_id)
 
         PrefabWaiter.wait_for_propagation()
 

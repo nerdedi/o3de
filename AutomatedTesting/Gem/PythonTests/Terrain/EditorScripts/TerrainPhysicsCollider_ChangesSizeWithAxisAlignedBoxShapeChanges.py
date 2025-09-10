@@ -76,7 +76,7 @@ def TerrainPhysicsCollider_ChangesSizeWithAxisAlignedBoxShapeChanges():
         # 4) Add the Axis Aligned Box Shape and Terrain Physics Heightfield Collider components
         aaBoxShape_component = test_entity.add_component("Axis Aligned Box Shape")
         Report.result(Tests.add_axis_aligned_box_shape, test_entity.has_component("Axis Aligned Box Shape"))
-        terrainPhysics_component = test_entity.add_component("Terrain Physics Heightfield Collider")
+        test_entity.add_component("Terrain Physics Heightfield Collider")
         Report.result(Tests.add_terrain_collider, test_entity.has_component("Terrain Physics Heightfield Collider"))
 
         # 5) Change the Axis Aligned Box Shape dimensions

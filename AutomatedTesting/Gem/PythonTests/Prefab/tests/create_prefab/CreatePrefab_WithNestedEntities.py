@@ -8,7 +8,7 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 def CreatePrefab_WithNestedEntities():
     """
     Test description:
-    - Creates linear nested entities. 
+    - Creates linear nested entities.
     - Creates a prefab from the nested entities.
 
     Test passed if the 3 entities inside the newly instanced prefab have correct hierarchy and positions.

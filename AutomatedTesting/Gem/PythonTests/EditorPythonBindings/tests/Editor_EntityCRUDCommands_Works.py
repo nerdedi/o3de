@@ -38,12 +38,12 @@ class Editor_EntityCRUDCommands_Works(BaseClass):
         # Test SetLockState and IsLocked
 
         queryLock = editor.EditorEntityInfoRequestBus(bus.Event, 'IsLocked', parentEntityId)
-        check_result(queryLock == False, "parentEntityId isn't locked")
+        check_result(not queryLock, "parentEntityId isn't locked")
 
         editor.EditorEntityAPIBus(bus.Event, 'SetLockState', parentEntityId, True)
 
         queryLock = editor.EditorEntityInfoRequestBus(bus.Event, 'IsLocked', parentEntityId)
-        check_result(queryLock == True, "parentEntityId is now locked")
+        check_result(queryLock, "parentEntityId is now locked")
 
         queryLock = editor.EditorEntityInfoRequestBus(bus.Event, 'IsLocked', childEntityId)
         check_result(queryLock, "childEntityId is now locked too")
@@ -54,15 +54,15 @@ class Editor_EntityCRUDCommands_Works(BaseClass):
         check_result(queryVisibility, "parentEntityId is visible")
 
         queryHidden = editor.EditorEntityInfoRequestBus(bus.Event, 'IsHidden', parentEntityId)
-        check_result(queryHidden == False, "parentEntityId isn't hidden")
+        check_result(not queryHidden, "parentEntityId isn't hidden")
 
         editor.EditorEntityAPIBus(bus.Event, 'SetVisibilityState', parentEntityId, False)
 
         queryVisibility = editor.EditorEntityInfoRequestBus(bus.Event, 'IsVisible', parentEntityId)
-        check_result(queryVisibility == False, "parentEntityId is now hidden")
+        check_result(not queryVisibility, "parentEntityId is now hidden")
 
         queryVisibility = editor.EditorEntityInfoRequestBus(bus.Event, 'IsVisible', childEntityId)
-        check_result(queryVisibility == False, "childEntityId is now hidden too")
+        check_result(not queryVisibility, "childEntityId is now hidden too")
 
         # Test EditorOnly
 

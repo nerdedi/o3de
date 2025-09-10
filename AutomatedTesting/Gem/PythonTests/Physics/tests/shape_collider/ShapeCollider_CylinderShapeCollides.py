@@ -33,7 +33,7 @@ def ShapeCollider_CylinderShapeCollides():
     Runs a test to make sure that a PhysX Rigid Body and Cylinder Shape Collider can successfully collide with a PhysX Terrain entity.
 
     Level Description:
-    A cylinder with rigid body and collider is positioned above a PhysX terrain. 
+    A cylinder with rigid body and collider is positioned above a PhysX terrain.
 
     Expected Outcome:
     Once game mode is entered, the cylinder should fall toward and collide with the terrain.

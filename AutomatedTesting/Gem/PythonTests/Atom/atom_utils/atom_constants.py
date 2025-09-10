@@ -405,7 +405,7 @@ class AtomComponentProperties:
                Exponential: f = 1/exp(d * density)
                ExponentialSquared: f = 1/exp((d * density)^2)
           - 'Fog Density': Density control for Exponential and ExponentialSquared modes.
-          - 'Fog Density Clamp': The maximum density that the fog can reach. 
+          - 'Fog Density Clamp': The maximum density that the fog can reach.
         :param property: From the last element of the property tree path. Default 'name' for component name string.
         :return: Full property path OR component name if no property specified.
         """

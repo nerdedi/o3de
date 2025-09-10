@@ -861,7 +861,7 @@ class TestsFBX_AllPlatforms(object):
 
         """
 
-        if blackbox_param == None:
+        if blackbox_param is None:
             return
         self.run_fbx_test(workspace, ap_setup_fixture, asset_processor, project, blackbox_param)
 
@@ -878,7 +878,7 @@ class TestsFBX_AllPlatforms(object):
         2. Re-run FBX test and validate the information in override assets
         """
 
-        if blackbox_param == None:
+        if blackbox_param is None:
             return
         self.run_fbx_test(workspace, ap_setup_fixture,
                           asset_processor, project, blackbox_param)
@@ -940,7 +940,7 @@ class TestsFBX_AllPlatforms(object):
         diff_actual, diff_expected = utils.get_differences_between_lists(diff_actual, diff_expected)
 
         # If both lists are now empty, then the only differences between the two scene files were floating point drift.
-        if (diff_actual == None and diff_expected == None) or (len(diff_actual) == 0 and len(diff_actual) == 0):
+        if (diff_actual is None and diff_expected is None) or (len(diff_actual) == 0 and len(diff_actual) == 0):
             warnings.warn(f"Floating point drift detected between {expected_file_path} and {actual_file_path}.")
             return diff_actual, diff_expected
 
@@ -1026,7 +1026,7 @@ class TestsFBX_AllPlatforms(object):
         hashes_removed_diffs_identical = utils.compare_lists(diff_actual_hashes_removed, diff_expected_hashes_removed)
 
         # If, after removing all of the hash values, the lists are now identical, emit a warning.
-        if hashes_removed_diffs_identical == True:
+        if hashes_removed_diffs_identical:
             warnings.warn(f"Hash values no longer match for debug scene graph between files {expected_file_path} and {actual_file_path}")
 
         return expected_hashes, actual_hashes
@@ -1049,7 +1049,7 @@ class TestsFBX_AllPlatforms(object):
         with open(expected_debug_graph_path, "r") as scene_file:
             expected_lines = scene_file.readlines()
         diff_actual, diff_expected = utils.get_differences_between_lists(actual_lines, expected_lines)
-        if diff_actual == None and diff_expected == None:
+        if diff_actual is None and diff_expected is None:
             return None, None
 
         # There are some differences that are currently considered warnings.

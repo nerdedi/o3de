@@ -27,16 +27,16 @@ def Multiplayer_AutoComponent_NetworkInput():
     Level Description:
     - Dynamic
         1. Although the level is empty, when the server and editor connect the server will spawn and replicate the player network prefab.
-           a. The player network prefab has a NetworkTestPlayerComponent.AutoComponent and a script canvas attached which will listen for the CreateInput and ProcessInput events.  
-               Print logs occur upon triggering the CreateInput and ProcessInput events along with their values; we are testing to make sure the expected events are values are recieved. 
+           a. The player network prefab has a NetworkTestPlayerComponent.AutoComponent and a script canvas attached which will listen for the CreateInput and ProcessInput events.
+               Print logs occur upon triggering the CreateInput and ProcessInput events along with their values; we are testing to make sure the expected events are values are recieved.
     - Static
         1. This is an empty level. All the logic occurs on the Player.network.spawnable (see the above Dynamic description)
-    
-                    
+
+
     Expected Outcome:
     We should see editor logs stating that network input has been created and processed.
     However, if the script receives unexpected values for the Process event we will see print logs for bad data as well.
-    
+
     :return:
     """
     import azlmbr.legacy.general as general

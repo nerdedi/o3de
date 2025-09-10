@@ -26,7 +26,7 @@ def Scene_Settings_Tests_Max_Prefab_Groups_Is_One():
         PREFAB_BUTTON_INDEX = 3
         add_button = add_buttons[PREFAB_BUTTON_INDEX]
 
-        Report.critical_result(tm.Test_Messages.scene_settings_add_button_initially_disabled, add_button.isEnabled() == False)
+        Report.critical_result(tm.Test_Messages.scene_settings_add_button_initially_disabled, not add_button.isEnabled())
 
         # Find the default prefab group and delete it
         ui_headers = widget_main_window.findChildren(QtWidgets.QWidget, "AZ__SceneAPI__UI__HeaderWidget")
@@ -40,12 +40,12 @@ def Scene_Settings_Tests_Max_Prefab_Groups_Is_One():
         # Briefly pause so all events get posted
         PREFAB_BUTTON_WAIT_TIMEOUT = 30
         await pyside_utils.wait_for_condition(lambda: add_button.isEnabled(), timeout=PREFAB_BUTTON_WAIT_TIMEOUT)
-        Report.critical_result(tm.Test_Messages.scene_settings_add_button_enabled, add_button.isEnabled() == True)
+        Report.critical_result(tm.Test_Messages.scene_settings_add_button_enabled, add_button.isEnabled())
 
         add_button.click()
         # Briefly pause so all events get posted
-        await pyside_utils.wait_for_condition(lambda: add_button.isEnabled() == False, timeout=PREFAB_BUTTON_WAIT_TIMEOUT)
-        Report.critical_result(tm.Test_Messages.scene_settings_add_button_disabled_after_adding, add_button.isEnabled() == False)
+        await pyside_utils.wait_for_condition(lambda: not add_button.isEnabled(), timeout=PREFAB_BUTTON_WAIT_TIMEOUT)
+        Report.critical_result(tm.Test_Messages.scene_settings_add_button_disabled_after_adding, not add_button.isEnabled())
 
         scene_test_helpers.save_and_verify_manifest(path_to_manifest, widget_main_window)
         widget_main_window.close()

@@ -92,7 +92,7 @@ def AssetBrowser_SearchFiltering():
         else:
             Report.info("Asset Browser is already open")
         editor_window = pyside_utils.get_editor_main_window()
-        app = QtWidgets.QApplication.instance()
+        QtWidgets.QApplication.instance()
 
         # 3) Switch to list view, type the name of an asset in the search bar and make sure it is filtered to and selectable
         asset_browser = editor_window.findChild(QtWidgets.QDockWidget, "Asset Browser")

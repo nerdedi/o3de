@@ -47,12 +47,12 @@ def PhysX_Primitive_Collider_Component_CRUD():
     from consts.physics import PHYSX_PRIMITIVE_COLLIDER
 
     # 0) Pre-conditions
-    physx_material = os.path.join("physx", "glass.physxmaterial")
+    os.path.join("physx", "glass.physxmaterial")
 
     TestHelper.init_idle()
     TestHelper.open_level("", "Base")
 
-    with Tracer() as section_tracer:
+    with Tracer():
     # 1 ) Add an Entity to manipulate
         phsyx_collider_entity = EditorEntity.create_editor_entity("TestEntity")
 

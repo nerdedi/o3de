@@ -315,7 +315,7 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
     def test_TwoAssetsWithSameProductName_ShouldProcessAfterRename(self, asset_processor, ap_setup_fixture):
         """
         GHI - https://github.com/o3de/o3de/issues/15250
-        
+
         Tests processing of two assets with the same product name, then verifies that AP will successfully process after
         renaming one of the assets' outputs.
 
@@ -331,7 +331,7 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
 
         def run_ap_reprocess_and_skip_atom_output(asset_processor):
             source_folder = asset_processor.project_test_source_folder()
-            reprocess_file_list = [os.path.join(source_folder, "a.fbx"),
+            [os.path.join(source_folder, "a.fbx"),
                                    os.path.join(source_folder, "b.fbx")]
 
             result, output = asset_processor.batch_process(capture_output=True,
@@ -347,7 +347,7 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
 
         # Launching AP, verify it is failing
         result, output = run_ap_reprocess_and_skip_atom_output(asset_processor)
-        assert result == False, \
+        assert not result, \
             'AssetProcessorBatch should have failed because the generated output products should share the same name.'
 
         # Renaming output files so they won't collide in cache after second processing
@@ -545,7 +545,6 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         3. Verify that a full analysis is performed
         """
         # fmt:on
-        env = ap_setup_fixture
         asset_processor.create_temp_asset_root()
         success, output = asset_processor.batch_process(capture_output=True)
         log = APOutputParser(output)
@@ -723,7 +722,7 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
     def test_AssetProcessor_Log_On_Failure(self, asset_processor, ap_setup_fixture, workspace):
         asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "test_AP_Logs")
         result, output = asset_processor.batch_process(expect_failure=True, capture_output=True)
-        assert result == False, f'AssetProcessorBatch should have failed because there is a bad asset, output was {output}'
+        assert not result, f'AssetProcessorBatch should have failed because there is a bad asset, output was {output}'
 
         jobLogs = listdir(workspace.paths.ap_job_logs() + "/test_AP_Logs")
         assert not len(jobLogs) == 0, 'No job logs where output during failure.'

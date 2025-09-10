@@ -55,29 +55,29 @@ def Physics_WorldBodyBusWorksOnEditorComponents():
 
     Level Description:
     - Dynamic
-        - Sphere: Sphere with Rigid body 
+        - Sphere: Sphere with Rigid body
         - Box: Box with Rigid body
         - Capsule: Capsule with Rigid body
         - Mesh: Sedan car Mesh with Rigid body
         - ShapeBox: Shape Collider component + Box with rigidBody
     - Static
-        - StaticSphere: Sphere with only Coollider component 
+        - StaticSphere: Sphere with only Coollider component
         - StaticBox: Box with only Coollider component
         - StaticCapsule: Capsule with only Coollider component
         - StaticMesh: Sedan car Mesh with only Coollider component
         - StaticShapeBox: Only Shape Collider component + Box
-    
+
     TopDown view:
                                                                   ____
           [!]               o          [ ]           ( )         (____)
-       ShapeBox           Sphere       Box         Capsule        Mesh 
+       ShapeBox           Sphere       Box         Capsule        Mesh
                                                                   ____
           [!]               o          [ ]           ( )         (____)
-     StaticShapeBox    StaticSphere  StaticBox   StaticCapsule  StaticMesh 
-                    
+     StaticShapeBox    StaticSphere  StaticBox   StaticCapsule  StaticMesh
+
     Expected Outcome:
     Checks AABB and RayCast functions of WorldBodyBus against the All the entities in the level
-    
+
     :return:
     """
     import azlmbr.legacy.general as general

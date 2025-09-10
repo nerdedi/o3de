@@ -29,13 +29,16 @@ class Editor_UtilityCommandsLegacy_Works(BaseClass):
 
         # ----- Test cvar
 
-        compare = lambda lhs, rhs: rhs == float(lhs)
+        def compare(lhs, rhs):
+            return rhs == float(lhs)
         testing_cvar_legacy(azlmbr.legacy.general.set_cvar_float, 'set_cvar_float', 'sv_DedicatedCPUVariance', 10.1, compare)
 
-        compare = lambda lhs, rhs: rhs == lhs
+        def compare(lhs, rhs):
+            return rhs == lhs
         testing_cvar_legacy(azlmbr.legacy.general.set_cvar_string, 'set_cvar_string', 'g_TemporaryLevelName', 'jpg', compare)
 
-        compare = lambda lhs, rhs: rhs == int(lhs)
+        def compare(lhs, rhs):
+            return rhs == int(lhs)
         testing_cvar_legacy(azlmbr.legacy.general.set_cvar_integer, 'set_cvar_integer', 'ed_backgroundUpdatePeriod', 33, compare)
 
         # ----- Test Axis Constraints

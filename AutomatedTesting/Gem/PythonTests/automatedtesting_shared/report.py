@@ -27,7 +27,7 @@ class Report:
     def result(success_message: str, condition: bool) -> None:
         """
         This would be used for expecting a True output on some condition
-        Example: 
+        Example:
             level_loaded = EditorTestHelper.open_level("Example")
             Report.result("Example level loaded successfully", level_loaded)
         """

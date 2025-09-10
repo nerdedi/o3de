@@ -10,10 +10,10 @@ def DeletePrefab_UnderNestedInstance():
     Test description:
     - Focuses on the "First_Car" instance.
     - Deletes the "Tire_Prefab" instance of the "Front_Wheel" under "First_Car".
-    - Checks that there are 2 "Tire_Prefab" and 2 "Tire_Entity" and the deleted 
+    - Checks that there are 2 "Tire_Prefab" and 2 "Tire_Entity" and the deleted
       instances are only in the "Front_Wheel" under both car instances.
     - Checks undo/redo correctness.
-    - Checks that the deleted "Tire_Prefab" (and "Tire_Entity") should re-appear 
+    - Checks that the deleted "Tire_Prefab" (and "Tire_Entity") should re-appear
       after focusing on its owning instance (i.e. "Front_Wheel") in "First_Car".
 
     Hierarchy:

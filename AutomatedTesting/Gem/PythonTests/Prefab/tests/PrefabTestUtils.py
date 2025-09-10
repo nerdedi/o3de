@@ -26,11 +26,11 @@ def get_linear_nested_items_name(nested_items_name_prefix, current_level):
 
 def create_linear_nested_entities(nested_entities_name_prefix, level_count, pos, parent_id=None):
     """
-    This is a helper function which helps create nested entities 
+    This is a helper function which helps create nested entities
     where each nested entity has only one child entity at most. For example:
 
     Entity_0
-    |- Entity_1 
+    |- Entity_1
     |  |- Entity_2
     ...
 
@@ -95,11 +95,11 @@ def validate_linear_nested_entities(nested_entities_root, expected_level_count, 
 
 def create_linear_nested_prefabs(entities, nested_prefabs_file_name_prefix, nested_prefabs_instance_name_prefix, level_count):
     """
-    This is a helper function which helps create nested prefabs 
+    This is a helper function which helps create nested prefabs
     where each nested prefab has only one child prefab at most. For example:
 
     Prefab_0
-    |- Prefab_1 
+    |- Prefab_1
     |  |- Prefab_2
     |  |  |- TestEntity
     ...
@@ -135,7 +135,7 @@ def create_linear_nested_prefabs(entities, nested_prefabs_file_name_prefix, nest
 
 def validate_linear_nested_prefab_instances_hierarchy(nested_prefab_instances):
     """
-    This is a helper function which helps validate linear nested prefabs 
+    This is a helper function which helps validate linear nested prefabs
     created by helper function create_linear_nested_prefabs.
 
     :param nested_prefab_instances: A list of nested prefab instances created by create_linear_nested_prefabs. Ordered from top to bottom.
@@ -147,7 +147,6 @@ def validate_linear_nested_prefab_instances_hierarchy(nested_prefab_instances):
     assert nested_prefab_instances_root.container_entity.get_parent_id().IsValid(), \
         "Root of nested prefabs should have a valid parent entity"
 
-    parent_prefab_instance = nested_prefab_instances_root
     for current_level in range(0, len(nested_prefab_instances) - 1):
         current_prefab_instance = nested_prefab_instances[current_level]
         current_prefab_instance_container_entity = current_prefab_instance.container_entity

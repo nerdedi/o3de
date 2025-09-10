@@ -92,7 +92,7 @@ class BenchmarkHelper(object):
 
     def wait_until_data(self):
         frames_waited = 0
-        while self.done == False:
+        while not self.done:
             general.idle_wait_frames(1)
             if frames_waited > self.max_frames_to_wait:
                 general.log('Timed out while waiting for the data to be captured')

@@ -432,7 +432,7 @@ def get_editor_settings_by_path(path):
 def set_editor_settings_by_path(path, value, is_bool = False):
     """
     Set the value of Editor Settings based on the path.
-    # NOTE: Some Editor Settings may need an Editor restart to apply. 
+    # NOTE: Some Editor Settings may need an Editor restart to apply.
     # Ex: Enabling or disabling New Viewport Interaction Model
     :param path: path to the Editor Settings to get the value
     :param value: value to be set

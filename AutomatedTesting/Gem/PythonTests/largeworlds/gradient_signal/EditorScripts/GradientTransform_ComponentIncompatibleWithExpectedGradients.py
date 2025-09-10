@@ -86,7 +86,6 @@ def GradientTransform_ComponentIncompatibleWithExpectedGradients():
         "Slope Gradient",
         "Surface Mask Gradient",
     ]
-    new_components_enabled = False
     for component in new_components_to_add:
         gradient.components.append(hydra.add_component(component, gradient_id))
         gradient_components_disabled = (

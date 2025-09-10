@@ -107,7 +107,7 @@ class TestsPythonAssetProcessing_APBatch(object):
 
         # compute the file name to the debug file
         asset_debug_filename = os.path.join(cache_folder, debug_filename)
-        if os.path.isfile(asset_debug_filename) == False:
+        if not os.path.isfile(asset_debug_filename):
             raise Exception(f"Missing file {asset_debug_filename}")
 
         return asset_debug_filename

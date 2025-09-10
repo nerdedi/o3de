@@ -9,7 +9,7 @@ def CreatePrefab_UnderAnotherPrefab():
     """
     Test description:
     - Creates an entity with a physx collider
-    - Creates a prefab "Outer_prefab" and an instance based of that entity 
+    - Creates a prefab "Outer_prefab" and an instance based of that entity
     - Creates a prefab "Inner_prefab" inside "Outer_prefab" based the entity contained inside of it
     Checks that the entity is correctly handled by the prefab system checking the name and that it contains the physx collider
     """

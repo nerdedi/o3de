@@ -31,7 +31,7 @@ def NvCloth_AddClothSimulationToActor():
      5) Verify there are no errors and warnings in the logs
      6) Exit game mode
      7) Close the editor
-     
+
     Note:
     At the time of writing this test it was not possible to set a component property
     with a dropdown, which is necessary to setup a Cloth component. Because of this limitation

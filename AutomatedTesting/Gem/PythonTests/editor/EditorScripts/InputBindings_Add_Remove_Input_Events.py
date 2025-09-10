@@ -88,7 +88,7 @@ def InputBindings_Add_Remove_Input_Events():
 
         # 3) Access Asset Editor
         editor_window = pyside_utils.get_editor_main_window()
-        app = QtWidgets.QApplication.instance()
+        QtWidgets.QApplication.instance()
         asset_editor = editor_window.findChild(QtWidgets.QDockWidget, "Asset Editor")
         asset_editor_widget = asset_editor.findChild(QtWidgets.QWidget, "m_assetEditorWidget")
 

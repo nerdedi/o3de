@@ -89,7 +89,7 @@ def TerrainHeightGradientList_AddRemoveGradientWorks():
     general.idle_wait_frames(1)
 
     # Add a terrain world component
-    world_component = hydra.add_level_component("Terrain World")
+    hydra.add_level_component("Terrain World")
 
     aabb_height = 1024.0
     box_dimensions = math.Vector3(1.0, 1.0, aabb_height)

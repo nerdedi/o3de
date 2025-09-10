@@ -71,7 +71,7 @@ def LayerSpawner_FilterStageToggle():
 
     # Add entity with Mesh to replicate creation of hills and a flat surface to plant on
     dynveg.create_surface_entity("Flat Surface", position, 32.0, 32.0, 1.0)
-    hill_entity = dynveg.create_mesh_surface_entity_with_slopes("hill", position, 4.0)
+    dynveg.create_mesh_surface_entity_with_slopes("hill", position, 4.0)
 
     # Set the filter stage to preprocess and postprocess respectively and verify instance count
     vegetation_entity.get_set_test(0, "Configuration|Filter Stage", 1)

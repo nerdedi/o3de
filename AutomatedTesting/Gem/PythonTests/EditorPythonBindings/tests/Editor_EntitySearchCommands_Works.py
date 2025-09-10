@@ -24,7 +24,7 @@ class Editor_EntitySearchCommands_Works(BaseClass):
 
         # Save Root Entities and Total Entity number
         root = entity.SearchBus(bus.Broadcast, 'GetRootEditorEntities')
-        rootNum = len(root)
+        len(root)
 
         all = entity.SearchBus(bus.Broadcast, 'SearchEntities', entity.SearchFilter())
         allNum = len(all)
@@ -55,12 +55,12 @@ class Editor_EntitySearchCommands_Works(BaseClass):
         streetId = CreateEntity('Street', cityId)
         carId1 = CreateEntity('Car', streetId)
         passengerId1 = CreateEntity('Passenger', carId1)
-        passengerId2 = CreateEntity('Passenger', carId1)
+        CreateEntity('Passenger', carId1)
         carId2 = CreateEntity('Car', streetId)
         passengerId3 = CreateEntity('Passenger', carId2)
         sportsCarId = CreateEntity('SportsCar', streetId)
         passengerId4 = CreateEntity('Passenger', sportsCarId)
-        passengerId5 = CreateEntity('Passenger', sportsCarId)
+        CreateEntity('Passenger', sportsCarId)
 
         # Components
         typeNameList = ["Comment", "Actor"]

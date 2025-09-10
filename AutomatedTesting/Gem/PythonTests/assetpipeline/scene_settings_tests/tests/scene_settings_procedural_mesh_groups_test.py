@@ -94,7 +94,7 @@ def Scene_Settings_Procedural_Mesh_Groups_Test():
             name_mesh_labels = widget_main_window.findChildren(QtWidgets.QFrame, "Name mesh")
             for name_mesh_label in name_mesh_labels:
                 mesh_name_line_edit = name_mesh_label.findChild(QtWidgets.QLineEdit, "")
-                if mesh_name_line_edit != None:
+                if mesh_name_line_edit is not None:
                     new_found_mesh_names.append(mesh_name_line_edit.text())
                     Report.critical_result(tm.Test_Messages.scene_settings_base_mesh_group_enabled, mesh_name_line_edit.isEnabled())
 

@@ -37,14 +37,14 @@ class Editor_ComponentPropertyCommands_visibility(BaseClass):
         check_result(pteObj.IsSuccess(), "Created a PropertyTreeEditor for the Mesh component")
         pte = pteObj.GetValue()
 
-        paths = pte.build_paths_list_with_types()
+        pte.build_paths_list_with_types()
 
         # test for visibility (default all nodes are exposed)
         check_result(pte.get_value('Controller|Configuration|Model Asset').IsSuccess(), "Found property hidden node in path")
 
         # enable visibility enforcement
         pte.set_visible_enforcement(True)
-        paths = pte.build_paths_list_with_types()
+        pte.build_paths_list_with_types()
         check_result(pte.get_value('Controller|Configuration|Model Asset').IsSuccess() is not True, "Property Controller|Configuration| is now a hidden path")
 
         # test for visibility (missing some property paths parts now)

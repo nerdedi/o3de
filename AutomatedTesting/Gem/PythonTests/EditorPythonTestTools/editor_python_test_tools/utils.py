@@ -132,9 +132,9 @@ class TestHelper:
     def find_line(window, line, print_infos):
         """
         Looks for an expected line in a list of tracer log lines
-        :param window: The log's window name. For example, logs printed via script-canvas use the "Script" window. 
-        :param line: The log message to search for. 
-        :param print_infos: A list of PrintInfos collected by Tracer to search. Example options: your_tracer.warnings, your_tracer.errors, your_tracer.asserts, or your_tracer.prints 
+        :param window: The log's window name. For example, logs printed via script-canvas use the "Script" window.
+        :param line: The log message to search for.
+        :param print_infos: A list of PrintInfos collected by Tracer to search. Example options: your_tracer.warnings, your_tracer.errors, your_tracer.asserts, or your_tracer.prints
 
         :return: True if the line is found, otherwise false.
         """
@@ -147,9 +147,9 @@ class TestHelper:
     def succeed_if_log_line_found(window, line, print_infos, time_out):
         """
         Looks for a line in a list of tracer log lines and reports success if found.
-        :param window: The log's window name. For example, logs printed via script-canvas use the "Script" window. 
+        :param window: The log's window name. For example, logs printed via script-canvas use the "Script" window.
         :param line: The log message we're hoping to find.
-        :param print_infos: A list of PrintInfos collected by Tracer to search. Example options: your_tracer.warnings, your_tracer.errors, your_tracer.asserts, or your_tracer.prints 
+        :param print_infos: A list of PrintInfos collected by Tracer to search. Example options: your_tracer.warnings, your_tracer.errors, your_tracer.asserts, or your_tracer.prints
         :param time_out: The total amount of time to wait before giving up looking for the expected line.
 
         :return: No return value, but if the message is found, a successful critical result is reported; otherwise failure.
@@ -161,9 +161,9 @@ class TestHelper:
     def fail_if_log_line_found(window, line, print_infos, time_out):
         """
         Reports a failure if a log line in a list of tracer log lines is found.
-        :param window: The log's window name. For example, logs printed via script-canvas use the "Script" window. 
+        :param window: The log's window name. For example, logs printed via script-canvas use the "Script" window.
         :param line: The log message we're hoping to not find.
-        :param print_infos: A list of PrintInfos collected by Tracer to search. Example options: your_tracer.warnings, your_tracer.errors, your_tracer.asserts, or your_tracer.prints 
+        :param print_infos: A list of PrintInfos collected by Tracer to search. Example options: your_tracer.warnings, your_tracer.errors, your_tracer.asserts, or your_tracer.prints
         :param time_out: The total amount of time to wait before giving up looking for the unexpected line. If time runs out and we don't see the unexpected line then report a success.
 
         :return: No return value, but if the line is found, a failed critical result is reported; otherwise success.

@@ -25,7 +25,7 @@ EVENT_NAME_QT = "EventName"
 NODE_TEST_METHOD = "test_method_name"
 
 """
-specific path constant. Move this file path to the associated test 
+specific path constant. Move this file path to the associated test
 """
 SCRIPT_EVENT_FILE_PATH = os.path.join(paths.projectroot, "ScriptCanvas", "test_file.scriptevent")
 

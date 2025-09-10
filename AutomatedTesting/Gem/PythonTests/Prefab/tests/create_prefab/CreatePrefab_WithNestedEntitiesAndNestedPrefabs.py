@@ -8,11 +8,11 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 def CreatePrefab_WithNestedEntitiesAndNestedPrefabs():
     """
     Test description:
-    - Creates linear nested entities. 
+    - Creates linear nested entities.
     - Creates linear nested prefabs based of an entity with a physx collider.
     - Creates a prefab from the nested entities and the nested prefabs.
 
-    Test passed if the the nested entities/prefabs under the newly instanced prefab 
+    Test passed if the the nested entities/prefabs under the newly instanced prefab
     have correct hierarchy and positions.
     """
 
@@ -23,7 +23,7 @@ def CreatePrefab_WithNestedEntitiesAndNestedPrefabs():
     from consts.physics import PHYSX_PRIMITIVE_COLLIDER as PHYSX_PRIMITIVE_COLLIDER_NAME
     import Prefab.tests.PrefabTestUtils as prefab_test_utils
 
-    NESTED_ENTITIES_PREFAB_FILE_NAME = Path(__file__).stem + '_' + 'nested_entities_prefab'
+    Path(__file__).stem + '_' + 'nested_entities_prefab'
     NESTED_ENTITIES_NAME_PREFIX = 'Entity_'
     NESTED_PREFABS_FILE_NAME_PREFIX = Path(__file__).stem + '_' + 'nested_prefabs_'
     NESTED_PREFABS_NAME_PREFIX = 'NestedPrefabs_Prefab_'

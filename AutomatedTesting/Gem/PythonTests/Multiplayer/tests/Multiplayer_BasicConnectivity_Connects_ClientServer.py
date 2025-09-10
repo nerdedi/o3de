@@ -27,10 +27,10 @@ def Multiplayer_BasicConnectivity_Connects_ClientServer():
         1. Although the level is empty, when the server and editor connect the server will spawn the player prefab.
     - Static
         1. This is an empty level.
-                    
+
     Expected Outcome:
     We should see the player connect and spawn with no errors.
-    
+
     :return:
     """
     import azlmbr.legacy.general as general

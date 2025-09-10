@@ -8,7 +8,7 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 def DeletePrefab_ContainingNestedEntitiesAndNestedPrefabs():
     """
     Test description:
-    - Creates linear nested entities. 
+    - Creates linear nested entities.
     - Creates linear nested prefabs based of an entity with a physx collider.
     - Creates a prefab from the nested entities and the nested prefabs.
     - Deletes the prefab.
@@ -26,7 +26,7 @@ def DeletePrefab_ContainingNestedEntitiesAndNestedPrefabs():
     from consts.physics import PHYSX_PRIMITIVE_COLLIDER as PHYSX_PRIMITIVE_COLLIDER_NAME
     import Prefab.tests.PrefabTestUtils as prefab_test_utils
 
-    NESTED_ENTITIES_PREFAB_FILE_NAME = Path(__file__).stem + '_' + 'nested_entities_prefab'
+    Path(__file__).stem + '_' + 'nested_entities_prefab'
     NESTED_ENTITIES_NAME_PREFIX = 'Entity_'
     NESTED_PREFABS_FILE_NAME_PREFIX = Path(__file__).stem + '_' + 'nested_prefabs_'
     NESTED_PREFABS_NAME_PREFIX = 'NestedPrefabs_Prefab_'
@@ -42,7 +42,7 @@ def DeletePrefab_ContainingNestedEntitiesAndNestedPrefabs():
     # Asserts if creation didn't succeed
     nested_entities_root = prefab_test_utils.create_linear_nested_entities(
         NESTED_ENTITIES_NAME_PREFIX, NUM_NESTED_ENTITIES_LEVELS, CREATION_POSITION)
-    nested_entities_root_parent = nested_entities_root.get_parent_id()
+    nested_entities_root.get_parent_id()
     prefab_test_utils.validate_linear_nested_entities(nested_entities_root, NUM_NESTED_ENTITIES_LEVELS, CREATION_POSITION)
     nested_entities_root_name = nested_entities_root.get_name()
 

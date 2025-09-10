@@ -42,7 +42,7 @@ def ScriptCanvas_OverlapNode():
         script starts and verifies each case one by one.
 
     Level Description:
-    Test Array - 8x8 array of sphere entities lined up edge to edge along an y-z plane, they are names with 
+    Test Array - 8x8 array of sphere entities lined up edge to edge along an y-z plane, they are names with
         'Sphere_row_column' convention; has PhysX rigid body, sphere shaped PhysX collider, sphere shape.
     Comm From Test- 3 communication entities that start inactive, used by the test script to initiate each of the three cases
         by activation of the relevent sphere; has sphere shape.

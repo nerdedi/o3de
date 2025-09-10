@@ -111,7 +111,7 @@ def TerrainMacroMaterialComponent_MacroMaterialActivates():
 
     # Check we don't receive a callback. The macro material component should be inactive as it has no images assigned.
     general.idle_wait_frames(1)
-    Report.result(MacroMaterialTests.material_changed_not_called_when_inactive, material_region_changed_called == False)
+    Report.result(MacroMaterialTests.material_changed_not_called_when_inactive, not material_region_changed_called)
 
      # Find the macro material component.
     macro_material_id_type = azlmbr.editor.EditorComponentAPIBus(azlmbr.bus.Broadcast, 'FindComponentTypeIdsByEntityType', ["Terrain Macro Material"], 0)[0]
@@ -126,7 +126,7 @@ def TerrainMacroMaterialComponent_MacroMaterialActivates():
     color_texture_path = "Configuration|Color Texture"
     editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", macro_material_component_id, color_texture_path, color_image_asset)
 
-    call_result = helper.wait_for_condition(lambda: material_created_called == True, 2.0)
+    call_result = helper.wait_for_condition(lambda: material_created_called, 2.0)
     Report.result(MacroMaterialTests.material_created, call_result)
 
     # Find a normal image asset.
@@ -140,10 +140,10 @@ def TerrainMacroMaterialComponent_MacroMaterialActivates():
     editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", macro_material_component_id, normal_texture_path, normal_image_asset)
 
     # Check the MacroMaterial was destroyed and recreated.
-    destroyed_call_result = helper.wait_for_condition(lambda: material_destroyed_called == True, 2.0)
+    destroyed_call_result = helper.wait_for_condition(lambda: material_destroyed_called, 2.0)
     Report.result(MacroMaterialTests.material_destroyed, destroyed_call_result)
 
-    recreated_call_result = helper.wait_for_condition(lambda: material_created_called == True, 2.0)
+    recreated_call_result = helper.wait_for_condition(lambda: material_created_called, 2.0)
     Report.result(MacroMaterialTests.material_recreated, recreated_call_result)
 
     # Change the aabb dimensions.
@@ -151,7 +151,7 @@ def TerrainMacroMaterialComponent_MacroMaterialActivates():
     editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", aabb_component_id, box_dimensions_path, math.Vector3(1.0, 1.0, 1.0))
 
     # Check that a callback is received.
-    region_changed_call_result = helper.wait_for_condition(lambda: material_region_changed_called == True, 2.0)
+    region_changed_call_result = helper.wait_for_condition(lambda: material_region_changed_called, 2.0)
     Report.result(MacroMaterialTests.material_changed_call_on_aabb_change, region_changed_call_result)
 
 

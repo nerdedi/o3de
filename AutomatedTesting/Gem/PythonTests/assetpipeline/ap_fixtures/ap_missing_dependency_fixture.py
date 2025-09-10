@@ -25,7 +25,6 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def ap_missing_dependency_fixture(request, workspace, ap_setup_fixture) -> Any:
-    ap_setup = ap_setup_fixture
 
     class MissingDependencyHelper:
         def __init__(self):

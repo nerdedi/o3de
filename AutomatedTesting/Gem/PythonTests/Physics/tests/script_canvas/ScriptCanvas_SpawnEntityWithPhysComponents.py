@@ -57,7 +57,6 @@ def ScriptCanvas_SpawnEntityWithPhysComponents():
 
     :return: None
     """
-    import sys
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
 
@@ -66,7 +65,6 @@ def ScriptCanvas_SpawnEntityWithPhysComponents():
     import azlmbr.entity
 
     # Constants
-    FLOAT_THRESHOLD = sys.float_info.epsilon
     TIMEOUT = 3.0
 
     # Global Variables

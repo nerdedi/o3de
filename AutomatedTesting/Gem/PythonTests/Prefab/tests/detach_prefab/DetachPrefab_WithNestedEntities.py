@@ -33,7 +33,7 @@ def DetachPrefab_WithNestedEntities():
         # Creates new nested entities at the root level. Asserts if creation didn't succeed
         nested_entities_root = prefab_test_utils.create_linear_nested_entities(NESTED_ENTITIES_NAME_PREFIX,
                                                                                NUM_NESTED_ENTITIES_LEVELS, POSITION)
-        level_entity = nested_entities_root.get_parent_id()
+        nested_entities_root.get_parent_id()
         prefab_test_utils.validate_linear_nested_entities(nested_entities_root, NUM_NESTED_ENTITIES_LEVELS,
                                                           POSITION)
 

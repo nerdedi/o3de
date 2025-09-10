@@ -60,9 +60,9 @@ def Tick_CharacterGameplayComponentMotionIsSmooth():
         azlmbr.bus.Event, "SetWorldTranslation", test_entity.id, math.Vector3(0.0, 0.0, 0.0))
 
     # 3) Add character controller and character gameplay components
-    character_controller_component = test_entity.add_component("PhysX Character Controller")
+    test_entity.add_component("PhysX Character Controller")
     Report.result(Tests.character_controller_added, test_entity.has_component("PhysX Character Controller"))
-    character_gameplay_component = test_entity.add_component("PhysX Character Gameplay")
+    test_entity.add_component("PhysX Character Gameplay")
     Report.result(Tests.character_gameplay_added, test_entity.has_component("PhysX Character Gameplay"))
 
     # 4) Enter game mode and collect data for the rigid body's z co-ordinate and the time values for a series of frames

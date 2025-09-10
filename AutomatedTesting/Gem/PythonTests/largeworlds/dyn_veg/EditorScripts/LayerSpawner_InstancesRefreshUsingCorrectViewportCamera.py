@@ -94,17 +94,17 @@ def LayerSpawner_InstancesRefreshUsingCorrectViewportCamera():
     general.set_current_view_rotation(-85.0, 0.0, 0.0)
 
     # Create the "flat surface" entities to use as our vegetation surfaces
-    first_surface_entity = dynveg.create_surface_entity("Surface 1", first_entity_center_point, box_size, box_size,
+    dynveg.create_surface_entity("Surface 1", first_entity_center_point, box_size, box_size,
                                                         surface_height)
-    second_surface_entity = dynveg.create_surface_entity("Surface 2", second_entity_center_point, box_size, box_size,
+    dynveg.create_surface_entity("Surface 2", second_entity_center_point, box_size, box_size,
                                                          surface_height)
 
     # Create the two vegetation areas
     pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
     pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "SpawnerViewportRefresh_PinkFlower")[0]
-    first_veg_entity = dynveg.create_temp_prefab_vegetation_area("Veg Area 1", first_entity_center_point, box_size, box_size,
+    dynveg.create_temp_prefab_vegetation_area("Veg Area 1", first_entity_center_point, box_size, box_size,
                                                                  box_size, pink_flower_prefab)
-    second_veg_entity = dynveg.create_temp_prefab_vegetation_area("Veg Area 2", second_entity_center_point, box_size, box_size,
+    dynveg.create_temp_prefab_vegetation_area("Veg Area 2", second_entity_center_point, box_size, box_size,
                                                                   box_size, pink_flower_prefab)
 
     # When the first viewport is active, the first area should be full of instances, and the second should be empty

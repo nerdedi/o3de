@@ -13,7 +13,7 @@ def DeletePrefab_UnderImmediateInstance():
     - Checks undo/redo correctness.
     - Checks that the deleted "Tire_Prefab" instance (and "Tire_Entity") should re-appear
       after focusing on its owning instance (i.e. "First_Car").
-    
+
     Hierarchy:
     - Level                    <-- focus on this prefab
       - First_Car
@@ -32,7 +32,7 @@ def DeletePrefab_UnderImmediateInstance():
     import Prefab.tests.PrefabTestUtils as prefab_test_utils
 
     CAR_PREFAB_FILE_NAME = Path(__file__).stem + "_" + "car_prefab"
-    WHEEL_PREFAB_FILE_NAME = Path(__file__).stem + "_" + "wheel_prefab"
+    Path(__file__).stem + "_" + "wheel_prefab"
     TIRE_PREFAB_FILE_NAME = Path(__file__).stem + "_" + "tire_prefab"
 
     FIRST_CAR_NAME = "First_Car"

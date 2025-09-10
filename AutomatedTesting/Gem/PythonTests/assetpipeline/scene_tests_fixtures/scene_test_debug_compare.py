@@ -88,7 +88,7 @@ def trim_floating_point_values_from_same_length_lists(diff_actual: List[str], di
     diff_actual, diff_expected = utils.get_differences_between_lists(diff_actual, diff_expected)
 
     # If both lists are now empty, then the only differences between the two scene files were floating point drift.
-    if (diff_actual == None and diff_expected == None) or (len(diff_actual) == 0 and len(diff_actual) == 0):
+    if (diff_actual is None and diff_expected is None) or (len(diff_actual) == 0 and len(diff_actual) == 0):
         warnings.warn(f"Floating point drift detected between {expected_file_path} and {actual_file_path}.")
         return diff_actual, diff_expected
 
@@ -181,7 +181,7 @@ def scan_scene_debug_scene_graph_file_differences_for_issues(diff_actual: List[s
     hashes_removed_diffs_identical = utils.compare_lists(diff_actual_hashes_removed, diff_expected_hashes_removed)
 
     # If, after removing all of the hash values, the lists are now identical, emit a warning.
-    if hashes_removed_diffs_identical == True:
+    if hashes_removed_diffs_identical:
         warnings.warn(
             f"Hash values no longer match for debug scene graph between files {expected_file_path} and {actual_file_path}")
 
@@ -221,7 +221,7 @@ def compare_scene_debug_file(asset_processor: object, expected_file_path: str, a
     with open(expected_debug_graph_path, "r") as scene_file:
         expected_lines = scene_file.readlines()
     diff_actual, diff_expected = utils.get_differences_between_lists(actual_lines, expected_lines)
-    if diff_actual == None and diff_expected == None:
+    if diff_actual is None and diff_expected is None:
         return None, None
 
     diff_actual, diff_expected = trim_floating_point_values_from_same_length_lists(

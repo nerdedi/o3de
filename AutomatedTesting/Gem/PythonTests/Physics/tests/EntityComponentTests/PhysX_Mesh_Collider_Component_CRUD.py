@@ -44,12 +44,12 @@ def PhysX_Mesh_Collider_Component_CRUD():
 
     # 0) Pre-conditions
     physx_mesh = os.path.join("objects", "_primitives", "_box_1x1.fbx.pxmesh")
-    physx_material = os.path.join("physx", "glass.physxmaterial")
+    os.path.join("physx", "glass.physxmaterial")
 
     TestHelper.init_idle()
     TestHelper.open_level("", "Base")
 
-    with Tracer() as section_tracer:
+    with Tracer():
     # 1 ) Add an Entity to manipulate
         phsyx_collider_entity = EditorEntity.create_editor_entity("TestEntity")
 

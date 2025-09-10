@@ -53,7 +53,7 @@ class TestAutomation(EditorTestSuite):
 
             cleanup_test_files(workspace, self.test_files)
 
-            destination_folder = os.path.join(workspace.paths.engine_root(), "AutomatedTesting")
+            os.path.join(workspace.paths.engine_root(), "AutomatedTesting")
 
             # Move/rename both files.  The point of the test is to verify references are still valid after this rename
             for i, val in enumerate(original_files):

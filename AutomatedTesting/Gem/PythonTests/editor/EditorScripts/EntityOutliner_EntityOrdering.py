@@ -107,13 +107,15 @@ def EntityOutliner_EntityOrdering():
         PrefabWaiter.wait_for_propagation()
 
     # Move an entity before another entity in the order by dragging the source above the target
-    move_entity_before = lambda source_name, target_name: _move_entity(
-        source_name, target_name, move_after=False
-    )
+    def move_entity_before(source_name, target_name):
+        return _move_entity(
+            source_name, target_name, move_after=False
+        )
     # Move an entity after another entity in the order by dragging the source below the target
-    move_entity_after = lambda source_name, target_name: _move_entity(
-        source_name, target_name, move_after=True
-    )
+    def move_entity_after(source_name, target_name):
+        return _move_entity(
+            source_name, target_name, move_after=True
+        )
 
     expected_order = []
 

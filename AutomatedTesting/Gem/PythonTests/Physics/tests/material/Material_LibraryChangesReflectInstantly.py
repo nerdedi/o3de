@@ -128,14 +128,14 @@ def Material_LibraryChangesReflectInstantly():
         initial velocity, 0.0 linear damping; has physx collider with box shape, physx rigid body, box shape, and
         has "to_change_static_friction", "to_change_dynamic_friction", and "to_change_friction_combine" materials
         applied respectively
-    trigger - Stationary trigger above the three spheres, used to indicate if the material was modified correctly; has 
+    trigger - Stationary trigger above the three spheres, used to indicate if the material was modified correctly; has
         physx collider with box shape (20.0, 5.0, 0.25) and trigger enabled and box shape (20.0, 5.0, 0.25)
     block - Stationary block that has all cubes sitting on it. Used as a controlled surface for friction testing; has
         physx collider with box shape (10.0, 10.0, 10.0) and box shape (10.0, 10.0, 10.0)
     terrain - terrain component holder lined up with terrain default height; has terrain component
 
     Material Library: Contains a different material for each entity with distinct collider shape. These materials are
-        designed to provide the largest difference in result after change (sphere: velocity, cube: distance). All spheres 
+        designed to provide the largest difference in result after change (sphere: velocity, cube: distance). All spheres
         should not bounce off of the terrain initially but will be able to hit the trigger post change. The cubes will
         experience higher friction after the change and not travel as far along the ramp entity.
 

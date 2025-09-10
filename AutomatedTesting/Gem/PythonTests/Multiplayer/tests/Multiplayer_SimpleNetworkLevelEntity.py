@@ -26,8 +26,8 @@ def Multiplayer_SimpleNetworkLevelEntity():
     Level Description:
     - Static
         1. NetLevelEntity. This is a networked entity which has a script attached which prints logs to ensure it's replicated.
-    
-                    
+
+
     Expected Outcome:
     We should see logs stating that the net-sync'd level entity exists on both server and client.
 

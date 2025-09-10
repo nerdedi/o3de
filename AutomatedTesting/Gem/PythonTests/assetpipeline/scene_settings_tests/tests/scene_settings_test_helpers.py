@@ -88,7 +88,7 @@ def save_and_verify_manifest(path_to_manifest, widget_main_window):
     # Even though the outer test wrapper running this has a built in timeout,
     # this is done with a custom timeout because it makes it more clear what failed.
     card_layout_area = widget_main_window.findChild(QtWidgets.QWidget, "m_cardAreaLayoutWidget")
-    while saving_completed == False and time_out_frames_on_scene_settings_updated > 0:
+    while not saving_completed and time_out_frames_on_scene_settings_updated > 0:
         first_card_push_buttons = card_layout_area.findChildren(QtWidgets.QPushButton,"")
         if len(first_card_push_buttons) > 0:
             # Once the button exists, and is enabled, the scene settings status card can be dismissed,

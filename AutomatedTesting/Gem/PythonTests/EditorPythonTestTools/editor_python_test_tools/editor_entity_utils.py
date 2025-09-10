@@ -393,7 +393,7 @@ class EditorEntity:
     @classmethod
     def find_editor_entities(cls, entity_names: List[str]) -> List[EditorEntity]:
         """
-        Given Entities names, returns a list of EditorEntity 
+        Given Entities names, returns a list of EditorEntity
         :param entity_names: List of entity names to find
         :return: List[EditorEntity] class object
         """

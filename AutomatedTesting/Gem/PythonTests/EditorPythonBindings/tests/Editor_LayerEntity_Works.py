@@ -96,7 +96,7 @@ def Editor_LayerEntity_Works():
 
     # Test adding component to layer entity
     result = add_component('Comment', layerId)
-    if(result == True):
+    if(result):
         print('[PASS] comment component has been added')
     else:
         check_result(False, '[FAIL] comment component was not added to layer')
@@ -104,7 +104,7 @@ def Editor_LayerEntity_Works():
     # Test locking layer entity. Note: layers themselves are not locked or unlocked;
     # setting lock on a layer effectively sets the lock for all child entities
     queryLock = editor.EditorEntityInfoRequestBus(bus.Event, 'IsLocked', layerId)
-    check_result(queryLock == False, '[INFO] layer is not locked')
+    check_result(not queryLock, '[INFO] layer is not locked')
 
     editor.EditorEntityAPIBus(bus.Event, 'SetLockState', layerId, True)
     queryLock = editor.EditorEntityInfoRequestBus(bus.Event, 'IsLocked', layerId)
@@ -117,7 +117,7 @@ def Editor_LayerEntity_Works():
 
     layers.EditorLayerComponentRequestBus(azlmbr.bus.Event, 'SetVisibility', layerId, False)
     queryVisibility = editor.EditorEntityInfoRequestBus(bus.Event, 'IsVisible', layerChild)
-    if(queryVisibility == False):
+    if(not queryVisibility):
         print('[PASS] layer children are hidden')
     else:
         check_result(False, '[FAIL] unable to set layer visibility to hidden')
