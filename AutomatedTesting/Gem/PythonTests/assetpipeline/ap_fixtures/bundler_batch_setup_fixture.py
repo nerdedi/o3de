@@ -17,10 +17,6 @@ import logging
 import zipfile
 from typing import Any, Dict, List
 
-from assetpipeline.ap_fixtures.asset_processor_fixture import asset_processor
-from assetpipeline.ap_fixtures.timeout_option_fixture import timeout_option_fixture as timeout
-from assetpipeline.ap_fixtures.ap_config_backup_fixture import ap_config_backup_fixture as config_backup
-from assetpipeline.ap_fixtures.ap_setup_fixture import ap_setup_fixture
 
 import ly_test_tools.environment.file_system as fs
 import ly_test_tools.o3de.pipeline_utils as utils

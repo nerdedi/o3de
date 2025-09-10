@@ -11,7 +11,6 @@ Fixture for backing up and restoring dev/AssetProcessorPlatformConfig.ini
 # Import builtin libraries
 import pytest
 
-from . import asset_processor_fixture as asset_processor
 from . import ap_config_backup_fixture as ap_config_backup_fixture
 
 @pytest.fixture

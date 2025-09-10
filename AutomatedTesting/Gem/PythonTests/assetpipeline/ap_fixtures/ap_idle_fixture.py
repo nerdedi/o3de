@@ -13,7 +13,6 @@ import os
 import time
 
 # Import fixtures
-from . import ap_setup_fixture
 
 # Import LyTestTools
 import ly_test_tools.environment.waiter as waiter
