@@ -11,7 +11,6 @@ import asyncio
 import re
 from shiboken2 import wrapInstance, getCppPointer
 from PySide2 import QtCore, QtWidgets, QtGui, QtTest
-from PySide2.QtWidgets import QAction, QWidget
 from PySide2.QtCore import Qt
 from PySide2.QtTest import QTest
 import traceback
@@ -40,6 +39,7 @@ class LmbrQtEventLoop(asyncio.AbstractEventLoop):
 
     def wait_for_condition(self, condition, action, on_timeout=None, timeout=1.0):
         timeout = self.time() + timeout if timeout is not None else None
+
         def callback(time):
             # Run our action and remove us from the queue if our condition is satisfied
             if condition():
@@ -51,10 +51,12 @@ class LmbrQtEventLoop(asyncio.AbstractEventLoop):
                     on_timeout()
                 return True
             return False
+
         self.queue.append((callback))
 
     def event_loop(self):
         time = self.time()
+
         def run_event(event):
             if event in self.blocked_events or event in self.finished_events:
                 return False
@@ -77,10 +79,16 @@ class LmbrQtEventLoop(asyncio.AbstractEventLoop):
 
         # Clear out any finished events if the queue is safe to mutate
         if self._event_loop_nesting == 0:
-            self.queue = [event for event in self.queue if event not in self.finished_events]
+            self.queue = [
+                event for event in self.queue if event not in self.finished_events
+            ]
             self.finished_events = set()
 
-        if not self.running or self._wait_future is not None and self._wait_future.done():
+        if (
+            not self.running
+            or self._wait_future is not None
+            and self._wait_future.done()
+        ):
             self.close()
 
     def run_until_shutdown(self):
@@ -126,16 +134,18 @@ class LmbrQtEventLoop(asyncio.AbstractEventLoop):
 
     def call_exception_handler(self, context):
         try:
-            raise context.get('exception', None)
+            raise context.get("exception", None)
         except:
             traceback.print_exc()
 
     def call_soon(self, callback, *args, **kw):
         h = asyncio.Handle(callback, args, self)
+
         def callback_wrapper(time):
             if not h.cancelled():
                 h._run()
             return True
+
         self.queue.append(callback_wrapper)
         return h
 
@@ -147,12 +157,14 @@ class LmbrQtEventLoop(asyncio.AbstractEventLoop):
     def call_at(self, when, callback, *args, **kw):
         h = asyncio.TimerHandle(when, callback, args, self)
         h._scheduled = True
+
         def callback_wrapper(time):
             if time > when:
                 if not h.cancelled():
                     h._run()
                 return True
             return False
+
         self.queue.append(callback_wrapper)
         return h
 
@@ -168,6 +180,8 @@ class EventLoopTimeoutException(Exception):
 
 
 event_loop = LmbrQtEventLoop()
+
+
 def wait_for_condition(condition, timeout=1.0):
     """
     Asynchronously waits for `condition` to evaluate to True.
@@ -177,11 +191,16 @@ def wait_for_condition(condition, timeout=1.0):
     Throws pyside_utils.EventLoopTimeoutException on timeout.
     """
     future = event_loop.create_future()
+
     def on_complete():
         future.set_result(True)
+
     def on_timeout():
         future.set_exception(EventLoopTimeoutException())
-    event_loop.wait_for_condition(condition, on_complete, on_timeout=on_timeout, timeout=timeout)
+
+    event_loop.wait_for_condition(
+        condition, on_complete, on_timeout=on_timeout, timeout=timeout
+    )
     return future
 
 
@@ -196,10 +215,12 @@ async def wait_for(expression, timeout=1.0):
     Throws pyside_utils.EventLoopTimeoutException on timeout.
     """
     result = None
+
     def condition():
         nonlocal result
         result = expression()
         return result is not None
+
     await wait_for_condition(condition, timeout)
     return result
 
@@ -212,12 +233,14 @@ def run_soon(fn):
     Returns a future that will be popualted with the result of fn or the exception it threw.
     """
     future = event_loop.create_future()
+
     def coroutine():
         try:
             fn()
             future.set_result(True)
         except Exception as e:
             future.set_exception(e)
+
     event_loop.call_soon(coroutine)
     return future
 
@@ -252,9 +275,11 @@ def wrap_async(fn):
     fn: The function to wrap
     Returns the decorated function.
     """
+
     def wrapper(*args, **kw):
         result = fn(*args, **kw)
         return run_async(result)
+
     return wrapper
 
 
@@ -263,13 +288,17 @@ def get_editor_main_window():
     Fetches the main Editor instance of QMainWindow for use with PySide tests
     :return Instance of QMainWindow for the Editor
     """
-    params = azlmbr.qt.QtForPythonRequestBus(azlmbr.bus.Broadcast, "GetQtBootstrapParameters")
+    params = azlmbr.qt.QtForPythonRequestBus(
+        azlmbr.bus.Broadcast, "GetQtBootstrapParameters"
+    )
     editor_id = QtWidgets.QWidget.find(params.mainWindowId)
     main_window = wrapInstance(int(getCppPointer(editor_id)[0]), QtWidgets.QMainWindow)
     return main_window
 
 
-def get_action_for_menu_path(editor_window: QtWidgets.QMainWindow, main_menu_item: str, *menu_item_path: str):
+def get_action_for_menu_path(
+    editor_window: QtWidgets.QMainWindow, main_menu_item: str, *menu_item_path: str
+):
     """
     main_menu_item: Main menu item among the MenuBar actions. Ex: "File"
     menu_item_path: Path to any nested menu item. Ex: "Viewport", "Goto Coordinates"
@@ -312,7 +341,11 @@ def _pattern_to_dict(pattern, **kw):
     elif is_string_or_regex(pattern):
         pattern = dict(text=pattern)
     # If our pattern is an (int, int) tuple, turn it into a row/column match
-    elif isinstance(pattern, tuple) and isinstance(pattern[0], int) and isinstance(pattern[1], int):
+    elif (
+        isinstance(pattern, tuple)
+        and isinstance(pattern[0], int)
+        and isinstance(pattern[1], int)
+    ):
         pattern = dict(row=pattern[0], column=pattern[1])
     # If our pattern is a QObject type, turn it into a type match
     elif isinstance(pattern, type(QtCore.QObject)):
@@ -365,7 +398,9 @@ def _match_pattern(obj, pattern):
                 return False
         elif key in item_roles:  # QAbstractItemModel display role
             if not isinstance(obj, QtCore.QModelIndex):
-                raise RuntimeError(f"Attempted to match data role on unsupported object {obj}")
+                raise RuntimeError(
+                    f"Attempted to match data role on unsupported object {obj}"
+                )
             if not compare(obj.data(key), value):
                 return False
         elif hasattr(obj, key):
@@ -433,7 +468,11 @@ def _get_parents_to_search(obj_entry_or_list):
     Otherwise, return a list containing obj_entry_or_list
     """
     if obj_entry_or_list is None:
-        return [widget for widget in QtWidgets.QApplication.topLevelWidgets() if widget.isVisible()]
+        return [
+            widget
+            for widget in QtWidgets.QApplication.topLevelWidgets()
+            if widget.isVisible()
+        ]
     try:
         return list(obj_entry_or_list)
     except TypeError:
@@ -501,7 +540,9 @@ def find_child_by_pattern(obj=None, pattern=None, recursive=True, **kw):
     find_child_by_pattern(obj, {"type": PySide.QtWidgets.QLabel})
     """
     # Return the first match result, if found
-    for match in find_children_by_pattern(obj, pattern=pattern, recursive=recursive, **kw):
+    for match in find_children_by_pattern(
+        obj, pattern=pattern, recursive=recursive, **kw
+    ):
         return match
     return None
 
@@ -536,13 +577,16 @@ def find_child_by_hierarchy(parent, *patterns, child_index=0):
 
         candidates = []
         for parent_candidate in current_objects:
-            candidates += find_children_by_pattern(parent_candidate, pattern=pattern, recursive=search_recursively)
+            candidates += find_children_by_pattern(
+                parent_candidate, pattern=pattern, recursive=search_recursively
+            )
         if len(candidates) == 0:
             return None
         current_objects = candidates
 
         search_recursively = False
     return current_objects[child_index]
+
 
 async def wait_for_child_by_hierarchy(parent, *patterns, timeout=1.0):
     """
@@ -552,15 +596,19 @@ async def wait_for_child_by_hierarchy(parent, *patterns, timeout=1.0):
     See find_child_by_hierarchy for usage information.
     """
     match = None
+
     def condition():
         nonlocal match
         match = find_child_by_hierarchy(parent, *patterns)
         return match is not None
+
     await wait_for_condition(condition, timeout)
     return match
 
 
-async def wait_for_child_by_pattern(obj=None, pattern=None, recursive=True, timeout=1.0, **kw):
+async def wait_for_child_by_pattern(
+    obj=None, pattern=None, recursive=True, timeout=1.0, **kw
+):
     """
     Finds the child of an object that matches a given pattern.
     Returns a future that will result in either the found child or an EventLoopTimeoutException.
@@ -568,15 +616,19 @@ async def wait_for_child_by_pattern(obj=None, pattern=None, recursive=True, time
     See find_child_by_hierarchy for usage information.
     """
     match = None
+
     def condition():
         nonlocal match
         match = find_child_by_pattern(obj, pattern, recursive, **kw)
         return match is not None
+
     await wait_for_condition(condition, timeout)
     return match
 
 
-def find_child_by_property(obj, obj_type, property_name, property_value, reg_exp_search=False):
+def find_child_by_property(
+    obj, obj_type, property_name, property_value, reg_exp_search=False
+):
     """
     Finds the child of an object which has the property name matching the property value
     of type obj_type
@@ -587,11 +639,18 @@ def find_child_by_property(obj, obj_type, property_name, property_value, reg_exp
     reg_exp_search: If True searches for the property_value based on re search. Defaults to False.
     """
     for child in obj.children():
-        if reg_exp_search and re.search(property_value, getattr(child, property_name)()):
+        if reg_exp_search and re.search(
+            property_value, getattr(child, property_name)()
+        ):
             return child
-        if not reg_exp_search and isinstance(child, obj_type) and getattr(child, property_name)() == property_value:
+        if (
+            not reg_exp_search
+            and isinstance(child, obj_type)
+            and getattr(child, property_name)() == property_value
+        ):
             return child
     return None
+
 
 def get_item_view_index(item_view, row, column=0, parent=QtCore.QModelIndex()):
     """
@@ -618,7 +677,9 @@ def get_item_view_index_rect(item_view, index):
     return item_view.visualRect(index)
 
 
-def item_view_index_mouse_click(item_view, index, button=QtCore.Qt.LeftButton, modifier=QtCore.Qt.NoModifier):
+def item_view_index_mouse_click(
+    item_view, index, button=QtCore.Qt.LeftButton, modifier=QtCore.Qt.NoModifier
+):
     """
     Helper method version of QTest.mouseClick for injecting mouse clicks on a QAbstractItemView
     item_view: The QAbstractItemView instance
@@ -631,7 +692,9 @@ def item_view_index_mouse_click(item_view, index, button=QtCore.Qt.LeftButton, m
     QTest.mouseClick(item_view.viewport(), button, modifier, item_index_center)
 
 
-def item_view_mouse_click(item_view, row, column=0, button=QtCore.Qt.LeftButton, modifier=QtCore.Qt.NoModifier):
+def item_view_mouse_click(
+    item_view, row, column=0, button=QtCore.Qt.LeftButton, modifier=QtCore.Qt.NoModifier
+):
     """
     Helper method version of 'item_view_index_mouse_click' using a row, column instead of a QModelIndex
     item_view: The QAbstractItemView instance
@@ -655,14 +718,16 @@ async def wait_for_action_in_menu(menu, pattern, timeout=1.0):
         raise TimeoutError(f"Failed to find context menu action for {pattern}")
 
     # If we've found a valid QAction, we're good to go
-    if hasattr(action, 'trigger'):
+    if hasattr(action, "trigger"):
         return action
 
     # If pattern matches a widget and not a QAction, look for an associated QWidgetAction
     widget_actions = find_children_by_pattern(menu, type=QtWidgets.QWidgetAction)
     underlying_widget_action = None
     for widget_action in widget_actions:
-        widgets_to_check = [widget_action.defaultWidget()] + widget_action.createdWidgets()
+        widgets_to_check = [
+            widget_action.defaultWidget()
+        ] + widget_action.createdWidgets()
         for check_widget in widgets_to_check:
             if action in _get_children(check_widget):
                 underlying_widget_action = widget_action
@@ -671,7 +736,7 @@ async def wait_for_action_in_menu(menu, pattern, timeout=1.0):
             action = underlying_widget_action
             break
 
-    if not hasattr(action, 'trigger'):
+    if not hasattr(action, "trigger"):
         raise RuntimeError(f"Failed to find action associated with widget {action}")
     return action
 
@@ -695,9 +760,11 @@ async def wait_for_destroyed(obj, timeout=1.0):
     timeout: The time, in seconds to wait. 0 for an indefinite wait.
     """
     was_destroyed = False
+
     def on_destroyed():
         nonlocal was_destroyed
         was_destroyed = True
+
     obj.destroyed.connect(on_destroyed)
     return await wait_for_condition(lambda: was_destroyed, timeout=timeout)
 
@@ -724,6 +791,7 @@ def trigger_context_menu_entry(widget, pattern, pos=None, index=None):
     index: Optional, the QModelIndex to click in widget
     widget must be a QAbstractItemView
     """
+
     async def async_wrapper():
         menu = await open_context_menu(widget, pos=pos, index=index)
         action = await wait_for_action_in_menu(menu, pattern)
@@ -764,15 +832,21 @@ async def open_context_menu(widget, pos=None, index=None, timeout=5.0):
     QtTest.QTest.mouseClick(widget, Qt.RightButton, Qt.NoModifier, pos)
 
     menu = None
+
     # Wait for a menu popup
     def menu_has_focus():
         nonlocal menu
-        for fw in [QtWidgets.QApplication.activePopupWidget(), QtWidgets.QApplication.activeModalWidget(),
-                   QtWidgets.QApplication.focusWidget(), QtWidgets.QApplication.activeWindow()]:
+        for fw in [
+            QtWidgets.QApplication.activePopupWidget(),
+            QtWidgets.QApplication.activeModalWidget(),
+            QtWidgets.QApplication.focusWidget(),
+            QtWidgets.QApplication.activeWindow(),
+        ]:
             if fw and isinstance(fw, QtWidgets.QMenu) and fw.isVisible():
                 menu = fw
                 return True
         return False
+
     await wait_for_condition(menu_has_focus, timeout)
     return menu
 
@@ -789,11 +863,20 @@ def move_mouse(widget, position):
     # Similarly, if only the MouseMove event is sent by itself to the core application, the global cursor position wasn't
     # updated properly, so drag/drop logic that depends on grabbing the globalPos didn't work.
     QtTest.QTest.mouseMove(widget, position)
-    event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, position, widget.mapToGlobal(position), QtCore.Qt.LeftButton, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
+    event = QtGui.QMouseEvent(
+        QtCore.QEvent.MouseMove,
+        position,
+        widget.mapToGlobal(position),
+        QtCore.Qt.LeftButton,
+        QtCore.Qt.LeftButton,
+        QtCore.Qt.NoModifier,
+    )
     QtCore.QCoreApplication.sendEvent(widget, event)
 
 
-def drag_and_drop(source, target, source_point = QtCore.QPoint(), target_point = QtCore.QPoint()):
+def drag_and_drop(
+    source, target, source_point=QtCore.QPoint(), target_point=QtCore.QPoint()
+):
     """
     Simulate a drag/drop event from a source object to a specified target
     This has special case handling if the source is a QDockWidget (for docking) vs normal drag/drop
@@ -872,13 +955,17 @@ def drag_and_drop(source, target, source_point = QtCore.QPoint(), target_point =
     move_mouse(source_widget, source_point)
 
     # Press the left-mouse button to begin the drag
-    QtTest.QTest.mousePress(source_widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, source_point)
+    QtTest.QTest.mousePress(
+        source_widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, source_point
+    )
 
     # If we are dragging for docking, we first need to drag the mouse past the minimum distance to
     # trigger the docking system properly
     if docking:
         drag_distance = QtWidgets.QApplication.startDragDistance() + 1
-        docking_trigger_point = source_point + QtCore.QPoint(drag_distance, drag_distance)
+        docking_trigger_point = source_point + QtCore.QPoint(
+            drag_distance, drag_distance
+        )
         move_mouse(source_widget, docking_trigger_point)
 
     # Drag the mouse to the target widget over the desired point
@@ -893,7 +980,9 @@ def drag_and_drop(source, target, source_point = QtCore.QPoint(), target_point =
     delay = -1
     if docking:
         delay = 200
-    QtTest.QTest.mouseRelease(target_widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, target_point, delay)
+    QtTest.QTest.mouseRelease(
+        target_widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, target_point, delay
+    )
 
     # Some drag/drop events have extra processing on the following event tick, so let those processEvents
     # first before we complete the drag/drop operation
@@ -924,10 +1013,15 @@ async def wait_for_modal_widget(timeout=1.0):
     """
     Waits for an active modal widget and returns it.
     """
-    return await wait_for(lambda: QtWidgets.QApplication.activeModalWidget(), timeout=timeout)
-    
+    return await wait_for(
+        lambda: QtWidgets.QApplication.activeModalWidget(), timeout=timeout
+    )
+
+
 async def wait_for_popup_widget(timeout=1.0):
     """
     Waits for an active popup widget and returns it.
     """
-    return await wait_for(lambda: QtWidgets.QApplication.activePopupWidget(), timeout=timeout)
+    return await wait_for(
+        lambda: QtWidgets.QApplication.activePopupWidget(), timeout=timeout
+    )
