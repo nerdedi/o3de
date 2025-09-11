@@ -192,9 +192,7 @@ class ReportCard(bpy.types.Operator):
             self.reported_issues_int += 1
         if not bpy.context.scene.unit_settings.length_unit == "METERS":
             issues.alert = True
-            issues.label(
-                text="Warning, Your Scene is set to", icon="SEQUENCE_COLOR_03"
-            )
+            issues.label(text="Warning, Your Scene is set to", icon="SEQUENCE_COLOR_03")
             issues.label(
                 text=f"{bpy.context.scene.unit_settings.length_unit}, however, O3DE units are in Meters."
             )
