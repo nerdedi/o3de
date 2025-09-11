@@ -36,40 +36,40 @@ def GradientModifiers_Incompatibilities():
     from editor_python_test_tools.utils import Report
 
     gradient_generators = [
-        'Altitude Gradient',
-        'Constant Gradient',
-        'FastNoise Gradient',
-        'Image Gradient',
-        'Perlin Noise Gradient',
-        'Random Noise Gradient',
-        'Shape Falloff Gradient',
-        'Slope Gradient',
-        'Surface Mask Gradient'
+        "Altitude Gradient",
+        "Constant Gradient",
+        "FastNoise Gradient",
+        "Image Gradient",
+        "Perlin Noise Gradient",
+        "Random Noise Gradient",
+        "Shape Falloff Gradient",
+        "Slope Gradient",
+        "Surface Mask Gradient",
     ]
     require_transform_modifiers = [
-        'FastNoise Gradient',
-        'Image Gradient',
-        'Perlin Noise Gradient',
-        'Random Noise Gradient'
+        "FastNoise Gradient",
+        "Image Gradient",
+        "Perlin Noise Gradient",
+        "Random Noise Gradient",
     ]
     gradient_modifiers = [
-        'Dither Gradient Modifier',
-        'Gradient Mixer',
-        'Invert Gradient Modifier',
-        'Levels Gradient Modifier',
-        'Posterize Gradient Modifier',
-        'Smooth-Step Gradient Modifier',
-        'Threshold Gradient Modifier'
+        "Dither Gradient Modifier",
+        "Gradient Mixer",
+        "Invert Gradient Modifier",
+        "Levels Gradient Modifier",
+        "Posterize Gradient Modifier",
+        "Smooth-Step Gradient Modifier",
+        "Threshold Gradient Modifier",
     ]
     vegetation_areas = [
-        'Vegetation Layer Spawner',
-        'Vegetation Layer Blender',
-        'Vegetation Layer Blocker',
-        'Vegetation Layer Blocker (Mesh)'
+        "Vegetation Layer Spawner",
+        "Vegetation Layer Blender",
+        "Vegetation Layer Blocker",
+        "Vegetation Layer Blocker (Mesh)",
     ]
     area_dependencies = {
-        'Vegetation Layer Spawner': 'Vegetation Asset List',
-        'Vegetation Layer Blocker (Mesh)': 'Mesh'
+        "Vegetation Layer Spawner": "Vegetation Asset List",
+        "Vegetation Layer Blocker (Mesh)": "Mesh",
     }
 
     # Open an existing simple level
@@ -81,10 +81,12 @@ def GradientModifiers_Incompatibilities():
     for component_name in gradient_modifiers:
         for vegetation_area_name in vegetation_areas:
             # Create a new Entity in the level
-            entity_id = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', entity.EntityId())
+            entity_id = editor.ToolsApplicationRequestBus(
+                bus.Broadcast, "CreateNewEntity", entity.EntityId()
+            )
 
             # Most of these need a shape, so use a Box Shape
-            hydra.add_component('Box Shape', entity_id)
+            hydra.add_component("Box Shape", entity_id)
 
             # Add the specific vegetation area dependencies (if necessary)
             if vegetation_area_name in area_dependencies:
@@ -98,35 +100,45 @@ def GradientModifiers_Incompatibilities():
             gradient_component = hydra.add_component(component_name, entity_id)
 
             # Verify the gradient modifier component is disabled since the vegetation area is incompatible
-            active = editor.EditorComponentAPIBus(bus.Broadcast, 'IsComponentEnabled', gradient_component)
+            active = editor.EditorComponentAPIBus(
+                bus.Broadcast, "IsComponentEnabled", gradient_component
+            )
             component_is_disabled = (
                 f"{component_name} is disabled before removing {vegetation_area_name} component",
-                f"{component_name} is unexpectedly enabled before removing {vegetation_area_name} component"
+                f"{component_name} is unexpectedly enabled before removing {vegetation_area_name} component",
             )
             Report.result(component_is_disabled, not active)
 
             # Remove the vegetation area component
-            editor.EditorComponentAPIBus(bus.Broadcast, 'RemoveComponents', [area_component])
+            editor.EditorComponentAPIBus(
+                bus.Broadcast, "RemoveComponents", [area_component]
+            )
 
             # Verify the gradient modifier component is enabled now that the vegetation area is gone
-            active = editor.EditorComponentAPIBus(bus.Broadcast, 'IsComponentEnabled', gradient_component)
+            active = editor.EditorComponentAPIBus(
+                bus.Broadcast, "IsComponentEnabled", gradient_component
+            )
             component_is_enabled = (
                 f"{component_name} is enabled after removing {vegetation_area_name} component",
-                f"{component_name} is unexpectedly disabled after removing {vegetation_area_name} component"
+                f"{component_name} is unexpectedly disabled after removing {vegetation_area_name} component",
             )
             Report.result(component_is_enabled, active)
 
         for gradient_name in all_gradients:
             # Create a new Entity in the level
-            entity_id = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', entity.EntityId())
+            entity_id = editor.ToolsApplicationRequestBus(
+                bus.Broadcast, "CreateNewEntity", entity.EntityId()
+            )
 
             # Most of these need a shape, so use a Box Shape
-            hydra.add_component('Box Shape', entity_id)
+            hydra.add_component("Box Shape", entity_id)
 
             # Add the specific gradient generator dependencies (if necessary)
             conflicting_components = []
             if gradient_name in require_transform_modifiers:
-                component = hydra.add_component('Gradient Transform Modifier', entity_id)
+                component = hydra.add_component(
+                    "Gradient Transform Modifier", entity_id
+                )
                 conflicting_components.append(component)
 
             # Add the gradient component we are validating against, then add the
@@ -138,26 +150,32 @@ def GradientModifiers_Incompatibilities():
             gradient_component = hydra.add_component(component_name, entity_id)
 
             # Verify the gradient modifier component is disabled since the other gradient is incompatible
-            active = editor.EditorComponentAPIBus(bus.Broadcast, 'IsComponentEnabled', gradient_component)
+            active = editor.EditorComponentAPIBus(
+                bus.Broadcast, "IsComponentEnabled", gradient_component
+            )
             component_is_disabled = (
                 f"{component_name} is disabled before removing {gradient_name} component",
-                f"{component_name} is unexpectedly enabled before removing {gradient_name} component"
+                f"{component_name} is unexpectedly enabled before removing {gradient_name} component",
             )
             Report.result(component_is_disabled, not active)
 
             # Remove the conflicting gradient component (and transform modifier if it was added)
-            editor.EditorComponentAPIBus(bus.Broadcast, 'RemoveComponents', conflicting_components)
+            editor.EditorComponentAPIBus(
+                bus.Broadcast, "RemoveComponents", conflicting_components
+            )
 
             # Verify the gradient modifier component is enabled now that the other gradient is gone
-            active = editor.EditorComponentAPIBus(bus.Broadcast, 'IsComponentEnabled', gradient_component)
+            active = editor.EditorComponentAPIBus(
+                bus.Broadcast, "IsComponentEnabled", gradient_component
+            )
             component_is_enabled = (
                 f"{component_name} is enabled after removing {gradient_name} component",
-                f"{component_name} is unexpectedly disabled after removing {gradient_name} component"
+                f"{component_name} is unexpectedly disabled after removing {gradient_name} component",
             )
             Report.result(component_is_enabled, active)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(GradientModifiers_Incompatibilities)
