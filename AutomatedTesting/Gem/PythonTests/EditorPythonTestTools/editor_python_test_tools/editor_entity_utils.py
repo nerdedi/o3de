@@ -49,7 +49,9 @@ class EditorComponent:
         Used to get name of component
         :return: name of component
         """
-        type_names = editor.EditorComponentAPIBus(bus.Broadcast, "FindComponentTypeNames", [self.type_id])
+        type_names = editor.EditorComponentAPIBus(
+            bus.Broadcast, "FindComponentTypeNames", [self.type_id]
+        )
         assert len(type_names) != 0, "Component object does not have type id"
         return type_names[0]
 
@@ -72,9 +74,9 @@ class EditorComponent:
         build_prop_tree_outcome = editor.EditorComponentAPIBus(
             bus.Broadcast, "BuildComponentPropertyTreeEditor", self.id
         )
-        assert (
-            build_prop_tree_outcome.IsSuccess()
-        ), f"Failure: Could not build property tree editor of component: '{self.get_component_name()}'"
+        assert build_prop_tree_outcome.IsSuccess(), (
+            f"Failure: Could not build property tree editor of component: '{self.get_component_name()}'"
+        )
         prop_tree = build_prop_tree_outcome.GetValue()
         self.property_tree_editor = prop_tree
         return self.property_tree_editor
@@ -114,7 +116,9 @@ class EditorComponent:
             self.get_property_tree()
         result = self.property_tree_editor.is_container(component_property_path)
         if not result:
-            Report.info(f"{self.get_component_name()}: '{component_property_path}' is not a container")
+            Report.info(
+                f"{self.get_component_name()}: '{component_property_path}' is not a container"
+            )
         return result
 
     def get_container_count(self, component_property_path: str) -> int:
@@ -123,13 +127,15 @@ class EditorComponent:
         :param component_property_path: String of component property. (e.g. 'Settings|Visible')
         :return: Count of items in the container as unsigned integer
         """
-        assert (
-            self.is_property_container(component_property_path)
-        ), f"Failure: '{component_property_path}' is not a property container"
-        container_count_outcome = self.property_tree_editor.get_container_count(component_property_path)
-        assert (
-            container_count_outcome.IsSuccess()
-        ), f"Failure: get_container_count did not return success for '{component_property_path}'"
+        assert self.is_property_container(component_property_path), (
+            f"Failure: '{component_property_path}' is not a property container"
+        )
+        container_count_outcome = self.property_tree_editor.get_container_count(
+            component_property_path
+        )
+        assert container_count_outcome.IsSuccess(), (
+            f"Failure: get_container_count did not return success for '{component_property_path}'"
+        )
         return container_count_outcome.GetValue()
 
     def reset_container(self, component_property_path: str):
@@ -138,13 +144,15 @@ class EditorComponent:
         :param component_property_path: String of component property. (e.g. 'Settings|Visible')
         :return: None
         """
-        assert (
-            self.is_property_container(component_property_path)
-        ), f"Failure: '{component_property_path}' is not a property container"
-        reset_outcome = self.property_tree_editor.reset_container(component_property_path)
-        assert (
-            reset_outcome.IsSuccess()
-        ), f"Failure: could not reset_container on '{component_property_path}'"
+        assert self.is_property_container(component_property_path), (
+            f"Failure: '{component_property_path}' is not a property container"
+        )
+        reset_outcome = self.property_tree_editor.reset_container(
+            component_property_path
+        )
+        assert reset_outcome.IsSuccess(), (
+            f"Failure: could not reset_container on '{component_property_path}'"
+        )
 
     def append_container_item(self, component_property_path: str, value: any):
         """
@@ -154,13 +162,15 @@ class EditorComponent:
         :param value: Value to be set
         :return: None
         """
-        assert (
-            self.is_property_container(component_property_path)
-        ), f"Failure: '{component_property_path}' is not a property container"
-        append_outcome = self.property_tree_editor.append_container_item(component_property_path, value)
-        assert (
-            append_outcome.IsSuccess()
-        ), f"Failure: could not append_container_item to '{component_property_path}'"
+        assert self.is_property_container(component_property_path), (
+            f"Failure: '{component_property_path}' is not a property container"
+        )
+        append_outcome = self.property_tree_editor.append_container_item(
+            component_property_path, value
+        )
+        assert append_outcome.IsSuccess(), (
+            f"Failure: could not append_container_item to '{component_property_path}'"
+        )
 
     def add_container_item(self, component_property_path: str, key: any, value: any):
         """
@@ -173,13 +183,15 @@ class EditorComponent:
         :param value: Value to be set
         :return: None
         """
-        assert (
-            self.is_property_container(component_property_path)
-        ), f"Failure: '{component_property_path}' is not a property container"
-        add_outcome = self.property_tree_editor.add_container_item(component_property_path, key, value)
-        assert (
-            add_outcome.IsSuccess()
-        ), f"Failure: could not add_container_item '{key}' to '{component_property_path}'"
+        assert self.is_property_container(component_property_path), (
+            f"Failure: '{component_property_path}' is not a property container"
+        )
+        add_outcome = self.property_tree_editor.add_container_item(
+            component_property_path, key, value
+        )
+        assert add_outcome.IsSuccess(), (
+            f"Failure: could not add_container_item '{key}' to '{component_property_path}'"
+        )
 
     def get_container_item(self, component_property_path: str, key: any) -> any:
         """
@@ -191,15 +203,16 @@ class EditorComponent:
         :param key: Zero index integer key or any supported type for associative container
         :return: Value stored at the key specified
         """
-        assert (
-            self.is_property_container(component_property_path)
-        ), f"Failure: '{component_property_path}' is not a property container"
-        get_outcome = self.property_tree_editor.get_container_item(component_property_path, key)
-        assert (
-            get_outcome.IsSuccess()
-        ), (
+        assert self.is_property_container(component_property_path), (
+            f"Failure: '{component_property_path}' is not a property container"
+        )
+        get_outcome = self.property_tree_editor.get_container_item(
+            component_property_path, key
+        )
+        assert get_outcome.IsSuccess(), (
             f"Failure: could not get a value for {self.get_component_name()}: '{component_property_path}' [{key}]. "
-            f"Error returned by get_container_item: {get_outcome.GetError()}")
+            f"Error returned by get_container_item: {get_outcome.GetError()}"
+        )
         return get_outcome.GetValue()
 
     def remove_container_item(self, component_property_path: str, key: any):
@@ -212,13 +225,15 @@ class EditorComponent:
         :param key: Zero index integer key or any supported type for associative container
         :return: None
         """
-        assert (
-            self.is_property_container(component_property_path)
-        ), f"Failure: '{component_property_path}' is not a property container"
-        remove_outcome = self.property_tree_editor.remove_container_item(component_property_path, key)
-        assert (
-            remove_outcome.IsSuccess()
-        ), f"Failure: could not remove_container_item '{key}' from '{component_property_path}'"
+        assert self.is_property_container(component_property_path), (
+            f"Failure: '{component_property_path}' is not a property container"
+        )
+        remove_outcome = self.property_tree_editor.remove_container_item(
+            component_property_path, key
+        )
+        assert remove_outcome.IsSuccess(), (
+            f"Failure: could not remove_container_item '{key}' from '{component_property_path}'"
+        )
 
     def update_container_item(self, component_property_path: str, key: any, value: any):
         """
@@ -231,13 +246,15 @@ class EditorComponent:
         :param value: Value to be set
         :return: None
         """
-        assert (
-            self.is_property_container(component_property_path)
-        ), f"Failure: '{component_property_path}' is not a property container"
-        update_outcome = self.property_tree_editor.update_container_item(component_property_path, key, value)
-        assert (
-            update_outcome.IsSuccess()
-        ), f"Failure: could not update '{key}' in '{component_property_path}'"
+        assert self.is_property_container(component_property_path), (
+            f"Failure: '{component_property_path}' is not a property container"
+        )
+        update_outcome = self.property_tree_editor.update_container_item(
+            component_property_path, key, value
+        )
+        assert update_outcome.IsSuccess(), (
+            f"Failure: could not update '{key}' in '{component_property_path}'"
+        )
 
     def get_component_property_value(self, component_property_path: str):
         """
@@ -248,12 +265,14 @@ class EditorComponent:
         get_component_property_outcome = editor.EditorComponentAPIBus(
             bus.Broadcast, "GetComponentProperty", self.id, component_property_path
         )
-        assert (
-            get_component_property_outcome.IsSuccess()
-        ), f"Failure: Could not get value from {self.get_component_name()} : {component_property_path}"
+        assert get_component_property_outcome.IsSuccess(), (
+            f"Failure: Could not get value from {self.get_component_name()} : {component_property_path}"
+        )
         return get_component_property_outcome.GetValue()
 
-    def check_component_property_value(self, component_property_path: str) -> tuple[bool, object]:
+    def check_component_property_value(
+        self, component_property_path: str
+    ) -> tuple[bool, object]:
         """
         Similar as get_component_property_value, but does not assert.
         :return: a tuple with a boolean that is True if the property exists, if the
@@ -273,11 +292,15 @@ class EditorComponent:
         :param value: new value for the variable being changed in the component
         """
         outcome = editor.EditorComponentAPIBus(
-            bus.Broadcast, "SetComponentProperty", self.id, component_property_path, value
+            bus.Broadcast,
+            "SetComponentProperty",
+            self.id,
+            component_property_path,
+            value,
         )
-        assert (
-            outcome.IsSuccess()
-        ), f"Failure: Could not set value to '{self.get_component_name()}' : '{component_property_path}'"
+        assert outcome.IsSuccess(), (
+            f"Failure: Could not set value to '{self.get_component_name()}' : '{component_property_path}'"
+        )
         PrefabWaiter.wait_for_propagation()
         self.get_property_tree(True)
 
@@ -286,7 +309,9 @@ class EditorComponent:
         Used to verify if the component is enabled.
         :return: True if enabled, otherwise False.
         """
-        return editor.EditorComponentAPIBus(bus.Broadcast, "IsComponentEnabled", self.id)
+        return editor.EditorComponentAPIBus(
+            bus.Broadcast, "IsComponentEnabled", self.id
+        )
 
     def set_enabled(self, new_state: bool):
         """
@@ -305,7 +330,10 @@ class EditorComponent:
         Deprecation warning! Use set_enabled(False) instead as this method is in deprecation
         :return: None
         """
-        warnings.warn("disable_component is deprecated, use set_enabled(False) instead.", DeprecationWarning)
+        warnings.warn(
+            "disable_component is deprecated, use set_enabled(False) instead.",
+            DeprecationWarning,
+        )
         editor.EditorComponentAPIBus(bus.Broadcast, "DisableComponents", [self.id])
 
     def remove(self):
@@ -316,7 +344,9 @@ class EditorComponent:
         editor.EditorComponentAPIBus(bus.Broadcast, "RemoveComponents", [self.id])
 
     @staticmethod
-    def get_type_ids(component_names: list, entity_type: EditorEntityType = EditorEntityType.GAME) -> list:
+    def get_type_ids(
+        component_names: list, entity_type: EditorEntityType = EditorEntityType.GAME
+    ) -> list:
         """
         Used to get type ids of given components list
         :param component_names: List of components to get type ids
@@ -324,7 +354,11 @@ class EditorComponent:
         :return: List of type ids of given components. Type id is a UUID as provided by the ebus call
         """
         type_ids = editor.EditorComponentAPIBus(
-            bus.Broadcast, "FindComponentTypeIdsByEntityType", component_names, entity_type.value)
+            bus.Broadcast,
+            "FindComponentTypeIdsByEntityType",
+            component_names,
+            entity_type.value,
+        )
         return type_ids
 
     def get_property_visibility(self, component_property_path: str) -> str:
@@ -336,12 +370,17 @@ class EditorComponent:
         """
         component_properties_type_visible = self.get_property_type_visibility()
 
-        assert component_property_path in component_properties_type_visible, f"Error: The {self.get_component_name()} does not have a component property of \"{component_property_path}\"."
+        assert component_property_path in component_properties_type_visible, (
+            f'Error: The {self.get_component_name()} does not have a component property of "{component_property_path}".'
+        )
 
-        property_type, visibility = component_properties_type_visible[component_property_path]
+        property_type, visibility = component_properties_type_visible[
+            component_property_path
+        ]
 
-        assert visibility != "" or visibility is not None, \
+        assert visibility != "" or visibility is not None, (
             f"No property visibility found for component property path {component_property_path}"
+        )
 
         return visibility
 
@@ -351,7 +390,9 @@ def convert_to_azvector3(xyz) -> azlmbr.math.Vector3:
     Converts a vector3-like element into a azlmbr.math.Vector3
     """
     if isinstance(xyz, Tuple) or isinstance(xyz, List):
-        assert len(xyz) == 3, ValueError("vector must be a 3 element list/tuple or azlmbr.math.Vector3")
+        assert len(xyz) == 3, ValueError(
+            "vector must be a 3 element list/tuple or azlmbr.math.Vector3"
+        )
         return math.Vector3(float(xyz[0]), float(xyz[1]), float(xyz[2]))
     elif isinstance(xyz, type(math.Vector3())):
         return xyz
@@ -375,7 +416,9 @@ class EditorEntity:
 
     # Creation functions
     @classmethod
-    def find_editor_entity(cls, entity_name: str, must_be_unique: bool = False) -> EditorEntity:
+    def find_editor_entity(
+        cls, entity_name: str, must_be_unique: bool = False
+    ) -> EditorEntity:
         """
         Given Entity name, outputs entity object
         :param entity_name: Name of entity to find
@@ -383,9 +426,13 @@ class EditorEntity:
         :return: EditorEntity class object
         """
         entities = cls.find_editor_entities([entity_name])
-        assert len(entities) != 0, f"Failure: Couldn't find entity with name: '{entity_name}'"
+        assert len(entities) != 0, (
+            f"Failure: Couldn't find entity with name: '{entity_name}'"
+        )
         if must_be_unique:
-            assert len(entities) == 1, f"Failure: Multiple entities with name: '{entity_name}' when expected only one"
+            assert len(entities) == 1, (
+                f"Failure: Multiple entities with name: '{entity_name}' when expected only one"
+            )
 
         entity = entities[0]
         return entity
@@ -399,7 +446,7 @@ class EditorEntity:
         """
         searchFilter = azlmbr.entity.SearchFilter()
         searchFilter.names = entity_names
-        ids = azlmbr.entity.SearchBus(bus.Broadcast, 'SearchEntities', searchFilter)
+        ids = azlmbr.entity.SearchBus(bus.Broadcast, "SearchEntities", searchFilter)
         return [cls(id) for id in ids]
 
     @classmethod
@@ -413,7 +460,9 @@ class EditorEntity:
         if parent_id is None:
             parent_id = azlmbr.entity.EntityId()
 
-        new_id = azlmbr.editor.ToolsApplicationRequestBus(bus.Broadcast, "CreateNewEntity", parent_id)
+        new_id = azlmbr.editor.ToolsApplicationRequestBus(
+            bus.Broadcast, "CreateNewEntity", parent_id
+        )
         assert new_id.IsValid(), "Failure: Could not create Editor Entity"
         entity = cls(new_id)
         if name:
@@ -426,7 +475,8 @@ class EditorEntity:
         cls,
         entity_position: Union[List, Tuple, math.Vector3],
         name: str = None,
-        parent_id: azlmbr.entity.EntityId = None) -> EditorEntity:
+        parent_id: azlmbr.entity.EntityId = None,
+    ) -> EditorEntity:
         """
         Used to create entity at position using 'CreateNewEntityAtPosition' Bus.
         :param entity_position: World Position(X, Y, Z) of entity in viewport.
@@ -441,7 +491,10 @@ class EditorEntity:
             parent_id = azlmbr.entity.EntityId()
 
         new_id = azlmbr.editor.ToolsApplicationRequestBus(
-            bus.Broadcast, "CreateNewEntityAtPosition", convert_to_azvector3(entity_position), parent_id
+            bus.Broadcast,
+            "CreateNewEntityAtPosition",
+            convert_to_azvector3(entity_position),
+            parent_id,
         )
         assert new_id.IsValid(), "Failure: Could not create Editor Entity"
         entity = cls(new_id)
@@ -469,9 +522,9 @@ class EditorEntity:
         Used to set this entity to be child of parent entity passed in
         :param: parent_entity_id: Entity Id of parent to set
         """
-        assert (
-            parent_entity_id.IsValid()
-        ), f"Failure: Could not set parent to entity: {self.get_name()}, Invalid parent id"
+        assert parent_entity_id.IsValid(), (
+            f"Failure: Could not set parent to entity: {self.get_name()}, Invalid parent id"
+        )
         editor.EditorEntityAPIBus(bus.Event, "SetParent", self.id, parent_entity_id)
 
     def get_parent_id(self) -> azlmbr.entity.EntityId:
@@ -514,9 +567,9 @@ class EditorEntity:
             add_component_outcome = editor.EditorComponentAPIBus(
                 bus.Broadcast, "AddComponentsOfType", self.id, [type_id]
             )
-            assert (
-                add_component_outcome.IsSuccess()
-            ), f"Failure: Could not add component: '{new_comp.get_component_name()}' to entity: '{self.get_name()}'"
+            assert add_component_outcome.IsSuccess(), (
+                f"Failure: Could not add component: '{new_comp.get_component_name()}' to entity: '{self.get_name()}'"
+            )
             new_comp.id = add_component_outcome.GetValue()[0]
             components.append(new_comp)
             self.components.append(new_comp)
@@ -537,11 +590,15 @@ class EditorEntity:
         :param component_names: List of component names to remove
         :return: None
         """
-        component_ids = [component.id for component in self.get_components_of_type(component_names)]
-        remove_success = editor.EditorComponentAPIBus(bus.Broadcast, "RemoveComponents", component_ids)
-        assert (
-            remove_success
-        ), f"Failure: could not remove component from entity '{self.get_name()}'"
+        component_ids = [
+            component.id for component in self.get_components_of_type(component_names)
+        ]
+        remove_success = editor.EditorComponentAPIBus(
+            bus.Broadcast, "RemoveComponents", component_ids
+        )
+        assert remove_success, (
+            f"Failure: could not remove component from entity '{self.get_name()}'"
+        )
 
     def get_components_of_type(self, component_names: list) -> List[EditorComponent]:
         """
@@ -556,9 +613,9 @@ class EditorEntity:
             get_component_of_type_outcome = editor.EditorComponentAPIBus(
                 bus.Broadcast, "GetComponentOfType", self.id, type_id
             )
-            assert (
-                get_component_of_type_outcome.IsSuccess()
-            ), f"Failure: Entity: '{self.get_name()}' does not have component:'{component.get_component_name()}'"
+            assert get_component_of_type_outcome.IsSuccess(), (
+                f"Failure: Entity: '{self.get_name()}' does not have component:'{component.get_component_name()}'"
+            )
             component.id = get_component_of_type_outcome.GetValue()
             component_list.append(component)
 
@@ -571,7 +628,9 @@ class EditorEntity:
         :return: True, if entity has specified component. Else, False
         """
         type_ids = EditorComponent.get_type_ids([component_name], EditorEntityType.GAME)
-        return editor.EditorComponentAPIBus(bus.Broadcast, "HasComponentOfType", self.id, type_ids[0])
+        return editor.EditorComponentAPIBus(
+            bus.Broadcast, "HasComponentOfType", self.id, type_ids[0]
+        )
 
     def get_start_status(self) -> int:
         """
@@ -597,7 +656,9 @@ class EditorEntity:
         if desired_start_status == "active":
             status_to_set = azlmbr.globals.property.EditorEntityStartStatus_StartActive
         elif desired_start_status == "inactive":
-            status_to_set = azlmbr.globals.property.EditorEntityStartStatus_StartInactive
+            status_to_set = (
+                azlmbr.globals.property.EditorEntityStartStatus_StartInactive
+            )
         elif desired_start_status == "editor":
             status_to_set = azlmbr.globals.property.EditorEntityStartStatus_EditorOnly
         else:
@@ -608,7 +669,9 @@ class EditorEntity:
 
         editor.EditorEntityAPIBus(bus.Event, "SetStartStatus", self.id, status_to_set)
         set_status = self.get_start_status()
-        assert set_status == status_to_set, f"Failed to set start status of {desired_start_status} to {self.get_name}"
+        assert set_status == status_to_set, (
+            f"Failed to set start status of {desired_start_status} to {self.get_name}"
+        )
 
     def is_locked(self) -> bool:
         """
@@ -667,40 +730,52 @@ class EditorEntity:
         """
         Gets the world translation of the entity
         """
-        return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
+        return azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "GetWorldTranslation", self.id
+        )
 
     def set_world_translation(self, new_translation) -> None:
         """
         Sets the new world translation of the current entity
         """
         new_translation = convert_to_azvector3(new_translation)
-        azlmbr.components.TransformBus(azlmbr.bus.Event, "SetWorldTranslation", self.id, new_translation)
+        azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "SetWorldTranslation", self.id, new_translation
+        )
 
     def get_world_rotation(self) -> azlmbr.math.Quaternion:
         """
         Gets the world rotation of the entity
         """
-        return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldRotation", self.id)
+        return azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "GetWorldRotation", self.id
+        )
 
     def set_world_rotation(self, new_rotation):
         """
         Sets the new world rotation of the current entity
         """
         new_rotation = convert_to_azvector3(new_rotation)
-        azlmbr.components.TransformBus(azlmbr.bus.Event, "SetWorldRotation", self.id, new_rotation)
+        azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "SetWorldRotation", self.id, new_rotation
+        )
 
     def get_world_uniform_scale(self) -> float:
         """
         Gets the world uniform scale of the current entity
         """
-        return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldUniformScale", self.id)
+        return azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "GetWorldUniformScale", self.id
+        )
 
     # Local Transform Functions
     def get_local_uniform_scale(self) -> float:
         """
         Gets the local uniform scale of the entity
         """
-        return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetLocalUniformScale", self.id)
+        return azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "GetLocalUniformScale", self.id
+        )
 
     def set_local_uniform_scale(self, scale_float) -> None:
         """
@@ -708,13 +783,17 @@ class EditorEntity:
         :param scale_float: value for "SetLocalUniformScale" to set to.
         :return: None
         """
-        azlmbr.components.TransformBus(azlmbr.bus.Event, "SetLocalUniformScale", self.id, scale_float)
+        azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "SetLocalUniformScale", self.id, scale_float
+        )
 
     def get_local_rotation(self) -> azlmbr.math.Quaternion:
         """
         Gets the local rotation of the entity
         """
-        return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetLocalRotation", self.id)
+        return azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "GetLocalRotation", self.id
+        )
 
     def set_local_rotation(self, new_rotation) -> None:
         """
@@ -723,14 +802,18 @@ class EditorEntity:
         :return: None
         """
         new_rotation = convert_to_azvector3(new_rotation)
-        azlmbr.components.TransformBus(azlmbr.bus.Event, "SetLocalRotation", self.id, new_rotation)
+        azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "SetLocalRotation", self.id, new_rotation
+        )
 
     def get_local_translation(self) -> azlmbr.math.Vector3:
         """
         Gets the local translation of the current entity.
         :return: The math.Vector3 value of the local translation.
         """
-        return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetLocalTranslation", self.id)
+        return azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "GetLocalTranslation", self.id
+        )
 
     def set_local_translation(self, new_translation) -> None:
         """
@@ -739,7 +822,9 @@ class EditorEntity:
         :return: None
         """
         new_translation = convert_to_azvector3(new_translation)
-        azlmbr.components.TransformBus(azlmbr.bus.Event, "SetLocalTranslation", self.id, new_translation)
+        azlmbr.components.TransformBus(
+            azlmbr.bus.Event, "SetLocalTranslation", self.id, new_translation
+        )
 
     def validate_world_translate_position(self, expected_translation) -> bool:
         """
@@ -747,10 +832,13 @@ class EditorEntity:
         :param expected_translation: The math.Vector3 value to compare against the world translation on the entity.
         :return: The bool indicating whether the translate position matched or not.
         """
-        is_entity_at_expected_position = self.get_world_translation().IsClose(expected_translation)
-        assert is_entity_at_expected_position, \
-            f"Translation position of entity '{self.get_name()}' : {self.get_world_translation().ToString()} does not" \
+        is_entity_at_expected_position = self.get_world_translation().IsClose(
+            expected_translation
+        )
+        assert is_entity_at_expected_position, (
+            f"Translation position of entity '{self.get_name()}' : {self.get_world_translation().ToString()} does not"
             f" match the expected value : {expected_translation.ToString()}"
+        )
         return is_entity_at_expected_position
 
     # Use this only when prefab system is enabled as it will fail otherwise.
@@ -760,9 +848,15 @@ class EditorEntity:
         :param entity: The entity used to fetch the owning prefab to focus on.
         """
 
-        assert self.id.isValid(), "A valid entity id is required to focus on its owning prefab."
-        focus_prefab_result = azlmbr.prefab.PrefabFocusPublicRequestBus(bus.Broadcast, "FocusOnOwningPrefab", self.id)
-        assert focus_prefab_result.IsSuccess(), f"Prefab operation 'FocusOnOwningPrefab' failed. Error: {focus_prefab_result.GetError()}"
+        assert self.id.isValid(), (
+            "A valid entity id is required to focus on its owning prefab."
+        )
+        focus_prefab_result = azlmbr.prefab.PrefabFocusPublicRequestBus(
+            bus.Broadcast, "FocusOnOwningPrefab", self.id
+        )
+        assert focus_prefab_result.IsSuccess(), (
+            f"Prefab operation 'FocusOnOwningPrefab' failed. Error: {focus_prefab_result.GetError()}"
+        )
 
     def has_overrides(self) -> bool:
         """
@@ -770,14 +864,18 @@ class EditorEntity:
         as this will currently always return as True on a container entity.
         :return: True if overrides are present, False otherwise
         """
-        return prefab.PrefabOverridePublicRequestBus(bus.Broadcast, "AreOverridesPresent", self.id, "")
+        return prefab.PrefabOverridePublicRequestBus(
+            bus.Broadcast, "AreOverridesPresent", self.id, ""
+        )
 
     def revert_overrides(self) -> bool:
         """
         Reverts overrides on a given entity if overrides are present
         :return: True is overrides were detected and reverted, False otherwise
         """
-        return prefab.PrefabOverridePublicRequestBus(bus.Broadcast, "RevertOverrides", self.id, "")
+        return prefab.PrefabOverridePublicRequestBus(
+            bus.Broadcast, "RevertOverrides", self.id, ""
+        )
 
 
 class EditorLevelEntity:
@@ -812,9 +910,9 @@ class EditorLevelEntity:
             add_component_outcome = editor.EditorLevelComponentAPIBus(
                 bus.Broadcast, "AddComponentsOfType", [type_id]
             )
-            assert (
-                add_component_outcome.IsSuccess()
-            ), f"Failure: Could not add component: '{new_comp.get_component_name()}' to level"
+            assert add_component_outcome.IsSuccess(), (
+                f"Failure: Could not add component: '{new_comp.get_component_name()}' to level"
+            )
             new_comp.id = add_component_outcome.GetValue()[0]
             components.append(new_comp)
         return components
@@ -833,9 +931,9 @@ class EditorLevelEntity:
             get_component_of_type_outcome = editor.EditorLevelComponentAPIBus(
                 bus.Broadcast, "GetComponentOfType", type_id
             )
-            assert (
-                get_component_of_type_outcome.IsSuccess()
-            ), f"Failure: Level does not have component:'{component.get_component_name()}'"
+            assert get_component_of_type_outcome.IsSuccess(), (
+                f"Failure: Level does not have component:'{component.get_component_name()}'"
+            )
             component.id = get_component_of_type_outcome.GetValue()
             component_list.append(component)
 
@@ -848,8 +946,12 @@ class EditorLevelEntity:
         :param component_name: Name of component to check for
         :return: True, if level has specified component. Else, False
         """
-        type_ids = EditorComponent.get_type_ids([component_name], EditorEntityType.LEVEL)
-        return editor.EditorLevelComponentAPIBus(bus.Broadcast, "HasComponentOfType", type_ids[0])
+        type_ids = EditorComponent.get_type_ids(
+            [component_name], EditorEntityType.LEVEL
+        )
+        return editor.EditorLevelComponentAPIBus(
+            bus.Broadcast, "HasComponentOfType", type_ids[0]
+        )
 
     @staticmethod
     def count_components_of_type(component_name: str) -> int:
@@ -858,5 +960,9 @@ class EditorLevelEntity:
         :param component_name: Name of component to check for
         :return: integer count of occurences of level component attached to level or zero if none are present
         """
-        type_ids = EditorComponent.get_type_ids([component_name], EditorEntityType.LEVEL)
-        return editor.EditorLevelComponentAPIBus(bus.Broadcast, "CountComponentsOfType", type_ids[0])
+        type_ids = EditorComponent.get_type_ids(
+            [component_name], EditorEntityType.LEVEL
+        )
+        return editor.EditorLevelComponentAPIBus(
+            bus.Broadcast, "CountComponentsOfType", type_ids[0]
+        )
