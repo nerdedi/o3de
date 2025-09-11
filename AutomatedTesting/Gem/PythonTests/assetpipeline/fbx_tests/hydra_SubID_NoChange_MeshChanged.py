@@ -9,7 +9,9 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     asset_id_no_change = (
         "Model AssetId matches after changes",
-        "P0: Model AssetId does not match expected output")
+        "P0: Model AssetId does not match expected output",
+    )
+
 
 def SubID_NoChange_MeshChanged():
     """
@@ -41,11 +43,16 @@ def SubID_NoChange_MeshChanged():
     import azlmbr.bus
     import azlmbr.editor as editor
     from Atom.atom_utils.atom_constants import AtomComponentProperties
-    from EditorPythonTestTools.editor_python_test_tools.editor_entity_utils import EditorEntity
-    from EditorPythonTestTools.editor_python_test_tools.utils import Report, TestHelper, Tracer
+    from EditorPythonTestTools.editor_python_test_tools.editor_entity_utils import (
+        EditorEntity,
+    )
+    from EditorPythonTestTools.editor_python_test_tools.utils import (
+        Report,
+        TestHelper,
+        Tracer,
+    )
     from EditorPythonTestTools.editor_python_test_tools.asset_utils import Asset
     from assetpipeline.ap_fixtures.check_model_ready_fixture import OnModelReloaded
-
 
     with Tracer() as error_tracer:
         # -- Test Setup Begins --
@@ -54,12 +61,19 @@ def SubID_NoChange_MeshChanged():
         TestHelper.open_level("AssetPipeline", "SceneTests")
 
         # Test Setup: Set source and destination paths for assetinfo file.
-        dirpath = editor.EditorToolsApplicationRequestBus(azlmbr.bus.Broadcast, 'GetGameFolder')
-        src = os.path.join(dirpath, 'Objects', 'ShaderBall_simple', 'shaderball_simple_MeshChange_SameID.fbx.assetinfo')
-        dst = os.path.join(dirpath, 'Objects', 'shaderball_simple.fbx.assetinfo')
+        dirpath = editor.EditorToolsApplicationRequestBus(
+            azlmbr.bus.Broadcast, "GetGameFolder"
+        )
+        src = os.path.join(
+            dirpath,
+            "Objects",
+            "ShaderBall_simple",
+            "shaderball_simple_MeshChange_SameID.fbx.assetinfo",
+        )
+        dst = os.path.join(dirpath, "Objects", "shaderball_simple.fbx.assetinfo")
 
         # Test Setup: Find the asset by asset path
-        model_path = os.path.join('objects', 'shaderball_simple.fbx.azmodel')
+        model_path = os.path.join("objects", "shaderball_simple.fbx.azmodel")
         model = Asset.find_asset_by_path(model_path)
 
         # Test Setup: Ensure there is no assetinfo file in the dst path, if there is, remove it.
@@ -70,11 +84,17 @@ def SubID_NoChange_MeshChanged():
 
         # Test Setup: Find the entity, and it's mesh component, within the level.
         find_entity = EditorEntity.find_editor_entity(AtomComponentProperties.mesh())
-        find_component = find_entity.get_components_of_type([AtomComponentProperties.mesh()])[0]
+        find_component = find_entity.get_components_of_type(
+            [AtomComponentProperties.mesh()]
+        )[0]
 
-        #Test Setup: Record the initial values for the Model Asset and the Vertex Count of LOD0.
-        original_component_id = find_component.get_component_property_value(AtomComponentProperties.mesh('Model Asset'))
-        original_vert_count = find_component.get_component_property_value(AtomComponentProperties.mesh('Vertex Count LOD0'))
+        # Test Setup: Record the initial values for the Model Asset and the Vertex Count of LOD0.
+        original_component_id = find_component.get_component_property_value(
+            AtomComponentProperties.mesh("Model Asset")
+        )
+        original_vert_count = find_component.get_component_property_value(
+            AtomComponentProperties.mesh("Vertex Count LOD0")
+        )
 
         # -- Test Begins --
         # 1. Copy an assetinfo file to change scene output.
@@ -88,16 +108,29 @@ def SubID_NoChange_MeshChanged():
         time.sleep(0.2)
 
         # 3. Record the current values for the Model Asset and the Vertex Count of LOD0.
-        current_component_id = find_component.get_component_property_value(AtomComponentProperties.mesh('Model Asset'))
-        current_vert_count = find_component.get_component_property_value(AtomComponentProperties.mesh('Vertex Count LOD0'))
-        result = current_component_id == original_component_id and original_vert_count != current_vert_count
+        current_component_id = find_component.get_component_property_value(
+            AtomComponentProperties.mesh("Model Asset")
+        )
+        current_vert_count = find_component.get_component_property_value(
+            AtomComponentProperties.mesh("Vertex Count LOD0")
+        )
+        result = (
+            current_component_id == original_component_id
+            and original_vert_count != current_vert_count
+        )
 
         # 4. Look for errors or asserts.
-        TestHelper.wait_for_condition(lambda: error_tracer.has_errors or error_tracer.has_asserts, 1.0)
+        TestHelper.wait_for_condition(
+            lambda: error_tracer.has_errors or error_tracer.has_asserts, 1.0
+        )
         for error_info in error_tracer.errors:
-            Report.info(f"Error: {error_info.filename} {error_info.function} | {error_info.message}")
+            Report.info(
+                f"Error: {error_info.filename} {error_info.function} | {error_info.message}"
+            )
         for assert_info in error_tracer.asserts:
-            Report.info(f"Assert: {assert_info.filename} {assert_info.function} | {assert_info.message}")
+            Report.info(
+                f"Assert: {assert_info.filename} {assert_info.function} | {assert_info.message}"
+            )
 
         # 5. Clean-up.
         os.remove(dst)
@@ -109,4 +142,5 @@ def SubID_NoChange_MeshChanged():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(SubID_NoChange_MeshChanged)

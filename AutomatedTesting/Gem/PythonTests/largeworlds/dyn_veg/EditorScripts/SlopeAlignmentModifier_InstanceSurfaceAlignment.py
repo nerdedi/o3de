@@ -9,19 +9,19 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     surface_entity_created = (
         "Successfully created Surface entity",
-        "Failed to create Surface entity"
+        "Failed to create Surface entity",
     )
     instance_count = (
         "Found the expected number of instances",
-        "Unexpected number of instances found"
+        "Unexpected number of instances found",
     )
     instances_aligned_1 = (
         "All instances are planted perpendicularly to the surface",
-        "Found instances not aligned to surface perpendicularly"
+        "Found instances not aligned to surface perpendicularly",
     )
     instances_aligned_0 = (
         "All instances are pointed straight up",
-        "Found instances not aligned to surface pointing straight up"
+        "Found instances not aligned to surface pointing straight up",
     )
 
 
@@ -55,7 +55,9 @@ def SlopeAlignmentModifier_InstanceSurfaceAlignment():
         expected_rotation.SetFromEulerDegrees(rot_degrees_vec)
         if instance.alignment.IsClose(expected_rotation):
             return True
-        Report.info(f"Expected rotation of {expected_rotation}, Found {instance.alignment}")
+        Report.info(
+            f"Expected rotation of {expected_rotation}, Found {instance.alignment}"
+        )
         return False
 
     # Open an existing simple level
@@ -65,24 +67,29 @@ def SlopeAlignmentModifier_InstanceSurfaceAlignment():
 
     # Create a spawner entity setup with all needed components
     center_point = math.Vector3(512.0, 512.0, 32.0)
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "SlopeAlign_PinkFlower")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", center_point, 16.0, 16.0, 32.0,
-                                                               pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "SlopeAlign_PinkFlower"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", center_point, 16.0, 16.0, 32.0, pink_flower_prefab
+    )
 
     # Create a sloped mesh surface for the instances to plant on
     center_point = math.Vector3(502.0, 512.0, 24.0)
     mesh_asset_path = os.path.join("objects", "_primitives", "_box_1x1.fbx.azmodel")
-    mesh_asset = asset.AssetCatalogRequestBus(bus.Broadcast, "GetAssetIdByPath", mesh_asset_path, math.Uuid(),
-                                              False)
+    mesh_asset = asset.AssetCatalogRequestBus(
+        bus.Broadcast, "GetAssetIdByPath", mesh_asset_path, math.Uuid(), False
+    )
     rotation = math.Vector3(0.0, radians(45.0), 0.0)
     surface_entity = hydra.Entity("Surface Entity")
-    surface_entity.create_entity(
-        center_point,
-        ["Mesh", "Mesh Surface Tag Emitter"]
-    )
+    surface_entity.create_entity(center_point, ["Mesh", "Mesh Surface Tag Emitter"])
     Report.critical_result(Tests.surface_entity_created, surface_entity.id.IsValid())
-    hydra.get_set_test(surface_entity, 0, "Controller|Configuration|Model Asset", mesh_asset)
+    hydra.get_set_test(
+        surface_entity, 0, "Controller|Configuration|Model Asset", mesh_asset
+    )
     components.TransformBus(bus.Event, "SetLocalRotation", surface_entity.id, rotation)
     components.TransformBus(bus.Event, "SetLocalUniformScale", surface_entity.id, 30.0)
 
@@ -97,24 +104,38 @@ def SlopeAlignmentModifier_InstanceSurfaceAlignment():
     spawner_entity.get_set_test(3, "Configuration|Alignment Coefficient Max", 1.0)
 
     # Create new child entity with a Constant Gradient
-    child_vegetation_id = editor.ToolsApplicationRequestBus(bus.Broadcast, "CreateNewEntity", spawner_entity.id)
+    child_vegetation_id = editor.ToolsApplicationRequestBus(
+        bus.Broadcast, "CreateNewEntity", spawner_entity.id
+    )
     child_vegetation = hydra.Entity("Child Vegetation Entity", child_vegetation_id)
     components_to_add = ["Constant Gradient"]
     child_vegetation.components = []
     for component in components_to_add:
-        child_vegetation.components.append(hydra.add_component(component, child_vegetation_id))
+        child_vegetation.components.append(
+            hydra.add_component(component, child_vegetation_id)
+        )
 
     # Reference the Constant Gradient on the Slope Alignment Modifier component
-    spawner_entity.get_set_test(3, "Configuration|Gradient|Gradient Entity Id", child_vegetation_id)
+    spawner_entity.get_set_test(
+        3, "Configuration|Gradient|Gradient Entity Id", child_vegetation_id
+    )
 
     # Verify instances are have planted and are aligned to slope as expected
     num_expected = 20 * 20
     instances_planted = helper.wait_for_condition(
-        lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id, num_expected), 5.0)
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.critical_result(Tests.instance_count, instances_planted)
 
-    box = azlmbr.shape.ShapeComponentRequestsBus(bus.Event, 'GetEncompassingAabb', spawner_entity.id)
-    instances = areasystem.AreaSystemRequestBus(bus.Broadcast, 'GetInstancesInAabb', box)
+    box = azlmbr.shape.ShapeComponentRequestsBus(
+        bus.Event, "GetEncompassingAabb", spawner_entity.id
+    )
+    instances = areasystem.AreaSystemRequestBus(
+        bus.Broadcast, "GetInstancesInAabb", box
+    )
 
     success = True
     for instance in instances:
@@ -124,13 +145,21 @@ def SlopeAlignmentModifier_InstanceSurfaceAlignment():
     # Change Min/Max to 0.0 and verify proper alignment
     spawner_entity.get_set_test(3, "Configuration|Alignment Coefficient Min", 0.0)
     spawner_entity.get_set_test(3, "Configuration|Alignment Coefficient Max", 0.0)
-    general.run_console('veg_debugClearAllAreas')
+    general.run_console("veg_debugClearAllAreas")
     instances_planted = helper.wait_for_condition(
-        lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id, num_expected), 5.0)
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.critical_result(Tests.instance_count, instances_planted)
 
-    box = azlmbr.shape.ShapeComponentRequestsBus(bus.Event, 'GetEncompassingAabb', spawner_entity.id)
-    instances = areasystem.AreaSystemRequestBus(bus.Broadcast, 'GetInstancesInAabb', box)
+    box = azlmbr.shape.ShapeComponentRequestsBus(
+        bus.Event, "GetEncompassingAabb", spawner_entity.id
+    )
+    instances = areasystem.AreaSystemRequestBus(
+        bus.Broadcast, "GetInstancesInAabb", box
+    )
 
     success = True
     for instance in instances:
@@ -139,6 +168,6 @@ def SlopeAlignmentModifier_InstanceSurfaceAlignment():
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(SlopeAlignmentModifier_InstanceSurfaceAlignment)

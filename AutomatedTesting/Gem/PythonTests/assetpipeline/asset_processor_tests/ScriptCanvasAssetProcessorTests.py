@@ -24,9 +24,12 @@ targetProjects = ["AutomatedTesting"]
 
 logger = logging.getLogger(__name__)
 
+
 @pytest.fixture
 def local_resources(request, workspace, ap_setup_fixture):
-    ap_setup_fixture["tests_dir"] = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__))))
+    ap_setup_fixture["tests_dir"] = os.path.abspath(
+        os.path.join(os.path.dirname(os.path.realpath(__file__)))
+    )
 
 
 @pytest.mark.usefixtures("asset_processor")
@@ -34,8 +37,9 @@ def local_resources(request, workspace, ap_setup_fixture):
 @pytest.mark.usefixtures("local_resources")
 @pytest.mark.parametrize("project", targetProjects)
 class TestsAssetProcessorBatch_AllPlatforms(object):
-
-    def test_RunAPBatch_ScriptCanvasFileOnlyProcessesOnce(self, asset_processor, ap_setup_fixture):
+    def test_RunAPBatch_ScriptCanvasFileOnlyProcessesOnce(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         Tests processing a script canvas file multiple times will not result in the file re-processing.
         This is a regression test for script canvas files that were generating a unique fingerprint
@@ -51,27 +55,49 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         4. Run asset processor a few more times
         5. Verify nothing was processed
         """
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "RunAPBatch_ScriptCanvasFileOnlyProcessesOnce")
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"],
+            "RunAPBatch_ScriptCanvasFileOnlyProcessesOnce",
+        )
 
-        result, output = asset_processor.batch_process(capture_output=True, fastscan=False)
+        result, output = asset_processor.batch_process(
+            capture_output=True, fastscan=False
+        )
         assert result, "AP Batch failed"
         num_processed_assets = asset_processor_utils.get_num_processed_assets(output)
         expected_processed_assets = 7
-        assert num_processed_assets is expected_processed_assets, f'Wrong number of processed assets, expected {expected_processed_assets}, but {num_processed_assets} were processed'
+        assert num_processed_assets is expected_processed_assets, (
+            f"Wrong number of processed assets, expected {expected_processed_assets}, but {num_processed_assets} were processed"
+        )
 
         missing_assets, existing_assets = asset_processor.compare_assets_with_cache()
         assert not missing_assets
 
-        expected_assets = ['graphwithmultipleentities-1', 'graphwithmultipleentities-2', 'graphwithmultipleentities-3', 'graphwithmultipleentities-4', 'graphwithmultipleentities', 'test_mathexpression_complex' ]
+        expected_assets = [
+            "graphwithmultipleentities-1",
+            "graphwithmultipleentities-2",
+            "graphwithmultipleentities-3",
+            "graphwithmultipleentities-4",
+            "graphwithmultipleentities",
+            "test_mathexpression_complex",
+        ]
 
         expected_assets.sort()
         existing_assets.sort()
 
-        assert existing_assets == expected_assets, f'Following assets were found in cache: {existing_assets}, but expected {expected_assets}'
+        assert existing_assets == expected_assets, (
+            f"Following assets were found in cache: {existing_assets}, but expected {expected_assets}"
+        )
 
         for processing_count in range(0, 5):
-            result, output = asset_processor.batch_process(capture_output=True, fastscan=False)
+            result, output = asset_processor.batch_process(
+                capture_output=True, fastscan=False
+            )
             assert result, "AP Batch failed"
-            num_processed_assets = asset_processor_utils.get_num_processed_assets(output)
+            num_processed_assets = asset_processor_utils.get_num_processed_assets(
+                output
+            )
             expected_processed_assets = 0
-            assert num_processed_assets is expected_processed_assets, f'Wrong number of processed assets, expected {expected_processed_assets}, but {num_processed_assets} were processed'
+            assert num_processed_assets is expected_processed_assets, (
+                f"Wrong number of processed assets, expected {expected_processed_assets}, but {num_processed_assets} were processed"
+            )

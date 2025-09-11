@@ -9,28 +9,27 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     asset_editor_opened = (
         "Successfully opened the Asset Editor",
-        "Failed to open the Asset Editor"
+        "Failed to open the Asset Editor",
     )
     event_groups_added = (
         "Successfully added event groups via +",
-        "Failed to add event groups"
+        "Failed to add event groups",
     )
     single_event_group_deleted = (
         "Successfully deleted an event group",
-        "Failed to delete event group"
+        "Failed to delete event group",
     )
     all_event_groups_deleted = (
         "Successfully deleted all event groups",
-        "Failed to delete all event groups"
+        "Failed to delete all event groups",
     )
     asset_editor_closed = (
         "Successfully closed the Asset Editor",
-        "Failed to close the Asset Editor"
+        "Failed to close the Asset Editor",
     )
 
 
 def InputBindings_Add_Remove_Input_Events():
-
     import pyside_utils
 
     @pyside_utils.wrap_async
@@ -90,15 +89,21 @@ def InputBindings_Add_Remove_Input_Events():
         editor_window = pyside_utils.get_editor_main_window()
         QtWidgets.QApplication.instance()
         asset_editor = editor_window.findChild(QtWidgets.QDockWidget, "Asset Editor")
-        asset_editor_widget = asset_editor.findChild(QtWidgets.QWidget, "m_assetEditorWidget")
+        asset_editor_widget = asset_editor.findChild(
+            QtWidgets.QWidget, "m_assetEditorWidget"
+        )
 
         # 4) Create a new .inputbindings file and add event groups
         # Get the action File->New->Input Bindings and trigger it
-        action = pyside_utils.find_child_by_pattern(asset_editor_widget, {"text": "Input Bindings"})
+        action = pyside_utils.find_child_by_pattern(
+            asset_editor_widget, {"text": "Input Bindings"}
+        )
         action.trigger()
 
         # Add event groups
-        input_event_groups = asset_editor_widget.findChild(QtWidgets.QFrame, "Input Event Groups")
+        input_event_groups = asset_editor_widget.findChild(
+            QtWidgets.QFrame, "Input Event Groups"
+        )
         # First QToolButton is +, Second QToolButton is Delete
         add_button = input_event_groups.findChildren(QtWidgets.QToolButton, "")[0]
         add_button.click()
@@ -106,12 +111,18 @@ def InputBindings_Add_Remove_Input_Events():
         add_button.click()
 
         # 5) Verify if there are 3 elements in the Input Event Groups label
-        no_of_elements_label = input_event_groups.findChild(QtWidgets.QLabel, "DefaultLabel")
-        success = await pyside_utils.wait_for_condition(lambda: "3 elements" in no_of_elements_label.text(), 2.0)
+        no_of_elements_label = input_event_groups.findChild(
+            QtWidgets.QLabel, "DefaultLabel"
+        )
+        success = await pyside_utils.wait_for_condition(
+            lambda: "3 elements" in no_of_elements_label.text(), 2.0
+        )
         Report.result(Tests.event_groups_added, success)
 
         # 6) Delete one event group
-        event = asset_editor_widget.findChildren(QtWidgets.QFrame, "<Unspecified Event>")[0]
+        event = asset_editor_widget.findChildren(
+            QtWidgets.QFrame, "<Unspecified Event>"
+        )[0]
         delete_button = event.findChildren(QtWidgets.QToolButton, "")[0]
         delete_button.click()
 
@@ -120,21 +131,30 @@ def InputBindings_Add_Remove_Input_Events():
         # the QLabel showing the no of elements is being rendered, so we are taking the 2nd QFrame
         # with name "Input Event Groups" to verify the number of elements
         def get_elements_label_text(asset_editor_widget):
-            input_event_groups = asset_editor_widget.findChildren(QtWidgets.QFrame, "Input Event Groups")
+            input_event_groups = asset_editor_widget.findChildren(
+                QtWidgets.QFrame, "Input Event Groups"
+            )
             if len(input_event_groups) > 1:
                 input_event_group = input_event_groups[1]
-                no_of_elements_label = input_event_group.findChild(QtWidgets.QLabel, "DefaultLabel")
+                no_of_elements_label = input_event_group.findChild(
+                    QtWidgets.QLabel, "DefaultLabel"
+                )
                 return no_of_elements_label.text()
             return ""
 
-        success = await pyside_utils.wait_for_condition(lambda: "2 elements" in
-                                                                get_elements_label_text(asset_editor_widget), 2.0)
+        success = await pyside_utils.wait_for_condition(
+            lambda: "2 elements" in get_elements_label_text(asset_editor_widget), 2.0
+        )
         Report.result(Tests.single_event_group_deleted, success)
 
         # 8) Click on Delete button to delete all the Event Groups
         # First QToolButton child of active input_event_groups is +, Second QToolButton is Delete
-        input_event_groups = asset_editor_widget.findChildren(QtWidgets.QFrame, "Input Event Groups")[1]
-        delete_all_button = input_event_groups.findChildren(QtWidgets.QToolButton, "")[1]
+        input_event_groups = asset_editor_widget.findChildren(
+            QtWidgets.QFrame, "Input Event Groups"
+        )[1]
+        delete_all_button = input_event_groups.findChildren(QtWidgets.QToolButton, "")[
+            1
+        ]
         pyside_utils.click_button_async(delete_all_button)
 
         # Clicking the Delete All button will prompt the user if they are sure they want to
@@ -145,8 +165,9 @@ def InputBindings_Add_Remove_Input_Events():
         yes_button.click()
 
         # 9) Verify if all the elements are deleted
-        success = await pyside_utils.wait_for_condition(lambda: "0 elements" in
-                                                                get_elements_label_text(asset_editor_widget), 2.0)
+        success = await pyside_utils.wait_for_condition(
+            lambda: "0 elements" in get_elements_label_text(asset_editor_widget), 2.0
+        )
         Report.result(Tests.all_event_groups_deleted, success)
 
         # 10) Close Asset Editor
@@ -156,6 +177,6 @@ def InputBindings_Add_Remove_Input_Events():
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(InputBindings_Add_Remove_Input_Events)
