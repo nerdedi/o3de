@@ -10,7 +10,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # Test Case Title : Verify ScriptCanvas Collision Events
 
 
-
 # fmt: off
 class Tests:
     enter_game_mode            = ("Entered game mode",                  "Failed to enter game mode")
@@ -101,24 +100,36 @@ def ScriptCanvas_CollisionEvents():
             self.handler.add_callback("OnCollisionEnd", self.on_collision_end)
 
         def get_z_position(self):
-            z_position = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldZ", self.id)
+            z_position = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldZ", self.id
+            )
             Report.info("{}'s z-position: {}".format(self.name, z_position))
             return z_position
 
         def is_gravity_enabled(self):
-            return azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "IsGravityEnabled", self.id)
+            return azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "IsGravityEnabled", self.id
+            )
 
         # Set up reporting of the event records and whether they match
         def match_event_records(self):
-            Report.info("{} collision event record: {}".format(self.name, self.collision_event_record))
-            Report.info("Script Canvas event record: {}".format(self.script_canvas_event_record))
+            Report.info(
+                "{} collision event record: {}".format(
+                    self.name, self.collision_event_record
+                )
+            )
+            Report.info(
+                "Script Canvas event record: {}".format(self.script_canvas_event_record)
+            )
             return self.collision_event_record == self.script_canvas_event_record
 
         # Set up collision event detection and update collision event record
         def on_collision(self, event, other_id):
             if not self.collided:
                 self.collided = True
-            other_name = azlmbr.entity.GameEntityContextRequestBus(azlmbr.bus.Broadcast, "GetEntityName", other_id)
+            other_name = azlmbr.entity.GameEntityContextRequestBus(
+                azlmbr.bus.Broadcast, "GetEntityName", other_id
+            )
             Report.info("{} collision {}s with {}".format(self.name, event, other_name))
             self.collision_event_record.append(event)
 
@@ -133,7 +144,9 @@ def ScriptCanvas_CollisionEvents():
 
         # Set up detection of the sphere coming to rest
         def bouncing_stopped(self):
-            if not azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "IsAwake", self.id):
+            if not azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "IsAwake", self.id
+            ):
                 self.stopped_bouncing = True
             return self.stopped_bouncing
 
@@ -164,8 +177,12 @@ def ScriptCanvas_CollisionEvents():
     # 2) Retrieve and validate entities
     terrain = Entity("PhysX Terrain", Tests.terrain_found_valid)
     sphere = Sphere("Sphere", Tests.sphere_found_valid, Tests.event_records_match)
-    begin_signal = SignalEntity("Begin Signal", Tests.begin_signal_found_valid, sphere, "begin")
-    persist_signal = SignalEntity("Persist Signal", Tests.persist_signal_found_valid, sphere, "persist")
+    begin_signal = SignalEntity(
+        "Begin Signal", Tests.begin_signal_found_valid, sphere, "begin"
+    )
+    persist_signal = SignalEntity(
+        "Persist Signal", Tests.persist_signal_found_valid, sphere, "persist"
+    )
     end_signal = SignalEntity("End Signal", Tests.end_signal_found_valid, sphere, "end")
 
     entities = [terrain, sphere, begin_signal, persist_signal, end_signal]
@@ -173,7 +190,10 @@ def ScriptCanvas_CollisionEvents():
         Report.critical_result(entity.found_valid_test, entity.id.IsValid())
 
     # 3) Check that the sphere is above the terrain
-    Report.critical_result(Tests.sphere_above_terrain, sphere.get_z_position() - SPHERE_RADIUS > TERRAIN_START_Z)
+    Report.critical_result(
+        Tests.sphere_above_terrain,
+        sphere.get_z_position() - SPHERE_RADIUS > TERRAIN_START_Z,
+    )
 
     # 4) Check that gravity is enabled on the sphere
     Report.critical_result(Tests.sphere_gravity_enabled, sphere.is_gravity_enabled())
@@ -195,4 +215,5 @@ def ScriptCanvas_CollisionEvents():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(ScriptCanvas_CollisionEvents)

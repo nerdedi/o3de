@@ -9,15 +9,15 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     initial_instance_count = (
         "Initial instance count is as expected",
-        "Found an unexpected number of initial instances"
+        "Found an unexpected number of initial instances",
     )
     autosnap_enabled_instance_count = (
         "Found the expected number of instances with Auto Snap to Surface enabled",
-        "Found an unexpected number of instances with Auto Snap to Surface enabled"
+        "Found an unexpected number of instances with Auto Snap to Surface enabled",
     )
     autosnap_disabled_instance_count = (
         "Found the expected number of instances with Auto Snap to Surface disabled",
-        "Found an unexpected number of instances with Auto Snap to Surface disabled"
+        "Found an unexpected number of instances with Auto Snap to Surface disabled",
     )
 
 
@@ -59,9 +59,14 @@ def PositionModifier_AutoSnapToSurfaceWorks():
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
 
-    position_modifier_paths = ['Configuration|Position X|Range Min', 'Configuration|Position X|Range Max',
-                               'Configuration|Position Y|Range Min', 'Configuration|Position Y|Range Max',
-                               'Configuration|Position Z|Range Min', 'Configuration|Position Z|Range Max']
+    position_modifier_paths = [
+        "Configuration|Position X|Range Min",
+        "Configuration|Position X|Range Max",
+        "Configuration|Position Y|Range Min",
+        "Configuration|Position Y|Range Max",
+        "Configuration|Position Z|Range Min",
+        "Configuration|Position Z|Range Max",
+    ]
 
     # 1) Open an existing simple level
     hydra.open_base_level()
@@ -72,10 +77,15 @@ def PositionModifier_AutoSnapToSurfaceWorks():
 
     # 2) Create a new entity with required vegetation area components and a Position Modifier
     spawner_center_point = math.Vector3(512.0, 512.0, 32.0)
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "PosMod_PinkFlower")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", spawner_center_point, 16.0, 16.0,
-                                                               16.0, pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "PosMod_PinkFlower"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", spawner_center_point, 16.0, 16.0, 16.0, pink_flower_prefab
+    )
 
     # Add a Vegetation Position Modifier and set offset values to 0
     spawner_entity.add_component("Vegetation Position Modifier")
@@ -83,21 +93,31 @@ def PositionModifier_AutoSnapToSurfaceWorks():
         spawner_entity.get_set_test(3, path, 0)
 
     # 3) Create a spherical planting surface
-    dynveg.create_mesh_surface_entity_with_slopes("Planting Surface", spawner_center_point, 5.0)
+    dynveg.create_mesh_surface_entity_with_slopes(
+        "Planting Surface", spawner_center_point, 5.0
+    )
 
     # 4) Verify initial instance counts pre-filter
     num_expected = 29
     spawner_success = helper.wait_for_condition(
-        lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id, num_expected), 5.0)
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.initial_instance_count, spawner_success)
 
     # 5) Create a child entity of the spawner entity with a Constant Gradient component and pin to spawner
     components_to_add = ["Constant Gradient"]
     gradient_entity = hydra.Entity("Gradient Entity")
-    gradient_entity.create_entity(spawner_center_point, components_to_add, parent_id=spawner_entity.id)
+    gradient_entity.create_entity(
+        spawner_center_point, components_to_add, parent_id=spawner_entity.id
+    )
 
     # Pin the Constant Gradient to the X axis of the spawner's Position Modifier component
-    spawner_entity.get_set_test(3, 'Configuration|Position X|Gradient|Gradient Entity Id', gradient_entity.id)
+    spawner_entity.get_set_test(
+        3, "Configuration|Position X|Gradient|Gradient Entity Id", gradient_entity.id
+    )
 
     # 6) Set the Position Modifier offset to 2.5 on the x-axis
     spawner_entity.get_set_test(3, position_modifier_paths[0], 2.5)
@@ -109,29 +129,43 @@ def PositionModifier_AutoSnapToSurfaceWorks():
     inside_point = math.Vector3(512.0, 512.0, 35.0)
     radius = 0.5
     num_expected = 1
-    Report.info(f"Checking for instances in a {radius * 2}m area at {top_point.ToString()}")
-    top_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(top_point, radius, num_expected),
-                                          5.0)
+    Report.info(
+        f"Checking for instances in a {radius * 2}m area at {top_point.ToString()}"
+    )
+    top_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(top_point, radius, num_expected), 5.0
+    )
     num_expected = 0
-    Report.info(f"Checking for instances in a {radius * 2}m area at {inside_point.ToString()}")
-    inside_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(inside_point, radius,
-                                                                                      num_expected), 5.0)
+    Report.info(
+        f"Checking for instances in a {radius * 2}m area at {inside_point.ToString()}"
+    )
+    inside_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(inside_point, radius, num_expected), 5.0
+    )
     Report.result(Tests.autosnap_enabled_instance_count, top_success and inside_success)
 
     # 8) Toggle off Auto Snap to Surface. Instances should now plant inside the sphere and no longer on top
     spawner_entity.get_set_test(3, "Configuration|Auto Snap To Surface", False)
     num_expected = 0
-    Report.info(f"Checking for instances in a {radius * 2}m area at {top_point.ToString()}")
-    top_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(top_point, radius, num_expected),
-                                            5.0)
+    Report.info(
+        f"Checking for instances in a {radius * 2}m area at {top_point.ToString()}"
+    )
+    top_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(top_point, radius, num_expected), 5.0
+    )
     num_expected = 1
-    Report.info(f"Checking for instances in a {radius * 2}m area at {inside_point.ToString()}")
-    inside_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(inside_point, radius,
-                                                                                    num_expected), 5.0)
-    Report.result(Tests.autosnap_disabled_instance_count, top_success and inside_success)
+    Report.info(
+        f"Checking for instances in a {radius * 2}m area at {inside_point.ToString()}"
+    )
+    inside_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(inside_point, radius, num_expected), 5.0
+    )
+    Report.result(
+        Tests.autosnap_disabled_instance_count, top_success and inside_success
+    )
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(PositionModifier_AutoSnapToSurfaceWorks)
