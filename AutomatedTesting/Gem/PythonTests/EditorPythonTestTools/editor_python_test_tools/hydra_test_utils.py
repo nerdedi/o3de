@@ -12,7 +12,9 @@ import psutil
 import ly_test_tools.log.log_monitor
 import ly_test_tools.environment.process_utils as process_utils
 import ly_test_tools.environment.waiter as waiter
-from ly_remote_console.remote_console_commands import send_command_and_expect_response as send_command_and_expect_response
+from ly_remote_console.remote_console_commands import (
+    send_command_and_expect_response as send_command_and_expect_response,
+)
 from ly_test_tools.o3de.editor_test_utils import compile_test_case_name_from_request
 
 logger = logging.getLogger(__name__)
@@ -23,13 +25,26 @@ def teardown_editor(editor):
     :param editor: Configured editor object
     :return:
     """
-    process_utils.kill_processes_named('AssetProcessor.exe')
-    logger.debug('Ensuring Editor is stopped')
+    process_utils.kill_processes_named("AssetProcessor.exe")
+    logger.debug("Ensuring Editor is stopped")
     editor.ensure_stopped()
 
-def launch_and_validate_results(request, test_directory, editor, editor_script, expected_lines, unexpected_lines=[],
-                                halt_on_unexpected=False, run_python="--runpythontest", auto_test_mode=True, null_renderer=True, cfg_args=[],
-                                timeout=300, log_file_name="Editor.log"):
+
+def launch_and_validate_results(
+    request,
+    test_directory,
+    editor,
+    editor_script,
+    expected_lines,
+    unexpected_lines=[],
+    halt_on_unexpected=False,
+    run_python="--runpythontest",
+    auto_test_mode=True,
+    null_renderer=True,
+    cfg_args=[],
+    timeout=300,
+    log_file_name="Editor.log",
+):
     """
     Runs the Editor with the specified script, and monitors for expected log lines.
     :param request: Special fixture providing information of the requesting test function.
@@ -50,19 +65,28 @@ def launch_and_validate_results(request, test_directory, editor, editor_script, 
     request.addfinalizer(lambda: teardown_editor(editor))
     logger.debug("Running automated test: {}".format(editor_script))
     compiled_test_case_name = compile_test_case_name_from_request(request)
-    editor.args.extend(["--skipWelcomeScreenDialog", "--regset=/Amazon/Settings/EnableSourceControl=false",
-                        run_python, test_case,
-                        "--regset=/Amazon/Preferences/EnablePrefabSystem=true",
-                        f"--regset-file={os.path.join(editor.workspace.paths.engine_root(), 'Registry', 'prefab.test.setreg')}",
-                        f"--pythontestcase={compiled_test_case_name}", "--runpythonargs", " ".join(cfg_args)])
+    editor.args.extend(
+        [
+            "--skipWelcomeScreenDialog",
+            "--regset=/Amazon/Settings/EnableSourceControl=false",
+            run_python,
+            test_case,
+            "--regset=/Amazon/Preferences/EnablePrefabSystem=true",
+            f"--regset-file={os.path.join(editor.workspace.paths.engine_root(), 'Registry', 'prefab.test.setreg')}",
+            f"--pythontestcase={compiled_test_case_name}",
+            "--runpythonargs",
+            " ".join(cfg_args),
+        ]
+    )
     if auto_test_mode:
         editor.args.extend(["--autotest_mode"])
     if null_renderer:
         editor.args.extend(["-rhi=Null"])
 
     with editor.start():
-
-        editorlog_file = os.path.join(editor.workspace.paths.project_log(), log_file_name)
+        editorlog_file = os.path.join(
+            editor.workspace.paths.project_log(), log_file_name
+        )
 
         # Log monitor requires the file to exist.
         logger.debug(f"Waiting until log file <{editorlog_file}> exists...")
@@ -75,17 +99,31 @@ def launch_and_validate_results(request, test_directory, editor, editor_script, 
         logger.debug(f"Done! log file <{editorlog_file}> exists.")
 
         # Initialize the log monitor and set time to wait for log creation
-        log_monitor = ly_test_tools.log.log_monitor.LogMonitor(launcher=editor, log_file_path=editorlog_file)
+        log_monitor = ly_test_tools.log.log_monitor.LogMonitor(
+            launcher=editor, log_file_path=editorlog_file
+        )
         log_monitor.log_creation_max_wait_time = timeout
 
         # Check for expected/unexpected lines
-        log_monitor.monitor_log_for_lines(expected_lines=expected_lines, unexpected_lines=unexpected_lines,
-                                          halt_on_unexpected=halt_on_unexpected, timeout=timeout)
+        log_monitor.monitor_log_for_lines(
+            expected_lines=expected_lines,
+            unexpected_lines=unexpected_lines,
+            halt_on_unexpected=halt_on_unexpected,
+            timeout=timeout,
+        )
 
 
-def launch_and_validate_results_launcher(launcher, level, remote_console_instance, expected_lines, null_renderer=True,
-                                         port_listener_timeout=120, log_monitor_timeout=300, remote_console_port=4600,
-                                         launch_ap=True):
+def launch_and_validate_results_launcher(
+    launcher,
+    level,
+    remote_console_instance,
+    expected_lines,
+    null_renderer=True,
+    port_listener_timeout=120,
+    log_monitor_timeout=300,
+    remote_console_port=4600,
+    launch_ap=True,
+):
     """
     Runs the launcher with the specified level, and monitors Game.log for expected lines.
     :param launcher: Configured launcher object to run test against.
@@ -107,7 +145,7 @@ def launch_and_validate_results_launcher(launcher, level, remote_console_instanc
         """
         port_listening = False
         for conn in psutil.net_connections():
-            if 'port={}'.format(port) in str(conn):
+            if "port={}".format(port) in str(conn):
                 port_listening = True
         return port_listening
 
@@ -116,7 +154,6 @@ def launch_and_validate_results_launcher(launcher, level, remote_console_instanc
 
     # Start the Launcher
     with launcher.start(launch_ap=launch_ap):
-
         # Ensure Remote Console can be reached
         waiter.wait_for(
             lambda: _check_for_listening_port(remote_console_port),
@@ -126,13 +163,15 @@ def launch_and_validate_results_launcher(launcher, level, remote_console_instanc
         remote_console_instance.start(timeout=30)
 
         # Load the specified level in the launcher
-        send_command_and_expect_response(remote_console_instance,
-                                         f"LoadLevel {level}",
-                                         "LEVEL_LOAD_END", timeout=30)
+        send_command_and_expect_response(
+            remote_console_instance, f"LoadLevel {level}", "LEVEL_LOAD_END", timeout=30
+        )
 
         # Monitor the console for expected lines
         for line in expected_lines:
-            assert remote_console_instance.expect_log_line(line, log_monitor_timeout), f"Expected line not found: {line}"
+            assert remote_console_instance.expect_log_line(line, log_monitor_timeout), (
+                f"Expected line not found: {line}"
+            )
 
 
 def remove_files(artifact_path, suffix):

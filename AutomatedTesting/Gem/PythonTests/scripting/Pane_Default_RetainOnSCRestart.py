@@ -64,10 +64,14 @@ def Pane_Default_RetainOnSCRestart():
     TEST_PANE_2 = "VariableManager"  # test location
     TEST_PANE_3 = "NodeInspector"  # test size
     SCALE_INT = 10  # Random resize scale integer
-    DOCKAREA = Qt.TopDockWidgetArea  # Preferred top area since no widget is docked on top
+    DOCKAREA = (
+        Qt.TopDockWidgetArea
+    )  # Preferred top area since no widget is docked on top
 
     def click_menu_option(window, option_text):
-        action = pyside_utils.find_child_by_pattern(window, {"text": option_text, "type": QtWidgets.QAction})
+        action = pyside_utils.find_child_by_pattern(
+            window, {"text": option_text, "type": QtWidgets.QAction}
+        )
         action.trigger()
 
     def find_pane(window, pane_name):
@@ -89,7 +93,8 @@ def Pane_Default_RetainOnSCRestart():
     test_pane_3 = sc.findChild(QtWidgets.QDockWidget, TEST_PANE_3)
 
     Report.result(
-        Tests.test_panes_visible, test_pane_1.isVisible() and test_pane_2.isVisible() and test_pane_3.isVisible()
+        Tests.test_panes_visible,
+        test_pane_1.isVisible() and test_pane_2.isVisible() and test_pane_3.isVisible(),
     )
 
     # Initiate try block here to restore default in finally block
@@ -100,15 +105,24 @@ def Pane_Default_RetainOnSCRestart():
 
         # 4) Change dock location of test pane 2
         sc_main = sc.findChild(QtWidgets.QMainWindow)
-        sc_main.addDockWidget(DOCKAREA, find_pane(sc_main, TEST_PANE_2), QtCore.Qt.Vertical)
-        Report.result(Tests.location_changed, sc_main.dockWidgetArea(find_pane(sc_main, TEST_PANE_2)) == DOCKAREA)
+        sc_main.addDockWidget(
+            DOCKAREA, find_pane(sc_main, TEST_PANE_2), QtCore.Qt.Vertical
+        )
+        Report.result(
+            Tests.location_changed,
+            sc_main.dockWidgetArea(find_pane(sc_main, TEST_PANE_2)) == DOCKAREA,
+        )
 
         # 5) Resize test pane 3
         initial_size = test_pane_3.frameSize()
-        test_pane_3.resize(initial_size.width() + SCALE_INT, initial_size.height() + SCALE_INT)
+        test_pane_3.resize(
+            initial_size.width() + SCALE_INT, initial_size.height() + SCALE_INT
+        )
         new_size = test_pane_3.frameSize()
         resize_success = (
-            abs(initial_size.width() - new_size.width()) == abs(initial_size.height() - new_size.height()) == SCALE_INT
+            abs(initial_size.width() - new_size.width())
+            == abs(initial_size.height() - new_size.height())
+            == SCALE_INT
         )
         Report.result(Tests.resize_pane_3, resize_success)
 
@@ -117,17 +131,24 @@ def Pane_Default_RetainOnSCRestart():
         helper.wait_for_condition(lambda: general.is_pane_visible("Script Canvas"), 2.0)
 
         general.open_pane("Script Canvas")
-        sc_visible = helper.wait_for_condition(lambda: general.is_pane_visible("Script Canvas"), 5.0)
+        sc_visible = helper.wait_for_condition(
+            lambda: general.is_pane_visible("Script Canvas"), 5.0
+        )
         Report.result(Tests.relaunch_sc, sc_visible)
 
         # 7) Verify if test pane 1 retain its visibility
         editor_window = pyside_utils.get_editor_main_window()
         sc = editor_window.findChild(QtWidgets.QDockWidget, "Script Canvas")
-        Report.result(Tests.visibility_retained, not find_pane(sc, TEST_PANE_1).isVisible())
+        Report.result(
+            Tests.visibility_retained, not find_pane(sc, TEST_PANE_1).isVisible()
+        )
 
         # 8) Verify if location of test pane 2 is retained
         sc_main = sc.findChild(QtWidgets.QMainWindow)
-        Report.result(Tests.location_retained, sc_main.dockWidgetArea(find_pane(sc_main, TEST_PANE_2)) == DOCKAREA)
+        Report.result(
+            Tests.location_retained,
+            sc_main.dockWidgetArea(find_pane(sc_main, TEST_PANE_2)) == DOCKAREA,
+        )
 
         # 9) Verify if size of test pane 3 is retained
         test_pane_3 = sc.findChild(QtWidgets.QDockWidget, TEST_PANE_3)

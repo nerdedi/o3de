@@ -10,6 +10,7 @@ import azlmbr.legacy.general as general
 
 from xml.etree import ElementTree
 
+
 class Physmaterial_Editor:
     """
     This class is used to adjust physmaterial files for use with Open 3D Engine.
@@ -70,21 +71,23 @@ class Physmaterial_Editor:
         # type: (str) -> None
         # See if a file exists at the given path
         if not os.path.exists(self.document_filename):
-            raise ValueError("Given file, {} ,does not exist".format(self.document_filename))
+            raise ValueError(
+                "Given file, {} ,does not exist".format(self.document_filename)
+            )
         # Brings Material Library contents into memory
         try:
             self.dom = ElementTree.parse(self.document_filename)
         except Exception as e:
             print(e)
-            raise ValueError('{} not valid'.format(self.document_filename))
+            raise ValueError("{} not valid".format(self.document_filename))
         # Turn parsed xml into usable form
         self.root = self.dom.getroot()
         # Check if file is a material library
-        asset_typename = self.root[0].get('name')
+        asset_typename = self.root[0].get("name")
         if not asset_typename == "MaterialLibraryAsset":
             if asset_typename:
-                print("Given file is a {} file".format(self.root[0].get('name')))
-            raise ValueError('File not valid')
+                print("Given file is a {} file".format(self.root[0].get("name")))
+            raise ValueError("File not valid")
 
     def save_changes(self):
         # type: (None) -> None
@@ -116,26 +119,39 @@ class Physmaterial_Editor:
         # Modifies attributes of a given material in the library
         index = self._find_material_index(material)
         attribute_index = Physmaterial_Editor._get_attribute_index(attribute)
-        formated_value = Physmaterial_Editor._value_formater(value, 'Restitution' == attribute, 'Combine' in attribute)
+        formated_value = Physmaterial_Editor._value_formater(
+            value, "Restitution" == attribute, "Combine" in attribute
+        )
         if index is not None:
-            self.root[0][1][index][0][attribute_index].set('value', formated_value)
+            self.root[0][1][index][0][attribute_index].set("value", formated_value)
             return True
         else:
-            print("{} not found in library. No modification of {} occurred.".format(material, attribute))
+            print(
+                "{} not found in library. No modification of {} occurred.".format(
+                    material, attribute
+                )
+            )
             return False
 
     @property
     def number_of_materials(self):
         # type: (str) -> int
-        materials = self.root[0][1].findall(".//Class[@name='MaterialFromAssetConfiguration']")
+        materials = self.root[0][1].findall(
+            ".//Class[@name='MaterialFromAssetConfiguration']"
+        )
         return len(materials)
 
     def _set_path(self):
         # type: (str) -> str
         if self.document_filename is None:
-            self.document_filename = os.path.join(self.project_folder, "assets", "physics", "surfacetypemateriallibrary.physmaterial")
+            self.document_filename = os.path.join(
+                self.project_folder,
+                "assets",
+                "physics",
+                "surfacetypemateriallibrary.physmaterial",
+            )
         else:
-            for (root, directories, root_files) in os.walk(self.project_folder):
+            for root, directories, root_files in os.walk(self.project_folder):
                 for root_file in root_files:
                     if root_file == self.document_filename:
                         self.document_filename = os.path.join(root, root_file)
@@ -167,16 +183,29 @@ class Physmaterial_Editor:
                     value = max(min(value, MAX_RESTITUTION), MIN_RESTITUTION)
                 value = "{:.7f}".format(value)
             else:
-                raise ValueError("Must enter int or float. Entered value was of type {}.".format(type(value)))
+                raise ValueError(
+                    "Must enter int or float. Entered value was of type {}.".format(
+                        type(value)
+                    )
+                )
         return value
 
     @staticmethod
     def _get_combine_id(combine_name):
         # type: (str) -> int
         # Maps the Combine mode to its enumerated value used by the Open 3D Engine Editor
-        combine_dictionary = {"Average": "0", "Minimum": "1", "Maximum": "2", "Multiply": "3"}
+        combine_dictionary = {
+            "Average": "0",
+            "Minimum": "1",
+            "Maximum": "2",
+            "Multiply": "3",
+        }
         if combine_name not in combine_dictionary:
-            raise ValueError("Invalid Combine Value given. {} is not in combine map".format(combine_name))
+            raise ValueError(
+                "Invalid Combine Value given. {} is not in combine map".format(
+                    combine_name
+                )
+            )
         return combine_dictionary[combine_name]
 
     @staticmethod
@@ -191,5 +220,9 @@ class Physmaterial_Editor:
             "RestitutionCombine": 5,
         }
         if attribute not in attribute_dictionary:
-            raise ValueError("Invalid Material Attribute given. {} is not in attribute map".format(attribute))
+            raise ValueError(
+                "Invalid Material Attribute given. {} is not in attribute map".format(
+                    attribute
+                )
+            )
         return attribute_dictionary[attribute]
