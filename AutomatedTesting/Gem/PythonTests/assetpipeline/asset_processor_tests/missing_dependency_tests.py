@@ -711,10 +711,11 @@ class TestsMissingDependencies_WindowsAndMac(object):
         filename = "DependencyScannerAssetGradImage"
 
         # Move the necessary files over to the project and confirm it was moved successfully
-        test_assets_folder, cache_folder = (
-            self._asset_processor.prepare_test_environment(
-                env["tests_dir"], "C24255732", use_current_root=True
-            )
+        (
+            test_assets_folder,
+            cache_folder,
+        ) = self._asset_processor.prepare_test_environment(
+            env["tests_dir"], "C24255732", use_current_root=True
         )
 
         # fmt:off
