@@ -5,55 +5,45 @@ For complete copyright and license terms please see the LICENSE at the root of t
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
+
 class Tests:
     postfx_layer_entity_creation = (
         "PostFX Layer Entity successfully created",
-        "P0: PostFX Layer Entity failed to be created")
+        "P0: PostFX Layer Entity failed to be created",
+    )
     postfx_layer_component_added = (
         "Entity has a PostFX Layer component",
-        "P0: Entity failed to find PostFX Layer component")
+        "P0: Entity failed to find PostFX Layer component",
+    )
     postfx_layer_component_removed = (
         "Remove PostFX Layer component success",
-        "P0: Remove PostFX Layer component failed")
-    enter_game_mode = (
-        "Entered game mode",
-        "P0: Failed to enter game mode")
-    exit_game_mode = (
-        "Exited game mode",
-        "P0: Couldn't exit game mode")
-    is_visible = (
-        "P0: Entity is visible",
-        "Entity was not visible")
-    is_hidden = (
-        "Entity is hidden",
-        "P0: Entity was not hidden")
-    entity_deleted = (
-        "Entity deleted",
-        "P0: Entity was not deleted")
-    deletion_undo = (
-        "UNDO deletion success",
-        "P0: UNDO deletion failed")
-    deletion_redo = (
-        "REDO deletion success",
-        "P0: REDO deletion failed")
-    priority = (
-        "'Priority' property set",
-        "P1: 'Priority' property failed to set")
-    weight = (
-        "'Weight' property set",
-        "P1: 'Weight' property failed to set")
+        "P0: Remove PostFX Layer component failed",
+    )
+    enter_game_mode = ("Entered game mode", "P0: Failed to enter game mode")
+    exit_game_mode = ("Exited game mode", "P0: Couldn't exit game mode")
+    is_visible = ("P0: Entity is visible", "Entity was not visible")
+    is_hidden = ("Entity is hidden", "P0: Entity was not hidden")
+    entity_deleted = ("Entity deleted", "P0: Entity was not deleted")
+    deletion_undo = ("UNDO deletion success", "P0: UNDO deletion failed")
+    deletion_redo = ("REDO deletion success", "P0: REDO deletion failed")
+    priority = ("'Priority' property set", "P1: 'Priority' property failed to set")
+    weight = ("'Weight' property set", "P1: 'Weight' property failed to set")
     selected_container = (
         "'Select Camera Tags Only' is a container property",
-        "P1: 'Select Camera Tags Only' is not a container property")
+        "P1: 'Select Camera Tags Only' is not a container property",
+    )
     selected_append = (
         "'Select Camera Tags Only' container property appended string value",
-        "P1: 'Select Camera Tags Only' container property failed to append string value")
+        "P1: 'Select Camera Tags Only' container property failed to append string value",
+    )
     excluded_container = (
         "'Excluded Camera Tags' is a container property",
-        "P1: 'Excluded Camera Tags' is not a container property")
+        "P1: 'Excluded Camera Tags' is not a container property",
+    )
     excluded_append = (
         "'Excluded Camera Tags' container property appended string value",
-        "P1: 'Excluded Camera Tags' container property failed to append string value")
+        "P1: 'Excluded Camera Tags' container property failed to append string value",
+    )
 
 
 def AtomEditorComponents_postfx_layer_AddedToEntity():
@@ -94,7 +84,10 @@ def AtomEditorComponents_postfx_layer_AddedToEntity():
 
     from editor_python_test_tools.editor_entity_utils import EditorEntity
     from editor_python_test_tools.utils import Report, Tracer, TestHelper
-    from Atom.atom_utils.atom_constants import AtomComponentProperties, POSTFX_LAYER_CATEGORY
+    from Atom.atom_utils.atom_constants import (
+        AtomComponentProperties,
+        POSTFX_LAYER_CATEGORY,
+    )
 
     with Tracer() as error_tracer:
         # Test setup begins.
@@ -104,57 +97,90 @@ def AtomEditorComponents_postfx_layer_AddedToEntity():
 
         # Test steps begin.
         # 1. Create a PostFX Layer entity with no components.
-        postfx_layer_entity = EditorEntity.create_editor_entity(AtomComponentProperties.postfx_layer())
-        Report.critical_result(Tests.postfx_layer_entity_creation, postfx_layer_entity.exists())
+        postfx_layer_entity = EditorEntity.create_editor_entity(
+            AtomComponentProperties.postfx_layer()
+        )
+        Report.critical_result(
+            Tests.postfx_layer_entity_creation, postfx_layer_entity.exists()
+        )
 
         # 2. Add a PostFX Layer component to PostFX Layer entity.
-        postfx_layer_component = postfx_layer_entity.add_component(AtomComponentProperties.postfx_layer())
+        postfx_layer_component = postfx_layer_entity.add_component(
+            AtomComponentProperties.postfx_layer()
+        )
         Report.critical_result(
             Tests.postfx_layer_component_added,
-            postfx_layer_entity.has_component(AtomComponentProperties.postfx_layer()))
+            postfx_layer_entity.has_component(AtomComponentProperties.postfx_layer()),
+        )
 
         # 3. Remove PostFX Layer component.
         postfx_layer_component.remove()
         general.idle_wait_frames(1)
         Report.result(
             Tests.postfx_layer_component_removed,
-            not postfx_layer_entity.has_component(AtomComponentProperties.postfx_layer()))
+            not postfx_layer_entity.has_component(
+                AtomComponentProperties.postfx_layer()
+            ),
+        )
 
         # 4. UNDO component removal.
         general.undo()
         general.idle_wait_frames(1)
         Report.critical_result(
             Tests.postfx_layer_component_added,
-            postfx_layer_entity.has_component(AtomComponentProperties.postfx_layer()))
+            postfx_layer_entity.has_component(AtomComponentProperties.postfx_layer()),
+        )
 
         # 5. Set each 'Layer Category' value.
         for category in POSTFX_LAYER_CATEGORY:
             postfx_layer_component.set_component_property_value(
-                AtomComponentProperties.postfx_layer('Layer Category'), POSTFX_LAYER_CATEGORY[category])
+                AtomComponentProperties.postfx_layer("Layer Category"),
+                POSTFX_LAYER_CATEGORY[category],
+            )
             general.idle_wait_frames(1)
-            layer_category = (f"'Layer Category' set to {category}", f"P1: 'Layer Category' failed to set {category}")
+            layer_category = (
+                f"'Layer Category' set to {category}",
+                f"P1: 'Layer Category' failed to set {category}",
+            )
             Report.result(
                 layer_category,
                 postfx_layer_component.get_component_property_value(
-                    AtomComponentProperties.postfx_layer('Layer Category')) == POSTFX_LAYER_CATEGORY[category])
+                    AtomComponentProperties.postfx_layer("Layer Category")
+                )
+                == POSTFX_LAYER_CATEGORY[category],
+            )
 
         # 6. Set 'Priority' property.
-        postfx_layer_component.set_component_property_value(AtomComponentProperties.postfx_layer('Priority'), 20)
+        postfx_layer_component.set_component_property_value(
+            AtomComponentProperties.postfx_layer("Priority"), 20
+        )
         Report.result(
             Tests.priority,
-            postfx_layer_component.get_component_property_value(AtomComponentProperties.postfx_layer('Priority')) == 20)
+            postfx_layer_component.get_component_property_value(
+                AtomComponentProperties.postfx_layer("Priority")
+            )
+            == 20,
+        )
 
         # 7. Set 'Weight' property.
-        postfx_layer_component.set_component_property_value(AtomComponentProperties.postfx_layer('Weight'), 0.5)
+        postfx_layer_component.set_component_property_value(
+            AtomComponentProperties.postfx_layer("Weight"), 0.5
+        )
         Report.result(
             Tests.weight,
-            postfx_layer_component.get_component_property_value(AtomComponentProperties.postfx_layer('Weight')) == 0.5)
+            postfx_layer_component.get_component_property_value(
+                AtomComponentProperties.postfx_layer("Weight")
+            )
+            == 0.5,
+        )
 
         # 8. Set a 'Select Camera Tags Only' tag.
         Report.result(
             Tests.selected_container,
             postfx_layer_component.is_property_container(
-                AtomComponentProperties.postfx_layer('Select Camera Tags Only')))
+                AtomComponentProperties.postfx_layer("Select Camera Tags Only")
+            ),
+        )
         # https://github.com/o3de/o3de/issues/10464
         # postfx_layer_component.reset_container(AtomComponentProperties.postfx_layer('Select Camera Tags Only'))
         # postfx_layer_component.append_container_item(
@@ -168,7 +194,9 @@ def AtomEditorComponents_postfx_layer_AddedToEntity():
         Report.result(
             Tests.excluded_container,
             postfx_layer_component.is_property_container(
-                AtomComponentProperties.postfx_layer('Excluded Camera Tags')))
+                AtomComponentProperties.postfx_layer("Excluded Camera Tags")
+            ),
+        )
         # https://github.com/o3de/o3de/issues/10464
         # postfx_layer_component.reset_container(AtomComponentProperties.postfx_layer('Excluded Camera Tags'))
         # postfx_layer_component.append_container_item(
@@ -207,13 +235,20 @@ def AtomEditorComponents_postfx_layer_AddedToEntity():
         Report.result(Tests.deletion_redo, not postfx_layer_entity.exists())
 
         # 16. Look for errors or asserts.
-        TestHelper.wait_for_condition(lambda: error_tracer.has_errors or error_tracer.has_asserts, 1.0)
+        TestHelper.wait_for_condition(
+            lambda: error_tracer.has_errors or error_tracer.has_asserts, 1.0
+        )
         for error_info in error_tracer.errors:
-            Report.info(f"Error: {error_info.filename} {error_info.function} | {error_info.message}")
+            Report.info(
+                f"Error: {error_info.filename} {error_info.function} | {error_info.message}"
+            )
         for assert_info in error_tracer.asserts:
-            Report.info(f"Assert: {assert_info.filename} {assert_info.function} | {assert_info.message}")
+            Report.info(
+                f"Assert: {assert_info.filename} {assert_info.function} | {assert_info.message}"
+            )
 
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(AtomEditorComponents_postfx_layer_AddedToEntity)
