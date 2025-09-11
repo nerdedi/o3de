@@ -54,7 +54,10 @@ def GradientPreviewSettings_ClearingPinnedEntitySetsPreviewToOrigin():
     def create_entity(entity_name, components_to_add):
         entity_position = math.Vector3(125.0, 136.0, 32.0)
         entity_id = editor.ToolsApplicationRequestBus(
-            bus.Broadcast, "CreateNewEntityAtPosition", entity_position, EntityId.EntityId()
+            bus.Broadcast,
+            "CreateNewEntityAtPosition",
+            entity_position,
+            EntityId.EntityId(),
         )
         entity = hydra.Entity(entity_name, entity_id)
         if entity_id.IsValid():
@@ -64,24 +67,39 @@ def GradientPreviewSettings_ClearingPinnedEntitySetsPreviewToOrigin():
             entity.components.append(hydra.add_component(component, entity_id))
         return entity
 
-    def clear_entityid_check_position(entity_name, components_to_add, check_preview_size=False):
+    def clear_entityid_check_position(
+        entity_name, components_to_add, check_preview_size=False
+    ):
         entity = create_entity(entity_name, components_to_add)
-        hydra.get_set_test(entity, 0, "Previewer|Preview Settings|Pin Preview to Shape", EntityId.EntityId())
+        hydra.get_set_test(
+            entity,
+            0,
+            "Previewer|Preview Settings|Pin Preview to Shape",
+            EntityId.EntityId(),
+        )
         preview_position = hydra.get_component_property_value(
             entity.components[0], "Previewer|Preview Settings|Preview Position"
         )
         preview_set_to_origin = (
             f"{entity_name}: Preview Position set to world origin",
-            f"{entity_name}: Preview Position set to unexpected coords"
+            f"{entity_name}: Preview Position set to unexpected coords",
         )
-        Report.result(preview_set_to_origin, preview_position.IsClose(WORLD_ORIGIN, CLOSE_THRESHOLD))
+        Report.result(
+            preview_set_to_origin,
+            preview_position.IsClose(WORLD_ORIGIN, CLOSE_THRESHOLD),
+        )
         if check_preview_size:
-            preview_size = hydra.get_component_property_value(entity.components[0], "Previewer|Preview Settings|Preview Size")
+            preview_size = hydra.get_component_property_value(
+                entity.components[0], "Previewer|Preview Settings|Preview Size"
+            )
             preview_size_default_set = (
                 f"{entity_name}: Preview Size set as expected",
-                f"{entity_name}: Preview Size set to unexpected value. Expected {EXPECTED_SIZE}, Found {preview_size}"
+                f"{entity_name}: Preview Size set to unexpected value. Expected {EXPECTED_SIZE}, Found {preview_size}",
             )
-            Report.result(preview_size_default_set, preview_size.IsClose(EXPECTED_SIZE, CLOSE_THRESHOLD))
+            Report.result(
+                preview_size_default_set,
+                preview_size.IsClose(EXPECTED_SIZE, CLOSE_THRESHOLD),
+            )
         return entity
 
     # 1) Open an existing simple level
@@ -89,39 +107,57 @@ def GradientPreviewSettings_ClearingPinnedEntitySetsPreviewToOrigin():
 
     # 2) Create entity with Random Noise gradient and verify gradient position after clearing pinned entity
     clear_entityid_check_position(
-        "Random Noise Gradient", ["Random Noise Gradient", "Gradient Transform Modifier", "Box Shape"], True
+        "Random Noise Gradient",
+        ["Random Noise Gradient", "Gradient Transform Modifier", "Box Shape"],
+        True,
     )
 
     # 3) Create entity with Levels Gradient Modifier and verify gradient position after clearing pinned entity
-    clear_entityid_check_position("Levels Gradient Modifier", ["Levels Gradient Modifier"])
+    clear_entityid_check_position(
+        "Levels Gradient Modifier", ["Levels Gradient Modifier"]
+    )
 
     # 4) Create entity with Posterize Gradient Modifier and verify gradient position after clearing pinned entity
-    clear_entityid_check_position("Posterize Gradient Modifier", ["Posterize Gradient Modifier"])
+    clear_entityid_check_position(
+        "Posterize Gradient Modifier", ["Posterize Gradient Modifier"]
+    )
 
     # 5) Create entity with Smooth-Step Gradient Modifier and verify gradient position after clearing pinned entity
-    clear_entityid_check_position("Smooth-Step Gradient Modifier", ["Smooth-Step Gradient Modifier"])
+    clear_entityid_check_position(
+        "Smooth-Step Gradient Modifier", ["Smooth-Step Gradient Modifier"]
+    )
 
     # 6) Create entity with Threshold Gradient Modifier and verify gradient position after clearing pinned entity
-    clear_entityid_check_position("Threshold Gradient Modifier", ["Threshold Gradient Modifier"])
+    clear_entityid_check_position(
+        "Threshold Gradient Modifier", ["Threshold Gradient Modifier"]
+    )
 
     # 7) Create entity with FastNoise Gradient and verify gradient position after clearing pinned entity
     clear_entityid_check_position(
-        "FastNoise Gradient", ["FastNoise Gradient", "Gradient Transform Modifier", "Box Shape"], True
+        "FastNoise Gradient",
+        ["FastNoise Gradient", "Gradient Transform Modifier", "Box Shape"],
+        True,
     )
 
     # 8) Create entity with Dither Gradient Modifier and verify gradient position after clearing pinned entity
-    clear_entityid_check_position("Dither Gradient Modifier", ["Dither Gradient Modifier"], True)
+    clear_entityid_check_position(
+        "Dither Gradient Modifier", ["Dither Gradient Modifier"], True
+    )
 
     # 9) Create entity with Invert Gradient Modifier and verify gradient position after clearing pinned entity
-    clear_entityid_check_position("Invert Gradient Modifier", ["Invert Gradient Modifier"])
+    clear_entityid_check_position(
+        "Invert Gradient Modifier", ["Invert Gradient Modifier"]
+    )
 
     # 10) Create entity with Perlin Noise Gradient and verify gradient position after clearing pinned entity
     clear_entityid_check_position(
-        "Perlin Noise Gradient", ["Perlin Noise Gradient", "Gradient Transform Modifier", "Box Shape"], True
+        "Perlin Noise Gradient",
+        ["Perlin Noise Gradient", "Gradient Transform Modifier", "Box Shape"],
+        True,
     )
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(GradientPreviewSettings_ClearingPinnedEntitySetsPreviewToOrigin)

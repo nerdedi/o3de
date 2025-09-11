@@ -9,7 +9,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # Test Case Title : Verify the functionality of static friction
 
 
-
 # fmt: off
 class Tests():
     enter_game_mode       = ("Entered game mode",                                            "Failed to enter game mode")
@@ -102,24 +101,36 @@ def Material_StaticFriction():
             self.moved_test = moved_test
 
         def is_stationary(self):
-            velocity = azlmbr.physics.RigidBodyRequestBus(bus.Event, "GetLinearVelocity", self.id)
+            velocity = azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "GetLinearVelocity", self.id
+            )
             return vector_close_to_zero(velocity, STATIONARY_TOLERANCE)
 
         def get_position(self):
-            return azlmbr.components.TransformBus(bus.Event, "GetWorldTranslation", self.id)
+            return azlmbr.components.TransformBus(
+                bus.Event, "GetWorldTranslation", self.id
+            )
 
     def vector_close_to_zero(vector, tolerance):
-        return abs(vector.x) <= tolerance and abs(vector.y) <= tolerance and abs(vector.z) <= tolerance
+        return (
+            abs(vector.x) <= tolerance
+            and abs(vector.y) <= tolerance
+            and abs(vector.z) <= tolerance
+        )
 
     def push(box):
         delta = box.start_position.Subtract(box.get_position())
         if vector_close_to_zero(delta, MIN_MOVE_DISTANCE):
             box.force_impulse += FORCE_IMPULSE_INCREMENT
             impulse_vector = lymath.Vector3(box.force_impulse, 0.0, 0.0)
-            azlmbr.physics.RigidBodyRequestBus(bus.Event, "ApplyLinearImpulse", box.id, impulse_vector)
+            azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "ApplyLinearImpulse", box.id, impulse_vector
+            )
             return False
         else:
-            Report.info("Box {} required force was {:.3f}".format(box.name, box.force_impulse))
+            Report.info(
+                "Box {} required force was {:.3f}".format(box.name, box.force_impulse)
+            )
             return True
 
     helper.init_idle()
@@ -169,17 +180,24 @@ def Material_StaticFriction():
         # 5) Ensure the box is stationary
         Report.result(box.stationary_test, box.is_stationary())
         # 6) Push the box until it moves
-        Report.critical_result(box.moved_test, helper.wait_for_condition(lambda: push(box), TIMEOUT))
+        Report.critical_result(
+            box.moved_test, helper.wait_for_condition(lambda: push(box), TIMEOUT)
+        )
 
     # 7) Assert that greater coefficients result in greater required force impulses
-    ordered_impulses = box_high.force_impulse > box_mid.force_impulse > box_low.force_impulse > box_zero.force_impulse
+    ordered_impulses = (
+        box_high.force_impulse
+        > box_mid.force_impulse
+        > box_low.force_impulse
+        > box_zero.force_impulse
+    )
     Report.result(Tests.force_impulse_ordered, ordered_impulses)
 
     # 8) Exit game mode
     helper.exit_game_mode(Tests.exit_game_mode)
 
 
-
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_StaticFriction)

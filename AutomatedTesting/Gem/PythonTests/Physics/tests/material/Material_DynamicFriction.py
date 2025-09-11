@@ -9,7 +9,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # Test Case Title : Verify the functionality of dynamic friction
 
 
-
 # fmt: off
 class Tests():
     enter_game_mode        = ("Entered game mode",                                    "Failed to enter game mode")
@@ -92,7 +91,14 @@ def Material_DynamicFriction():
     TIMEOUT = 5
 
     class Box:
-        def __init__(self, name, valid_test, stationary_start_test, moved_test, stationary_end_test):
+        def __init__(
+            self,
+            name,
+            valid_test,
+            stationary_start_test,
+            moved_test,
+            stationary_end_test,
+        ):
             self.name = name
             self.id = general.find_game_entity(name)
             self.start_position = self.get_position()
@@ -103,17 +109,25 @@ def Material_DynamicFriction():
             self.stationary_end_test = stationary_end_test
 
         def is_stationary(self):
-            velocity = azlmbr.physics.RigidBodyRequestBus(bus.Event, "GetLinearVelocity", self.id)
+            velocity = azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "GetLinearVelocity", self.id
+            )
             return vector_is_close_to_zero(velocity)
 
         def get_position(self):
-            return azlmbr.components.TransformBus(bus.Event, "GetWorldTranslation", self.id)
+            return azlmbr.components.TransformBus(
+                bus.Event, "GetWorldTranslation", self.id
+            )
 
     def vector_is_close_to_zero(vector):
-        return abs(vector.x) <= 0.001 and abs(vector.y) <= 0.001 and abs(vector.z) <= 0.001
+        return (
+            abs(vector.x) <= 0.001 and abs(vector.y) <= 0.001 and abs(vector.z) <= 0.001
+        )
 
     def push(box):
-        azlmbr.physics.RigidBodyRequestBus(bus.Event, "ApplyLinearImpulse", box.id, FORCE_IMPULSE)
+        azlmbr.physics.RigidBodyRequestBus(
+            bus.Event, "ApplyLinearImpulse", box.id, FORCE_IMPULSE
+        )
 
     helper.init_idle()
     # 1) Open level
@@ -167,22 +181,30 @@ def Material_DynamicFriction():
         Report.result(box.stationary_start_test, box.is_stationary())
         # 6) Push the box
         push(box)
-        Report.result(box.moved_test, helper.wait_for_condition(lambda: not box.is_stationary(), TIMEOUT))
-        Report.result(box.stationary_end_test, helper.wait_for_condition(lambda: box.is_stationary(), TIMEOUT))
+        Report.result(
+            box.moved_test,
+            helper.wait_for_condition(lambda: not box.is_stationary(), TIMEOUT),
+        )
+        Report.result(
+            box.stationary_end_test,
+            helper.wait_for_condition(lambda: box.is_stationary(), TIMEOUT),
+        )
 
         end_position = box.get_position()
         box.distance = end_position.GetDistance(box.start_position)
         Report.info("Box {} travelled {:.3f} meters".format(box.name, box.distance))
 
     # 7) Assert that greater coefficients result in shorter travelled distance
-    distance_ordered = box_high.distance < box_mid.distance < box_low.distance < box_zero.distance
+    distance_ordered = (
+        box_high.distance < box_mid.distance < box_low.distance < box_zero.distance
+    )
     Report.result(Tests.distance_ordered, distance_ordered)
 
     # 8) Exit game mode
     helper.exit_game_mode(Tests.exit_game_mode)
 
 
-
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_DynamicFriction)
