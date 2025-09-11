@@ -1063,7 +1063,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-
     # easy overrides
     if arg_bool(args.global_debug, desc="args.global_debug"):
         from DccScriptingInterface.azpy.constants import ENVAR_DCCSI_GDEBUG
@@ -1145,9 +1144,7 @@ if __name__ == "__main__":
             )
         )
         _LOGGER.info("O3DE_PYTHONHOME")
-        _LOGGER.info(
-            "PATH_O3DE_PYTHON_INSTALL"
-        )
+        _LOGGER.info("PATH_O3DE_PYTHON_INSTALL")
         _LOGGER.info("DCCSI_PY_BASE: {}".format(settings.DCCSI_PY_BASE))
         _LOGGER.info(STR_CROSSBAR)
         _LOGGER.info("")
