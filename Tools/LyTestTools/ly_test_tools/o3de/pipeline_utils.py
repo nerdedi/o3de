@@ -9,17 +9,13 @@ Small library of functions to support autotests for asset processor
 """
 
 # Import builtin libraries
-import pytest
-import binascii
 import hashlib
 import os
 import re
-import hashlib
 import shutil
 import logging
 import subprocess
 import psutil
-from configparser import ConfigParser
 from typing import Dict, List, Tuple, Optional, Callable
 
 # Import LyTestTools
@@ -45,7 +41,9 @@ class ProcessOutput(object):
         self.exception_occurred = False
 
 
-def compare_assets_with_cache(assets: List[str], assets_cache_path: str) -> Tuple[List[str], List[str]]:
+def compare_assets_with_cache(
+    assets: List[str], assets_cache_path: str
+) -> Tuple[List[str], List[str]]:
     """
     Given a list of assets names, will try to find them (disrespecting file extensions)
     from project's Cache folder with test assets
@@ -57,7 +55,9 @@ def compare_assets_with_cache(assets: List[str], assets_cache_path: str) -> Tupl
     missing_assets = []
     existing_assets = []
     if os.path.exists(assets_cache_path):
-        files_in_cache = list(map(fs.remove_path_and_extension, os.listdir(assets_cache_path)))
+        files_in_cache = list(
+            map(fs.remove_path_and_extension, os.listdir(assets_cache_path))
+        )
         for asset in assets:
             file_without_ext = fs.remove_path_and_extension(asset).lower()
             if file_without_ext in files_in_cache:
@@ -70,7 +70,9 @@ def compare_assets_with_cache(assets: List[str], assets_cache_path: str) -> Tupl
     return missing_assets, existing_assets
 
 
-def copy_assets_to_project(assets: List[str], source_directory: str, target_asset_dir: str) -> None:
+def copy_assets_to_project(
+    assets: List[str], source_directory: str, target_asset_dir: str
+) -> None:
     """
     Given a list of asset names and a directory, copy those assets into the target project directory
 
@@ -91,7 +93,9 @@ def copy_assets_to_project(assets: List[str], source_directory: str, target_asse
         os.chmod(destination_fullname, 0o0777)
 
 
-def prepare_test_assets(assets_path: str, function_name: str, project_test_assets_dir: str) -> str:
+def prepare_test_assets(
+    assets_path: str, function_name: str, project_test_assets_dir: str
+) -> str:
     """
     Given function name and assets cache path, will clear cache and copy test assets assigned to function name to
     project's folder
@@ -104,9 +108,10 @@ def prepare_test_assets(assets_path: str, function_name: str, project_test_asset
     test_assets_folder = os.path.join(assets_path, "assets", function_name)
     # Some tests don't have any assets to copy, which is fine, we don't want to fail in that case
     if os.path.exists(test_assets_folder):
-        copy_assets_to_project(os.listdir(test_assets_folder), test_assets_folder, project_test_assets_dir)
+        copy_assets_to_project(
+            os.listdir(test_assets_folder), test_assets_folder, project_test_assets_dir
+        )
     return test_assets_folder
-
 
 
 def find_joblog_file(joblogs_path: str, regexp: str) -> str:
@@ -124,7 +129,9 @@ def find_joblog_file(joblogs_path: str, regexp: str) -> str:
     return ""
 
 
-def find_missing_lines_in_joblog(joblog_location: str, strings_to_verify: List[str]) -> List[str]:
+def find_missing_lines_in_joblog(
+    joblog_location: str, strings_to_verify: List[str]
+) -> List[str]:
     """
     Given joblog file full path and list of strings to verify, will find all missing strings in the file
 
@@ -170,7 +177,9 @@ def get_files_hashsum(path_to_files_dir: str) -> Dict[str, int]:
     return checksum_dict
 
 
-def append_to_filename(file_name: str, path_to_file: str, append_text: str, ignore_extension: str) -> None:
+def append_to_filename(
+    file_name: str, path_to_file: str, append_text: str, ignore_extension: str
+) -> None:
     """
     Function for appending text to file and folder names
 
@@ -185,10 +194,14 @@ def append_to_filename(file_name: str, path_to_file: str, append_text: str, igno
         new_name = name + append_text + "." + extension
     else:
         new_name = file_name + append_text
-    os.rename(os.path.join(path_to_file, file_name), os.path.join(path_to_file, new_name))
+    os.rename(
+        os.path.join(path_to_file, file_name), os.path.join(path_to_file, new_name)
+    )
 
 
-def create_asset_processor_backup_directories(backup_root_directory: str, test_backup_directory: str) -> None:
+def create_asset_processor_backup_directories(
+    backup_root_directory: str, test_backup_directory: str
+) -> None:
     """
     Function for creating the asset processor logs backup directory structure
 
@@ -197,7 +210,9 @@ def create_asset_processor_backup_directories(backup_root_directory: str, test_b
     :return: None
     """
     if not os.path.exists(os.path.join(backup_root_directory, test_backup_directory)):
-        os.makedirs(os.path.join(backup_root_directory, test_backup_directory), exist_ok=True)
+        os.makedirs(
+            os.path.join(backup_root_directory, test_backup_directory), exist_ok=True
+        )
 
 
 def backup_asset_processor_logs(bin_directory: str, backup_directory: str) -> None:
@@ -252,7 +267,9 @@ def safe_subprocess(command: str or List[str], **kwargs: Dict) -> ProcessOutput:
         # Set object flag
         subprocess_output.exception_occurred = True
         # If error occurs when **kwargs includes check=True Exceptions are possible
-        logger.warning(f'Command "{cmd_string}" failed in LyTestTools with returncode {e.returncode}, output:\n{e.output}')
+        logger.warning(
+            f'Command "{cmd_string}" failed in LyTestTools with returncode {e.returncode}, output:\n{e.output}'
+        )
         # Read and process error outputs
         subprocess_output.stderr = e.output.read().decode()
         # Save error return code
@@ -276,7 +293,9 @@ def processes_with_substring_in_name(substring: str) -> tuple:
             if substring.lower() in p.name().lower():
                 targeted_processes.append(p)
         except psutil.NoSuchProcess as e:
-            logger.info(f"Process {p} was killed in LyTestTools during processes_with_substring_in_name()!\nError: {e}")
+            logger.info(
+                f"Process {p} was killed in LyTestTools during processes_with_substring_in_name()!\nError: {e}"
+            )
             continue
     return tuple(targeted_processes)
 
@@ -307,7 +326,9 @@ def process_cpu_usage_below(process_name: str, cpu_usage_threshold: float) -> bo
     # Get all instances of targeted process
     targeted_processes = processes_with_substring_in_name(process_name)
     if not len(targeted_processes) > 0:
-        raise exceptions.LyTestToolsFrameworkException(f"No instances of {process_name} were found")
+        raise exceptions.LyTestToolsFrameworkException(
+            f"No instances of {process_name} were found"
+        )
 
     # Return whether all instances of targeted process are idle
     for targeted_process in targeted_processes:
@@ -337,7 +358,9 @@ def temp_test_dir(request, dir_path: str) -> str:
     return dir_path
 
 
-def get_relative_file_paths(start_dir: str, ignore_list: Optional[List[str]] = None) -> List[str]:
+def get_relative_file_paths(
+    start_dir: str, ignore_list: Optional[List[str]] = None
+) -> List[str]:
     """
     Collects all relative paths for files under the [start_dir] directory tree.
     Ignores a path if it contains any string in the [ignore_list].
@@ -352,15 +375,18 @@ def get_relative_file_paths(start_dir: str, ignore_list: Optional[List[str]] = N
                 all_files.append(os.path.relpath(full_path, start_dir))
     return all_files
 
-def get_differences_between_lists(first: List[str], second: List[str]) -> (List[str], List[str]):
+
+def get_differences_between_lists(
+    first: List[str], second: List[str]
+) -> (List[str], List[str]):
     """
-        Returns two lists that contain unique entries in lists, missing from the other list.
+    Returns two lists that contain unique entries in lists, missing from the other list.
     """
     first_set = set(first)
     second_set = set(second)
     diff_first = [x for x in first_set if x not in second]
     diff_second = [x for x in second_set if x not in first]
-    
+
     if diff_first or diff_second:
         # Print a simple header if there are differences, to make it easier to follow log output on build machines.
         logger.info("Differences were found comparing the given lists.")
@@ -371,12 +397,14 @@ def get_differences_between_lists(first: List[str], second: List[str]) -> (List[
         for list_entry in diff_first:
             logger.info("   " + list_entry)
     if diff_second:
-        logger.info("The following entries were expected to be found but were actually not:")
+        logger.info(
+            "The following entries were expected to be found but were actually not:"
+        )
         for list_entry in diff_second:
             logger.info("   " + list_entry)
 
     return diff_first, diff_second
-    
+
 
 def compare_lists(actual: List[str], expected: List[str]) -> bool:
     """Compares the two lists of strings. Returns false and prints any discrepancies if present."""
@@ -402,7 +430,9 @@ def delete_MoveOutput_folders(search_path: List[str] or str) -> None:
 
         for file_or_folder in os.listdir(search_location):
             file_or_folder_path = os.path.join(search_location, file_or_folder)
-            if os.path.isdir(file_or_folder_path) and file_or_folder.startswith("MoveOutput"):
+            if os.path.isdir(file_or_folder_path) and file_or_folder.startswith(
+                "MoveOutput"
+            ):
                 delete_list.append(file_or_folder_path)
 
     if isinstance(search_path, List):
@@ -414,7 +444,9 @@ def delete_MoveOutput_folders(search_path: List[str] or str) -> None:
     fs.delete(delete_list, False, True)
 
 
-def find_queries(line: str, queries_to_find: List[str or List[str]]) -> List[str or List[str]]:
+def find_queries(
+    line: str, queries_to_find: List[str or List[str]]
+) -> List[str or List[str]]:
     """
     Searches for strings and/or combinations of strings within a line
 
@@ -443,7 +475,7 @@ def validate_log_output(
     log_output: List[str or List[str]],
     expected_queries: List[str or List[str]] = [],
     unexpected_queries: List[str or List[str]] = [],
-    failure_cb: Callable = None
+    failure_cb: Callable = None,
 ) -> None:
     """
     Asserts that the log output contains all expected queries and no unexpected queries.
@@ -454,8 +486,14 @@ def validate_log_output(
     :param failure_cb: Optional callback when log output isn't expected, useful for printing debug info
     :return: None
     """
-    expected_queries = [expected_queries] if isinstance(expected_queries, str) else expected_queries
-    unexpected_queries = [unexpected_queries] if isinstance(unexpected_queries, str) else unexpected_queries
+    expected_queries = (
+        [expected_queries] if isinstance(expected_queries, str) else expected_queries
+    )
+    unexpected_queries = (
+        [unexpected_queries]
+        if isinstance(unexpected_queries, str)
+        else unexpected_queries
+    )
     unexpectedly_found = []
 
     for line in log_output:
@@ -470,8 +508,12 @@ def validate_log_output(
         failure_cb()
 
     # Assert no unexpected lines found and all expected queries found
-    assert unexpectedly_found == [], f"Unexpected line(s) were found in the log run: {unexpectedly_found}"
-    assert expected_queries == [], f"Expected query(s) were not found in the log run: {expected_queries}"
+    assert unexpectedly_found == [], (
+        f"Unexpected line(s) were found in the log run: {unexpectedly_found}"
+    )
+    assert expected_queries == [], (
+        f"Expected query(s) were not found in the log run: {expected_queries}"
+    )
 
 
 def validate_log_messages(
@@ -490,7 +532,9 @@ def validate_log_messages(
     """
 
     # Search the log lines in the latest log run
-    validate_log_output(APLogParser(log_file).runs[-1]["Lines"], expected_queries, unexpected_queries)
+    validate_log_output(
+        APLogParser(log_file).runs[-1]["Lines"], expected_queries, unexpected_queries
+    )
 
 
 def validate_relocation_report(
@@ -507,8 +551,14 @@ def validate_relocation_report(
     :param unexpected_queries: String or list containing strings and/or lists of strings not to be found
     :return: None
     """
-    expected_queries = [expected_queries] if isinstance(expected_queries, str) else expected_queries
-    unexpected_queries = [unexpected_queries] if isinstance(unexpected_queries, str) else unexpected_queries
+    expected_queries = (
+        [expected_queries] if isinstance(expected_queries, str) else expected_queries
+    )
+    unexpected_queries = (
+        [unexpected_queries]
+        if isinstance(unexpected_queries, str)
+        else unexpected_queries
+    )
     unexpectedly_found = []
     in_relocation_report = False
 
@@ -527,8 +577,12 @@ def validate_relocation_report(
                 unexpectedly_found.append(line)
 
     # Assert no unexpected lines found and all expected queries found
-    assert unexpectedly_found == [], f"Unexpected line(s) were found in the relocation report: {unexpectedly_found}"
-    assert expected_queries == [], f"Expected query(s) were not found in the relocation report: {expected_queries}"
+    assert unexpectedly_found == [], (
+        f"Unexpected line(s) were found in the relocation report: {unexpectedly_found}"
+    )
+    assert expected_queries == [], (
+        f"Expected query(s) were not found in the relocation report: {expected_queries}"
+    )
 
 
 def get_paths_from_wildcard(root_path: str, wildcard_str: str) -> List[str]:
@@ -542,16 +596,20 @@ def get_paths_from_wildcard(root_path: str, wildcard_str: str) -> List[str]:
     rel_path_list = get_relative_file_paths(root_path)
     if not wildcard_str == "*":
         if wildcard_str.startswith("*"):
-            rel_path_list = [item for item in rel_path_list if item.endswith(wildcard_str[1:])]
+            rel_path_list = [
+                item for item in rel_path_list if item.endswith(wildcard_str[1:])
+            ]
         elif wildcard_str.endswith("*"):
-            rel_path_list = [item for item in rel_path_list if item.startswith(wildcard_str[0:-1])]
+            rel_path_list = [
+                item for item in rel_path_list if item.startswith(wildcard_str[0:-1])
+            ]
     return [os.path.join(root_path, item) for item in rel_path_list]
 
 
 def check_for_perforce(error_on_no_perforce=True):
-    command_list = ['p4', 'info']
+    command_list = ["p4", "info"]
     try:
-        p4_output = subprocess.check_output(command_list).decode('utf-8')
+        p4_output = subprocess.check_output(command_list).decode("utf-8")
     except subprocess.CalledProcessError as e:
         if error_on_no_perforce:
             logger.error(f"Failed to call {command_list} in LyTestTools with error {e}")
@@ -569,7 +627,9 @@ def check_for_perforce(error_on_no_perforce=True):
     client_root_match = re.search(r"Client root: (.*)\r", p4_output)
     if client_root_match is None:
         if error_on_no_perforce:
-            logger.warning(f"Could not determine client root for p4 workspace. Perforce output was {p4_output}")
+            logger.warning(
+                f"Could not determine client root for p4 workspace. Perforce output was {p4_output}"
+            )
         return False
     else:
         # This requires the tests to be in the Perforce path that the tests run against.
@@ -585,12 +645,14 @@ def check_for_perforce(error_on_no_perforce=True):
     return True
 
 
-def get_file_hash(filePath, hashBufferSize = 65536):
+def get_file_hash(filePath, hashBufferSize=65536):
     if not os.path.exists(filePath):
-        raise exceptions.LyTestToolsFrameworkException(f"Cannot get file hash, file at path '{filePath}' does not exist.")
+        raise exceptions.LyTestToolsFrameworkException(
+            f"Cannot get file hash, file at path '{filePath}' does not exist."
+        )
 
     sha1 = hashlib.sha1()
-    with open(filePath, 'rb') as cacheFile:
+    with open(filePath, "rb") as cacheFile:
         while True:
             data = cacheFile.read(hashBufferSize)
             if not data:
