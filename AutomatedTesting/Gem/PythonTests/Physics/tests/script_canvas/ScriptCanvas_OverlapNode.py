@@ -120,7 +120,9 @@ def ScriptCanvas_OverlapNode():
 
         def activate_entity(self):
             Report.info("Activating Entity : " + self.name)
-            azlmbr.entity.GameEntityContextRequestBus(azlmbr.bus.Broadcast, "ActivateGameEntity", self.id)
+            azlmbr.entity.GameEntityContextRequestBus(
+                azlmbr.bus.Broadcast, "ActivateGameEntity", self.id
+            )
             self.activated = True
 
         def entity_activated(self, args):
@@ -144,10 +146,14 @@ def ScriptCanvas_OverlapNode():
             return self.id.isValid()
 
         def move_entity_back(self):
-            azlmbr.components.TransformBus(azlmbr.bus.Event, "SetWorldTranslation", self.id, self.array_position)
+            azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "SetWorldTranslation", self.id, self.array_position
+            )
 
         def in_position(self):
-            current_position = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
+            current_position = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldTranslation", self.id
+            )
             return abs(current_position.x - self.array_position.x) < FLOAT_THRESHOLD
 
     class Script_Canvas_Test:
@@ -167,7 +173,9 @@ def ScriptCanvas_OverlapNode():
             Report.result(self.test_finish, finished)
 
         def report_results_logged(self):
-            self.results_logged = Tests.__dict__["test_{}_results_logged".format(self.index)]
+            self.results_logged = Tests.__dict__[
+                "test_{}_results_logged".format(self.index)
+            ]
             Report.result(self.results_logged, self.got_expected_result)
 
         def report_test_array_reset(self, entities_in_position):
@@ -314,4 +322,5 @@ def ScriptCanvas_OverlapNode():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(ScriptCanvas_OverlapNode)

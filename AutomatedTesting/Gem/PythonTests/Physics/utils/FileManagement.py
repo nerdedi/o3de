@@ -26,8 +26,12 @@ class FileManagement:
     # Static variables
     MAX_BACKUPS = 10000  # Arbitrary number to cap same-file-name name generating
     backup_folder_name = ".backup"
-    backup_folder_path = os.path.join(os.path.split(__file__)[0], backup_folder_name)  # CWD plus backup folder name
-    file_map_name = "_filebackup_map.json"  # JSON file to store original to back up file mappings
+    backup_folder_path = os.path.join(
+        os.path.split(__file__)[0], backup_folder_name
+    )  # CWD plus backup folder name
+    file_map_name = (
+        "_filebackup_map.json"  # JSON file to store original to back up file mappings
+    )
 
     @staticmethod
     def _load_file_map():
@@ -41,13 +45,19 @@ class FileManagement:
         If there is no current json file or the file cannot be parsed, an empty dictionary is returned.
         :return: Dictionary to map original file's to their back up file names.
         """
-        json_file_path = os.path.join(FileManagement.backup_folder_path, FileManagement.file_map_name)
+        json_file_path = os.path.join(
+            FileManagement.backup_folder_path, FileManagement.file_map_name
+        )
         if os.path.exists(json_file_path):
             try:
                 with open(json_file_path, "r") as f:
                     return json.load(f)
             except ValueError:
-                logging.info("Decoding JSON file {} failed. Empty dictionary used".format(json_file_path))
+                logging.info(
+                    "Decoding JSON file {} failed. Empty dictionary used".format(
+                        json_file_path
+                    )
+                )
         return {}
 
     @staticmethod
@@ -59,7 +69,9 @@ class FileManagement:
         :param file_map: A dictionary mapping original file paths to their back up file names.
         :return: None
         """
-        file_path = os.path.join(FileManagement.backup_folder_path, FileManagement.file_map_name)
+        file_path = os.path.join(
+            FileManagement.backup_folder_path, FileManagement.file_map_name
+        )
         if os.path.exists(file_path):
             fs.unlock_file(file_path)
         if len(file_map) > 0:
@@ -107,11 +119,15 @@ class FileManagement:
         if backup_file_name is None:
             # If _next_available_name returns None, we have backed up MAX_BACKUPS of files name [file_name]
             raise Exception(
-                "FileManagement class ran out of backups per name. Max: {}".format(FileManagement.MAX_BACKUPS)
+                "FileManagement class ran out of backups per name. Max: {}".format(
+                    FileManagement.MAX_BACKUPS
+                )
             )
 
         # If this backup file already exists, delete it.
-        backup_storage_file = "{}.bak".format(os.path.normpath(os.path.join(backup_path, backup_file_name)))
+        backup_storage_file = "{}.bak".format(
+            os.path.normpath(os.path.join(backup_path, backup_file_name))
+        )
         if os.path.exists(backup_storage_file):
             fs.delete([backup_storage_file], True, False)
 
@@ -180,14 +196,25 @@ class FileManagement:
                             found_count += 1
                         else:
                             # Found multiple files with same name. Raise warning.
-                            raise RuntimeWarning("Found multiple files with the name {}.".format(dir_file))
+                            raise RuntimeWarning(
+                                "Found multiple files with the name {}.".format(
+                                    dir_file
+                                )
+                            )
         else:
             for dir_file in os.listdir(root_dir):
-                if os.path.isfile(os.path.join(root_dir, dir_file)) and dir_file in file_names:
+                if (
+                    os.path.isfile(os.path.join(root_dir, dir_file))
+                    and dir_file in file_names
+                ):
                     file_list[dir_file] = root_dir
-        not_found = [file_name for file_name in file_names if file_list[file_name] is None]
+        not_found = [
+            file_name for file_name in file_names if file_list[file_name] is None
+        ]
         if not_found:
-            raise RuntimeWarning("Could not find the following files: {}".format(not_found))
+            raise RuntimeWarning(
+                "Could not find the following files: {}".format(not_found)
+            )
 
         return file_list
 
@@ -257,7 +284,9 @@ class FileManagement:
 
                 # Try to locate files
                 try:
-                    file_list = FileManagement._find_files(file_names, root_path, search_subdirs)
+                    file_list = FileManagement._find_files(
+                        file_names, root_path, search_subdirs
+                    )
                 except RuntimeWarning as w:
                     assert False, (
                         w.args[0]
@@ -318,7 +347,9 @@ class FileManagement:
 
                 # Try to locate both target and source files
                 try:
-                    file_list = FileManagement._find_files([target_file, src_file], root_path, search_subdirs)
+                    file_list = FileManagement._find_files(
+                        [target_file, src_file], root_path, search_subdirs
+                    )
                 except RuntimeWarning as w:
                     assert False, (
                         w.args[0]
@@ -327,7 +358,9 @@ class FileManagement:
 
                 FileManagement._restore_file(target_file, file_list[target_file])
                 FileManagement._backup_file(target_file, file_list[target_file])
-                FileManagement._copy_file(src_file, file_list[src_file], target_file, file_list[target_file])
+                FileManagement._copy_file(
+                    src_file, file_list[src_file], target_file, file_list[target_file]
+                )
 
                 try:
                     # Run Test
