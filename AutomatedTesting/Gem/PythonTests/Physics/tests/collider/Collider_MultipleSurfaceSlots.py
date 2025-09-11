@@ -59,8 +59,12 @@ def Collider_MultipleSurfaceSlots():
     SURFACE_TAG_COUNT = 4  # Number of surface tags included in used asset
 
     # Asset paths
-    STATIC_MESH = os.path.join("assets", "Physics", "Collider_MultipleSurfaceSlots", "test.fbx.azmodel")
-    PHYSX_MESH = os.path.join("assets", "Physics","Collider_MultipleSurfaceSlots", "test.fbx.pxmesh")
+    STATIC_MESH = os.path.join(
+        "assets", "Physics", "Collider_MultipleSurfaceSlots", "test.fbx.azmodel"
+    )
+    PHYSX_MESH = os.path.join(
+        "assets", "Physics", "Collider_MultipleSurfaceSlots", "test.fbx.pxmesh"
+    )
 
     # 1) Load the empty level
     hydra.open_base_level()
@@ -75,30 +79,53 @@ def Collider_MultipleSurfaceSlots():
     Report.result(Tests.mesh_added, test_entity.has_component("Mesh"))
 
     collider_component = test_entity.add_component(PHYSX_MESH_COLLIDER)
-    Report.result(Tests.physx_collider_added, test_entity.has_component(PHYSX_MESH_COLLIDER))
+    Report.result(
+        Tests.physx_collider_added, test_entity.has_component(PHYSX_MESH_COLLIDER)
+    )
 
     # 4) Assign the fbx file in PhysX Mesh and Mesh component
     px_asset = Asset.find_asset_by_path(PHYSX_MESH)
-    collider_component.set_component_property_value("Shape Configuration|Asset|PhysX Mesh", px_asset.id)
-    px_asset.id = collider_component.get_component_property_value("Shape Configuration|Asset|PhysX Mesh")
-    Report.result(Tests.assign_px_mesh_asset, px_asset.get_path().lower() == PHYSX_MESH.replace(os.sep, "/").lower())
+    collider_component.set_component_property_value(
+        "Shape Configuration|Asset|PhysX Mesh", px_asset.id
+    )
+    px_asset.id = collider_component.get_component_property_value(
+        "Shape Configuration|Asset|PhysX Mesh"
+    )
+    Report.result(
+        Tests.assign_px_mesh_asset,
+        px_asset.get_path().lower() == PHYSX_MESH.replace(os.sep, "/").lower(),
+    )
 
     model_asset = Asset.find_asset_by_path(STATIC_MESH)
-    mesh_component.set_component_property_value("Controller|Configuration|Model Asset", model_asset.id)
-    model_asset.id = mesh_component.get_component_property_value("Controller|Configuration|Model Asset")
-    Report.result(Tests.assign_model_asset, model_asset.get_path().lower() == STATIC_MESH.replace(os.sep, "/").lower())
+    mesh_component.set_component_property_value(
+        "Controller|Configuration|Model Asset", model_asset.id
+    )
+    model_asset.id = mesh_component.get_component_property_value(
+        "Controller|Configuration|Model Asset"
+    )
+    Report.result(
+        Tests.assign_model_asset,
+        model_asset.get_path().lower() == STATIC_MESH.replace(os.sep, "/").lower(),
+    )
 
     # 5) Check if multiple material slots show up under Materials section in the PhysX Mesh Collider component
     pte = collider_component.get_property_tree()
+
     def get_surface_count():
-        count = pte.get_container_count("Collider Configuration|Physics Materials|Slots")
+        count = pte.get_container_count(
+            "Collider Configuration|Physics Materials|Slots"
+        )
         return count.GetValue()
 
     Report.result(
-        Tests.count_mesh_surface, helper.wait_for_condition(lambda: get_surface_count() == SURFACE_TAG_COUNT, 1.0)
+        Tests.count_mesh_surface,
+        helper.wait_for_condition(
+            lambda: get_surface_count() == SURFACE_TAG_COUNT, 1.0
+        ),
     )
 
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Collider_MultipleSurfaceSlots)

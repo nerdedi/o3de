@@ -66,7 +66,12 @@ def Collider_PxMeshNotAutoAssignedWhenNoPhysicsFbx():
     import azlmbr.asset as azasset
 
     # Asset paths
-    STATIC_MESH = os.path.join("assets", "Physics", "Collider_PxMeshNotAutoAssignedWhenNoPhysicsFbx", "test_asset.fbx.azmodel")
+    STATIC_MESH = os.path.join(
+        "assets",
+        "Physics",
+        "Collider_PxMeshNotAutoAssignedWhenNoPhysicsFbx",
+        "test_asset.fbx.azmodel",
+    )
 
     # 1) Load the empty level
     hydra.open_base_level()
@@ -82,16 +87,27 @@ def Collider_PxMeshNotAutoAssignedWhenNoPhysicsFbx():
 
     # 4) Assign a render model asset to Mesh component (the fbx mesh having both Static mesh and PhysX collision Mesh)
     model_asset = Asset.find_asset_by_path(STATIC_MESH)
-    mesh_component.set_component_property_value("Controller|Configuration|Model Asset", model_asset.id)
-    model_asset.id = mesh_component.get_component_property_value("Controller|Configuration|Model Asset")
-    Report.result(Tests.assign_model_asset, model_asset.get_path().lower() == STATIC_MESH.replace(os.sep, "/").lower())
+    mesh_component.set_component_property_value(
+        "Controller|Configuration|Model Asset", model_asset.id
+    )
+    model_asset.id = mesh_component.get_component_property_value(
+        "Controller|Configuration|Model Asset"
+    )
+    Report.result(
+        Tests.assign_model_asset,
+        model_asset.get_path().lower() == STATIC_MESH.replace(os.sep, "/").lower(),
+    )
 
     # 5) Add PhysX Mesh Collider component
     test_component = test_entity.add_component(PHYSX_MESH_COLLIDER)
-    Report.result(Tests.physx_collider_added, test_entity.has_component(PHYSX_MESH_COLLIDER))
+    Report.result(
+        Tests.physx_collider_added, test_entity.has_component(PHYSX_MESH_COLLIDER)
+    )
 
     # 6) The physics asset in PhysX Mesh Collider component is not auto-assigned.
-    asset_id = test_component.get_component_property_value("Shape Configuration|Asset|PhysX Mesh")
+    asset_id = test_component.get_component_property_value(
+        "Shape Configuration|Asset|PhysX Mesh"
+    )
     # Comparing asset_id with Null/Invalid asset azlmbr.asset.AssetId() to check that asset is not auto assigned
     Report.result(Tests.shape_not_assigned, asset_id == azasset.AssetId())
 
@@ -104,4 +120,5 @@ def Collider_PxMeshNotAutoAssignedWhenNoPhysicsFbx():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Collider_PxMeshNotAutoAssignedWhenNoPhysicsFbx)
