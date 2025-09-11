@@ -46,7 +46,9 @@ def Tick_CharacterGameplayComponentMotionIsSmooth():
     import numpy as np
 
     # constants
-    COEFFICIENT_OF_DETERMINATION_THRESHOLD = 1 - 1e-4 # curves with values below this are not considered sufficiently smooth
+    COEFFICIENT_OF_DETERMINATION_THRESHOLD = (
+        1 - 1e-4
+    )  # curves with values below this are not considered sufficiently smooth
 
     helper.init_idle()
     # 1) Load the empty level
@@ -57,13 +59,23 @@ def Tick_CharacterGameplayComponentMotionIsSmooth():
     Report.result(Tests.create_entity, test_entity.id.IsValid())
 
     azlmbr.components.TransformBus(
-        azlmbr.bus.Event, "SetWorldTranslation", test_entity.id, math.Vector3(0.0, 0.0, 0.0))
+        azlmbr.bus.Event,
+        "SetWorldTranslation",
+        test_entity.id,
+        math.Vector3(0.0, 0.0, 0.0),
+    )
 
     # 3) Add character controller and character gameplay components
     test_entity.add_component("PhysX Character Controller")
-    Report.result(Tests.character_controller_added, test_entity.has_component("PhysX Character Controller"))
+    Report.result(
+        Tests.character_controller_added,
+        test_entity.has_component("PhysX Character Controller"),
+    )
     test_entity.add_component("PhysX Character Gameplay")
-    Report.result(Tests.character_gameplay_added, test_entity.has_component("PhysX Character Gameplay"))
+    Report.result(
+        Tests.character_gameplay_added,
+        test_entity.has_component("PhysX Character Gameplay"),
+    )
 
     # 4) Enter game mode and collect data for the rigid body's z co-ordinate and the time values for a series of frames
     t = []
@@ -72,8 +84,16 @@ def Tick_CharacterGameplayComponentMotionIsSmooth():
     general.idle_wait_frames(1)
     game_entity_id = general.find_game_entity("test_entity")
     for frame in range(100):
-        t.append(azlmbr.components.TickRequestBus(azlmbr.bus.Broadcast, "GetTimeAtCurrentTick").GetSeconds())
-        z.append(azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldZ", game_entity_id))
+        t.append(
+            azlmbr.components.TickRequestBus(
+                azlmbr.bus.Broadcast, "GetTimeAtCurrentTick"
+            ).GetSeconds()
+        )
+        z.append(
+            azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldZ", game_entity_id
+            )
+        )
         general.idle_wait_frames(1)
     helper.exit_game_mode(Tests.exit_game_mode)
 
@@ -88,10 +108,14 @@ def Tick_CharacterGameplayComponentMotionIsSmooth():
     # if the coefficient is very close to 1, then the curve fits the data very well, suggesting that the rigid body motion is smooth
     # if the coefficient is significantly less than 1, then the z values vary more erratically relative to the smooth curve,
     # indicating that the motion of the rigid body is not smooth
-    coefficient_of_determination = (1 - np.sum(residual * residual) / np.sum(z * z))
-    Report.result(Tests.character_motion_smooth, bool(coefficient_of_determination > COEFFICIENT_OF_DETERMINATION_THRESHOLD))
+    coefficient_of_determination = 1 - np.sum(residual * residual) / np.sum(z * z)
+    Report.result(
+        Tests.character_motion_smooth,
+        bool(coefficient_of_determination > COEFFICIENT_OF_DETERMINATION_THRESHOLD),
+    )
 
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Tick_CharacterGameplayComponentMotionIsSmooth)
