@@ -4,10 +4,13 @@ For complete copyright and license terms please see the LICENSE at the root of t
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
+
 import os
 import sys
+
 sys.path.append(os.path.dirname(__file__))
 from Editor_TestClass import BaseClass
+
 
 class Editor_EntitySearchCommands_Works(BaseClass):
     # Description:
@@ -20,13 +23,14 @@ class Editor_EntitySearchCommands_Works(BaseClass):
         import azlmbr.bus as bus
         import azlmbr.math as math
         import azlmbr.components as components
+
         check_result = BaseClass.check_result
 
         # Save Root Entities and Total Entity number
-        root = entity.SearchBus(bus.Broadcast, 'GetRootEditorEntities')
+        root = entity.SearchBus(bus.Broadcast, "GetRootEditorEntities")
         len(root)
 
-        all = entity.SearchBus(bus.Broadcast, 'SearchEntities', entity.SearchFilter())
+        all = entity.SearchBus(bus.Broadcast, "SearchEntities", entity.SearchFilter())
         allNum = len(all)
 
         # Create Hierarchy
@@ -44,51 +48,85 @@ class Editor_EntitySearchCommands_Works(BaseClass):
         #
 
         def CreateEntity(name, parentId):
-            newEntityId = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', parentId)
-            editor.EditorEntityAPIBus(bus.Event, 'SetName', newEntityId, name)
-            testName = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', newEntityId)
-            check_result(testName == name, f"testName {testName} does not equal set name {name}")
+            newEntityId = editor.ToolsApplicationRequestBus(
+                bus.Broadcast, "CreateNewEntity", parentId
+            )
+            editor.EditorEntityAPIBus(bus.Event, "SetName", newEntityId, name)
+            testName = editor.EditorEntityInfoRequestBus(
+                bus.Event, "GetName", newEntityId
+            )
+            check_result(
+                testName == name, f"testName {testName} does not equal set name {name}"
+            )
             return newEntityId
 
         # Entities
-        cityId = CreateEntity('City', entity.EntityId())
-        streetId = CreateEntity('Street', cityId)
-        carId1 = CreateEntity('Car', streetId)
-        passengerId1 = CreateEntity('Passenger', carId1)
-        CreateEntity('Passenger', carId1)
-        carId2 = CreateEntity('Car', streetId)
-        passengerId3 = CreateEntity('Passenger', carId2)
-        sportsCarId = CreateEntity('SportsCar', streetId)
-        passengerId4 = CreateEntity('Passenger', sportsCarId)
-        CreateEntity('Passenger', sportsCarId)
+        cityId = CreateEntity("City", entity.EntityId())
+        streetId = CreateEntity("Street", cityId)
+        carId1 = CreateEntity("Car", streetId)
+        passengerId1 = CreateEntity("Passenger", carId1)
+        CreateEntity("Passenger", carId1)
+        carId2 = CreateEntity("Car", streetId)
+        passengerId3 = CreateEntity("Passenger", carId2)
+        sportsCarId = CreateEntity("SportsCar", streetId)
+        passengerId4 = CreateEntity("Passenger", sportsCarId)
+        CreateEntity("Passenger", sportsCarId)
 
         # Components
         typeNameList = ["Comment", "Actor"]
-        typeIdsList = editor.EditorComponentAPIBus(bus.Broadcast, 'FindComponentTypeIdsByEntityType', typeNameList, entity.EntityType().Game)
+        typeIdsList = editor.EditorComponentAPIBus(
+            bus.Broadcast,
+            "FindComponentTypeIdsByEntityType",
+            typeNameList,
+            entity.EntityType().Game,
+        )
 
-        editor.EditorComponentAPIBus(bus.Broadcast, 'AddComponentsOfType', passengerId1, [typeIdsList[0]])
-        editor.EditorComponentAPIBus(bus.Broadcast, 'AddComponentsOfType', carId2, [typeIdsList[0]])
-        editor.EditorComponentAPIBus(bus.Broadcast, 'AddComponentsOfType', streetId, [typeIdsList[1]])
-        editor.EditorComponentAPIBus(bus.Broadcast, 'AddComponentsOfType', passengerId1, [typeIdsList[1]])
-        editor.EditorComponentAPIBus(bus.Broadcast, 'AddComponentsOfType', passengerId4, [typeIdsList[1]])
+        editor.EditorComponentAPIBus(
+            bus.Broadcast, "AddComponentsOfType", passengerId1, [typeIdsList[0]]
+        )
+        editor.EditorComponentAPIBus(
+            bus.Broadcast, "AddComponentsOfType", carId2, [typeIdsList[0]]
+        )
+        editor.EditorComponentAPIBus(
+            bus.Broadcast, "AddComponentsOfType", streetId, [typeIdsList[1]]
+        )
+        editor.EditorComponentAPIBus(
+            bus.Broadcast, "AddComponentsOfType", passengerId1, [typeIdsList[1]]
+        )
+        editor.EditorComponentAPIBus(
+            bus.Broadcast, "AddComponentsOfType", passengerId4, [typeIdsList[1]]
+        )
 
         # Test the Entity Search API
         def CompareEntityIds(id1, id2):
-            return (id1.ToString() == id2.ToString())
+            return id1.ToString() == id2.ToString()
 
         def SearchResultCheck(searchFilter, testName, resultId):
-            entities = entity.SearchBus(bus.Broadcast, 'SearchEntities', searchFilter)
-            check_result((len(entities) == 1) and (CompareEntityIds(entities[0], resultId)), "SearchResultCheck: " + testName)
+            entities = entity.SearchBus(bus.Broadcast, "SearchEntities", searchFilter)
+            check_result(
+                (len(entities) == 1) and (CompareEntityIds(entities[0], resultId)),
+                "SearchResultCheck: " + testName,
+            )
 
         def SearchResultsCheck(searchFilter, testName, resultSize):
-            entities = entity.SearchBus(bus.Broadcast, 'SearchEntities', searchFilter)
-            check_result(len(entities) == resultSize, testName + " (size is " +  str(len(entities)) + ", should be " + str(resultSize) + ")")
+            entities = entity.SearchBus(bus.Broadcast, "SearchEntities", searchFilter)
+            check_result(
+                len(entities) == resultSize,
+                testName
+                + " (size is "
+                + str(len(entities))
+                + ", should be "
+                + str(resultSize)
+                + ")",
+            )
 
         # Search by Name - Base
 
         # No filters - return all entities
         searchFilter1 = entity.SearchFilter()
-        SearchResultsCheck(searchFilter1, "No filters - return all entities", (10 + allNum))
+        SearchResultsCheck(
+            searchFilter1, "No filters - return all entities", (10 + allNum)
+        )
 
         # Filter by name - single entity
         searchFilter2 = entity.SearchFilter()
@@ -130,7 +168,9 @@ class Editor_EntitySearchCommands_Works(BaseClass):
         # Filter by name - wildcard 05
         searchFilter10 = entity.SearchFilter()
         searchFilter10.names = ["*"]
-        SearchResultsCheck(searchFilter10, "Filter by name - wildcard 05", (10 + allNum))
+        SearchResultsCheck(
+            searchFilter10, "Filter by name - wildcard 05", (10 + allNum)
+        )
 
         # Search by Name - Case Sensitive
 
@@ -138,19 +178,25 @@ class Editor_EntitySearchCommands_Works(BaseClass):
         searchFilter11 = entity.SearchFilter()
         searchFilter11.names = ["Street"]
         searchFilter11.names_case_sensitive = False  # default
-        SearchResultCheck(searchFilter11, "Filter by name - case sensitive 01", streetId)
+        SearchResultCheck(
+            searchFilter11, "Filter by name - case sensitive 01", streetId
+        )
 
         # Filter by name - case sensitive 02
         searchFilter12 = entity.SearchFilter()
         searchFilter12.names = ["street"]
         searchFilter12.names_case_sensitive = False
-        SearchResultCheck(searchFilter12, "Filter by name - case sensitive 02", streetId)
+        SearchResultCheck(
+            searchFilter12, "Filter by name - case sensitive 02", streetId
+        )
 
         # Filter by name - case sensitive 03
         searchFilter13 = entity.SearchFilter()
         searchFilter13.names = ["Street"]
         searchFilter13.names_case_sensitive = True
-        SearchResultCheck(searchFilter13, "Filter by name - case sensitive 03", streetId)
+        SearchResultCheck(
+            searchFilter13, "Filter by name - case sensitive 03", streetId
+        )
 
         # Filter by name - case sensitive 04
         searchFilter14 = entity.SearchFilter()
@@ -198,19 +244,25 @@ class Editor_EntitySearchCommands_Works(BaseClass):
         searchFilter21 = entity.SearchFilter()
         searchFilter21.names = ["City|Street"]
         searchFilter21.names_case_sensitive = False  # default
-        SearchResultCheck(searchFilter21, "Filter by path - case sensitive 01", streetId)
+        SearchResultCheck(
+            searchFilter21, "Filter by path - case sensitive 01", streetId
+        )
 
         # Filter by path - case sensitive 02
         searchFilter22 = entity.SearchFilter()
         searchFilter22.names = ["city|street"]
         searchFilter22.names_case_sensitive = False  # default
-        SearchResultCheck(searchFilter22, "Filter by path - case sensitive 02", streetId)
+        SearchResultCheck(
+            searchFilter22, "Filter by path - case sensitive 02", streetId
+        )
 
         # Filter by path - case sensitive 03
         searchFilter23 = entity.SearchFilter()
         searchFilter23.names = ["City|Street"]
         searchFilter23.names_case_sensitive = True
-        SearchResultCheck(searchFilter23, "Filter by path - case sensitive 03", streetId)
+        SearchResultCheck(
+            searchFilter23, "Filter by path - case sensitive 03", streetId
+        )
 
         # Filter by path - case sensitive 04
         searchFilter24 = entity.SearchFilter()
@@ -222,27 +274,29 @@ class Editor_EntitySearchCommands_Works(BaseClass):
 
         # Filter by component - base 01
         searchFilter25 = entity.SearchFilter()
-        searchFilter25.components = { typeIdsList[0]:{} }
+        searchFilter25.components = {typeIdsList[0]: {}}
         SearchResultsCheck(searchFilter25, "Filter by component - base 01", 2)
 
         # Filter by component - base 02
         searchFilter26 = entity.SearchFilter()
-        searchFilter26.components = { typeIdsList[1]:{} }
+        searchFilter26.components = {typeIdsList[1]: {}}
         SearchResultsCheck(searchFilter26, "Filter by component - base 02", 3)
 
         # Search by Component - Multiple
 
         # Filter by component - multiple 01
         searchFilter27 = entity.SearchFilter()
-        searchFilter27.components = { typeIdsList[0]: {} , typeIdsList[1]: {} }
+        searchFilter27.components = {typeIdsList[0]: {}, typeIdsList[1]: {}}
         searchFilter27.components_match_all = False  # default
         SearchResultsCheck(searchFilter27, "Filter by component - multiple 01", 4)
 
         # Filter by component - multiple 02
         searchFilter28 = entity.SearchFilter()
-        searchFilter28.components = { typeIdsList[0]: {} , typeIdsList[1]: {} }
+        searchFilter28.components = {typeIdsList[0]: {}, typeIdsList[1]: {}}
         searchFilter28.components_match_all = True
-        SearchResultCheck(searchFilter28, "Filter by component - multiple 02", passengerId1)
+        SearchResultCheck(
+            searchFilter28, "Filter by component - multiple 02", passengerId1
+        )
 
         # Search with Roots - Base
 
@@ -315,7 +369,7 @@ class Editor_EntitySearchCommands_Works(BaseClass):
         searchFilter39 = entity.SearchFilter()
         searchFilter39.names = ["Pass*"]
         searchFilter39.roots = [sportsCarId]
-        searchFilter39.components = { typeIdsList[1]:{} }
+        searchFilter39.components = {typeIdsList[1]: {}}
         searchFilter39.names_are_root_based = True
         searchFilter39.names_case_sensitive = True
         SearchResultCheck(searchFilter39, "Search with Multiple Filters", passengerId4)
@@ -324,12 +378,24 @@ class Editor_EntitySearchCommands_Works(BaseClass):
 
         aabb = math.Aabb()
         cityPosition = components.TransformBus(bus.Event, "GetWorldTranslation", cityId)
-        print("City Position: ( " + str(cityPosition.x) + ", " + str(cityPosition.y) + ", " + str(cityPosition.z) + " )")
+        print(
+            "City Position: ( "
+            + str(cityPosition.x)
+            + ", "
+            + str(cityPosition.y)
+            + ", "
+            + str(cityPosition.z)
+            + " )"
+        )
 
         # Filter by AABB - base 01
         searchFilter40 = entity.SearchFilter()
-        aabbMin = math.Vector3(cityPosition.x - 1000.0, cityPosition.y - 1000.0, cityPosition.z - 1000.0)
-        aabbMax = math.Vector3(cityPosition.x + 1000.0, cityPosition.y + 1000.0, cityPosition.z + 1000.0)
+        aabbMin = math.Vector3(
+            cityPosition.x - 1000.0, cityPosition.y - 1000.0, cityPosition.z - 1000.0
+        )
+        aabbMax = math.Vector3(
+            cityPosition.x + 1000.0, cityPosition.y + 1000.0, cityPosition.z + 1000.0
+        )
         aabb.Set(aabbMin, aabbMax)
         searchFilter40.aabb = aabb
         searchFilter40.names = ["City", "Street", "SportsCar", "Car", "Passenger"]
@@ -338,8 +404,12 @@ class Editor_EntitySearchCommands_Works(BaseClass):
 
         # Filter by AABB - base 02
         searchFilter41 = entity.SearchFilter()
-        aabbMin = math.Vector3(cityPosition.x - 1000.0, cityPosition.y - 1000.0, cityPosition.z - 1000.0)
-        aabbMax = math.Vector3(cityPosition.x - 100.0, cityPosition.y - 100.0, cityPosition.z - 100.0)
+        aabbMin = math.Vector3(
+            cityPosition.x - 1000.0, cityPosition.y - 1000.0, cityPosition.z - 1000.0
+        )
+        aabbMax = math.Vector3(
+            cityPosition.x - 100.0, cityPosition.y - 100.0, cityPosition.z - 100.0
+        )
         aabb.Set(aabbMin, aabbMax)
         searchFilter41.aabb = aabb
         searchFilter41.names = ["City", "Street", "SportsCar", "Car", "Passenger"]
@@ -350,23 +420,38 @@ class Editor_EntitySearchCommands_Works(BaseClass):
 
         # Filter by Component Properties - base 01
         searchFilter42 = entity.SearchFilter()
-        searchFilter42.components = { typeIdsList[1]:{'Render options|Draw character': True} }
+        searchFilter42.components = {
+            typeIdsList[1]: {"Render options|Draw character": True}
+        }
         searchFilter42.names = ["City", "Street", "SportsCar", "Car", "Passenger"]
-        SearchResultsCheck(searchFilter42, "Filter by Component Properties - base 01", 3)
+        SearchResultsCheck(
+            searchFilter42, "Filter by Component Properties - base 01", 3
+        )
 
         # Filter by Component Properties - base 02
         searchFilter43 = entity.SearchFilter()
-        searchFilter43.components = { typeIdsList[0]:{}, typeIdsList[1]:{'Render options|Draw character': True} }
+        searchFilter43.components = {
+            typeIdsList[0]: {},
+            typeIdsList[1]: {"Render options|Draw character": True},
+        }
         searchFilter43.components_match_all = False
         searchFilter43.names = ["City", "Street", "SportsCar", "Car", "Passenger"]
-        SearchResultsCheck(searchFilter43, "Filter by Component Properties - base 02", 4)
+        SearchResultsCheck(
+            searchFilter43, "Filter by Component Properties - base 02", 4
+        )
 
         # Filter by Component Properties - base 03
         searchFilter44 = entity.SearchFilter()
-        searchFilter44.components = { typeIdsList[0]:{}, typeIdsList[1]:{'Render options|Draw character': True} }
+        searchFilter44.components = {
+            typeIdsList[0]: {},
+            typeIdsList[1]: {"Render options|Draw character": True},
+        }
         searchFilter44.components_match_all = True
         searchFilter44.names = ["City", "Street", "SportsCar", "Car", "Passenger"]
-        SearchResultsCheck(searchFilter44, "Filter by Component Properties - base 03", 1)
+        SearchResultsCheck(
+            searchFilter44, "Filter by Component Properties - base 03", 1
+        )
+
 
 if __name__ == "__main__":
     tester = Editor_EntitySearchCommands_Works()

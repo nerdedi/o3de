@@ -5,6 +5,7 @@ For complete copyright and license terms please see the LICENSE at the root of t
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
+
 # fmt: off
 class Tests():
     azshader_was_removed =          ("azshader was removed",        "Failed to remove azshader")
@@ -51,7 +52,7 @@ def ShaderAssetBuilder_RecompilesShaderAsChainOfDependenciesChanges():
             "Test3Color.azsli",
             "Test1Color.azsli",
             "DependencyValidation.azsl",
-            "DependencyValidation.shader"
+            "DependencyValidation.shader",
         ]
 
         reverse_file_list = file_list[::-1]
@@ -61,24 +62,41 @@ def ShaderAssetBuilder_RecompilesShaderAsChainOfDependenciesChanges():
 
         # Wait here until the azshader doesn't exist anymore.
         azshader_name = "assets/dependencyvalidation.azshader"
-        helper.wait_for_condition(lambda: not ShaderAssetTestHelper.asset_exists(azshader_name), 5.0)
+        helper.wait_for_condition(
+            lambda: not ShaderAssetTestHelper.asset_exists(azshader_name), 5.0
+        )
 
-        Report.critical_result(Tests.azshader_was_removed, not ShaderAssetTestHelper.asset_exists(azshader_name))
+        Report.critical_result(
+            Tests.azshader_was_removed,
+            not ShaderAssetTestHelper.asset_exists(azshader_name),
+        )
 
-        ShaderAssetTestHelper.copy_tmp_files_in_order(src_assets_subdir, file_list, game_asset_path, 1.0)
+        ShaderAssetTestHelper.copy_tmp_files_in_order(
+            src_assets_subdir, file_list, game_asset_path, 1.0
+        )
 
         # Give enough time to AP to compile the shader
-        helper.wait_for_condition(lambda: ShaderAssetTestHelper.asset_exists(azshader_name), 60.0)
+        helper.wait_for_condition(
+            lambda: ShaderAssetTestHelper.asset_exists(azshader_name), 60.0
+        )
 
-        Report.critical_result(Tests.azshader_was_compiled, ShaderAssetTestHelper.asset_exists(azshader_name))
+        Report.critical_result(
+            Tests.azshader_was_compiled,
+            ShaderAssetTestHelper.asset_exists(azshader_name),
+        )
 
         # The first part was about compiling the shader under normal conditions.
         # Let's remove the files from the previous phase and will proceed
         # to make the source files visible to the AP in reverse order. The
         # ShaderAssetBuilder will only succeed when the last file becomes visible.
         ShaderAssetTestHelper.remove_files(game_asset_path, reverse_file_list)
-        helper.wait_for_condition(lambda: not ShaderAssetTestHelper.asset_exists(azshader_name), 5.0)
-        Report.critical_result(Tests.azshader_was_removed, not ShaderAssetTestHelper.asset_exists(azshader_name))
+        helper.wait_for_condition(
+            lambda: not ShaderAssetTestHelper.asset_exists(azshader_name), 5.0
+        )
+        Report.critical_result(
+            Tests.azshader_was_removed,
+            not ShaderAssetTestHelper.asset_exists(azshader_name),
+        )
 
         # Remark, if you are running this test manually from the Editor with "pyRunFile",
         # You'll notice how the AP issues notifications that it fails to compile the shader
@@ -91,12 +109,19 @@ def ShaderAssetBuilder_RecompilesShaderAsChainOfDependenciesChanges():
         # presented in this test, but with the new version of ShaderAssetBuilder::CreateJobs, which
         # doesn't use MCPP for #include files discovery, it should eventually compile the shader
         # once all the source files are in place.
-        ShaderAssetTestHelper.copy_tmp_files_in_order(src_assets_subdir, reverse_file_list, game_asset_path, 3.0)
+        ShaderAssetTestHelper.copy_tmp_files_in_order(
+            src_assets_subdir, reverse_file_list, game_asset_path, 3.0
+        )
 
         # Give enough time to AP to compile the shader
-        helper.wait_for_condition(lambda: ShaderAssetTestHelper.asset_exists(azshader_name), 60.0)
+        helper.wait_for_condition(
+            lambda: ShaderAssetTestHelper.asset_exists(azshader_name), 60.0
+        )
 
-        Report.critical_result(Tests.azshader_was_compiled, ShaderAssetTestHelper.asset_exists(azshader_name))
+        Report.critical_result(
+            Tests.azshader_was_compiled,
+            ShaderAssetTestHelper.asset_exists(azshader_name),
+        )
 
         # The last phase of the test puts stress on potential race conditions
         # when all required files appear as soon as possible.
@@ -104,20 +129,34 @@ def ShaderAssetBuilder_RecompilesShaderAsChainOfDependenciesChanges():
         # First Clean up.
         # Remove left over files.
         ShaderAssetTestHelper.remove_files(game_asset_path, reverse_file_list)
-        helper.wait_for_condition(lambda: not ShaderAssetTestHelper.asset_exists(azshader_name), 5.0)
-        Report.critical_result(Tests.azshader_was_removed, not ShaderAssetTestHelper.asset_exists(azshader_name))
+        helper.wait_for_condition(
+            lambda: not ShaderAssetTestHelper.asset_exists(azshader_name), 5.0
+        )
+        Report.critical_result(
+            Tests.azshader_was_removed,
+            not ShaderAssetTestHelper.asset_exists(azshader_name),
+        )
 
         # Now let's copy all the source files to the "Assets" folder as fast as possible.
-        ShaderAssetTestHelper.copy_tmp_files_in_order(src_assets_subdir, reverse_file_list, game_asset_path)
+        ShaderAssetTestHelper.copy_tmp_files_in_order(
+            src_assets_subdir, reverse_file_list, game_asset_path
+        )
 
         # Give enough time to AP to compile the shader
-        helper.wait_for_condition(lambda: ShaderAssetTestHelper.asset_exists(azshader_name), 60.0)
+        helper.wait_for_condition(
+            lambda: ShaderAssetTestHelper.asset_exists(azshader_name), 60.0
+        )
 
-        Report.critical_result(Tests.azshader_was_compiled, ShaderAssetTestHelper.asset_exists(azshader_name))
+        Report.critical_result(
+            Tests.azshader_was_compiled,
+            ShaderAssetTestHelper.asset_exists(azshader_name),
+        )
 
         # All good, let's cleanup leftover files before closing the test.
         ShaderAssetTestHelper.remove_files(game_asset_path, reverse_file_list)
-        helper.wait_for_condition(lambda: not ShaderAssetTestHelper.asset_exists(azshader_name), 5.0)
+        helper.wait_for_condition(
+            lambda: not ShaderAssetTestHelper.asset_exists(azshader_name), 5.0
+        )
 
         # Look for errors to raise.
         helper.wait_for_condition(lambda: error_tracer.has_errors, 1.0)
@@ -126,4 +165,5 @@ def ShaderAssetBuilder_RecompilesShaderAsChainOfDependenciesChanges():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(ShaderAssetBuilder_RecompilesShaderAsChainOfDependenciesChanges)
