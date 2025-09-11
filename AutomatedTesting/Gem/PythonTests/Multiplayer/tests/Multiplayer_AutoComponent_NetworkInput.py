@@ -47,7 +47,7 @@ def Multiplayer_AutoComponent_NetworkInput():
 
     level_name = "AutoComponent_NetworkInput"
     helper.init_idle()
-    general.set_cvar_integer('editorsv_port', 33452)
+    general.set_cvar_integer("editorsv_port", 33452)
 
     # 1) Open Level
     helper.open_level("Multiplayer", level_name)
@@ -62,19 +62,44 @@ def Multiplayer_AutoComponent_NetworkInput():
 
         # 4) Check the editor logs for expected and unexpected log output
         EXPECTEDLINE_WAIT_TIME_SECONDS = 1.0
-        helper.succeed_if_log_line_found('Script', "AutoComponent_NetworkInput CreateInput called!", section_tracer.prints, EXPECTEDLINE_WAIT_TIME_SECONDS)
-        helper.succeed_if_log_line_found('Script', "AutoComponent_NetworkInput ProcessInput called!", section_tracer.prints, EXPECTEDLINE_WAIT_TIME_SECONDS)
-        helper.succeed_if_log_line_found('EditorServer', 'Script: AutoComponent_NetworkInput ProcessInput called!', section_tracer.prints, EXPECTEDLINE_WAIT_TIME_SECONDS)
+        helper.succeed_if_log_line_found(
+            "Script",
+            "AutoComponent_NetworkInput CreateInput called!",
+            section_tracer.prints,
+            EXPECTEDLINE_WAIT_TIME_SECONDS,
+        )
+        helper.succeed_if_log_line_found(
+            "Script",
+            "AutoComponent_NetworkInput ProcessInput called!",
+            section_tracer.prints,
+            EXPECTEDLINE_WAIT_TIME_SECONDS,
+        )
+        helper.succeed_if_log_line_found(
+            "EditorServer",
+            "Script: AutoComponent_NetworkInput ProcessInput called!",
+            section_tracer.prints,
+            EXPECTEDLINE_WAIT_TIME_SECONDS,
+        )
 
         WAIT_TIME_CLIENT_RECEIVED_INCORRECT_INPUT = 1.0
-        helper.fail_if_log_line_found("Script", "AutoComponent_NetworkInput received bad fwdback!", section_tracer.prints, WAIT_TIME_CLIENT_RECEIVED_INCORRECT_INPUT)
-        helper.fail_if_log_line_found("Script", "AutoComponent_NetworkInput received bad leftright!", section_tracer.prints, WAIT_TIME_CLIENT_RECEIVED_INCORRECT_INPUT)
+        helper.fail_if_log_line_found(
+            "Script",
+            "AutoComponent_NetworkInput received bad fwdback!",
+            section_tracer.prints,
+            WAIT_TIME_CLIENT_RECEIVED_INCORRECT_INPUT,
+        )
+        helper.fail_if_log_line_found(
+            "Script",
+            "AutoComponent_NetworkInput received bad leftright!",
+            section_tracer.prints,
+            WAIT_TIME_CLIENT_RECEIVED_INCORRECT_INPUT,
+        )
 
     # Exit game mode
     helper.exit_game_mode(Tests.exit_game_mode)
 
 
-
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Multiplayer_AutoComponent_NetworkInput)

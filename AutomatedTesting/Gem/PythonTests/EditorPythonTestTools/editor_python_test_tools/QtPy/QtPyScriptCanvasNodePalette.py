@@ -6,23 +6,43 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 
 Object to house all the Qt Objects and behavior used in testing the script canvas node palette
 """
+
 from editor_python_test_tools.utils import TestHelper as helper
 from PySide2 import QtWidgets
 import pyside_utils
-from consts.scripting import (NODE_PALETTE_QT, TREE_VIEW_QT, SEARCH_FRAME_QT, SEARCH_FILTER_QT, NODE_PALETTE_CLEAR_BUTTON_QT)
-from consts.general import (WAIT_TIME_SEC_1, WAIT_TIME_SEC_3)
+from consts.scripting import (
+    NODE_PALETTE_QT,
+    TREE_VIEW_QT,
+    SEARCH_FRAME_QT,
+    SEARCH_FILTER_QT,
+    NODE_PALETTE_CLEAR_BUTTON_QT,
+)
+from consts.general import WAIT_TIME_SEC_1, WAIT_TIME_SEC_3
 
-class QtPyScriptCanvasNodePalette():
+
+class QtPyScriptCanvasNodePalette:
     """
-       QtPy class for handling the behavior of the script canvas node palette such as filter/searching for a node type
-        """
+    QtPy class for handling the behavior of the script canvas node palette such as filter/searching for a node type
+    """
+
     def __init__(self, sc_editor):
-        self.node_palette = sc_editor.sc_editor.findChild(QtWidgets.QDockWidget, NODE_PALETTE_QT)
-        self.node_palette_tree = self.node_palette.findChild(QtWidgets.QTreeView, TREE_VIEW_QT)
-        self.node_palette_search_frame = self.node_palette.findChild(QtWidgets.QFrame, SEARCH_FRAME_QT)
-        self.node_palette_search_box = self.node_palette_search_frame.findChild(QtWidgets.QLineEdit, SEARCH_FILTER_QT)
-        self.node_palette_clear_search_button = self.node_palette_search_frame.findChild(QtWidgets.QToolButton,
-                                                                                         NODE_PALETTE_CLEAR_BUTTON_QT)
+        self.node_palette = sc_editor.sc_editor.findChild(
+            QtWidgets.QDockWidget, NODE_PALETTE_QT
+        )
+        self.node_palette_tree = self.node_palette.findChild(
+            QtWidgets.QTreeView, TREE_VIEW_QT
+        )
+        self.node_palette_search_frame = self.node_palette.findChild(
+            QtWidgets.QFrame, SEARCH_FRAME_QT
+        )
+        self.node_palette_search_box = self.node_palette_search_frame.findChild(
+            QtWidgets.QLineEdit, SEARCH_FILTER_QT
+        )
+        self.node_palette_clear_search_button = (
+            self.node_palette_search_frame.findChild(
+                QtWidgets.QToolButton, NODE_PALETTE_CLEAR_BUTTON_QT
+            )
+        )
 
     def search_for_node(self, node_name: str):
         """
@@ -37,7 +57,9 @@ class QtPyScriptCanvasNodePalette():
         self.clear_search_filter()
         self.__set_search_filter(node_name)
 
-        nodes_found = pyside_utils.find_child_by_pattern(self.node_palette_tree, {"text": f"{node_name}"})
+        nodes_found = pyside_utils.find_child_by_pattern(
+            self.node_palette_tree, {"text": f"{node_name}"}
+        )
 
         return nodes_found
 
@@ -57,7 +79,9 @@ class QtPyScriptCanvasNodePalette():
         helper.wait_for_condition(lambda: True is False, WAIT_TIME_SEC_1)
         helper.wait_for_condition(lambda: search_field_set, WAIT_TIME_SEC_3)
 
-        assert search_field_set, f"Failed to set the node palette search field to: {node_name}."
+        assert search_field_set, (
+            f"Failed to set the node palette search field to: {node_name}."
+        )
 
     def clear_search_filter(self) -> None:
         """
@@ -78,4 +102,6 @@ class QtPyScriptCanvasNodePalette():
         search_field_text = self.node_palette_search_box.text()
         search_field_cleared = search_field_text == ""
 
-        assert search_field_cleared, f"Failed to clear the node palette search field. Remaining text was {search_field_text} "
+        assert search_field_cleared, (
+            f"Failed to clear the node palette search field. Remaining text was {search_field_text} "
+        )
