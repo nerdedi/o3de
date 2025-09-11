@@ -9,23 +9,20 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     lc_tool_opened = (
         "Landscape Canvas tool opened",
-        "Failed to open Landscape Canvas tool"
+        "Failed to open Landscape Canvas tool",
     )
-    new_graph_created = (
-        "Successfully created new graph",
-        "Failed to create new graph"
-    )
+    new_graph_created = ("Successfully created new graph", "Failed to create new graph")
     graph_registered = (
         "Graph registered with Landscape Canvas",
-        "Failed to register graph"
+        "Failed to register graph",
     )
     blender_first_layer_set = (
         "Spawner entity set as the first layer of the Vegetation Layer Blender component",
-        "Unexpected entity set as the first layer of the Vegetation Layer Blender component"
+        "Unexpected entity set as the first layer of the Vegetation Layer Blender component",
     )
     blender_second_layer_set = (
         "Blocker entity set as the second layer of the Vegetation Layer Blender component",
-        "Unexpected entity set as the second layer of the Vegetation Layer Blender component"
+        "Unexpected entity set as the second layer of the Vegetation Layer Blender component",
     )
 
 
@@ -76,22 +73,26 @@ def LayerBlender_NodeConstruction():
     hydra.open_base_level()
 
     # Open Landscape Canvas tool and verify
-    general.open_pane('Landscape Canvas')
-    Report.critical_result(Tests.lc_tool_opened, general.is_pane_visible('Landscape Canvas'))
+    general.open_pane("Landscape Canvas")
+    Report.critical_result(
+        Tests.lc_tool_opened, general.is_pane_visible("Landscape Canvas")
+    )
 
     # Create a new graph in Landscape Canvas
-    newGraphId = graph.AssetEditorRequestBus(bus.Event, 'CreateNewGraph', editorId)
+    newGraphId = graph.AssetEditorRequestBus(bus.Event, "CreateNewGraph", editorId)
     Report.critical_result(Tests.new_graph_created, newGraphId is not None)
 
     # Make sure the graph we created is in Landscape Canvas
-    graph_registered = graph.AssetEditorRequestBus(bus.Event, 'ContainsGraph', editorId, newGraphId)
+    graph_registered = graph.AssetEditorRequestBus(
+        bus.Event, "ContainsGraph", editorId, newGraphId
+    )
     Report.result(Tests.graph_registered, graph_registered)
 
     # Listen for entity creation notifications so we can verify the component EntityId
     # references are set correctly when connecting slots on the nodes
     handler = editor.EditorEntityContextNotificationBusHandler()
     handler.connect()
-    handler.add_callback('OnEditorEntityCreated', onEntityCreated)
+    handler.add_callback("OnEditorEntityCreated", onEntityCreated)
 
     positionX = 10.0
     positionY = 10.0
@@ -99,28 +100,49 @@ def LayerBlender_NodeConstruction():
     offsetY = 100.0
 
     # Add a Vegetation Layer Spawner node to the graph
-    newGraph = graph.GraphManagerRequestBus(bus.Broadcast, 'GetGraph', newGraphId)
-    layerSpawnerNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(bus.Broadcast, 'CreateNodeForTypeName',
-                                                                            newGraph, 'SpawnerAreaNode')
-    graph.GraphControllerRequestBus(bus.Event, 'AddNode', newGraphId, layerSpawnerNode, math.Vector2(positionX, positionY))
+    newGraph = graph.GraphManagerRequestBus(bus.Broadcast, "GetGraph", newGraphId)
+    layerSpawnerNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(
+        bus.Broadcast, "CreateNodeForTypeName", newGraph, "SpawnerAreaNode"
+    )
+    graph.GraphControllerRequestBus(
+        bus.Event,
+        "AddNode",
+        newGraphId,
+        layerSpawnerNode,
+        math.Vector2(positionX, positionY),
+    )
     layerSpawnerEntityId = newEntityId
 
     positionX += offsetX
     positionY += offsetY
 
     # Add a Vegetation Layer Blocker node to the graph
-    layerBlockerNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(bus.Broadcast, 'CreateNodeForTypeName',
-                                                                            newGraph, 'BlockerAreaNode')
-    graph.GraphControllerRequestBus(bus.Event, 'AddNode', newGraphId, layerBlockerNode, math.Vector2(positionX, positionY))
+    layerBlockerNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(
+        bus.Broadcast, "CreateNodeForTypeName", newGraph, "BlockerAreaNode"
+    )
+    graph.GraphControllerRequestBus(
+        bus.Event,
+        "AddNode",
+        newGraphId,
+        layerBlockerNode,
+        math.Vector2(positionX, positionY),
+    )
     layerBlockerEntityId = newEntityId
 
     positionX += offsetX
     positionY += offsetY
 
     # Add a Vegetation Layer Blender node to the graph
-    layerBlenderNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(bus.Broadcast, 'CreateNodeForTypeName',
-                                                                            newGraph, 'AreaBlenderNode')
-    graph.GraphControllerRequestBus(bus.Event, 'AddNode', newGraphId, layerBlenderNode, math.Vector2(positionX, positionY))
+    layerBlenderNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(
+        bus.Broadcast, "CreateNodeForTypeName", newGraph, "AreaBlenderNode"
+    )
+    graph.GraphControllerRequestBus(
+        bus.Event,
+        "AddNode",
+        newGraphId,
+        layerBlenderNode,
+        math.Vector2(positionX, positionY),
+    )
     layerBlenderNodeEntityId = newEntityId
 
     positionX += offsetX
@@ -128,16 +150,31 @@ def LayerBlender_NodeConstruction():
 
     PrefabWaiter.wait_for_propagation()
 
-    outboundAreaSlotId = graph.GraphModelSlotId('OutboundArea')
-    inboundAreaSlotId = graph.GraphModelSlotId('InboundArea')
-    inboundAreaSlotId2 = graph.GraphControllerRequestBus(bus.Event, 'ExtendSlot', newGraphId, layerBlenderNode,
-                                                         'InboundArea')
+    outboundAreaSlotId = graph.GraphModelSlotId("OutboundArea")
+    inboundAreaSlotId = graph.GraphModelSlotId("InboundArea")
+    inboundAreaSlotId2 = graph.GraphControllerRequestBus(
+        bus.Event, "ExtendSlot", newGraphId, layerBlenderNode, "InboundArea"
+    )
 
     # Connect slots on our nodes to construct a Vegetation Layer Blender hierarchy
-    graph.GraphControllerRequestBus(bus.Event, 'AddConnectionBySlotId', newGraphId, layerSpawnerNode, outboundAreaSlotId,
-                                    layerBlenderNode, inboundAreaSlotId)
-    graph.GraphControllerRequestBus(bus.Event, 'AddConnectionBySlotId', newGraphId, layerBlockerNode, outboundAreaSlotId,
-                                    layerBlenderNode, inboundAreaSlotId2)
+    graph.GraphControllerRequestBus(
+        bus.Event,
+        "AddConnectionBySlotId",
+        newGraphId,
+        layerSpawnerNode,
+        outboundAreaSlotId,
+        layerBlenderNode,
+        inboundAreaSlotId,
+    )
+    graph.GraphControllerRequestBus(
+        bus.Event,
+        "AddConnectionBySlotId",
+        newGraphId,
+        layerBlockerNode,
+        outboundAreaSlotId,
+        layerBlenderNode,
+        inboundAreaSlotId2,
+    )
 
     # Delay 2 frames to allow for underlying component properties to be updated after the slot connections are made and
     # propagation to occur
@@ -145,26 +182,40 @@ def LayerBlender_NodeConstruction():
 
     # Get component info
     layerBlenderTypeId = hydra.get_component_type_id("Vegetation Layer Blender")
-    vegetationLayerBlenderOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'GetComponentOfType',
-                                                                 layerBlenderNodeEntityId, layerBlenderTypeId)
+    vegetationLayerBlenderOutcome = editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "GetComponentOfType",
+        layerBlenderNodeEntityId,
+        layerBlenderTypeId,
+    )
     layerBlenderComponent = vegetationLayerBlenderOutcome.GetValue()
 
     # Verify the Vegetation Areas properties on our Vegetation Layer Blender component have been set to our area EntityIds
-    area1EntityId = hydra.get_component_property_value(layerBlenderComponent, 'Configuration|Vegetation Areas|[0]')
+    area1EntityId = hydra.get_component_property_value(
+        layerBlenderComponent, "Configuration|Vegetation Areas|[0]"
+    )
     Report.info(f"First pinned entity ID: {area1EntityId.ToString()}")
     Report.info(f"Layer Spawner entity ID: {layerSpawnerEntityId.ToString()}")
-    Report.result(Tests.blender_first_layer_set, area1EntityId and layerSpawnerEntityId.invoke("Equal", area1EntityId))
+    Report.result(
+        Tests.blender_first_layer_set,
+        area1EntityId and layerSpawnerEntityId.invoke("Equal", area1EntityId),
+    )
 
-    area2EntityId = hydra.get_component_property_value(layerBlenderComponent, 'Configuration|Vegetation Areas|[1]')
+    area2EntityId = hydra.get_component_property_value(
+        layerBlenderComponent, "Configuration|Vegetation Areas|[1]"
+    )
     Report.info(f"Second pinned entity ID: {area2EntityId.ToString()}")
     Report.info(f"Layer Blocker entity ID: {layerBlockerEntityId.ToString()}")
-    Report.result(Tests.blender_second_layer_set, area2EntityId and layerBlockerEntityId.invoke("Equal", area2EntityId))
+    Report.result(
+        Tests.blender_second_layer_set,
+        area2EntityId and layerBlockerEntityId.invoke("Equal", area2EntityId),
+    )
 
     # Stop listening for entity creation notifications
     handler.disconnect()
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(LayerBlender_NodeConstruction)

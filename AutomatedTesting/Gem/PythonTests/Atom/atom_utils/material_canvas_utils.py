@@ -12,7 +12,10 @@ import azlmbr.object
 import azlmbr.bus as bus
 
 from Atom.atom_utils.atom_constants import (
-    DynamicNodeManagerRequestBusEvents, GraphControllerRequestBusEvents, GraphDocumentRequestBusEvents)
+    DynamicNodeManagerRequestBusEvents,
+    GraphControllerRequestBusEvents,
+    GraphDocumentRequestBusEvents,
+)
 
 
 class Node(object):
@@ -32,7 +35,7 @@ class Node(object):
         :return: a dict containing slot name keys with graph.GraphModelSlotId slot values.
         """
         mapped_node_slots = {}
-        raw_node_slots_dict = self.node_python_proxy.invoke('GetSlots')
+        raw_node_slots_dict = self.node_python_proxy.invoke("GetSlots")
 
         for k, v in raw_node_slots_dict.items():
             mapped_node_slots[k.name] = graph.GraphModelSlotId(k.name)
@@ -54,7 +57,8 @@ class Graph(object):
         :return: math.Uuid which represents the graph ID value.
         """
         return atomtools.GraphDocumentRequestBus(
-            bus.Event, GraphDocumentRequestBusEvents.GET_GRAPH_ID, self.document_id)
+            bus.Event, GraphDocumentRequestBusEvents.GET_GRAPH_ID, self.document_id
+        )
 
     def get_graph_name(self) -> str:
         """
@@ -62,14 +66,17 @@ class Graph(object):
         :return: string representing the name of this Graph object.
         """
         return atomtools.GraphDocumentRequestBus(
-            bus.Event, GraphDocumentRequestBusEvents.GET_GRAPH_NAME, self.document_id)
+            bus.Event, GraphDocumentRequestBusEvents.GET_GRAPH_NAME, self.document_id
+        )
 
     def get_graph(self) -> azlmbr.object.PythonProxyObject:
         """
         Returns the AZStd::shared_ptr<Graph> object for this Graph object.
         :return: azlmbr.object.PythonProxyObject containing a AZStd::shared_ptr<Graph> object.
         """
-        return atomtools.GraphDocumentRequestBus(bus.Event, GraphDocumentRequestBusEvents.GET_GRAPH, self.document_id)
+        return atomtools.GraphDocumentRequestBus(
+            bus.Event, GraphDocumentRequestBusEvents.GET_GRAPH, self.document_id
+        )
 
     def get_nodes(self) -> list[azlmbr.object.PythonProxyObject]:
         """
@@ -77,7 +84,8 @@ class Graph(object):
         :return: list of azlmbr.object.PythonProxyObject objects each representing a Node in this Graph.
         """
         return graph.GraphControllerRequestBus(
-            bus.Event, GraphControllerRequestBusEvents.GET_NODES, self.get_graph_id())
+            bus.Event, GraphControllerRequestBusEvents.GET_NODES, self.get_graph_id()
+        )
 
     def create_node_by_name(self, node_name: str) -> azlmbr.object.PythonProxyObject:
         """
@@ -88,9 +96,15 @@ class Graph(object):
         :return: azlmbr.object.PythonProxyObject representing a C++ AZStd::shared_ptr<Node> object.
         """
         return atomtools.DynamicNodeManagerRequestBus(
-            bus.Broadcast, DynamicNodeManagerRequestBusEvents.CREATE_NODE_BY_NAME, self.get_graph(), node_name)
+            bus.Broadcast,
+            DynamicNodeManagerRequestBusEvents.CREATE_NODE_BY_NAME,
+            self.get_graph(),
+            node_name,
+        )
 
-    def add_node(self, node: azlmbr.object.PythonProxyObject, position: math.Vector2) -> Node:
+    def add_node(
+        self, node: azlmbr.object.PythonProxyObject, position: math.Vector2
+    ) -> Node:
         """
         Adds a node generated from the NodeManager to this Graph, then returns a Node object for that node.
         :param node: A azlmbr.object.PythonProxyObject containing the node we wish to add to the graph.
@@ -98,14 +112,21 @@ class Graph(object):
         :return: A Node object containing node object and node id via azlmbr.object.PythonProxyObject objects.
         """
         graph.GraphControllerRequestBus(
-            bus.Event, GraphControllerRequestBusEvents.ADD_NODE, self.get_graph_id(), node, position)
+            bus.Event,
+            GraphControllerRequestBusEvents.ADD_NODE,
+            self.get_graph_id(),
+            node,
+            position,
+        )
         return Node(node)
 
-    def add_connection_by_slot_id(self,
-                                  source_node: Node,
-                                  source_slot: graph.GraphModelSlotId,
-                                  target_node: Node,
-                                  target_slot: graph.GraphModelSlotId) -> azlmbr.object.PythonProxyObject:
+    def add_connection_by_slot_id(
+        self,
+        source_node: Node,
+        source_slot: graph.GraphModelSlotId,
+        target_node: Node,
+        target_slot: graph.GraphModelSlotId,
+    ) -> azlmbr.object.PythonProxyObject:
         """
         Connects a starting source_slot to a destination target_slot.
         :param source_node: A Node() object for the source node we are connecting from.
@@ -115,14 +136,22 @@ class Graph(object):
         :return: azlmbr.object.PythonProxyObject representing a C++ AZStd::shared_ptr<Connection> object.
         """
         return graph.GraphControllerRequestBus(
-            bus.Event, GraphControllerRequestBusEvents.ADD_CONNECTION_BY_SLOT_ID, self.get_graph_id(),
-            source_node.node_python_proxy, source_slot, target_node.node_python_proxy, target_slot)
+            bus.Event,
+            GraphControllerRequestBusEvents.ADD_CONNECTION_BY_SLOT_ID,
+            self.get_graph_id(),
+            source_node.node_python_proxy,
+            source_slot,
+            target_node.node_python_proxy,
+            target_slot,
+        )
 
-    def are_slots_connected(self,
-                            source_node: Node,
-                            source_slot: graph.GraphModelSlotId,
-                            target_node: Node,
-                            target_slot: graph.GraphModelSlotId) -> bool:
+    def are_slots_connected(
+        self,
+        source_node: Node,
+        source_slot: graph.GraphModelSlotId,
+        target_node: Node,
+        target_slot: graph.GraphModelSlotId,
+    ) -> bool:
         """
         Determines if the source_slot is connected to the target_slot on the target_node.
         :param source_node: A Node() object for the source node that should be connected to the target node.
@@ -132,5 +161,11 @@ class Graph(object):
         :return: True if the source_slot and target_slot are connected, False otherwise.
         """
         return graph.GraphControllerRequestBus(
-            bus.Event, GraphControllerRequestBusEvents.ARE_SLOTS_CONNECTED, self.get_graph_id(),
-            source_node.node_python_proxy, source_slot, target_node.node_python_proxy, target_slot)
+            bus.Event,
+            GraphControllerRequestBusEvents.ARE_SLOTS_CONNECTED,
+            self.get_graph_id(),
+            source_node.node_python_proxy,
+            source_slot,
+            target_node.node_python_proxy,
+            target_slot,
+        )
