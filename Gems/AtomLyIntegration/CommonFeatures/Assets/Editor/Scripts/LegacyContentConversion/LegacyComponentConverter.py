@@ -23,9 +23,9 @@ Actor
 Do materials get carried over?
 ================================================
 For the mesh component, this script will attempt to create an atom mesh component
-that uses the same material, pre-supposing that you have already run the 
+that uses the same material, pre-supposing that you have already run the
 LegacyAssetConverter script to generate Atom .material files out of legacy .mtl files.
-(Gems\AtomLyIntegration\TechnicalArt\DccScriptingInterface\SDK\Maya\Scripts\Python\legacy_asset_converter\main.py)
+(Gems\\AtomLyIntegration\\TechnicalArt\\DccScriptingInterface\\SDK\\Maya\\Scripts\\Python\\legacy_asset_converter\\main.py)
 For meshes that only have one sub-mesh, this is straightforward as the mesh will only
 have one material to apply, and this script will look for a material with the same
 name but a .material extension.
@@ -43,9 +43,9 @@ What does this script needs?
 ================================================
 This script will parse the assetcatalog.xml from the cache folder to get asset ids and path.
 This file is in binary by default, you need to rebuild the engine with a modification to make it useable by this script.
-    - In lumberyard, modify dev\Code\Tools\AssetProcessor\native\AssetManager\AssetCatalog.cpp line 343 to use AZ::ObjectStream::ST_XML instead of ST_BINARY
-    - In o3de (if you use assetCatalogOverridePath), modify Code\Framework\AzFramework\AzFramework\Asset\AssetCatalog.cpp 
-      and Code\Tools\AssetProcessor\native\AssetManager\AssetCatalog.cpp in the same fashion
+    - In lumberyard, modify dev\\Code\\Tools\\AssetProcessor\native\\AssetManager\\AssetCatalog.cpp line 343 to use AZ::ObjectStream::ST_XML instead of ST_BINARY
+    - In o3de (if you use assetCatalogOverridePath), modify Code\\Framework\\AzFramework\\AzFramework\\Asset\\AssetCatalog.cpp
+      and Code\\Tools\\AssetProcessor\native\\AssetManager\\AssetCatalog.cpp in the same fashion
 
 Note that after the modification and rebuild, you will need to delete the cache folder and launch the engine for the catalog to be rebuilt
 
@@ -54,7 +54,7 @@ How do I run this script from a command line?
 1) Check out any .slice, .layer, .ly, and .cry files you want to convert from source control
     - This script will remove the legacy components entirely, so make sure you have your files
       backed up before you run this script in case you want to run it again
-2) From the Lumberyard root folder, run LegacyComponentConverter.py -project=<ProjectName> -include_gems -assetCatalogOverridePath=<ExternalProjectPath\Cache\pc\assetcatalog.xml>
+2) From the Lumberyard root folder, run LegacyComponentConverter.py -project=<ProjectName> -include_gems -assetCatalogOverridePath=<ExternalProjectPath\\Cache\\pc\assetcatalog.xml>
     - -include_gems is optional. If you include Gems, it will run all all Gems, not just the ones enabled by your project
     - -assetCatalogOverridePath is optional. It will replace mesh/material asset id from the source project to this target project
       based on relative asset path from the project root (in general, Objects/Models/yourasset.fbx)
@@ -71,6 +71,7 @@ Yes! This is a one-way conversion that will clear the old data once converted. Y
 your files before running this conversion in case you want to modify the script and re-run it on
 your original level.
 """
+
 CONVERTED_LOG_NAME = "ComponentConversion_ConvertedLegacyFiles.log"
 UNCONVERTED_LOG_NAME = "ComponentConversion_UnsupportedLegacyFiles.log"
 STATS_LOG_NAME = "ComponentConversion_LegacyComponentStats.log"
@@ -91,20 +92,26 @@ from LegacyActorComponentConverter import *
 from LegacyPointLightComponentConverter import *
 from LegacyTransformComponentConverter import *
 
-BUILD_PATH = "./" # Use current working directory, we expect to be in lumberyard dev folder
+BUILD_PATH = (
+    "./"  # Use current working directory, we expect to be in lumberyard dev folder
+)
 GEMS_PATH = os.path.join(BUILD_PATH, "Gems")
+
 
 class Component_File(object):
     """
     Class to perform any read, write or conversion operations on material (*.mtl) files.
     """
+
     def __init__(self, filename, projectDir, assetCatalogHelper, statsCollector):
         self.filename = filename
         self.normalizedProjectDir = os.path.normpath(projectDir)
         self.needsConversion = False
-        self.hadException = False        
+        self.hadException = False
         self.assetCatalogHelper = assetCatalogHelper
-        self.materialComponentConverter = Material_Component_Converter(assetCatalogHelper)#TODO - I'm pretty sure this is dead code
+        self.materialComponentConverter = Material_Component_Converter(
+            assetCatalogHelper
+        )  # TODO - I'm pretty sure this is dead code
         self.xml = None
         self.statsCollector = statsCollector
 
@@ -132,41 +139,41 @@ class Component_File(object):
         Open and parse the file's xml, storing it for access later.
         For .ly and .cry files, it will get the xml out of the .zip
         """
-        if self.filename.endswith(".cry") or self.filename.endswith(".ly"):            
-            zipRead = ZipFile(self.filename, 'r')
-            
+        if self.filename.endswith(".cry") or self.filename.endswith(".ly"):
+            zipRead = ZipFile(self.filename, "r")
+
             contents = zipRead.read("levelentities.editor_xml")
-            
+
             zipRead.close()
 
             # write the contents to a temporary file so we can parse it with ElementTree
             tmpFile = tempfile.NamedTemporaryFile(delete=False)
             tmpFile.write(contents)
             tmpFile.close()
-            
+
             self.xml = xml.etree.ElementTree.parse(tmpFile.name)
             self.gather_elements()
-            
+
             os.unlink(tmpFile.name)
             os.path.exists(tmpFile.name)
         elif os.path.exists(self.filename):
-            #try:
-                # TODO try-except is supposed to make it so one bad xml doesn't crash the lot
-                # need to clean up stuff so the logging/conversion later doesn't crash
-                # for now, better to crash here so we see where the exception is being thrown
+            # try:
+            # TODO try-except is supposed to make it so one bad xml doesn't crash the lot
+            # need to clean up stuff so the logging/conversion later doesn't crash
+            # for now, better to crash here so we see where the exception is being thrown
             self.xml = xml.etree.ElementTree.parse(self.filename)
-            self.gather_elements()                
-            #except OSError as err:
+            self.gather_elements()
+            # except OSError as err:
             #    print("OS error: {0}".format(err))
             #    self.xml = None
             #    self.needsConversion = False
             #    self.hadException = True
-            #except ValueError:
+            # except ValueError:
             #    print("Could not convert data to an integer.")
             #    self.xml = None
             #    self.needsConversion = False
             #    self.hadException = True
-            #except:
+            # except:
             #    print("Unexpected error:", sys.exc_info()[0])
             #    self.xml = None
             #    self.needsConversion = False
@@ -180,34 +187,54 @@ class Component_File(object):
         print("starting to parse {0}".format(self.filename))
 
         componentConverters = []
-        componentConverters.append(Mesh_Component_Converter(self.assetCatalogHelper, self.statsCollector, self.normalizedProjectDir))
-        componentConverters.append(Actor_Component_Converter(self.assetCatalogHelper, self.statsCollector, self.normalizedProjectDir))
-        componentConverters.append(Point_Light_Component_Converter(self.assetCatalogHelper, self.statsCollector, self.normalizedProjectDir))
-        componentConverters.append(Transform_Component_Converter(self.assetCatalogHelper, self.statsCollector, self.normalizedProjectDir))
+        componentConverters.append(
+            Mesh_Component_Converter(
+                self.assetCatalogHelper, self.statsCollector, self.normalizedProjectDir
+            )
+        )
+        componentConverters.append(
+            Actor_Component_Converter(
+                self.assetCatalogHelper, self.statsCollector, self.normalizedProjectDir
+            )
+        )
+        componentConverters.append(
+            Point_Light_Component_Converter(
+                self.assetCatalogHelper, self.statsCollector, self.normalizedProjectDir
+            )
+        )
+        componentConverters.append(
+            Transform_Component_Converter(
+                self.assetCatalogHelper, self.statsCollector, self.normalizedProjectDir
+            )
+        )
 
         if self.is_valid_xml():
             root = self.xml.getroot()
             if root.tag == "ObjectStream" or True:
-                # First, get a dictionary of child->parent mapping for later use inserting sibling elements                
-                self.parent_map = {c:p for p in root.iter('Class') for c in p}
+                # First, get a dictionary of child->parent mapping for later use inserting sibling elements
+                self.parent_map = {c: p for p in root.iter("Class") for c in p}
 
                 # Now go through and look for mesh components
-                for child in root.iter('Class'):
+                for child in root.iter("Class"):
                     # If we run into one of the components we just added, skip it. It doesn't need to be converted,
                     # and it doesn't exist in the pre-built parent_map so it would throw an exception if we tried to access it
                     if child in self.parent_map:
                         parent = self.parent_map[child]
                         for componentConverter in componentConverters:
                             componentConverter.reset()
-                            if componentConverter.is_this_the_component_im_looking_for(child, parent):
+                            if componentConverter.is_this_the_component_im_looking_for(
+                                child, parent
+                            ):
                                 self.needsConversion = True
-                                componentConverter.gather_info_for_conversion(child, parent)
+                                componentConverter.gather_info_for_conversion(
+                                    child, parent
+                                )
                                 # TODO - we're about to change the tree structure while iterating, which is apparently undefined but appears to work. Might be better to just build up a list of things that need to be modified, then do a second pass to replace the legacy component
                                 # Seems to be okay since we only change or add elements, never remove entirely
                                 componentConverter.convert(child, parent)
-            self.xml._setroot(root)    
-            # pretty print 
-            ET.indent(self.xml, space='\t')
+            self.xml._setroot(root)
+            # pretty print
+            ET.indent(self.xml, space="\t")
 
         print("finished parsing {0}".format(self.filename))
 
@@ -229,7 +256,7 @@ class Component_File(object):
             if os.access(fullFilePath, os.W_OK):
                 return True
         else:
-            with open(fullFilePath,"a+") as f:
+            with open(fullFilePath, "a+") as f:
                 f.close()
                 return True
         return False
@@ -238,7 +265,7 @@ class Component_File(object):
         # This is just a way to optionally create a new file for comparing with the original
         # TODO: control this via command line
         atomFileName = self.filename
-        return atomFileName#.replace('.slice', '_atom.slice')
+        return atomFileName  # .replace('.slice', '_atom.slice')
 
     def convert(self):
         """
@@ -246,75 +273,101 @@ class Component_File(object):
         """
         # TODO - will not work if .slice is part of the path instead of the extension
         if self.needsConversion:
-            if self.filename.endswith(".cry") or self.filename.endswith(".ly"):             
+            if self.filename.endswith(".cry") or self.filename.endswith(".ly"):
                 # We can't just update the .cry file, we need to rebuild all the contents
-                
-                #Make a temporary file
-                tmpFile, tmpFileName = tempfile.mkstemp(dir=os.path.dirname(self.filename))
+
+                # Make a temporary file
+                tmpFile, tmpFileName = tempfile.mkstemp(
+                    dir=os.path.dirname(self.filename)
+                )
                 os.close(tmpFile)
-                
-                #Create a temporary copy of the .cry file 
-                with ZipFile(self.filename, 'r') as zin:
-                    with ZipFile(tmpFileName, 'w') as zout:
-                        #Loop through the file list and write out every file but level.editor_xml with no modifications
-                        #when we hit the level data we want to edit, write it out with the new contents
+
+                # Create a temporary copy of the .cry file
+                with ZipFile(self.filename, "r") as zin:
+                    with ZipFile(tmpFileName, "w") as zout:
+                        # Loop through the file list and write out every file but level.editor_xml with no modifications
+                        # when we hit the level data we want to edit, write it out with the new contents
                         for item in zin.infolist():
                             if item.filename == "levelentities.editor_xml":
-                                xmlString = xml.etree.ElementTree.tostring(self.xml.getroot())
+                                xmlString = xml.etree.ElementTree.tostring(
+                                    self.xml.getroot()
+                                )
                                 zout.writestr(item, xmlString)
                             else:
                                 zout.writestr(item, zin.read(item.filename))
-                        
-                #Remove old cry file and rename the temp file
+
+                # Remove old cry file and rename the temp file
                 os.remove(self.filename)
                 os.rename(tmpFileName, self.filename)
             else:
                 self.xml.write(self.get_atom_file_path())
 
         return False
-    
+
     def getUpdatedStatsCollector(self):
         """
         Returns the stats collector that was passed in intially, with any modifications that were made
         """
         return self.statsCollector
 
+
 ###############################################################################
 def main():
-    '''sys.__name__ wrapper function'''
+    """sys.__name__ wrapper function"""
 
-    msgStr = "This tool will scan all of your lumberyard project's level/layer/slice files\n\
+    msgStr = (
+        "This tool will scan all of your lumberyard project's level/layer/slice files\n\
 convert any compatible legacy components into the equivalent Atom components\n\
 This script will overwrite the original files, and will remove the legacy components\n\
 upon conversion, decimating the previous contents of those components.\n"
+    )
 
     commandLineOptions = Common_Command_Line_Options(sys.argv)
     if commandLineOptions.isHelp:
-        print (commandLineOptions.helpString)
+        print(commandLineOptions.helpString)
         return
 
     start_time = time.time()
     total_converted = 0
 
     extensionList = [".slice", ".layer", ".ly", ".cry"]
-    fileList = get_file_list(commandLineOptions.projectName, commandLineOptions.includeGems, extensionList, BUILD_PATH, GEMS_PATH)
-    
+    fileList = get_file_list(
+        commandLineOptions.projectName,
+        commandLineOptions.includeGems,
+        extensionList,
+        BUILD_PATH,
+        GEMS_PATH,
+    )
+
     if commandLineOptions.assetCatalogOverridePath:
         assetCatalogPath = commandLineOptions.assetCatalogOverridePath
         assetCatalogDictionaries = get_asset_catalog_dictionaries(assetCatalogPath)
     else:
-        assetCatalogPath = os.path.join("Cache", commandLineOptions.projectName, get_default_asset_platform(), commandLineOptions.projectName, "assetcatalog.xml")
+        assetCatalogPath = os.path.join(
+            "Cache",
+            commandLineOptions.projectName,
+            get_default_asset_platform(),
+            commandLineOptions.projectName,
+            "assetcatalog.xml",
+        )
         assetCatalogDictionaries = get_asset_catalog_dictionaries(assetCatalogPath)
-        
+
     # Create a log file to store converted component file filenames
     # and to check to see if the component file has already been converted.
-    convertedLogFile = Log_File(filename="{0}\\{1}".format(BUILD_PATH, CONVERTED_LOG_NAME))
+    convertedLogFile = Log_File(
+        filename="{0}\\{1}".format(BUILD_PATH, CONVERTED_LOG_NAME)
+    )
 
     # Create a log file to store component file filenames that need conversion
     # but cannot becuase they are read only.
-    unconvertedLogFile = Log_File(filename="{0}\\{1}".format(BUILD_PATH, UNCONVERTED_LOG_NAME), include_previous = False)
+    unconvertedLogFile = Log_File(
+        filename="{0}\\{1}".format(BUILD_PATH, UNCONVERTED_LOG_NAME),
+        include_previous=False,
+    )
 
-    statsLogFile = Log_File(filename="{0}\\{1}".format(BUILD_PATH, STATS_LOG_NAME), include_previous = False)
+    statsLogFile = Log_File(
+        filename="{0}\\{1}".format(BUILD_PATH, STATS_LOG_NAME), include_previous=False
+    )
     statsCollector = Stats_Collector()
 
     # Go through each component file to perform the conversion on it
@@ -325,33 +378,60 @@ upon conversion, decimating the previous contents of those components.\n"
         componentFileName = componentFileInfo.filename
         copmonentFileProjectDir = componentFileInfo.normalizedProjectDir
         print(componentFileName)
-        
-        
-        #if convertedLogFile.has_line(componentFileName.lstrip(BUILD_PATH)): # Use this to only convert files that haven't already been converted
+
+        # if convertedLogFile.has_line(componentFileName.lstrip(BUILD_PATH)): # Use this to only convert files that haven't already been converted
         #    print("--> Previously converted, not doing")
         #    continue
-        if commandLineOptions.endsWithStr == "" or componentFileName.lower().endswith(commandLineOptions.endsWithStr.lower()):
-            componentFile = Component_File(componentFileName, copmonentFileProjectDir, assetCatalogDictionaries, statsCollector)
+        if commandLineOptions.endsWithStr == "" or componentFileName.lower().endswith(
+            commandLineOptions.endsWithStr.lower()
+        ):
+            componentFile = Component_File(
+                componentFileName,
+                copmonentFileProjectDir,
+                assetCatalogDictionaries,
+                statsCollector,
+            )
             if componentFile.can_be_converted():
                 if commandLineOptions.useP4:
-                    subprocess.check_call(['p4', 'edit', componentFileName])
+                    subprocess.check_call(["p4", "edit", componentFileName])
                 if componentFile.can_write():
                     componentFile.convert()
-                    convertedLogFile.add_line_no_duplicates(componentFile.get_atom_file_path())
+                    convertedLogFile.add_line_no_duplicates(
+                        componentFile.get_atom_file_path()
+                    )
                     print("--> Converted")
                     total_converted += 1
                 else:
-                    unconvertedLogFile.add_line_no_duplicates("{0} - cannot access file (read-only)".format(componentFile.get_atom_file_path()))
-                    print("--> Could not write to destination component file (read-only). Not converted.")
+                    unconvertedLogFile.add_line_no_duplicates(
+                        "{0} - cannot access file (read-only)".format(
+                            componentFile.get_atom_file_path()
+                        )
+                    )
+                    print(
+                        "--> Could not write to destination component file (read-only). Not converted."
+                    )
             else:
                 print("--> did not need conversion.")
             statsCollector = componentFile.getUpdatedStatsCollector()
         print("\n")
 
     # Fill out the stats log
-    statsLogFile.add_line("Mesh/Actor Components without a material overrride: {0}".format(statsCollector.noMaterialOverrideCount))
-    statsLogFile.add_line("Mesh/Actor Components with a material overrride: {0}".format(statsCollector.materialOverrideCount))
-    statsLogFile.add_line("Total Mesh/Actor Components: {0}".format(statsCollector.noMaterialOverrideCount + statsCollector.materialOverrideCount))
+    statsLogFile.add_line(
+        "Mesh/Actor Components without a material overrride: {0}".format(
+            statsCollector.noMaterialOverrideCount
+        )
+    )
+    statsLogFile.add_line(
+        "Mesh/Actor Components with a material overrride: {0}".format(
+            statsCollector.materialOverrideCount
+        )
+    )
+    statsLogFile.add_line(
+        "Total Mesh/Actor Components: {0}".format(
+            statsCollector.noMaterialOverrideCount
+            + statsCollector.materialOverrideCount
+        )
+    )
 
     # Finally, save the log files to disk
     convertedLogFile.save()
@@ -360,9 +440,15 @@ upon conversion, decimating the previous contents of those components.\n"
 
     total_time = time.time() - start_time
 
-    log_str = "You can view a list of converted component files in this log file:\n{0}\\{1}".format(BUILD_PATH, CONVERTED_LOG_NAME)
-    unconverted_log_str = "You can view a list of component files that were not converted in this log file:\n{0}\\{1}".format(BUILD_PATH, UNCONVERTED_LOG_NAME)
-    stats_log_str = "You can view a list of component files stats, such as feature and shader usage, in this log file:\n{0}\\{1}".format(BUILD_PATH, STATS_LOG_NAME)
+    log_str = "You can view a list of converted component files in this log file:\n{0}\\{1}".format(
+        BUILD_PATH, CONVERTED_LOG_NAME
+    )
+    unconverted_log_str = "You can view a list of component files that were not converted in this log file:\n{0}\\{1}".format(
+        BUILD_PATH, UNCONVERTED_LOG_NAME
+    )
+    stats_log_str = "You can view a list of component files stats, such as feature and shader usage, in this log file:\n{0}\\{1}".format(
+        BUILD_PATH, STATS_LOG_NAME
+    )
 
     print("==============================\n")
     print("Conversion completed in {0} seconds.\n".format(total_time))
@@ -374,7 +460,7 @@ upon conversion, decimating the previous contents of those components.\n"
     print("{0}".format(stats_log_str))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # GLOBAL NOTE:
     # - All python scripts should execute through a main() function.
     main()

@@ -7,6 +7,7 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 A class to control functionality of Lumberyard's asset processor.
 The class manages a workspace's asset processor and asset configurations.
 """
+
 import logging
 import os
 import psutil
@@ -35,18 +36,19 @@ DEFAULT_TIMEOUT_HOURS = 8
 DEFAULT_TIMEOUT_SECONDS = 900
 
 ASSET_PROCESSOR_PLATFORM_MAP = {
-    'android': 'android',
-    'ios': 'ios',
-    'linux': 'linux',  # Not fully implemented, see SPEC-2501
-    'mac': 'mac',
-    'windows': 'pc',
+    "android": "android",
+    "ios": "ios",
+    "linux": "linux",  # Not fully implemented, see SPEC-2501
+    "mac": "mac",
+    "windows": "pc",
 }
 
-ASSET_PROCESSOR_SETTINGS_ROOT_KEY = '/Amazon/AssetProcessor/Settings'
+ASSET_PROCESSOR_SETTINGS_ROOT_KEY = "/Amazon/AssetProcessor/Settings"
 
 
 class AssetProcessorError(Exception):
-    """ Indicates that the AssetProcessor raised an error """
+    """Indicates that the AssetProcessor raised an error"""
+
 
 class StopReason(IntEnum):
     """
@@ -58,12 +60,14 @@ class StopReason(IntEnum):
         TIMEOUT = 4
         NO_STOP = 5
     """
+
     NOT_RUNNING = 0
     NO_CONTROL = 1
     NO_QUIT = 2
     IO_ERROR = 3
     TIMEOUT = 4
     NO_STOP = 5
+
 
 class AssetProcessor(object):
     def __init__(self, workspace, port=45643):
@@ -94,12 +98,29 @@ class AssetProcessor(object):
         self._enabled_platform_overrides = dict()
 
     # Starts AP but does not by default run until idle.
-    def start(self, connection_timeout=30, quitonidle=False, add_gem_scan_folders=None, add_config_scan_folders=None,
-              accept_input=True, run_until_idle=False, scan_folder_pattern=None, connect_to_ap=False, extra_params=None):
-        self.gui_process(extra_params=extra_params, quitonidle=quitonidle, add_gem_scan_folders=add_gem_scan_folders,
-                         add_config_scan_folders=add_config_scan_folders, timeout=connection_timeout,
-                         connect_to_ap=connect_to_ap, accept_input=accept_input, run_until_idle=run_until_idle,
-                         scan_folder_pattern=scan_folder_pattern)
+    def start(
+        self,
+        connection_timeout=30,
+        quitonidle=False,
+        add_gem_scan_folders=None,
+        add_config_scan_folders=None,
+        accept_input=True,
+        run_until_idle=False,
+        scan_folder_pattern=None,
+        connect_to_ap=False,
+        extra_params=None,
+    ):
+        self.gui_process(
+            extra_params=extra_params,
+            quitonidle=quitonidle,
+            add_gem_scan_folders=add_gem_scan_folders,
+            add_config_scan_folders=add_config_scan_folders,
+            timeout=connection_timeout,
+            connect_to_ap=connect_to_ap,
+            accept_input=accept_input,
+            run_until_idle=run_until_idle,
+            scan_folder_pattern=scan_folder_pattern,
+        )
 
     def wait_for_idle(self, timeout=DEFAULT_TIMEOUT_SECONDS):
         """
@@ -107,15 +128,21 @@ class AssetProcessor(object):
         or that it becomes idle within the timeout
         """
         if not self.process_exists():
-            logger.warning("Not currently managing a running Asset Processor, cannot request idle")
+            logger.warning(
+                "Not currently managing a running Asset Processor, cannot request idle"
+            )
             return False
 
         self.send_message("waitforidle")
         result = self.read_message(read_timeout=timeout)
         if not self.process_exists():
-            raise exceptions.LyTestToolsFrameworkException("Asset Processor has crashed or unexpectedly shut down during idle wait.")
+            raise exceptions.LyTestToolsFrameworkException(
+                "Asset Processor has crashed or unexpectedly shut down during idle wait."
+            )
         if not result == "idle":
-            raise exceptions.LyTestToolsFrameworkException(f"Did not get idle state from AP, message was instead: {result}")
+            raise exceptions.LyTestToolsFrameworkException(
+                f"Did not get idle state from AP, message was instead: {result}"
+            )
         return True
 
     def next_idle(self):
@@ -127,15 +154,21 @@ class AssetProcessor(object):
         to hear back after it's done.
         """
         if not self.process_exists():
-            logger.warning("Not currently managing a running Asset Processor, cannot request idle")
+            logger.warning(
+                "Not currently managing a running Asset Processor, cannot request idle"
+            )
             return
 
         self.send_message("signalidle")
         result = self.read_message()
         if not self.process_exists():
-            raise exceptions.LyTestToolsFrameworkException("Asset Processor has crashed or unexpectedly shut down during idle request.")
+            raise exceptions.LyTestToolsFrameworkException(
+                "Asset Processor has crashed or unexpectedly shut down during idle request."
+            )
         if not result == "idle":
-            raise exceptions.LyTestToolsFrameworkException(f"Did not get idle state from AP, message was instead: {result}")
+            raise exceptions.LyTestToolsFrameworkException(
+                f"Did not get idle state from AP, message was instead: {result}"
+            )
 
     def send_quit(self):
         """
@@ -169,7 +202,9 @@ class AssetProcessor(object):
             logger.debug(f"Sent input {message}")
             return True
         except IOError as e:
-            logger.warning(f"Failed in LyTestTools to send message {message} to AP with error {e}")
+            logger.warning(
+                f"Failed in LyTestTools to send message {message} to AP with error {e}"
+            )
         return False
 
     def read_message(self, read_timeout=DEFAULT_TIMEOUT_SECONDS):
@@ -220,14 +255,19 @@ class AssetProcessor(object):
                     logger.debug(f"Read port type {port_type} : {port}")
                     return True
                 except Exception as ex:  # intentionally broad
-                    logger.debug(f"Failed in LyTestTools to read port type {port_type} : {port} from file", exc_info=ex)
+                    logger.debug(
+                        f"Failed in LyTestTools to read port type {port_type} : {port} from file",
+                        exc_info=ex,
+                    )
             return False
 
         # the timeout needs to be large enough to load all the dynamic libraries the AP-GUI loads since the control port
         # is opened after all the DLL loads, this can take a long time in a Debug build
         ap_max_activate_time = 60
-        err = AssetProcessorError(f"Failed in LyTestTools to read port type {port_type} from {self._workspace.paths.ap_gui_log()}. "
-                                  f"Waited for {ap_max_activate_time} seconds.")
+        err = AssetProcessorError(
+            f"Failed in LyTestTools to read port type {port_type} from {self._workspace.paths.ap_gui_log()}. "
+            f"Waited for {ap_max_activate_time} seconds."
+        )
         waiter.wait_for(_get_port_from_log, timeout=ap_max_activate_time, exc=err)
         return port
 
@@ -241,15 +281,25 @@ class AssetProcessor(object):
         """
         if not self._control_connection:
             control_timeout = 60
-            return self.connect_socket("Control Connection", self.read_control_port,
-                                       set_port_method=self.set_control_connection, timeout=control_timeout)
+            return self.connect_socket(
+                "Control Connection",
+                self.read_control_port,
+                set_port_method=self.set_control_connection,
+                timeout=control_timeout,
+            )
         return True, None
 
     def using_temp_workspace(self):
         return self._temp_asset_root is not None
 
-    def connect_socket(self, port_name, read_port_method, host='127.0.0.1', set_port_method=None,
-                       timeout=10):
+    def connect_socket(
+        self,
+        port_name,
+        read_port_method,
+        host="127.0.0.1",
+        set_port_method=None,
+        timeout=10,
+    ):
         """
         :param port_name: Str defining the name of the port for logging
         :param read_port_method: Method to retrieve the port number to use
@@ -258,12 +308,16 @@ class AssetProcessor(object):
         :param timeout: Max seconds to attempt connection for
         """
         connect_port = read_port_method()
-        logger.debug(f"Attempting to for connect to AP {port_name}: {host}:{connect_port} for {timeout} seconds")
+        logger.debug(
+            f"Attempting to for connect to AP {port_name}: {host}:{connect_port} for {timeout} seconds"
+        )
 
         def _attempt_connection():
             nonlocal connect_port
             if self._ap_proc.poll() is not None:
-                raise AssetProcessorError(f"Asset processor exited early with errorcode: {self._ap_proc.returncode}")
+                raise AssetProcessorError(
+                    f"Asset processor exited early with errorcode: {self._ap_proc.returncode}"
+                )
 
             connection_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             connection_socket.settimeout(timeout)
@@ -282,26 +336,32 @@ class AssetProcessor(object):
                     try:
                         new_connect_port = read_port_method()
                         if new_connect_port != connect_port:
-                            logger.debug(f"Found new connect port for {port_name}: {host}:{new_connect_port}")
+                            logger.debug(
+                                f"Found new connect port for {port_name}: {host}:{new_connect_port}"
+                            )
                             connect_port = new_connect_port
                     except Exception as read_exception:  # Purposefully broad
-                        logger.debug(f"Failed in LyTestTools to read port data for {port_name}: {host}:{new_connect_port}",
-                                       exc_info=read_exception)
+                        logger.debug(
+                            f"Failed in LyTestTools to read port data for {port_name}: {host}:{new_connect_port}",
+                            exc_info=read_exception,
+                        )
             return False
 
-        err = AssetProcessorError(f"Could not connect to AP {port_name} on {host}:{connect_port}. Waited for {timeout}.")
+        err = AssetProcessorError(
+            f"Could not connect to AP {port_name} on {host}:{connect_port}. Waited for {timeout}."
+        )
         waiter.wait_for(_attempt_connection, timeout=timeout, exc=err)
         return True, None
 
     def stop(self, timeout=60):
         """
-         Stops the AssetProcessor. First attempts a clean shutdown over the control channel
-         if open.  Calls terminate if no control connection is open
-         :param timeout: How long to wait, in seconds, for AP to shut down after receiving quit message.
-            This timeout is a longer default because AP doesn't quit immediately on receiving the quit message,
-            it waits until finishing its current task, which can sometimes take a while.
-         :return: Returns the StopReason as an Int
-         """
+        Stops the AssetProcessor. First attempts a clean shutdown over the control channel
+        if open.  Calls terminate if no control connection is open
+        :param timeout: How long to wait, in seconds, for AP to shut down after receiving quit message.
+           This timeout is a longer default because AP doesn't quit immediately on receiving the quit message,
+           it waits until finishing its current task, which can sometimes take a while.
+        :return: Returns the StopReason as an Int
+        """
         if not self._ap_proc:
             logger.warning("Attempting to quit AP but none running")
             return StopReason.NOT_RUNNING
@@ -317,20 +377,30 @@ class AssetProcessor(object):
                 self.terminate()
                 return StopReason.NO_QUIT
         except IOError as e:
-            logger.warning(f"Failed in LyTestTools to send quit request with error {e}, stopping")
+            logger.warning(
+                f"Failed in LyTestTools to send quit request with error {e}, stopping"
+            )
             self.terminate()
             return StopReason.IO_ERROR
 
         wait_timeout = timeout
         try:
-            waiter.wait_for(lambda: not self.process_exists(), exc=AssetProcessorError, timeout=wait_timeout)
+            waiter.wait_for(
+                lambda: not self.process_exists(),
+                exc=AssetProcessorError,
+                timeout=wait_timeout,
+            )
         except AssetProcessorError:
-            logger.warning(f"Timeout in LyTestTools attempting to quit asset processor after {wait_timeout} seconds, using terminate")
+            logger.warning(
+                f"Timeout in LyTestTools attempting to quit asset processor after {wait_timeout} seconds, using terminate"
+            )
             self.terminate()
             return StopReason.TIMEOUT
 
         if self.process_exists():
-            logger.warning(f"Failed in LyTestTools to stop process {self.get_pid()} after {wait_timeout} seconds, using terminate")
+            logger.warning(
+                f"Failed in LyTestTools to stop process {self.get_pid()} after {wait_timeout} seconds, using terminate"
+            )
             self.terminate()
             return StopReason.NO_STOP
 
@@ -364,7 +434,9 @@ class AssetProcessor(object):
             except psutil.NoSuchProcess:
                 # Already terminated
                 pass
-        _, remaining = psutil.wait_procs(process_list, timeout=10, callback=term_success)
+        _, remaining = psutil.wait_procs(
+            process_list, timeout=10, callback=term_success
+        )
         for process in remaining:
             logger.debug(f"Killing: {process.name()} pid: {process.pid}")
             process.kill()
@@ -455,27 +527,66 @@ class AssetProcessor(object):
             return self._ap_proc.poll() is None
         return False
 
-    def batch_process(self, timeout=DEFAULT_TIMEOUT_SECONDS, fastscan=True, capture_output=False, platforms=None,
-                      extra_params=None, add_gem_scan_folders=None, add_config_scan_folders=None, decode=True,
-                      expect_failure=False, scan_folder_pattern=None, create_temp_log=True, debug_output=False,
-                      skip_atom_output=False):
+    def batch_process(
+        self,
+        timeout=DEFAULT_TIMEOUT_SECONDS,
+        fastscan=True,
+        capture_output=False,
+        platforms=None,
+        extra_params=None,
+        add_gem_scan_folders=None,
+        add_config_scan_folders=None,
+        decode=True,
+        expect_failure=False,
+        scan_folder_pattern=None,
+        create_temp_log=True,
+        debug_output=False,
+        skip_atom_output=False,
+    ):
         if create_temp_log:
             self.create_temp_log_root()
         ap_path = self._workspace.paths.asset_processor_batch()
-        command = self.build_ap_command(ap_path=ap_path, fastscan=fastscan, platforms=platforms,
-                                        extra_params=extra_params, add_gem_scan_folders=add_gem_scan_folders,
-                                        add_config_scan_folders=add_config_scan_folders,
-                                        scan_folder_pattern=scan_folder_pattern, debug_output=debug_output,
-                                        skip_atom_output=skip_atom_output)
-        return self.run_ap_process_command(command, timeout=timeout, capture_output=capture_output, decode=decode,
-                                           expect_failure=expect_failure)
+        command = self.build_ap_command(
+            ap_path=ap_path,
+            fastscan=fastscan,
+            platforms=platforms,
+            extra_params=extra_params,
+            add_gem_scan_folders=add_gem_scan_folders,
+            add_config_scan_folders=add_config_scan_folders,
+            scan_folder_pattern=scan_folder_pattern,
+            debug_output=debug_output,
+            skip_atom_output=skip_atom_output,
+        )
+        return self.run_ap_process_command(
+            command,
+            timeout=timeout,
+            capture_output=capture_output,
+            decode=decode,
+            expect_failure=expect_failure,
+        )
 
     # Start AP gui and run until idle.  Useful for asset processing tests where the assets should be seen and processed
     # by AP on startup and in the test you do not wish to continue execution until you know AP has gone idle.
-    def gui_process(self, timeout=DEFAULT_TIMEOUT_SECONDS, fastscan=True, capture_output=False, platforms=None,
-                    extra_params=None, add_gem_scan_folders=None, add_config_scan_folders=None, decode=True,
-                    expect_failure=False, quitonidle=False, connect_to_ap=False, accept_input=True, run_until_idle=True,
-                    scan_folder_pattern=None, create_temp_log=True, debug_output=False, skip_atom_output=False):
+    def gui_process(
+        self,
+        timeout=DEFAULT_TIMEOUT_SECONDS,
+        fastscan=True,
+        capture_output=False,
+        platforms=None,
+        extra_params=None,
+        add_gem_scan_folders=None,
+        add_config_scan_folders=None,
+        decode=True,
+        expect_failure=False,
+        quitonidle=False,
+        connect_to_ap=False,
+        accept_input=True,
+        run_until_idle=True,
+        scan_folder_pattern=None,
+        create_temp_log=True,
+        debug_output=False,
+        skip_atom_output=False,
+    ):
         ap_path = os.path.abspath(self._workspace.paths.asset_processor())
         ap_exe_path = os.path.dirname(ap_path)
         extra_gui_params = []
@@ -494,9 +605,11 @@ class AssetProcessor(object):
                 ap_target = self._workspace.asset_processor_platform
             else:
                 ap_target = ly_test_tools.HOST_OS_PLATFORM
-            ap_platform = ASSET_PROCESSOR_PLATFORM_MAP.get(ap_target, ly_test_tools.HOST_OS_PLATFORM)
+            ap_platform = ASSET_PROCESSOR_PLATFORM_MAP.get(
+                ap_target, ly_test_tools.HOST_OS_PLATFORM
+            )
             logger.debug(f"Setting AP platform to: {ap_platform}")
-            extra_gui_params.append('--platforms')
+            extra_gui_params.append("--platforms")
             extra_gui_params.append(ap_platform)
 
         if extra_params:
@@ -507,28 +620,43 @@ class AssetProcessor(object):
 
         if create_temp_log:
             self.create_temp_log_root()
-        command = self.build_ap_command(ap_path=ap_path, fastscan=fastscan, platforms=platforms,
-                                        extra_params=extra_gui_params, add_gem_scan_folders=add_gem_scan_folders,
-                                        add_config_scan_folders=add_config_scan_folders,
-                                        scan_folder_pattern=scan_folder_pattern, debug_output=debug_output,
-                                        skip_atom_output=skip_atom_output)
+        command = self.build_ap_command(
+            ap_path=ap_path,
+            fastscan=fastscan,
+            platforms=platforms,
+            extra_params=extra_gui_params,
+            add_gem_scan_folders=add_gem_scan_folders,
+            add_config_scan_folders=add_config_scan_folders,
+            scan_folder_pattern=scan_folder_pattern,
+            debug_output=debug_output,
+            skip_atom_output=skip_atom_output,
+        )
 
         # If the AP is quitting on idle just run it like AP batch.
         if quitonidle:
-            return self.run_ap_process_command(command, timeout=timeout, capture_output=capture_output, decode=decode,
-                                               expect_failure=expect_failure)
+            return self.run_ap_process_command(
+                command,
+                timeout=timeout,
+                capture_output=capture_output,
+                decode=decode,
+                expect_failure=expect_failure,
+            )
 
         logger.debug(f"Launching AP at path: {ap_path}")
 
         if capture_output:
-            logger.warning(f"Cannot capture output when leaving AP connection open.")
+            logger.warning("Cannot capture output when leaving AP connection open.")
 
         logger.info(f"Launching AP with command: {command}")
         try:
-            self._ap_proc = subprocess.Popen(command, cwd=ap_exe_path, env=process_utils.get_display_env())
+            self._ap_proc = subprocess.Popen(
+                command, cwd=ap_exe_path, env=process_utils.get_display_env()
+            )
             time.sleep(1)
             if self._ap_proc.poll() is not None:
-                raise AssetProcessorError(f"AssetProcessor immediately quit with errorcode {self._ap_proc.returncode} in LyTestTools ")
+                raise AssetProcessorError(
+                    f"AssetProcessor immediately quit with errorcode {self._ap_proc.returncode} in LyTestTools "
+                )
 
             if accept_input:
                 self.connect_control()
@@ -537,8 +665,13 @@ class AssetProcessor(object):
                 self.connect_listen()
 
             if quitonidle:
-                waiter.wait_for(lambda: not self.process_exists(), timeout=timeout,
-                                exc=AssetProcessorError(f"Failed in LyTestTools to quit on idle within {timeout} seconds"))
+                waiter.wait_for(
+                    lambda: not self.process_exists(),
+                    timeout=timeout,
+                    exc=AssetProcessorError(
+                        f"Failed in LyTestTools to quit on idle within {timeout} seconds"
+                    ),
+                )
             elif run_until_idle and accept_input:
                 if not self.wait_for_idle():
                     return False, None
@@ -549,17 +682,30 @@ class AssetProcessor(object):
             try:
                 if self._ap_proc:
                     self._ap_proc.kill()
-            except Exception as ex:
-                logger.exception("Ignoring exception while trying to terminate Asset Processor from LyTestTools")
+            except Exception:
+                logger.exception(
+                    "Ignoring exception while trying to terminate Asset Processor from LyTestTools"
+                )
             raise exceptions.LyTestToolsFrameworkException from be  # raise whatever prompted us to clean up
 
     def connect_listen(self, timeout=DEFAULT_TIMEOUT_SECONDS):
         # Wait for the AP we launched to be ready to accept a connection
-        return self.connect_socket("Listen Connection", self.read_listening_port, timeout=timeout)
+        return self.connect_socket(
+            "Listen Connection", self.read_listening_port, timeout=timeout
+        )
 
-    def build_ap_command(self, ap_path, fastscan=True, platforms=None,
-                         extra_params=None, add_gem_scan_folders=None, add_config_scan_folders=None,
-                         scan_folder_pattern=None, debug_output=False, skip_atom_output=False):
+    def build_ap_command(
+        self,
+        ap_path,
+        fastscan=True,
+        platforms=None,
+        extra_params=None,
+        add_gem_scan_folders=None,
+        add_config_scan_folders=None,
+        scan_folder_pattern=None,
+        debug_output=False,
+        skip_atom_output=False,
+    ):
         """
         Launch asset processor batch and wait for it to complete or until the timeout expires.
         Returns true on success and False if an error is reported.
@@ -580,7 +726,9 @@ class AssetProcessor(object):
             command.append("--zeroAnalysisMode")
 
         if self._project_path:
-            command.append(f'--regset="/Amazon/AzCore/Bootstrap/project_path={self._project_path}"')
+            command.append(
+                f'--regset="/Amazon/AzCore/Bootstrap/project_path={self._project_path}"'
+            )
 
         # When using a scratch workspace we will set several options.  The asset root controls where our
         # cache lives.
@@ -589,7 +737,9 @@ class AssetProcessor(object):
         if self._temp_asset_root:
             command.append("--assetroot")
             command.append(f"{self._temp_asset_root}")
-            command.append(f'--regset="/Amazon/AzCore/Bootstrap/project_cache_path={self.temp_project_cache_path()}"')
+            command.append(
+                f'--regset="/Amazon/AzCore/Bootstrap/project_cache_path={self.temp_project_cache_path()}"'
+            )
             command.append("--randomListeningPort")
         if self._temp_log_root:
             command.append("--logDir")
@@ -612,19 +762,25 @@ class AssetProcessor(object):
             command.append(f"{','.join(scan_folder_pattern)}")
 
         if self._disable_all_platforms:
-            command.append(f'--regremove="f{ASSET_PROCESSOR_SETTINGS_ROOT_KEY}/Platforms"')
+            command.append(
+                f'--regremove="f{ASSET_PROCESSOR_SETTINGS_ROOT_KEY}/Platforms"'
+            )
         if platforms:
             if isinstance(platforms, list):
-                platforms = ','.join(platforms)
-            command.append(f'--platforms={platforms}')
+                platforms = ",".join(platforms)
+            command.append(f"--platforms={platforms}")
         for key, value in self._enabled_platform_overrides.items():
-            command.append(f'--regset="f{ASSET_PROCESSOR_SETTINGS_ROOT_KEY}/Platforms/{key}={value}"')
+            command.append(
+                f'--regset="f{ASSET_PROCESSOR_SETTINGS_ROOT_KEY}/Platforms/{key}={value}"'
+            )
 
         if debug_output:
             command.append("--debugOutput")
 
         if skip_atom_output:
-            command.append("--regset=\"/O3DE/SceneAPI/AssetImporter/SkipAtomOutput=true\"")
+            command.append(
+                '--regset="/O3DE/SceneAPI/AssetImporter/SkipAtomOutput=true"'
+            )
 
         if extra_params:
             if isinstance(extra_params, list):
@@ -633,8 +789,14 @@ class AssetProcessor(object):
                 command.append(extra_params)
         return command
 
-    def run_ap_process_command(self, command, timeout=DEFAULT_TIMEOUT_SECONDS, decode=True, capture_output=False,
-                               expect_failure=False):
+    def run_ap_process_command(
+        self,
+        command,
+        timeout=DEFAULT_TIMEOUT_SECONDS,
+        decode=True,
+        capture_output=False,
+        expect_failure=False,
+    ):
         """
         In case of a timeout, the asset processor and associated processes are killed and the function returns False.
 
@@ -646,14 +808,20 @@ class AssetProcessor(object):
         logger.info(f"Launching AP with command: {command}")
         start = time.time()
         if type(timeout) not in [int, float] or timeout < 1:
-            logger.warning(f"Invalid timeout {timeout} - defaulting to {DEFAULT_TIMEOUT_SECONDS} seconds")
+            logger.warning(
+                f"Invalid timeout {timeout} - defaulting to {DEFAULT_TIMEOUT_SECONDS} seconds"
+            )
             timeout = DEFAULT_TIMEOUT_SECONDS
 
-        run_result = subprocess.run(command, close_fds=True, timeout=timeout, capture_output=capture_output)
+        run_result = subprocess.run(
+            command, close_fds=True, timeout=timeout, capture_output=capture_output
+        )
         output_list = None
         if capture_output:
             if decode:
-                output_list = run_result.stdout.decode('utf-8', errors="replace").splitlines()
+                output_list = run_result.stdout.decode(
+                    "utf-8", errors="replace"
+                ).splitlines()
             else:
                 output_list = run_result.stdout.splitlines()
 
@@ -666,9 +834,13 @@ class AssetProcessor(object):
                 self.check_copy_logs()
             return False, output_list
         elif expect_failure:
-            logger.error(f"{command} was expected to fail, but instead ran without failure.")
+            logger.error(
+                f"{command} was expected to fail, but instead ran without failure."
+            )
             return True, output_list
-        logger.debug(f"{command} completed successfully in {time.time() - start} seconds")
+        logger.debug(
+            f"{command} completed successfully in {time.time() - start} seconds"
+        )
         return True, output_list
 
     def set_failure_log_folder(self, log_root):
@@ -677,15 +849,18 @@ class AssetProcessor(object):
     def check_copy_logs(self):
         if self._temp_asset_root and self._failed_log_root:
             source_path = os.path.join(self._temp_asset_root, "logs")
-            failed_log_folder = f"{self._function_name}." if self._function_name else ''
-            dest_path = os.path.join(self._failed_log_root, f"{failed_log_folder}{int(round(time.time() * 1000))}")
+            failed_log_folder = f"{self._function_name}." if self._function_name else ""
+            dest_path = os.path.join(
+                self._failed_log_root,
+                f"{failed_log_folder}{int(round(time.time() * 1000))}",
+            )
             logger.debug(f"Copying {source_path} to {dest_path}")
             shutil.copytree(source_path, dest_path)
 
     def disable_all_asset_processor_platforms(self):
         """
         Disables all platforms via the SettingsRegistry --regremove option
-        
+
         :return: None
         """
         self._disable_all_platforms = True
@@ -694,11 +869,11 @@ class AssetProcessor(object):
         # type: (str) -> None
         """
         Add the platform to the dict of platforms to enable via the SettingsRegistry --regset option
-        
+
         :param platform: The platform to enable
         :return: None
         """
-        self._enabled_platform_overrides[platform] = 'enabled'
+        self._enabled_platform_overrides[platform] = "enabled"
 
     def temp_asset_root(self):
         """
@@ -716,15 +891,19 @@ class AssetProcessor(object):
 
         :return: None
         """
-        for copy_dir in [self._workspace.project, 'Assets/Engine', 'Registry']:
+        for copy_dir in [self._workspace.project, "Assets/Engine", "Registry"]:
             make_dir = os.path.join(self._temp_asset_root, copy_dir)
             if not os.path.isdir(make_dir):
                 os.makedirs(make_dir, exist_ok=True)
-        for copyfile_name in ['Registry/AssetProcessorPlatformConfig.setreg',
-                              os.path.join(self._workspace.project, "project.json"),
-                              os.path.join('Assets', 'Engine', 'exclude.filetag')]:
-            shutil.copyfile(os.path.join(self._workspace.paths.engine_root(), copyfile_name),
-                            os.path.join(self._temp_asset_root, copyfile_name))
+        for copyfile_name in [
+            "Registry/AssetProcessorPlatformConfig.setreg",
+            os.path.join(self._workspace.project, "project.json"),
+            os.path.join("Assets", "Engine", "exclude.filetag"),
+        ]:
+            shutil.copyfile(
+                os.path.join(self._workspace.paths.engine_root(), copyfile_name),
+                os.path.join(self._temp_asset_root, copyfile_name),
+            )
 
     def delete_temp_asset_root(self):
         """
@@ -742,7 +921,7 @@ class AssetProcessor(object):
         try:
             os.remove(name)
         except OSError as e:
-            logger.error(f'In LyTestTools Failed to clean up {name} : {e}')
+            logger.error(f"In LyTestTools Failed to clean up {name} : {e}")
 
     def delete_temp_asset_root_folder(self):
         """
@@ -751,7 +930,7 @@ class AssetProcessor(object):
         :return: None
         """
         if self._temp_asset_root:
-            logger.debug(f'Cleaning up old asset root at {self._temp_asset_root}')
+            logger.debug(f"Cleaning up old asset root at {self._temp_asset_root}")
             shutil.rmtree(self._temp_asset_root, onerror=self._del_readonly)
 
     def create_temp_asset_root(self, project_scan_folder=True):
@@ -763,12 +942,14 @@ class AssetProcessor(object):
         :return: None
         """
         if self._temp_asset_root:
-            logger.debug(f'Cleaning up old asset root at {self._temp_asset_root}')
+            logger.debug(f"Cleaning up old asset root at {self._temp_asset_root}")
             shutil.rmtree(self._temp_asset_root, True)
         self._temp_asset_directory = tempfile.TemporaryDirectory()
         self._temp_asset_root = self._temp_asset_directory.name
         self._copy_asset_root_files()
-        self._project_path = os.path.join(self._temp_asset_root, self._workspace.project)
+        self._project_path = os.path.join(
+            self._temp_asset_root, self._workspace.project
+        )
         if project_scan_folder:
             self.add_scan_folder(self._project_path)
 
@@ -785,7 +966,7 @@ class AssetProcessor(object):
         runs of asset processor.
         """
         if self._temp_log_directory:
-            logger.debug(f'Cleaning up old log root at {self._temp_log_root}')
+            logger.debug(f"Cleaning up old log root at {self._temp_log_root}")
             # The finalizer will clean up the old temporary directory when the TemporaryDirectory() reference count
             # hits 0
             self._temp_log_directory = None
@@ -804,14 +985,20 @@ class AssetProcessor(object):
         if os.path.isabs(folder_name):
             if folder_name not in self._override_scan_folders:
                 self._override_scan_folders.append(folder_name)
-                logger.debug(f'Adding override scan folder {folder_name}')
+                logger.debug(f"Adding override scan folder {folder_name}")
             return folder_name
         else:
             if not self._temp_asset_root:
-                logger.warning(f"Can not create scan folder, no temporary asset workspace has been created")
+                logger.warning(
+                    "Can not create scan folder, no temporary asset workspace has been created"
+                )
                 return ""
-            scan_folder = os.path.join(self._temp_asset_root if self._temp_asset_root else self._workspace.paths.engine_root(),
-                                       folder_name)
+            scan_folder = os.path.join(
+                self._temp_asset_root
+                if self._temp_asset_root
+                else self._workspace.paths.engine_root(),
+                folder_name,
+            )
             if not os.path.isdir(scan_folder):
                 os.makedirs(scan_folder, exist_ok=True)
             if folder_name not in self._override_scan_folders:
@@ -836,14 +1023,21 @@ class AssetProcessor(object):
         :return: None
         """
         write_path = os.path.join(self._temp_asset_root, file_path)
-        f = open(write_path, 'w')
+        f = open(write_path, "w")
         f.write(content)
         f.close()
-        logger.debug(f'Wrote to asset at path: {write_path}')
+        logger.debug(f"Wrote to asset at path: {write_path}")
 
-    def prepare_test_environment(self, assets_path: str, function_name: str, use_current_root=False,
-                                 relative_asset_root=None, add_scan_folder=True, cache_platform=None,
-                                 existing_function_name=None) -> Tuple[str, str]:
+    def prepare_test_environment(
+        self,
+        assets_path: str,
+        function_name: str,
+        use_current_root=False,
+        relative_asset_root=None,
+        add_scan_folder=True,
+        cache_platform=None,
+        existing_function_name=None,
+    ) -> Tuple[str, str]:
         """
         Creates a temporary test workspace, copies the specified test assets and sets the folder as a scan
         folder for processing.
@@ -860,21 +1054,35 @@ class AssetProcessor(object):
         """
         if not use_current_root:
             self.create_temp_asset_root()
-        test_asset_root = os.path.join(self._temp_asset_root, self._workspace.project if relative_asset_root is None
-                                       else relative_asset_root)
-        test_folder = os.path.join(test_asset_root, function_name if existing_function_name is None
-                                   else existing_function_name)
+        test_asset_root = os.path.join(
+            self._temp_asset_root,
+            self._workspace.project
+            if relative_asset_root is None
+            else relative_asset_root,
+        )
+        test_folder = os.path.join(
+            test_asset_root,
+            function_name if existing_function_name is None else existing_function_name,
+        )
         if not os.path.isdir(test_folder):
             os.makedirs(test_folder, exist_ok=True)
         if add_scan_folder:
             self.add_scan_folder(test_asset_root)
         self._function_name = function_name
-        self._assets_source_folder = utils.prepare_test_assets(assets_path, function_name, test_folder)
+        self._assets_source_folder = utils.prepare_test_assets(
+            assets_path, function_name, test_folder
+        )
         self._test_assets_source_folder = test_folder
-        self._cache_folder = os.path.join(self._temp_asset_root, self._workspace.project,'Cache', cache_platform or
-                                          ASSET_PROCESSOR_PLATFORM_MAP[self._workspace.asset_processor_platform],
-                                          function_name.lower() if existing_function_name is None
-                                          else existing_function_name)
+        self._cache_folder = os.path.join(
+            self._temp_asset_root,
+            self._workspace.project,
+            "Cache",
+            cache_platform
+            or ASSET_PROCESSOR_PLATFORM_MAP[self._workspace.asset_processor_platform],
+            function_name.lower()
+            if existing_function_name is None
+            else existing_function_name,
+        )
 
         return self._test_assets_source_folder, self._cache_folder
 
@@ -910,7 +1118,9 @@ class AssetProcessor(object):
         :return: Results of the comparison as a pair (Missing Assets, Found matching assets) - see
         pipeline_utils.compare_assets_with_cache for more info
         """
-        return utils.compare_assets_with_cache(os.listdir(self._test_assets_source_folder), self._cache_folder)
+        return utils.compare_assets_with_cache(
+            os.listdir(self._test_assets_source_folder), self._cache_folder
+        )
 
     def clear_project_test_assets_dir(self):
         """
@@ -928,7 +1138,9 @@ class AssetProcessor(object):
         """
         shutil.rmtree(self._cache_folder, onerror=self._del_readonly)
 
-    def run_and_check_output(self, error_expected, error_search_terms, platforms=None, decode=True):
+    def run_and_check_output(
+        self, error_expected, error_search_terms, platforms=None, decode=True
+    ):
         """
         Helper to call batch_process which respects temporary workspaces.
 
@@ -936,15 +1148,21 @@ class AssetProcessor(object):
         :param error_search_terms: Errors to be found if error_expected is true, errors not to be found if false
         :return: Output list
         """
-        _, output = self.batch_process(capture_output=True, platforms=platforms, decode=decode,
-                                       expect_failure=error_expected)
+        _, output = self.batch_process(
+            capture_output=True,
+            platforms=platforms,
+            decode=decode,
+            expect_failure=error_expected,
+        )
         # Check for error in output
         if error_expected:
             utils.validate_log_output(output, error_search_terms, [])
         else:
             utils.validate_log_output(output, [], error_search_terms)
 
-    def add_relative_source_asset(self, relative_asset, source_root=None, dest_root=None):
+    def add_relative_source_asset(
+        self, relative_asset, source_root=None, dest_root=None
+    ):
         """
         Helper to add a source asset from our workspace to our temporary asset workspace
 
@@ -957,14 +1175,18 @@ class AssetProcessor(object):
         """
         source_root = source_root or self._workspace.paths.engine_root()
         if not self._temp_asset_root:
-            logger.warning("Can't add relative source asset, no temporary asset root created.")
+            logger.warning(
+                "Can't add relative source asset, no temporary asset root created."
+            )
             return
         dest_root = dest_root or self._temp_asset_root
         make_dir = os.path.dirname(os.path.join(dest_root, relative_asset))
         if not os.path.isdir(make_dir):
             os.makedirs(make_dir, exist_ok=True)
-        shutil.copyfile(os.path.join(source_root, relative_asset),
-                        os.path.join(dest_root, relative_asset))
+        shutil.copyfile(
+            os.path.join(source_root, relative_asset),
+            os.path.join(dest_root, relative_asset),
+        )
 
     def temp_project_cache(self, project_name=None, asset_platform=None):
         """
@@ -974,8 +1196,16 @@ class AssetProcessor(object):
         :param asset_platform: Asset platform to use.  Workspace's asset platform if not supplied
         :return: path to project cache
         """
-        asset_platform = asset_platform or ASSET_PROCESSOR_PLATFORM_MAP[self._workspace.asset_processor_platform]
-        return os.path.join(self._temp_asset_root, self._workspace.project, 'Cache', asset_platform.lower())
+        asset_platform = (
+            asset_platform
+            or ASSET_PROCESSOR_PLATFORM_MAP[self._workspace.asset_processor_platform]
+        )
+        return os.path.join(
+            self._temp_asset_root,
+            self._workspace.project,
+            "Cache",
+            asset_platform.lower(),
+        )
 
     def temp_project_cache_path(self, project_name=None):
         """
@@ -986,7 +1216,7 @@ class AssetProcessor(object):
 
         :return: path to project cache root folder
         """
-        return os.path.join(self._temp_asset_root, self._workspace.project, 'Cache')
+        return os.path.join(self._temp_asset_root, self._workspace.project, "Cache")
 
     def clear_readonly(self, relative_dest):
         """
@@ -1019,14 +1249,18 @@ class AssetProcessor(object):
             supplied
         :return: path to project cache
         """
-        source_folder = os.path.join(self._workspace.paths.engine_root(), relative_source)
+        source_folder = os.path.join(
+            self._workspace.paths.engine_root(), relative_source
+        )
         dest_relative = relative_dest or relative_source
         dest_folder = os.path.join(self._temp_asset_root, dest_relative)
         shutil.copytree(source_folder, dest_folder)
         self.clear_readonly(dest_relative)
 
     @staticmethod
-    def copy_assets_to_project(assets: List[str], source_directory: str, target_asset_dir: str) -> None:
+    def copy_assets_to_project(
+        assets: List[str], source_directory: str, target_asset_dir: str
+    ) -> None:
         """
         Simple wrapper for pipeline_utils' copy_assets_to_project to remove the need to import pipeline_utils
 
@@ -1037,13 +1271,13 @@ class AssetProcessor(object):
 
 def _build_ap_batch_call_params(ap_path, project, platforms, extra_params=None):
     project_str = f"--regset=/Amazon/AzCore/Bootstrap/project_path={project}"
-    project_str.rstrip(' ')
+    project_str.rstrip(" ")
     param_list = [ap_path, project_str]
 
     if platforms:
         if isinstance(platforms, list):
-            platforms = ','.join(platforms)
-        param_list.append(f'--platforms={platforms}')
+            platforms = ",".join(platforms)
+        param_list.append(f"--platforms={platforms}")
 
     if extra_params:
         if isinstance(extra_params, list):
@@ -1053,31 +1287,47 @@ def _build_ap_batch_call_params(ap_path, project, platforms, extra_params=None):
     return param_list
 
 
-def assetprocessorbatch_check_output(workspace, project=None, platforms=None, extra_params=None, log_info=False,
-                                     ap_override_path=None, no_split=False, expect_failure=False):
+def assetprocessorbatch_check_output(
+    workspace,
+    project=None,
+    platforms=None,
+    extra_params=None,
+    log_info=False,
+    ap_override_path=None,
+    no_split=False,
+    expect_failure=False,
+):
     ap_path = ap_override_path or workspace.paths.asset_processor_batch()
     project = project or workspace.project
-    platforms = platforms or ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]
+    platforms = (
+        platforms or ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]
+    )
     param_list = _build_ap_batch_call_params(ap_path, project, platforms, extra_params)
     try:
-        output_list = subprocess.check_output(param_list).decode('utf-8')
+        output_list = subprocess.check_output(param_list).decode("utf-8")
         if not no_split:
             output_list = output_list.splitlines()
         if log_info:
-            logger.info(f'AssetProcessorBatch output:\n{output_list}')
+            logger.info(f"AssetProcessorBatch output:\n{output_list}")
         return output_list
     except subprocess.CalledProcessError as e:
         if not expect_failure:
-            logger.error(f"AssetProcessorBatch returned error {ap_path} to LyTestTools with error {e}")
+            logger.error(
+                f"AssetProcessorBatch returned error {ap_path} to LyTestTools with error {e}"
+            )
         # This will sometimes be due to expected asset processing errors - we'll return the output and let the tests
         # decide what to do
         if not no_split:
-            return e.output.decode('utf-8').splitlines()
-        return e.output.decode('utf-8')
+            return e.output.decode("utf-8").splitlines()
+        return e.output.decode("utf-8")
     except FileNotFoundError as e:
-        logger.error(f"File Not Found - Failed to call {ap_path} from LyTestTools with error {e}")
+        logger.error(
+            f"File Not Found - Failed to call {ap_path} from LyTestTools with error {e}"
+        )
     if expect_failure:
-        raise exceptions.LyTestToolsFrameworkException("AP failure didn't occur as expected")
+        raise exceptions.LyTestToolsFrameworkException(
+            "AP failure didn't occur as expected"
+        )
 
 
 def parse_output_value(output_list, start_value, end_value=None):
@@ -1095,14 +1345,14 @@ def parse_output_value(output_list, start_value, end_value=None):
 
 
 def get_num_processed_assets(output):
-    result = parse_output_value(output, 'Number of Assets Successfully Processed:', '.')
-    logger.info(f'Assets Successfully Processed returned {result}')
+    result = parse_output_value(output, "Number of Assets Successfully Processed:", ".")
+    logger.info(f"Assets Successfully Processed returned {result}")
     return -1 if not result else int(result)
 
 
 def get_num_failed_processed_assets(output):
-    result = parse_output_value(output, 'Number of Assets Failed to Process:', '.')
-    logger.info(f'Failed assets returned {result}')
+    result = parse_output_value(output, "Number of Assets Failed to Process:", ".")
+    logger.info(f"Failed assets returned {result}")
     return -1 if not result else int(result)
 
 
