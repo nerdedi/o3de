@@ -29,8 +29,9 @@ logger = logging.getLogger(__name__)
 @pytest.mark.usefixtures("config_backup")
 @pytest.mark.usefixtures("asset_processor")
 @pytest.mark.usefixtures("ap_setup_fixture")
-def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_processor) -> Any:
-
+def bundler_batch_setup_fixture(
+    request, workspace, ap_setup_fixture, asset_processor
+) -> Any:
     def get_all_platforms() -> list[str]:
         """Helper: This function generates a list of all platforms to be built for testing Asset Bundler."""
         ALL_PLATFORMS = []
@@ -66,6 +67,7 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
         """
         Houses useful variables and functions for running Asset Bundler Batch Tests
         """
+
         def __init__(self):
             self.bin_dir = workspace.paths.build_directory()
             self.bundler_batch = os.path.join(self.bin_dir, "AssetBundlerBatch")
@@ -82,40 +84,68 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
             self.number_of_bytes_in_mib = 1024 * 1024
 
             # Checks whether or not the fixture was parametrized to use the temp workspace. Defaults to True.
-            self.use_temp_workspace = request.param if hasattr(request, "param") else True
+            self.use_temp_workspace = (
+                request.param if hasattr(request, "param") else True
+            )
 
             if self.use_temp_workspace:
                 setup_temp_workspace()
-                self.project_path = os.path.join(asset_processor.temp_asset_root(), workspace.project)
+                self.project_path = os.path.join(
+                    asset_processor.temp_asset_root(), workspace.project
+                )
                 self.cache = asset_processor.temp_project_cache_path()
-                self.seed_list_file = os.path.join(self.project_path, self.seed_list_file_name)
-                self.asset_info_file_request = os.path.join(self.project_path, self.asset_info_file_name)
-                self.bundle_settings_file_request = os.path.join(self.project_path, self.bundle_settings_file_name)
-                self.bundle_file = os.path.join(self.project_path, self.bundle_file_name)
+                self.seed_list_file = os.path.join(
+                    self.project_path, self.seed_list_file_name
+                )
+                self.asset_info_file_request = os.path.join(
+                    self.project_path, self.asset_info_file_name
+                )
+                self.bundle_settings_file_request = os.path.join(
+                    self.project_path, self.bundle_settings_file_name
+                )
+                self.bundle_file = os.path.join(
+                    self.project_path, self.bundle_file_name
+                )
                 self.asset_info_file_result = os.path.join(
-                    self.project_path, self.platform_file_name(self.asset_info_file_name,
-                                                               workspace.asset_processor_platform)
+                    self.project_path,
+                    self.platform_file_name(
+                        self.asset_info_file_name, workspace.asset_processor_platform
+                    ),
                 )
                 self.bundle_settings_file_result = os.path.join(
-                    self.project_path, self.platform_file_name(self.bundle_settings_file_name,
-                                                               workspace.asset_processor_platform)
+                    self.project_path,
+                    self.platform_file_name(
+                        self.bundle_settings_file_name,
+                        workspace.asset_processor_platform,
+                    ),
                 )
 
             else:
                 self.project_path = workspace.paths.project()
                 self.cache = workspace.paths.project_cache()
                 self.test_dir = setup_temp_dir()
-                self.seed_list_file = os.path.join(self.test_dir, self.seed_list_file_name)
-                self.asset_info_file_request = os.path.join(self.test_dir, self.asset_info_file_name)
-                self.bundle_settings_file_request = os.path.join(self.test_dir, self.bundle_settings_file_name)
+                self.seed_list_file = os.path.join(
+                    self.test_dir, self.seed_list_file_name
+                )
+                self.asset_info_file_request = os.path.join(
+                    self.test_dir, self.asset_info_file_name
+                )
+                self.bundle_settings_file_request = os.path.join(
+                    self.test_dir, self.bundle_settings_file_name
+                )
                 self.bundle_file = os.path.join(self.test_dir, self.bundle_file_name)
                 self.asset_info_file_result = os.path.join(
-                    self.test_dir, self.platform_file_name(self.asset_info_file_name,
-                                                           workspace.asset_processor_platform)
+                    self.test_dir,
+                    self.platform_file_name(
+                        self.asset_info_file_name, workspace.asset_processor_platform
+                    ),
                 )
                 self.bundle_settings_file_result = os.path.join(
-                    self.test_dir, self.platform_file_name(self.bundle_settings_file_name,
-                                                           workspace.asset_processor_platform)
+                    self.test_dir,
+                    self.platform_file_name(
+                        self.bundle_settings_file_name,
+                        workspace.asset_processor_platform,
+                    ),
                 )
 
         @staticmethod
@@ -128,31 +158,43 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
                 output = subprocess.check_output(arg_list).decode()
                 return True, output
             except subprocess.CalledProcessError as e:
-                output = e.output.decode('utf-8')
-                logger.error(f"AssetBundlerBatch called with args {arg_list} returned error {e} with output {output}")
+                output = e.output.decode("utf-8")
+                logger.error(
+                    f"AssetBundlerBatch called with args {arg_list} returned error {e} with output {output}"
+                )
                 return False, output
             except FileNotFoundError as e:
-                logger.error(f"File Not Found - Failed to call AssetBundlerBatch with args {arg_list} with error {e}")
+                logger.error(
+                    f"File Not Found - Failed to call AssetBundlerBatch with args {arg_list} with error {e}"
+                )
                 raise e
 
-        def call_bundlerbatch(self, **kwargs: Dict[str, str]) -> tuple[bool, str] | tuple[bool, Any]:
+        def call_bundlerbatch(
+            self, **kwargs: Dict[str, str]
+        ) -> tuple[bool, str] | tuple[bool, Any]:
             """Helper function for calling assetbundlerbatch with no sub-command"""
             cmd = [self.bundler_batch]
             return self.call_asset_bundler(self._append_arguments(cmd, kwargs))
 
-        def call_seeds(self, **kwargs: Dict[str, str]) -> tuple[bool, str] | tuple[bool, Any]:
+        def call_seeds(
+            self, **kwargs: Dict[str, str]
+        ) -> tuple[bool, str] | tuple[bool, Any]:
             """Helper function for calling assetbundlerbatch with 'seeds' sub-command"""
 
             cmd = [self.bundler_batch, "seeds"]
             return self.call_asset_bundler(self._append_arguments(cmd, kwargs))
 
-        def call_assetLists(self, **kwargs: Dict) -> tuple[bool, str] | tuple[bool, Any]:
+        def call_assetLists(
+            self, **kwargs: Dict
+        ) -> tuple[bool, str] | tuple[bool, Any]:
             """Helper function for calling assetbundlerbatch with 'assetLists' sub-command"""
 
             cmd = [self.bundler_batch, "assetLists"]
             return self.call_asset_bundler(self._append_arguments(cmd, kwargs))
 
-        def call_comparisonRules(self, **kwargs: Dict) -> tuple[bool, str] | tuple[bool, Any]:
+        def call_comparisonRules(
+            self, **kwargs: Dict
+        ) -> tuple[bool, str] | tuple[bool, Any]:
             """Helper function for calling assetbundlerbatch with 'comparisonRules' sub-command"""
 
             cmd = [self.bundler_batch, "comparisonRules"]
@@ -164,7 +206,9 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
             cmd = [self.bundler_batch, "compare"]
             return self.call_asset_bundler(self._append_arguments(cmd, kwargs))
 
-        def call_bundleSettings(self, **kwargs: Dict) -> tuple[bool, str] | tuple[bool, Any]:
+        def call_bundleSettings(
+            self, **kwargs: Dict
+        ) -> tuple[bool, str] | tuple[bool, Any]:
             """Helper function for calling assetbundlerbatch with 'bundleSettings' sub-command"""
 
             cmd = [self.bundler_batch, "bundleSettings"]
@@ -176,13 +220,17 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
             cmd = [self.bundler_batch, "bundles"]
             return self.call_asset_bundler(self._append_arguments(cmd, kwargs))
 
-        def call_bundleSeed(self, **kwargs: Dict) -> tuple[bool, str] | tuple[bool, Any]:
+        def call_bundleSeed(
+            self, **kwargs: Dict
+        ) -> tuple[bool, str] | tuple[bool, Any]:
             """Helper function for calling assetbundlerbatch with 'bundleSeed' sub-command"""
 
             cmd = [self.bundler_batch, "bundleSeed"]
             return self.call_asset_bundler(self._append_arguments(cmd, kwargs))
 
-        def _append_arguments(self, cmd: List[str], kwargs: Dict, append_defaults: bool = True) -> List[str]:
+        def _append_arguments(
+            self, cmd: List[str], kwargs: Dict, append_defaults: bool = True
+        ) -> List[str]:
             """Appends and returns all keyword arguments to the list of string [cmd]"""
             for key, value in kwargs.items():
                 if not value:
@@ -205,11 +253,17 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
             assert seed_file.endswith(".seed"), f"file {seed_file} is not a seed file"
             # Get value from all XML nodes who are grandchildren of all Class tags and have
             # a field attr. equal to "pathHint"
-            for node in ET.parse(seed_file).getroot().findall(r"./Class/Class/*[@field='pathHint']"):
+            for node in (
+                ET.parse(seed_file)
+                .getroot()
+                .findall(r"./Class/Class/*[@field='pathHint']")
+            ):
                 yield node.attrib["value"]
 
         @staticmethod
-        def get_seed_relative_paths_for_platform(seed_file: str, platform_flags: int) -> list[str]:
+        def get_seed_relative_paths_for_platform(
+            seed_file: str, platform_flags: int
+        ) -> list[str]:
             """Iterates all asset relative paths in the [seed_file] which match the platform flags"""
             assert seed_file.endswith(".seed"), f"file {seed_file} is not a seed file"
             # Get value from all XML nodes who are grandchildren of all Class tags and have
@@ -220,39 +274,65 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
             root = data.getroot()
             seedFileRootNode = root.find("Class")
             for seedFileInfoNode in seedFileRootNode.findall("*"):
-                if (int(seedFileInfoNode.find('./Class[@field="platformFlags"]').attrib["value"]) & platform_flags):
-                    pathHint = seedFileInfoNode.find('./Class[@field="pathHint"]').attrib["value"]
+                if (
+                    int(
+                        seedFileInfoNode.find('./Class[@field="platformFlags"]').attrib[
+                            "value"
+                        ]
+                    )
+                    & platform_flags
+                ):
+                    pathHint = seedFileInfoNode.find(
+                        './Class[@field="pathHint"]'
+                    ).attrib["value"]
                     seedFileListContents.append(pathHint)
             return seedFileListContents
 
         @staticmethod
         def get_asset_relative_paths(asset_list_file: str) -> str:
             """Iterates all asset relative paths in the [asset_list_file]."""
-            assert asset_list_file.endswith(".assetlist"), f"file {asset_list_file} is not an assetlist file"
+            assert asset_list_file.endswith(".assetlist"), (
+                f"file {asset_list_file} is not an assetlist file"
+            )
             # Get value from all XML nodes who are great-grandchildren of all Class tags and have
             # a field attr. equal to "assetRelativePath"
 
-            for node in (ET.parse(asset_list_file).getroot().findall(
-                    r"./Class/Class/Class/*[@field='assetRelativePath']")):
+            for node in (
+                ET.parse(asset_list_file)
+                .getroot()
+                .findall(r"./Class/Class/Class/*[@field='assetRelativePath']")
+            ):
                 yield node.attrib["value"]
 
         @staticmethod
         def get_dependent_bundle_names(manifest_file: str) -> str:
             """Iterates all dependent bundle names in the [manifest_file]"""
-            assert manifest_file.endswith(".xml"), f"File {manifest_file} does not have an XML extension"
+            assert manifest_file.endswith(".xml"), (
+                f"File {manifest_file} does not have an XML extension"
+            )
             # Get value from all XML nodes whose parent field attr. is "DependentBundleNames" and whose tag is Class
-            for node in ET.parse(manifest_file).getroot().findall(r".//*[@field='DependentBundleNames']/Class"):
+            for node in (
+                ET.parse(manifest_file)
+                .getroot()
+                .findall(r".//*[@field='DependentBundleNames']/Class")
+            ):
                 yield node.attrib["value"]
 
         @staticmethod
         def platform_file_name(file_name: str, platform: str) -> str:
             """Converts the standard [file_name] to a platform specific file name"""
             split = file_name.split(".", 1)
-            platform_name = platform if platform in ASSET_PROCESSOR_PLATFORM_MAP.values() else ASSET_PROCESSOR_PLATFORM_MAP.get(platform)
+            platform_name = (
+                platform
+                if platform in ASSET_PROCESSOR_PLATFORM_MAP.values()
+                else ASSET_PROCESSOR_PLATFORM_MAP.get(platform)
+            )
             if not platform_name:
-                logger.warning(f"platform {platform} not recognized. File name could not be generated")
+                logger.warning(
+                    f"platform {platform} not recognized. File name could not be generated"
+                )
                 return file_name
-            return f'{split[0]}_{platform_name}.{split[1]}'
+            return f"{split[0]}_{platform_name}.{split[1]}"
 
         @staticmethod
         def extract_file_content(bundle_file: str, file_name_to_extract: str) -> bytes:
@@ -278,18 +358,14 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
 
         @staticmethod
         def get_platform_flag(platform_name: str) -> int:
-            """ Helper to fetch the platform flag from a provided platform name. """
-            platform_flags = {
-                "pc": 1,
-                "android": 2,
-                "ios": 4,
-                "mac": 8,
-                "server": 128
-            }
+            """Helper to fetch the platform flag from a provided platform name."""
+            platform_flags = {"pc": 1, "android": 2, "ios": 4, "mac": 8, "server": 128}
             if platform_name in platform_flags:
                 return platform_flags.get(platform_name)
-            raise ValueError(f"{platform_name} not found within expected platform flags. "
-                             f"Expected: {platform_flags.keys()}")
+            raise ValueError(
+                f"{platform_name} not found within expected platform flags. "
+                f"Expected: {platform_flags.keys()}"
+            )
 
         def extract_and_check(self, extract_dir: str, bundle_file: str) -> None:
             """
@@ -297,7 +373,9 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
             and validate against the actual files in the bundle
             """
             # Ensure that the parent bundle was created
-            assert os.path.isfile(bundle_file), f"{bundle_file} was not created by the 'bundles' call"
+            assert os.path.isfile(bundle_file), (
+                f"{bundle_file} was not created by the 'bundles' call"
+            )
 
             os.mkdir(extract_dir)
 
@@ -321,13 +399,16 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
             for bundle in dependent_bundle_name:
                 file_info = os.stat(bundle)
                 # Verify that the size of all bundles is less than the max size specified
-                assert file_info.st_size <= expected_size, \
+                assert file_info.st_size <= expected_size, (
                     f"file_info.st_size {file_info.st_size} for bundle {bundle} was expected to be smaller than {expected_size}"
+                )
                 with zipfile.ZipFile(bundle) as bundle_zip:
                     bundle_zip.extractall(extract_dir)
 
             ignore_list = ["assetCatalog.bundle", "manifest.xml", "DeltaCatalog.xml"]
-            assets_in_disk = utils.get_relative_file_paths(extract_dir, ignore_list=ignore_list)
+            assets_in_disk = utils.get_relative_file_paths(
+                extract_dir, ignore_list=ignore_list
+            )
 
             # Ensure that all assets were present in the bundles
             assert sorted(assets_from_file) == sorted(assets_in_disk)
@@ -362,9 +443,13 @@ def bundler_batch_setup_fixture(request, workspace, ap_setup_fixture, asset_proc
                     if start_gathering:
                         result = get_platform.match(line)  # Try the regex
                         if result:
-                            platform_values[result.group(1).replace("_ID", "").lower()] = counter
+                            platform_values[
+                                result.group(1).replace("_ID", "").lower()
+                            ] = counter
                             counter = counter << 1
-                    elif "(Invalid, -1)" in line:  # The line right before the first platform
+                    elif (
+                        "(Invalid, -1)" in line
+                    ):  # The line right before the first platform
                         start_gathering = True
             return platform_values
 
