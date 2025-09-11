@@ -5,6 +5,7 @@ For complete copyright and license terms please see the LICENSE at the root of t
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
+
 def DeletePrefab_UnderImmediateInstance():
     """
     Test description:
@@ -43,26 +44,42 @@ def DeletePrefab_UnderImmediateInstance():
     prefab_test_utils.open_base_tests_level()
 
     # Create a new entity at the root level.
-    tire_entity = EditorEntity.create_editor_entity_at((100.0, 100.0, 100.0), TIRE_ENTITY_NAME)
+    tire_entity = EditorEntity.create_editor_entity_at(
+        (100.0, 100.0, 100.0), TIRE_ENTITY_NAME
+    )
     assert tire_entity.id.IsValid(), f"Failed to create new entity: {TIRE_ENTITY_NAME}."
 
     # Create a tire prefab from the tire entity.
     tire_prefab_entities = [tire_entity]
-    tire_prefab, tire_instance = Prefab.create_prefab(tire_prefab_entities, TIRE_PREFAB_FILE_NAME, TIRE_PREFAB_NAME)
-    assert tire_instance.is_valid(), f"Failed to instantiate instance: {TIRE_PREFAB_NAME}."
+    tire_prefab, tire_instance = Prefab.create_prefab(
+        tire_prefab_entities, TIRE_PREFAB_FILE_NAME, TIRE_PREFAB_NAME
+    )
+    assert tire_instance.is_valid(), (
+        f"Failed to instantiate instance: {TIRE_PREFAB_NAME}."
+    )
 
     # Create a car prefab and the first car instance from the tire entity.
     car_prefab_entities = [tire_instance.container_entity]
-    car_prefab, car_instance_1 = Prefab.create_prefab(car_prefab_entities, CAR_PREFAB_FILE_NAME, FIRST_CAR_NAME)
-    assert car_instance_1.is_valid(), f"Failed to instantiate instance: {FIRST_CAR_NAME}."
+    car_prefab, car_instance_1 = Prefab.create_prefab(
+        car_prefab_entities, CAR_PREFAB_FILE_NAME, FIRST_CAR_NAME
+    )
+    assert car_instance_1.is_valid(), (
+        f"Failed to instantiate instance: {FIRST_CAR_NAME}."
+    )
 
     # Create the second car instance.
     car_instance_2 = car_prefab.instantiate(name=SECOND_CAR_NAME)
-    assert car_instance_2.is_valid(), f"Failed to instantiate instance: {SECOND_CAR_NAME}."
+    assert car_instance_2.is_valid(), (
+        f"Failed to instantiate instance: {SECOND_CAR_NAME}."
+    )
 
     # Delete the tire instance the first car. Note: Level prefab is currently being focused by default during deletion.
-    tire_container_entities_in_car_instance_1 = car_instance_1.get_direct_child_entities()
-    tire_container_entity_in_car_instance_1 = tire_container_entities_in_car_instance_1[0]
+    tire_container_entities_in_car_instance_1 = (
+        car_instance_1.get_direct_child_entities()
+    )
+    tire_container_entity_in_car_instance_1 = tire_container_entities_in_car_instance_1[
+        0
+    ]
     tire_container_entity_in_car_instance_1.delete()
 
     # Wait till prefab propagation finishes before validating deletion.
@@ -95,7 +112,7 @@ def DeletePrefab_UnderImmediateInstance():
     # Focus on the first car instance. Deleted tire instance should appear in Prefab Edit Mode.
     car_instance_1.container_entity.focus_on_owning_prefab()
 
-    PrefabWaiter.wait_for_propagation() # propagate source template changes after focusing on
+    PrefabWaiter.wait_for_propagation()  # propagate source template changes after focusing on
     prefab_test_utils.check_entity_children_count(car_instance_1.container_entity.id, 1)
 
     # Note: This should be 2 because the tire entity (and instance) inside the second car is not deleted.
@@ -105,4 +122,5 @@ def DeletePrefab_UnderImmediateInstance():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(DeletePrefab_UnderImmediateInstance)

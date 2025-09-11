@@ -9,12 +9,9 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     lc_tool_opened = (
         "Landscape Canvas tool opened",
-        "Failed to open Landscape Canvas tool"
+        "Failed to open Landscape Canvas tool",
     )
-    new_graph_created = (
-        "Successfully created new graph",
-        "Failed to create new graph"
-    )
+    new_graph_created = ("Successfully created new graph", "Failed to create new graph")
 
 
 newEntityId = None
@@ -62,11 +59,13 @@ def Edit_DisabledNodeDuplication():
     hydra.open_base_level()
 
     # Open Landscape Canvas tool and verify
-    general.open_pane('Landscape Canvas')
-    Report.critical_result(Tests.lc_tool_opened, general.is_pane_visible('Landscape Canvas'))
+    general.open_pane("Landscape Canvas")
+    Report.critical_result(
+        Tests.lc_tool_opened, general.is_pane_visible("Landscape Canvas")
+    )
 
     # Create a new graph in Landscape Canvas
-    newGraphId = graph.AssetEditorRequestBus(bus.Event, 'CreateNewGraph', editorId)
+    newGraphId = graph.AssetEditorRequestBus(bus.Event, "CreateNewGraph", editorId)
     Report.critical_result(Tests.new_graph_created, newGraphId is not None)
 
     # Listen for entity creation notifications so when we add a new node
@@ -74,52 +73,74 @@ def Edit_DisabledNodeDuplication():
     # can disable/remove components on that Entity
     handler = editor.EditorEntityContextNotificationBusHandler()
     handler.connect()
-    handler.add_callback('OnEditorEntityCreated', onEntityCreated)
+    handler.add_callback("OnEditorEntityCreated", onEntityCreated)
 
     # Mapping of our Landscape Canvas nodes with corresponding dependent components
     # that we can disable/remove to reproduce the crash
     nodes = {
-        'SpawnerAreaNode': 'Vegetation Asset List',
-        'MeshBlockerAreaNode': 'Mesh',
-        'BlockerAreaNode': 'Shape Reference',
-        'FastNoiseGradientNode': 'Gradient Transform Modifier',
-        'ImageGradientNode': 'Gradient Transform Modifier',
-        'PerlinNoiseGradientNode': 'Gradient Transform Modifier',
-        'RandomNoiseGradientNode': 'Gradient Transform Modifier'
+        "SpawnerAreaNode": "Vegetation Asset List",
+        "MeshBlockerAreaNode": "Mesh",
+        "BlockerAreaNode": "Shape Reference",
+        "FastNoiseGradientNode": "Gradient Transform Modifier",
+        "ImageGradientNode": "Gradient Transform Modifier",
+        "PerlinNoiseGradientNode": "Gradient Transform Modifier",
+        "RandomNoiseGradientNode": "Gradient Transform Modifier",
     }
 
     # Retrieve a mapping of the TypeIds for all the components
     # we will be checking for
-    componentNames = list(set(nodes.values())) # Convert to set then back to list to remove any duplicates
+    componentNames = list(
+        set(nodes.values())
+    )  # Convert to set then back to list to remove any duplicates
     componentTypeIds = hydra.get_component_type_id_map(componentNames)
 
     # Iterate through creating our nodes and then disabling/deleting required components
     # and then duplicating the node to reproduce the crash
-    newGraph = graph.GraphManagerRequestBus(bus.Broadcast, 'GetGraph', newGraphId)
+    newGraph = graph.GraphManagerRequestBus(bus.Broadcast, "GetGraph", newGraphId)
     x = 10.0
     y = 10.0
     for nodeName in nodes:
         nodePosition = math.Vector2(x, y)
-        node = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(bus.Broadcast, 'CreateNodeForTypeName', newGraph, nodeName)
-        graph.GraphControllerRequestBus(bus.Event, 'AddNode', newGraphId, node, nodePosition)
+        node = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(
+            bus.Broadcast, "CreateNodeForTypeName", newGraph, nodeName
+        )
+        graph.GraphControllerRequestBus(
+            bus.Event, "AddNode", newGraphId, node, nodePosition
+        )
 
         dependentComponentName = nodes[nodeName]
         componentTypeId = componentTypeIds[dependentComponentName]
-        componentOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'GetComponentOfType', newEntityId, componentTypeId)
+        componentOutcome = editor.EditorComponentAPIBus(
+            bus.Broadcast, "GetComponentOfType", newEntityId, componentTypeId
+        )
         component = componentOutcome.GetValue()
 
         # First make sure we can duplicate a node with a dependent component that is disabled
-        editor.EditorComponentAPIBus(bus.Broadcast, 'DisableComponents', [component])
-        helper.wait_for_condition(lambda: not editor.EditorComponentAPIBus(bus.Broadcast, 'IsComponentEnabled',
-                                                                           [component]), 1.0)
-        graph.SceneRequestBus(bus.Event, 'DuplicateSelection', newGraphId) # This duplication would cause a crash without the fix
+        editor.EditorComponentAPIBus(bus.Broadcast, "DisableComponents", [component])
+        helper.wait_for_condition(
+            lambda: not editor.EditorComponentAPIBus(
+                bus.Broadcast, "IsComponentEnabled", [component]
+            ),
+            1.0,
+        )
+        graph.SceneRequestBus(
+            bus.Event, "DuplicateSelection", newGraphId
+        )  # This duplication would cause a crash without the fix
         Report.info("{node} duplicated with disabled component".format(node=nodeName))
 
         # Then, make sure we can duplicate the node with a dependent component that is deleted
-        editor.EditorComponentAPIBus(bus.Broadcast, 'RemoveComponents', [component])
-        helper.wait_for_condition(lambda: not editor.EditorComponentAPIBus(bus.Broadcast, 'HasComponentOfType',
-                                                                           componentTypeIds[dependentComponentName]), 1.0)
-        graph.SceneRequestBus(bus.Event, 'DuplicateSelection', newGraphId) # This duplication would cause a crash without the fix
+        editor.EditorComponentAPIBus(bus.Broadcast, "RemoveComponents", [component])
+        helper.wait_for_condition(
+            lambda: not editor.EditorComponentAPIBus(
+                bus.Broadcast,
+                "HasComponentOfType",
+                componentTypeIds[dependentComponentName],
+            ),
+            1.0,
+        )
+        graph.SceneRequestBus(
+            bus.Event, "DuplicateSelection", newGraphId
+        )  # This duplication would cause a crash without the fix
         Report.info("{node} duplicated with deleted component".format(node=nodeName))
 
         x += 40.0
@@ -130,6 +151,6 @@ def Edit_DisabledNodeDuplication():
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Edit_DisabledNodeDuplication)
