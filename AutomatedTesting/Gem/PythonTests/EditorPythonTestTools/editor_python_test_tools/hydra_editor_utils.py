@@ -31,11 +31,13 @@ def find_entity_by_name(entity_name):
     """
     search_filter = entity.SearchFilter()
     search_filter.names = [entity_name]
-    matching_entity_list = entity.SearchBus(bus.Broadcast, 'SearchEntities', search_filter)
+    matching_entity_list = entity.SearchBus(
+        bus.Broadcast, "SearchEntities", search_filter
+    )
     if matching_entity_list:
         matching_entity = matching_entity_list[0]
         if matching_entity.IsValid():
-            print(f'{entity_name} entity found with ID {matching_entity.ToString()}')
+            print(f"{entity_name} entity found with ID {matching_entity.ToString()}")
             return matching_entity
     else:
         return matching_entity_list
@@ -47,8 +49,12 @@ def get_component_type_id(component_name):
     :param component_name: String of component name to search for
     :return component type ID
     """
-    type_ids_list = editor.EditorComponentAPIBus(bus.Broadcast, 'FindComponentTypeIdsByEntityType', [component_name],
-                                                 entity.EntityType().Game)
+    type_ids_list = editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "FindComponentTypeIdsByEntityType",
+        [component_name],
+        entity.EntityType().Game,
+    )
     component_type_id = type_ids_list[0]
     return component_type_id
 
@@ -59,8 +65,12 @@ def get_level_component_type_id(component_name):
     :param component_name: String of component name to search for
     :return component type ID
     """
-    type_ids_list = editor.EditorComponentAPIBus(bus.Broadcast, 'FindComponentTypeIdsByEntityType', [component_name],
-                                                 entity.EntityType().Level)
+    type_ids_list = editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "FindComponentTypeIdsByEntityType",
+        [component_name],
+        entity.EntityType().Level,
+    )
     component_type_id = type_ids_list[0]
     return component_type_id
 
@@ -72,12 +82,17 @@ def add_level_component(component_name):
     :return Component object.
     """
     level_component_list = [component_name]
-    level_component_type_ids_list = editor.EditorComponentAPIBus(bus.Broadcast, 'FindComponentTypeIdsByEntityType',
-                                                                 level_component_list, entity.EntityType().Level)
-    level_component_outcome = editor.EditorLevelComponentAPIBus(bus.Broadcast, 'AddComponentsOfType',
-                                                                [level_component_type_ids_list[0]])
+    level_component_type_ids_list = editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "FindComponentTypeIdsByEntityType",
+        level_component_list,
+        entity.EntityType().Level,
+    )
+    level_component_outcome = editor.EditorLevelComponentAPIBus(
+        bus.Broadcast, "AddComponentsOfType", [level_component_type_ids_list[0]]
+    )
     if not level_component_outcome.IsSuccess():
-        print('Failed to add {} level component'.format(component_name))
+        print("Failed to add {} level component".format(component_name))
         return None
 
     level_component = level_component_outcome.GetValue()[0]
@@ -91,35 +106,52 @@ def add_component(componentName, entityId):
     :param entityId: Entity to add component to.
     :return: Component object.
     """
-    typeIdsList = editor.EditorComponentAPIBus(bus.Broadcast, 'FindComponentTypeIdsByEntityType', [componentName],
-                                               entity.EntityType().Game)
-    typeNamesList = editor.EditorComponentAPIBus(bus.Broadcast, 'FindComponentTypeNames', typeIdsList)
+    typeIdsList = editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "FindComponentTypeIdsByEntityType",
+        [componentName],
+        entity.EntityType().Game,
+    )
+    typeNamesList = editor.EditorComponentAPIBus(
+        bus.Broadcast, "FindComponentTypeNames", typeIdsList
+    )
 
     # If the type name comes back as empty, then it means componentName is invalid
     if len(typeNamesList) != 1 or not typeNamesList[0]:
-        print('Unable to find component TypeId for {}'.format(componentName))
+        print("Unable to find component TypeId for {}".format(componentName))
         return None
 
-    componentOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'AddComponentsOfType', entityId, typeIdsList)
+    componentOutcome = editor.EditorComponentAPIBus(
+        bus.Broadcast, "AddComponentsOfType", entityId, typeIdsList
+    )
     if not componentOutcome.IsSuccess():
-        print('Failed to add {} component to entity'.format(typeNamesList[0]))
+        print("Failed to add {} component to entity".format(typeNamesList[0]))
         return None
 
-    isActive = editor.EditorComponentAPIBus(bus.Broadcast, 'IsComponentEnabled', componentOutcome.GetValue()[0])
-    hasComponent = editor.EditorComponentAPIBus(bus.Broadcast, 'HasComponentOfType', entityId, typeIdsList[0])
+    isActive = editor.EditorComponentAPIBus(
+        bus.Broadcast, "IsComponentEnabled", componentOutcome.GetValue()[0]
+    )
+    hasComponent = editor.EditorComponentAPIBus(
+        bus.Broadcast, "HasComponentOfType", entityId, typeIdsList[0]
+    )
     if isActive:
-        print('{} component was added to entity'.format(typeNamesList[0]))
+        print("{} component was added to entity".format(typeNamesList[0]))
     else:
-        print('{} component was added to entity, but the component is disabled'.format(typeNamesList[0]))
+        print(
+            "{} component was added to entity, but the component is disabled".format(
+                typeNamesList[0]
+            )
+        )
     if hasComponent:
-        print('Entity has a {} component'.format(typeNamesList[0]))
+        print("Entity has a {} component".format(typeNamesList[0]))
     return componentOutcome.GetValue()[0]
 
 
 def add_component_of_type(componentTypeId, entityId):
     typeIdsList = [componentTypeId]
     componentOutcome = editor.EditorComponentAPIBus(
-        azlmbr.bus.Broadcast, 'AddComponentsOfType', entityId, typeIdsList)
+        azlmbr.bus.Broadcast, "AddComponentsOfType", entityId, typeIdsList
+    )
     return componentOutcome.GetValue()[0]
 
 
@@ -131,11 +163,17 @@ def remove_component(component_name, entity_id):
     :return: EntityComponentIdPair if removal was successful, else None.
     """
     type_ids_list = [get_component_type_id(component_name)]
-    outcome = editor.EditorComponentAPIBus(bus.Broadcast, 'GetComponentOfType', entity_id, type_ids_list[0])
+    outcome = editor.EditorComponentAPIBus(
+        bus.Broadcast, "GetComponentOfType", entity_id, type_ids_list[0]
+    )
     if outcome.IsSuccess():
         component_entity_pair = outcome.GetValue()
-        editor.EditorComponentAPIBus(bus.Broadcast, 'RemoveComponents', [component_entity_pair])
-        has_component = editor.EditorComponentAPIBus(bus.Broadcast, 'HasComponentOfType', entity_id, type_ids_list[0])
+        editor.EditorComponentAPIBus(
+            bus.Broadcast, "RemoveComponents", [component_entity_pair]
+        )
+        has_component = editor.EditorComponentAPIBus(
+            bus.Broadcast, "HasComponentOfType", entity_id, type_ids_list[0]
+        )
         if has_component:
             print(f"Failed to remove {component_name}")
             return None
@@ -154,15 +192,17 @@ def get_component_property_value(component, component_propertyPath):
     :param componentPropertyPath: String of component property. (e.g. 'Settings|Visible')
     :return: Value set in given componentPropertyPath
     """
-    componentPropertyObj = editor.EditorComponentAPIBus(bus.Broadcast, 'GetComponentProperty', component,
-                                                        component_propertyPath)
+    componentPropertyObj = editor.EditorComponentAPIBus(
+        bus.Broadcast, "GetComponentProperty", component, component_propertyPath
+    )
     if componentPropertyObj.IsSuccess():
         componentProperty = componentPropertyObj.GetValue()
-        print(f'{component_propertyPath} set to {componentProperty}')
+        print(f"{component_propertyPath} set to {componentProperty}")
         return componentProperty
     else:
-        print(f'FAILURE: Could not get value from {component_propertyPath}')
+        print(f"FAILURE: Could not get value from {component_propertyPath}")
         return None
+
 
 def set_component_property_value(component, component_propertyPath, value):
     """
@@ -171,12 +211,13 @@ def set_component_property_value(component, component_propertyPath, value):
     :param componentPropertyPath: String of component property. (e.g. 'Settings|Visible')
     :param value: new value for the variable being changed in the component
     """
-    componentPropertyObj = editor.EditorComponentAPIBus(bus.Broadcast, 'SetComponentProperty', component,
-                                                        component_propertyPath, value)
+    componentPropertyObj = editor.EditorComponentAPIBus(
+        bus.Broadcast, "SetComponentProperty", component, component_propertyPath, value
+    )
     if componentPropertyObj.IsSuccess():
-        print(f'{component_propertyPath} set to {value}')
+        print(f"{component_propertyPath} set to {value}")
     else:
-        print(f'FAILURE: Could not set value in {component_propertyPath}')
+        print(f"FAILURE: Could not set value in {component_propertyPath}")
 
 
 def get_property_tree(component):
@@ -184,7 +225,9 @@ def get_property_tree(component):
     Given a configured component object, prints the property tree info from that component
     :param component: Component object to act on.
     """
-    pteObj = editor.EditorComponentAPIBus(bus.Broadcast, 'BuildComponentPropertyTreeEditor', component)
+    pteObj = editor.EditorComponentAPIBus(
+        bus.Broadcast, "BuildComponentPropertyTreeEditor", component
+    )
     pte = pteObj.GetValue()
     print(pte.build_paths_list())
     return pte
@@ -192,7 +235,7 @@ def get_property_tree(component):
 
 def compare_values(first_object: object, second_object: object, name: str) -> bool:
     # Quick case - can we just directly compare the two objects successfully?
-    if (first_object == second_object):
+    if first_object == second_object:
         result = True
     # No, so get a lot more specific
     elif isinstance(first_object, collections.abc.Container):
@@ -200,7 +243,7 @@ def compare_values(first_object: object, second_object: object, name: str) -> bo
         if not isinstance(second_object, collections.abc.Container):
             result = False
         # If they have different lengths, they're different
-        elif len(first_object) != len (second_object):
+        elif len(first_object) != len(second_object):
             result = False
         # If they're different strings, they're containers but they failed the == check so
         # we know they're different
@@ -211,23 +254,31 @@ def compare_values(first_object: object, second_object: object, name: str) -> bo
             collection_idx = 0
             result = True
             for val1, val2 in zip(first_object, second_object):
-                result = result and compare_values(val1, val2, f"{name} (index [{collection_idx}])")
+                result = result and compare_values(
+                    val1, val2, f"{name} (index [{collection_idx}])"
+                )
                 collection_idx = collection_idx + 1
 
     else:
         # Do approximate comparisons for floats
-        if isinstance(first_object, float) and isclose(first_object, second_object, rel_tol=0.001):
+        if isinstance(first_object, float) and isclose(
+            first_object, second_object, rel_tol=0.001
+        ):
             result = True
         # We currently don't have a generic way to compare PythonProxyObject contents, so return a
         # false positive result for now.
         elif isinstance(first_object, azlmbr.object.PythonProxyObject):
-            print(f"{name}: validation inconclusive, the two objects cannot be directly compared.")
+            print(
+                f"{name}: validation inconclusive, the two objects cannot be directly compared."
+            )
             result = True
         else:
             result = False
 
     if not result:
-        print(f"compare_values failed: {first_object} ({type(first_object)}) vs {second_object} ({type(second_object)})")
+        print(
+            f"compare_values failed: {first_object} ({type(first_object)}) vs {second_object} ({type(second_object)})"
+        )
 
     print(f"{name}: {'SUCCESS' if result else 'FAILURE'}")
     return result
@@ -253,7 +304,7 @@ class Entity:
         )
         if self.id.IsValid():
             print(f"{self.name} Entity successfully created")
-            editor.EditorEntityAPIBus(bus.Event, 'SetName', self.id, self.name)
+            editor.EditorEntityAPIBus(bus.Event, "SetName", self.id, self.name)
             self.components = []
             for component in components:
                 self.add_component(component)
@@ -278,15 +329,25 @@ class Entity:
         Prints the string for papertrail
         :return: None
         """
-        self.parent_id = editor.EditorEntityInfoRequestBus(bus.Event, "GetParent", self.id)
-        self.parent_name = editor.EditorEntityInfoRequestBus(bus.Event, "GetName", self.parent_id)
+        self.parent_id = editor.EditorEntityInfoRequestBus(
+            bus.Event, "GetParent", self.id
+        )
+        self.parent_name = editor.EditorEntityInfoRequestBus(
+            bus.Event, "GetName", self.parent_id
+        )
         print(f"The parent entity of {self.name} is {self.parent_name}")
 
     def set_test_parent_entity(self, parent_entity_obj):
         editor.EditorEntityAPIBus(bus.Event, "SetParent", self.id, parent_entity_obj.id)
         self.get_parent_info()
 
-    def get_set_test(self, component_index: int, path: str, value: object, expected_result: object = None) -> bool:
+    def get_set_test(
+        self,
+        component_index: int,
+        path: str,
+        value: object,
+        expected_result: object = None,
+    ) -> bool:
         """
         Used to set and validate changes in component values
         :param component_index: Index location in the self.components list
@@ -308,16 +369,24 @@ class Entity:
             print(f"SUCCESS: Retrieved property Value for {self.name}")
         else:
             print("FAILURE: failed to find path in component. Existing Paths:\n")
-            paths = editor.EditorComponentAPIBus(bus.Broadcast, 'BuildComponentPropertyList', component)
+            paths = editor.EditorComponentAPIBus(
+                bus.Broadcast, "BuildComponentPropertyList", component
+            )
             print(paths)
             print(f"FAILURE: Failed to find value in {self.name} {path}")
             return False
 
         if old_value == expected_result:
-            print((f"WARNING: get_set_test on {self.name} is setting the same value that already exists ({old_value})."
-                    "The set results will be inconclusive."))
+            print(
+                (
+                    f"WARNING: get_set_test on {self.name} is setting the same value that already exists ({old_value})."
+                    "The set results will be inconclusive."
+                )
+            )
 
-        editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", component, path, value)
+        editor.EditorComponentAPIBus(
+            bus.Broadcast, "SetComponentProperty", component, path, value
+        )
         new_value = get_component_property_value(self.components[component_index], path)
 
         if new_value is not None:
@@ -329,7 +398,9 @@ class Entity:
         return compare_values(new_value, expected_result, f"{self.name} {path}")
 
 
-def get_set_test(entity: object, component_index: int, path: str, value: object) -> bool:
+def get_set_test(
+    entity: object, component_index: int, path: str, value: object
+) -> bool:
     """
     Used to set and validate changes in component values
     :param component_index: Index location in the entity.components list
@@ -339,7 +410,12 @@ def get_set_test(entity: object, component_index: int, path: str, value: object)
     return entity.get_set_test(component_index, path, value)
 
 
-def get_set_property_test(ly_object: object, attribute_name: str, value: object, expected_result: object = None) -> bool:
+def get_set_property_test(
+    ly_object: object,
+    attribute_name: str,
+    value: object,
+    expected_result: object = None,
+) -> bool:
     """
     Used to set and validate BehaviorContext property changes in Open 3D Engine objects
     :param ly_object: The Open 3D Engine object to test
@@ -352,37 +428,55 @@ def get_set_property_test(ly_object: object, attribute_name: str, value: object,
         expected_result = value
 
     # Test Get/Set (get old value, set new value, check that new value was set correctly)
-    print(f"Attempting to set {ly_object.typename}.{attribute_name} = {value} (expected result is {expected_result})")
+    print(
+        f"Attempting to set {ly_object.typename}.{attribute_name} = {value} (expected result is {expected_result})"
+    )
 
     if hasattr(ly_object, attribute_name):
         print(f"SUCCESS: Located attribute {attribute_name} for {ly_object.typename}")
     else:
-        print(f"FAILURE: Failed to find attribute {attribute_name} in {ly_object.typename}")
+        print(
+            f"FAILURE: Failed to find attribute {attribute_name} in {ly_object.typename}"
+        )
         return False
 
     old_value = getattr(ly_object, attribute_name)
 
     if old_value is not None:
-        print(f"SUCCESS: Retrieved existing value {old_value} for {attribute_name} in {ly_object.typename}")
+        print(
+            f"SUCCESS: Retrieved existing value {old_value} for {attribute_name} in {ly_object.typename}"
+        )
     else:
-        print(f"FAILURE: Failed to retrieve value for {attribute_name} in {ly_object.typename}")
+        print(
+            f"FAILURE: Failed to retrieve value for {attribute_name} in {ly_object.typename}"
+        )
         return False
 
     if old_value == expected_result:
-        print((f"WARNING: get_set_test on {attribute_name} is setting the same value that already exists ({old_value})."
-                "The 'set' result for the test will be inconclusive."))
+        print(
+            (
+                f"WARNING: get_set_test on {attribute_name} is setting the same value that already exists ({old_value})."
+                "The 'set' result for the test will be inconclusive."
+            )
+        )
 
     setattr(ly_object, attribute_name, expected_result)
 
     new_value = getattr(ly_object, attribute_name)
 
     if new_value is not None:
-        print(f"SUCCESS: Retrieved new value {new_value} for {attribute_name} in {ly_object.typename}")
+        print(
+            f"SUCCESS: Retrieved new value {new_value} for {attribute_name} in {ly_object.typename}"
+        )
     else:
-        print(f"FAILURE: Failed to retrieve value for {attribute_name} in {ly_object.typename}")
+        print(
+            f"FAILURE: Failed to retrieve value for {attribute_name} in {ly_object.typename}"
+        )
         return False
 
-    return compare_values(new_value, expected_result, f"{ly_object.typename}.{attribute_name}")
+    return compare_values(
+        new_value, expected_result, f"{ly_object.typename}.{attribute_name}"
+    )
 
 
 def has_components(entity_id: object, component_list: list) -> bool:
@@ -392,10 +486,16 @@ def has_components(entity_id: object, component_list: list) -> bool:
     :param entity_id: entity id of the entity
     :param component_list: list of component names to be verified
     """
-    typeIdsList = editor.EditorComponentAPIBus(bus.Broadcast, 'FindComponentTypeIdsByEntityType', component_list,
-                                               entity.EntityType().Game)
+    typeIdsList = editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "FindComponentTypeIdsByEntityType",
+        component_list,
+        entity.EntityType().Game,
+    )
     for type_id in typeIdsList:
-        if not editor.EditorComponentAPIBus(bus.Broadcast, 'HasComponentOfType', entity_id, type_id):
+        if not editor.EditorComponentAPIBus(
+            bus.Broadcast, "HasComponentOfType", entity_id, type_id
+        ):
             return False
     return True
 
@@ -405,14 +505,14 @@ class PathNotFoundError(Exception):
         self.path = path
 
     def __str__(self):
-        return f"Path \"{self.path}\" not found in Editor Settings"
+        return f'Path "{self.path}" not found in Editor Settings'
 
 
 def get_editor_settings_path_list():
     """
     Get the list of Editor Settings paths
     """
-    paths = editor.EditorSettingsAPIBus(bus.Broadcast, 'BuildSettingsList')
+    paths = editor.EditorSettingsAPIBus(bus.Broadcast, "BuildSettingsList")
     return paths
 
 
@@ -423,13 +523,13 @@ def get_editor_settings_by_path(path):
     """
     if path not in get_editor_settings_path_list():
         raise PathNotFoundError(path)
-    outcome = editor.EditorSettingsAPIBus(bus.Broadcast, 'GetValue', path)
+    outcome = editor.EditorSettingsAPIBus(bus.Broadcast, "GetValue", path)
     if outcome.isSuccess():
         return outcome.GetValue()
     raise RuntimeError(f"GetValue for path '{path}' failed")
 
 
-def set_editor_settings_by_path(path, value, is_bool = False):
+def set_editor_settings_by_path(path, value, is_bool=False):
     """
     Set the value of Editor Settings based on the path.
     # NOTE: Some Editor Settings may need an Editor restart to apply.
@@ -441,12 +541,14 @@ def set_editor_settings_by_path(path, value, is_bool = False):
     if path not in get_editor_settings_path_list():
         raise PathNotFoundError(path)
     if is_bool and not isinstance(value, bool):
+
         def ParseBoolValue(value):
-            if(value == "0"):
+            if value == "0":
                 return False
             return True
+
         value = ParseBoolValue(value)
-    outcome = editor.EditorSettingsAPIBus(bus.Broadcast, 'SetValue', path, value)
+    outcome = editor.EditorSettingsAPIBus(bus.Broadcast, "SetValue", path, value)
     if not outcome.isSuccess():
         raise RuntimeError(f"SetValue for path '{path}' failed")
     print(f"Value for path '{path}' is set to {value}")
@@ -462,8 +564,12 @@ def get_component_type_id_map(component_name_list):
     component_names = list(set(component_name_list))
 
     type_ids_by_component = {}
-    type_ids = editor.EditorComponentAPIBus(bus.Broadcast, 'FindComponentTypeIdsByEntityType', component_names,
-                                            entity.EntityType().Game)
+    type_ids = editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "FindComponentTypeIdsByEntityType",
+        component_names,
+        entity.EntityType().Game,
+    )
     for i, typeId in enumerate(type_ids):
         type_ids_by_component[component_names[i]] = typeId
 
@@ -479,19 +585,28 @@ def attach_component_to_entity(entity_id, component_name):
     :return: If successful, returns the EntityComponentIdPair, otherwise returns None.
     """
     type_ids_list = editor.EditorComponentAPIBus(
-        bus.Broadcast, 'FindComponentTypeIdsByEntityType', [component_name], 0)
+        bus.Broadcast, "FindComponentTypeIdsByEntityType", [component_name], 0
+    )
     general.log(f"Components found = {len(type_ids_list)}")
     if len(type_ids_list) < 1:
-        general.log(f"ERROR: A component class with name {component_name} doesn't exist")
+        general.log(
+            f"ERROR: A component class with name {component_name} doesn't exist"
+        )
         return None
     elif len(type_ids_list) > 1:
-        general.log(f"ERROR: Found more than one component classes with same name: {component_name}")
+        general.log(
+            f"ERROR: Found more than one component classes with same name: {component_name}"
+        )
         return None
     # Before adding the component let's check if it is already attached to the entity.
-    component_outcome = editor.EditorComponentAPIBus(bus.Broadcast, 'GetComponentOfType', entity_id, type_ids_list[0])
+    component_outcome = editor.EditorComponentAPIBus(
+        bus.Broadcast, "GetComponentOfType", entity_id, type_ids_list[0]
+    )
     if component_outcome.IsSuccess():
         return component_outcome.GetValue()  # In this case the value is not a list.
-    component_outcome = editor.EditorComponentAPIBus(bus.Broadcast, 'AddComponentsOfType', entity_id, type_ids_list)
+    component_outcome = editor.EditorComponentAPIBus(
+        bus.Broadcast, "AddComponentsOfType", entity_id, type_ids_list
+    )
     if component_outcome.IsSuccess():
         general.log(f"{component_name} Component added to entity.")
         return component_outcome.GetValue()[0]

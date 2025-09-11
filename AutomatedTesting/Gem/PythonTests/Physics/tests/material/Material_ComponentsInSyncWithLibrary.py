@@ -9,7 +9,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # Test Case Title : Verify that material library and slots are always in sync and work consistently through the different places of usage
 
 
-
 # fmt: off
 class Tests:
     enter_game_mode_0           = ("Test 0) Entered game mode",                       "Test 0) Failed to enter game mode")
@@ -146,7 +145,9 @@ def Material_ComponentsInSyncWithLibrary():
 
         @property
         def position(self):
-            return azlmbr.components.TransformBus(bus.Event, "GetWorldTranslation", self.id)
+            return azlmbr.components.TransformBus(
+                bus.Event, "GetWorldTranslation", self.id
+            )
 
     def get_test(test_name):
         return Tests.__dict__[test_name]
@@ -159,23 +160,38 @@ def Material_ComponentsInSyncWithLibrary():
         controller_valid = general.find_game_entity("character_controller").IsValid()
         terrain_valid = general.find_game_entity("terrain").IsValid()
 
-        Report.critical_result(get_test("find_character_controller_{}".format(test_number)), controller_valid)
-        Report.critical_result(get_test("find_terrain_{}".format(test_number)), terrain_valid)
+        Report.critical_result(
+            get_test("find_character_controller_{}".format(test_number)),
+            controller_valid,
+        )
+        Report.critical_result(
+            get_test("find_terrain_{}".format(test_number)), terrain_valid
+        )
 
         collider_valid = collider.find_and_reset()
         controller_box_valid = controller_box.find_and_reset()
         ragdoll_valid = ragdoll.find_and_reset()
         terrain_box_valid = terrain_box.find_and_reset()
 
-        Report.critical_result(get_test("find_collider_{}".format(test_number)), collider_valid)
-        Report.critical_result(get_test("find_controller_box_{}".format(test_number)), controller_box_valid)
-        Report.critical_result(get_test("find_ragdoll_{}".format(test_number)), ragdoll_valid)
-        Report.critical_result(get_test("find_terrain_box_{}".format(test_number)), terrain_box_valid)
+        Report.critical_result(
+            get_test("find_collider_{}".format(test_number)), collider_valid
+        )
+        Report.critical_result(
+            get_test("find_controller_box_{}".format(test_number)), controller_box_valid
+        )
+        Report.critical_result(
+            get_test("find_ragdoll_{}".format(test_number)), ragdoll_valid
+        )
+        Report.critical_result(
+            get_test("find_terrain_box_{}".format(test_number)), terrain_box_valid
+        )
 
         def wait_for_bounce():
             for entity in all_entities:
                 if entity.hit_terrain:
-                    current_bounce_height = entity.position.z - entity.hit_terrain_position.z
+                    current_bounce_height = (
+                        entity.position.z - entity.hit_terrain_position.z
+                    )
                     if current_bounce_height >= entity.max_bounce:
                         entity.max_bounce = current_bounce_height
                     elif entity.max_bounce > 0.0:
@@ -185,10 +201,22 @@ def Material_ComponentsInSyncWithLibrary():
         # x.3) Wait for entities to bounce
         helper.wait_for_condition(wait_for_bounce, TIMEOUT)
 
-        Report.result(get_test("collider_bounced_{}".format(test_number)), collider.reached_max_bounce)
-        Report.result(get_test("controller_box_bounced_{}".format(test_number)), controller_box.reached_max_bounce)
-        Report.result(get_test("ragdoll_bounced_{}".format(test_number)), ragdoll.reached_max_bounce)
-        Report.result(get_test("terrain_box_bounced_{}".format(test_number)), terrain_box.reached_max_bounce)
+        Report.result(
+            get_test("collider_bounced_{}".format(test_number)),
+            collider.reached_max_bounce,
+        )
+        Report.result(
+            get_test("controller_box_bounced_{}".format(test_number)),
+            controller_box.reached_max_bounce,
+        )
+        Report.result(
+            get_test("ragdoll_bounced_{}".format(test_number)),
+            ragdoll.reached_max_bounce,
+        )
+        Report.result(
+            get_test("terrain_box_bounced_{}".format(test_number)),
+            terrain_box.reached_max_bounce,
+        )
 
         for entity in all_entities:
             entity.bounces.append(entity.max_bounce)
@@ -214,11 +242,14 @@ def Material_ComponentsInSyncWithLibrary():
     test_0_max_bounce = max([entity.bounces[0] for entity in all_entities])
     test_0_min_bounce = min([entity.bounces[0] for entity in all_entities])
     Report.result(
-        Tests.all_bounced_equal_0, lymath.Math_IsClose(test_0_max_bounce, test_0_min_bounce, BOUNCE_TOLERANCE)
+        Tests.all_bounced_equal_0,
+        lymath.Math_IsClose(test_0_max_bounce, test_0_min_bounce, BOUNCE_TOLERANCE),
     )
 
     # 4) Modify the restitution value of 'modified'
-    material_editor = Physmaterial_Editor("c15308221_material_componentsinsyncwithlibrary.physmaterial")
+    material_editor = Physmaterial_Editor(
+        "c15308221_material_componentsinsyncwithlibrary.physmaterial"
+    )
     material_editor.modify_material("Modified", "Restitution", 0.75)
     material_editor.save_changes()
     run_test(1)
@@ -227,15 +258,18 @@ def Material_ComponentsInSyncWithLibrary():
     test_1_max_bounce = max([entity.bounces[1] for entity in all_entities])
     test_1_min_bounce = min([entity.bounces[1] for entity in all_entities])
     Report.result(
-        Tests.all_bounced_equal_1, lymath.Math_IsClose(test_1_max_bounce, test_1_min_bounce, BOUNCE_TOLERANCE)
+        Tests.all_bounced_equal_1,
+        lymath.Math_IsClose(test_1_max_bounce, test_1_min_bounce, BOUNCE_TOLERANCE),
     )
 
     # 6) Verify that the material change was propagated correctly
-    all_bounced_greater = all([entity.bounces[0] < entity.bounces[1] for entity in all_entities])
+    all_bounced_greater = all(
+        [entity.bounces[0] < entity.bounces[1] for entity in all_entities]
+    )
     Report.result(Tests.all_bounced_greater, all_bounced_greater)
-
 
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_ComponentsInSyncWithLibrary)
