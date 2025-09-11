@@ -21,15 +21,15 @@ import tiaf_report_constants as constants
 logger = get_logger(__file__)
 
 # Constants to access our argument dictionary for the values of different arguments. Not guarunteed to be in dictionary in all cases.
-ARG_S3_BUCKET = 's3_bucket'
-ARG_SUITES = 'suites'
-ARG_LABEL_EXCLUDES = 'label_excludes'
-ARG_CONFIG = 'config'
-ARG_SOURCE_BRANCH = 'src_branch'
-ARG_DESTINATION_BRANCH = 'dst_branch'
-ARG_COMMIT = 'commit'
-ARG_S3_TOP_LEVEL_DIR = 's3_top_level_dir'
-ARG_SEQUENCE_OVERRIDE = 'sequence_override'
+ARG_S3_BUCKET = "s3_bucket"
+ARG_SUITES = "suites"
+ARG_LABEL_EXCLUDES = "label_excludes"
+ARG_CONFIG = "config"
+ARG_SOURCE_BRANCH = "src_branch"
+ARG_DESTINATION_BRANCH = "dst_branch"
+ARG_COMMIT = "commit"
+ARG_S3_TOP_LEVEL_DIR = "s3_top_level_dir"
+ARG_SEQUENCE_OVERRIDE = "sequence_override"
 ARG_INTEGRATION_POLICY = RuntimeArgs.COMMON_IPOLICY.driver_argument
 ARG_TEST_FAILURE_POLICY = RuntimeArgs.COMMON_FPOLICY.driver_argument
 ARG_CHANGE_LIST = RuntimeArgs.COMMON_CHANGELIST.driver_argument
@@ -37,14 +37,13 @@ ARG_SEQUENCE = RuntimeArgs.COMMON_SEQUENCE.driver_argument
 ARG_REPORT = RuntimeArgs.COMMON_REPORT.driver_argument
 
 # Sequence types as constants
-TIA_NOWRITE = 'tianowrite'
-TIA_SEED = 'seed'
-TIA_ON = 'tia'
-TIA_REGULAR = 'regular'
+TIA_NOWRITE = "tianowrite"
+TIA_SEED = "seed"
+TIA_ON = "tia"
+TIA_REGULAR = "regular"
 
 
 class BaseTestImpact(ABC):
-
     _runtime_type = None
 
     def __init__(self, args: dict):
@@ -55,8 +54,7 @@ class BaseTestImpact(ABC):
         """
 
         self._runtime_args = []
-        self._change_list = {"createdFiles": [],
-                             "updatedFiles": [], "deletedFiles": []}
+        self._change_list = {"createdFiles": [], "updatedFiles": [], "deletedFiles": []}
         self._has_change_list = False
         self._enabled = False
         self._use_test_impact_analysis = False
@@ -69,12 +67,18 @@ class BaseTestImpact(ABC):
         self._label_excludes = args.get(ARG_LABEL_EXCLUDES)
 
         # Compile the dash-separated concatenation of the ordered suites and labels to be used as path components
-        self._suites_string = '-'.join(self._suites) if isinstance(self._suites, list) else self._suites
-        self._label_excludes_string = '-'.join(self._label_excludes) if isinstance(self._label_excludes, list) else self._label_excludes
+        self._suites_string = (
+            "-".join(self._suites) if isinstance(self._suites, list) else self._suites
+        )
+        self._label_excludes_string = (
+            "-".join(self._label_excludes)
+            if isinstance(self._label_excludes, list)
+            else self._label_excludes
+        )
 
         self._config = self._parse_config_file(args.get(ARG_CONFIG))
         if not self._enabled:
-            logger.info(f"TIAF is disabled.")
+            logger.info("TIAF is disabled.")
             return
 
         # Initialize branches
@@ -97,11 +101,12 @@ class BaseTestImpact(ABC):
         # If flag is set for us to use TIAF
         if self._use_test_impact_analysis:
             logger.info("Test impact analysis is enabled.")
-            self._persistent_storage = self._initialize_persistent_storage(s3_top_level_dir=args.get(ARG_S3_TOP_LEVEL_DIR))
+            self._persistent_storage = self._initialize_persistent_storage(
+                s3_top_level_dir=args.get(ARG_S3_TOP_LEVEL_DIR)
+            )
 
             # If persistent storage intialized correctly
             if self._persistent_storage:
-
                 # Historic Data Handling:
                 # This flag is used to help handle our corner cases if we have historic data.
                 # NOTE: need to draft in failing tests or only update upon success otherwise reruns for failed runs will have the same last commit
@@ -125,7 +130,10 @@ class BaseTestImpact(ABC):
                         args[ARG_INTEGRATION_POLICY] = "continue"
                     args[ARG_CHANGE_LIST] = self._change_list_path
                 else:
-                    if self._is_source_of_truth_branch and self._can_rerun_with_instrumentation:
+                    if (
+                        self._is_source_of_truth_branch
+                        and self._can_rerun_with_instrumentation
+                    ):
                         # Use seed sequence (instrumented all tests) for coverage updating branches so we can generate the coverage bed for future sequences
                         sequence_type = TIA_SEED
                         # We always continue after test failures when seeding to ensure we capture the coverage for all test targets
@@ -138,7 +146,8 @@ class BaseTestImpact(ABC):
         # Store sequence and report into args so that our argument enum can be used to apply all relevant arguments.
         args[ARG_SEQUENCE] = args.get(ARG_SEQUENCE_OVERRIDE) or sequence_type
         self._report_file = PurePath(self._report_workspace).joinpath(
-            f"report.{self._instance_id}.json")
+            f"report.{self._instance_id}.json"
+        )
         args[ARG_REPORT] = self._report_file
         self._parse_arguments_to_runtime(args)
 
@@ -152,7 +161,9 @@ class BaseTestImpact(ABC):
         for argument in RuntimeArgs:
             value = args.get(argument.driver_argument)
             if value:
-                self._runtime_args.append(f"{argument.runtime_arg}{','.join(value) if isinstance(value, list) else value}") 
+                self._runtime_args.append(
+                    f"{argument.runtime_arg}{','.join(value) if isinstance(value, list) else value}"
+                )
                 logger.info(f"{argument.message}{value}")
 
     def _handle_historic_data(self):
@@ -172,16 +183,17 @@ class BaseTestImpact(ABC):
 
         # If the last commit hash in our historic data is the same as our current commit hash
         if self._persistent_storage.is_last_commit_hash_equal_to_this_commit_hash:
-
             # If we have the last commit hash of our previous run in our json then we will just use the data from that run
             if self._persistent_storage.has_previous_last_commit_hash:
                 logger.info(
-                    f"This sequence is being re-run before any other changes have come in so the last commit '{self._persistent_storage.this_commit_last_commit_hash}' used for the previous sequence will be used instead.")
+                    f"This sequence is being re-run before any other changes have come in so the last commit '{self._persistent_storage.this_commit_last_commit_hash}' used for the previous sequence will be used instead."
+                )
                 self._src_commit = self._persistent_storage.this_commit_last_commit_hash
             else:
                 # If we don't have the last commit hash of our previous run then we do a regular run as there will be no change list and no historic coverage data to use
                 logger.info(
-                    f"This sequence is being re-run before any other changes have come in but there is no useful historic data. A regular sequence will be performed instead.")
+                    "This sequence is being re-run before any other changes have come in but there is no useful historic data. A regular sequence will be performed instead."
+                )
                 self._persistent_storage = None
                 self._can_rerun_with_instrumentation = False
         else:
@@ -200,18 +212,38 @@ class BaseTestImpact(ABC):
         try:
             if self._s3_bucket:
                 return PersistentStorageS3(
-                    self._config, self._suites_string, self._dst_commit, self._s3_bucket, self._compile_s3_top_level_dir_name(s3_top_level_dir), self._source_of_truth_branch, self._active_workspace, self._unpacked_coverage_data_file, self._previous_test_run_data_file, self._temp_workspace)
+                    self._config,
+                    self._suites_string,
+                    self._dst_commit,
+                    self._s3_bucket,
+                    self._compile_s3_top_level_dir_name(s3_top_level_dir),
+                    self._source_of_truth_branch,
+                    self._active_workspace,
+                    self._unpacked_coverage_data_file,
+                    self._previous_test_run_data_file,
+                    self._temp_workspace,
+                )
             else:
                 return PersistentStorageLocal(
-                    self._config, self._suites_string, self._dst_commit, self._active_workspace, self._unpacked_coverage_data_file, self._previous_test_run_data_file, self._historic_workspace, self._historic_data_file, self._temp_workspace)
+                    self._config,
+                    self._suites_string,
+                    self._dst_commit,
+                    self._active_workspace,
+                    self._unpacked_coverage_data_file,
+                    self._previous_test_run_data_file,
+                    self._historic_workspace,
+                    self._historic_data_file,
+                    self._temp_workspace,
+                )
         except SystemError as e:
             logger.warning(
-                f"The persistent storage encountered an irrecoverable error, test impact analysis will be disabled: '{e}'")
+                f"The persistent storage encountered an irrecoverable error, test impact analysis will be disabled: '{e}'"
+            )
             return None
 
     def _determine_source_of_truth(self):
         """
-        Determines whether the branch we are executing TIAF on is the source of truth (the branch from which the coverage data will be stored/retrieved from) or not.        
+        Determines whether the branch we are executing TIAF on is the source of truth (the branch from which the coverage data will be stored/retrieved from) or not.
         """
         # Source of truth (the branch from which the coverage data will be stored/retrieved from)
         if not self._dst_branch or self._src_branch == self._dst_branch:
@@ -221,10 +253,8 @@ class BaseTestImpact(ABC):
             # Pull request builds use their destination as the source of truth and never update the coverage data for the source of truth
             self._source_of_truth_branch = self._dst_branch
 
-        logger.info(
-            f"Source of truth branch: '{self._source_of_truth_branch}'.")
-        logger.info(
-            f"Is source of truth branch: '{self._is_source_of_truth_branch}'.")
+        logger.info(f"Source of truth branch: '{self._source_of_truth_branch}'.")
+        logger.info(f"Is source of truth branch: '{self._is_source_of_truth_branch}'.")
 
     def _parse_config_file(self, config_file: str):
         """
@@ -257,8 +287,7 @@ class BaseTestImpact(ABC):
         REPORT_KEY = "reports"
         CHANGE_LIST_KEY = "change_list"
 
-        logger.info(
-            f"Attempting to parse configuration file '{config_file}'...")
+        logger.info(f"Attempting to parse configuration file '{config_file}'...")
         try:
             with open(config_file, "r") as config_data:
                 config = json.load(config_data)
@@ -267,44 +296,61 @@ class BaseTestImpact(ABC):
 
                 # TIAF
                 self._enabled = config[self.runtime_type][JENKINS_KEY][ENABLED_KEY]
-                self._use_test_impact_analysis = config[self.runtime_type][JENKINS_KEY][USE_TEST_IMPACT_ANALYSIS_KEY]
-                self._tiaf_bin = Path(
-                    config[self.runtime_type][RUNTIME_BIN_KEY])
+                self._use_test_impact_analysis = config[self.runtime_type][JENKINS_KEY][
+                    USE_TEST_IMPACT_ANALYSIS_KEY
+                ]
+                self._tiaf_bin = Path(config[self.runtime_type][RUNTIME_BIN_KEY])
                 if self._use_test_impact_analysis and not self._tiaf_bin.is_file():
                     logger.warning(
-                        f"Could not find TIAF binary at location {self._tiaf_bin}, TIAF will be turned off.")
+                        f"Could not find TIAF binary at location {self._tiaf_bin}, TIAF will be turned off."
+                    )
                     self._use_test_impact_analysis = False
                 else:
-                    logger.info(
-                        f"Runtime binary found at location '{self._tiaf_bin}'")
+                    logger.info(f"Runtime binary found at location '{self._tiaf_bin}'")
 
                 # Workspaces
-                self._active_workspace = config[self.runtime_type][WORKSPACE_KEY][ACTIVE_KEY][ROOT_KEY]
-                self._historic_workspace = config[self.runtime_type][WORKSPACE_KEY][HISTORIC_KEY][ROOT_KEY]
-                self._temp_workspace = config[self.runtime_type][WORKSPACE_KEY][TEMP_KEY][ROOT_KEY]
-                self._report_workspace = config[self.runtime_type][WORKSPACE_KEY][TEMP_KEY][REPORT_KEY]
-                self._change_list_workspace = config[self.runtime_type][WORKSPACE_KEY][TEMP_KEY][CHANGE_LIST_KEY]
+                self._active_workspace = config[self.runtime_type][WORKSPACE_KEY][
+                    ACTIVE_KEY
+                ][ROOT_KEY]
+                self._historic_workspace = config[self.runtime_type][WORKSPACE_KEY][
+                    HISTORIC_KEY
+                ][ROOT_KEY]
+                self._temp_workspace = config[self.runtime_type][WORKSPACE_KEY][
+                    TEMP_KEY
+                ][ROOT_KEY]
+                self._report_workspace = config[self.runtime_type][WORKSPACE_KEY][
+                    TEMP_KEY
+                ][REPORT_KEY]
+                self._change_list_workspace = config[self.runtime_type][WORKSPACE_KEY][
+                    TEMP_KEY
+                ][CHANGE_LIST_KEY]
 
                 # Data file paths
                 self._unpacked_coverage_data_file = config[self.runtime_type][
-                    WORKSPACE_KEY][ACTIVE_KEY][RELATIVE_PATHS_KEY][TEST_IMPACT_DATA_FILE_KEY]
-                self._previous_test_run_data_file = config[self.runtime_type][WORKSPACE_KEY][
-                    ACTIVE_KEY][RELATIVE_PATHS_KEY][PREVIOUS_TEST_RUN_DATA_FILE_KEY]
+                    WORKSPACE_KEY
+                ][ACTIVE_KEY][RELATIVE_PATHS_KEY][TEST_IMPACT_DATA_FILE_KEY]
+                self._previous_test_run_data_file = config[self.runtime_type][
+                    WORKSPACE_KEY
+                ][ACTIVE_KEY][RELATIVE_PATHS_KEY][PREVIOUS_TEST_RUN_DATA_FILE_KEY]
                 self._historic_data_file = config[self.runtime_type][WORKSPACE_KEY][
-                    HISTORIC_KEY][RELATIVE_PATHS_KEY][HISTORIC_DATA_FILE_KEY]
+                    HISTORIC_KEY
+                ][RELATIVE_PATHS_KEY][HISTORIC_DATA_FILE_KEY]
 
                 # Runtime artifact and coverage directories
-                self._runtime_artifact_directory = config[self.runtime_type][WORKSPACE_KEY][TEMP_KEY][RUNTIME_ARTIFACT_DIR_KEY]
-                self._runtime_coverage_directory = config[self.runtime_type][WORKSPACE_KEY][TEMP_KEY][RUNTIME_COVERAGE_DIR_KEY]
+                self._runtime_artifact_directory = config[self.runtime_type][
+                    WORKSPACE_KEY
+                ][TEMP_KEY][RUNTIME_ARTIFACT_DIR_KEY]
+                self._runtime_coverage_directory = config[self.runtime_type][
+                    WORKSPACE_KEY
+                ][TEMP_KEY][RUNTIME_COVERAGE_DIR_KEY]
                 logger.info("The configuration file was parsed successfully.")
                 return config
         except KeyError as e:
             logger.error(f"The config does not contain the key {str(e)}.")
             return None
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             logger.error("The config file doesn not contain valid JSON")
-            raise SystemError(
-                "Config file does not contain valid JSON, stopping TIAF")
+            raise SystemError("Config file does not contain valid JSON, stopping TIAF")
 
     def _attempt_to_generate_change_list(self):
         """
@@ -320,14 +366,17 @@ class BaseTestImpact(ABC):
                 # For branch builds, the dst commit must be descended from the src commit
                 if not self._repo.is_descendent(self._src_commit, self._dst_commit):
                     logger.error(
-                        f"Source commit '{self._src_commit}' and destination commit '{self._dst_commit}' must be related for branch builds.")
+                        f"Source commit '{self._src_commit}' and destination commit '{self._dst_commit}' must be related for branch builds."
+                    )
                     return
 
                 # Calculate the distance (in commits) between the src and dst commits
                 self._commit_distance = self._repo.commit_distance(
-                    self._src_commit, self._dst_commit)
+                    self._src_commit, self._dst_commit
+                )
                 logger.info(
-                    f"The distance between '{self._src_commit}' and '{self._dst_commit}' commits is '{self._commit_distance}' commits.")
+                    f"The distance between '{self._src_commit}' and '{self._dst_commit}' commits is '{self._commit_distance}' commits."
+                )
                 multi_branch = False
             else:
                 # For pull request builds, the src and dst commits are on different branches so we need to ensure a common ancestor is used for the diff
@@ -336,18 +385,24 @@ class BaseTestImpact(ABC):
             try:
                 # Attempt to generate a diff between the src and dst commits
                 logger.info(
-                    f"Source '{self._src_commit}' and destination '{self._dst_commit}' will be diff'd.")
-                diff_path = Path(PurePath(self._change_list_workspace).joinpath(
-                    f"changelist.{self._instance_id}.diff"))
+                    f"Source '{self._src_commit}' and destination '{self._dst_commit}' will be diff'd."
+                )
+                diff_path = Path(
+                    PurePath(self._change_list_workspace).joinpath(
+                        f"changelist.{self._instance_id}.diff"
+                    )
+                )
                 self._repo.create_diff_file(
-                    self._src_commit, self._dst_commit, diff_path, multi_branch)
+                    self._src_commit, self._dst_commit, diff_path, multi_branch
+                )
             except RuntimeError as e:
                 logger.error(e)
                 return
 
             # A diff was generated, attempt to parse the diff and construct the change list
             logger.info(
-                f"Generated diff between commits '{self._src_commit}' and '{self._dst_commit}': '{diff_path}'.")
+                f"Generated diff between commits '{self._src_commit}' and '{self._dst_commit}': '{diff_path}'."
+            )
             with open(diff_path, "r") as diff_data:
                 lines = diff_data.readlines()
                 for line in lines:
@@ -360,37 +415,36 @@ class BaseTestImpact(ABC):
                     else:
                         match = re.split("^[AMD]\\s(\\S+)", line)
                         if len(match) > 1:
-                            if line[0] == 'A':
+                            if line[0] == "A":
                                 # File addition
-                                self._change_list["createdFiles"].append(
-                                    match[1])
-                            elif line[0] == 'M':
+                                self._change_list["createdFiles"].append(match[1])
+                            elif line[0] == "M":
                                 # File modification
-                                self._change_list["updatedFiles"].append(
-                                    match[1])
-                            elif line[0] == 'D':
+                                self._change_list["updatedFiles"].append(match[1])
+                            elif line[0] == "D":
                                 # File Deletion
-                                self._change_list["deletedFiles"].append(
-                                    match[1])
+                                self._change_list["deletedFiles"].append(match[1])
 
             # Serialize the change list to the JSON format the test impact analysis runtime expects
             change_list_json = json.dumps(self._change_list, indent=4)
             change_list_path = PurePath(self._temp_workspace).joinpath(
-                f"changelist.{self._instance_id}.json")
+                f"changelist.{self._instance_id}.json"
+            )
             f = open(change_list_path, "w")
             f.write(change_list_json)
             f.close()
+            logger.info(f"Change list constructed successfully: '{change_list_path}'.")
             logger.info(
-                f"Change list constructed successfully: '{change_list_path}'.")
-            logger.info(
-                f"{len(self._change_list['createdFiles'])} created files, {len(self._change_list['updatedFiles'])} updated files and {len(self._change_list['deletedFiles'])} deleted files.")
+                f"{len(self._change_list['createdFiles'])} created files, {len(self._change_list['updatedFiles'])} updated files and {len(self._change_list['deletedFiles'])} deleted files."
+            )
 
             # Note: an empty change list generated due to no changes between last and current commit is valid
             self._has_change_list = True
             self._change_list_path = change_list_path
         else:
             logger.error(
-                "No previous commit hash found, regular or seeded sequences only will be run.")
+                "No previous commit hash found, regular or seeded sequences only will be run."
+            )
             self._has_change_list = False
             return
 
@@ -411,7 +465,9 @@ class BaseTestImpact(ABC):
         result[constants.LABEL_EXCLUDES_KEY] = self._label_excludes
         result[constants.USE_TEST_IMPACT_ANALYSIS_KEY] = self._use_test_impact_analysis
         result[constants.SOURCE_OF_TRUTH_BRANCH_KEY] = self._source_of_truth_branch
-        result[constants.IS_SOURCE_OF_TRUTH_BRANCH_KEY] = self._is_source_of_truth_branch
+        result[constants.IS_SOURCE_OF_TRUTH_BRANCH_KEY] = (
+            self._is_source_of_truth_branch
+        )
         result[constants.HAS_CHANGE_LIST_KEY] = self._has_change_list
         result[constants.HAS_HISTORIC_DATA_KEY] = self._has_historic_data
         result[constants.S3_BUCKET_KEY] = self._s3_bucket
@@ -447,7 +503,8 @@ class BaseTestImpact(ABC):
             dir_name = f"{dir_name}/{self.runtime_type}"
             return dir_name
         raise SystemError(
-            "s3_top_level_dir not set while trying to access s3 instance.")
+            "s3_top_level_dir not set while trying to access s3 instance."
+        )
 
     def _extract_test_runs_from_test_run_report(self, report: dict):
         """
@@ -469,15 +526,20 @@ class BaseTestImpact(ABC):
         """
         report_type = report[constants.SEQUENCE_TYPE_KEY]
         test_runs = self._extract_test_runs_from_test_run_report(
-            report[constants.SELECTED_TEST_RUN_REPORT_KEY])
+            report[constants.SELECTED_TEST_RUN_REPORT_KEY]
+        )
 
-        if report_type == constants.IMPACT_ANALYSIS_SEQUENCE_TYPE_KEY or report_type == constants.SAFE_IMPACT_ANALYSIS_SEQUENCE_TYPE_KEY:
-            test_runs = test_runs + \
-                self._extract_test_runs_from_test_run_report(
-                    report[constants.DRAFTED_TEST_RUN_REPORT_KEY])
+        if (
+            report_type == constants.IMPACT_ANALYSIS_SEQUENCE_TYPE_KEY
+            or report_type == constants.SAFE_IMPACT_ANALYSIS_SEQUENCE_TYPE_KEY
+        ):
+            test_runs = test_runs + self._extract_test_runs_from_test_run_report(
+                report[constants.DRAFTED_TEST_RUN_REPORT_KEY]
+            )
             if report_type == constants.SAFE_IMPACT_ANALYSIS_SEQUENCE_TYPE_KEY:
                 test_runs = test_runs + self._extract_test_runs_from_test_run_report(
-                    report[constants.DISCARDED_TEST_RUN_REPORT_KEY])
+                    report[constants.DISCARDED_TEST_RUN_REPORT_KEY]
+                )
         return test_runs
 
     def run(self):
@@ -509,10 +571,13 @@ class BaseTestImpact(ABC):
             if self._persistent_storage:
                 if self._is_source_of_truth_branch:
                     self._persistent_storage.update_and_store_historic_data(test_runs)
-                self._persistent_storage.store_artifacts(self._runtime_artifact_directory, self._runtime_coverage_directory)
+                self._persistent_storage.store_artifacts(
+                    self._runtime_artifact_directory, self._runtime_coverage_directory
+                )
         else:
             logger.error(
-                f"The test impact analysis runtime returned with error: '{runtime_result.returncode}'.")
+                f"The test impact analysis runtime returned with error: '{runtime_result.returncode}'."
+            )
 
         return self._generate_result(runtime_result.returncode, report)
 
