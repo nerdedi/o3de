@@ -9,15 +9,15 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     instance_count_in_box_shape = (
         "Only found instances in the configured Box Shape intersection area",
-        "Found instances outside of the configured Box Shape intersection area"
+        "Found instances outside of the configured Box Shape intersection area",
     )
     instance_count_in_cylinder_shape = (
         "Only found instances in the configured Cylinder Shape intersection area",
-        "Found instances outside of the configured Cylinder Shape intersection area"
+        "Found instances outside of the configured Cylinder Shape intersection area",
     )
     unfiltered_instance_count = (
         "Found instances in the entire Spawner area with no filter set",
-        "Failed to find all expected instances in the Spawner area with no filter set"
+        "Failed to find all expected instances in the Spawner area with no filter set",
     )
 
 
@@ -68,10 +68,15 @@ def ShapeIntersectionFilter_InstancesPlantInAssignedShape():
 
     # 2) Create a new entity with required vegetation area components and Vegetation Shape Intersection Filter
     center_point = math.Vector3(512.0, 512.0, 32.0)
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "ShapeIntersection_PinkFlower2")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", center_point, 16.0, 16.0, 1.0,
-                                                               pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "ShapeIntersection_PinkFlower2"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", center_point, 16.0, 16.0, 1.0, pink_flower_prefab
+    )
     spawner_entity.add_component("Vegetation Shape Intersection Filter")
 
     # Create a planting surface
@@ -79,17 +84,23 @@ def ShapeIntersectionFilter_InstancesPlantInAssignedShape():
 
     # 3) Create a child entity with Box Shape
     components_to_add = ["Box Shape"]
-    box_id = editor.ToolsApplicationRequestBus(bus.Broadcast, "CreateNewEntity", spawner_entity.id)
+    box_id = editor.ToolsApplicationRequestBus(
+        bus.Broadcast, "CreateNewEntity", spawner_entity.id
+    )
     box = hydra.Entity("Box", box_id)
     box.components = []
     for component in components_to_add:
         box.components.append(hydra.add_component(component, box_id))
     new_box_dimension = math.Vector3(5.0, 5.0, 5.0)
-    hydra.get_set_test(box, 0, "Box Shape|Box Configuration|Dimensions", new_box_dimension)
+    hydra.get_set_test(
+        box, 0, "Box Shape|Box Configuration|Dimensions", new_box_dimension
+    )
 
     # 4) Create a child entity with Cylinder Shape
     components_to_add = ["Cylinder Shape"]
-    cylinder_id = editor.ToolsApplicationRequestBus(bus.Broadcast, "CreateNewEntity", spawner_entity.id)
+    cylinder_id = editor.ToolsApplicationRequestBus(
+        bus.Broadcast, "CreateNewEntity", spawner_entity.id
+    )
     cylinder = hydra.Entity("Cylinder", cylinder_id)
     cylinder.components = []
     for component in components_to_add:
@@ -101,8 +112,12 @@ def ShapeIntersectionFilter_InstancesPlantInAssignedShape():
 
     # Validate instance counts. Instances should only plant in the Box Shape area
     num_expected = 49
-    success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                             num_expected), 5.0)
+    success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.instance_count_in_box_shape, success)
 
     # 6) Set the Intersection Filter's Shape Entity Id to the Cylinder Shape entity
@@ -110,8 +125,12 @@ def ShapeIntersectionFilter_InstancesPlantInAssignedShape():
 
     # Validate instance counts. Instances should only plant in the Cylinder Shape area
     num_expected = 121
-    success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                             num_expected), 5.0)
+    success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.instance_count_in_cylinder_shape, success)
 
     # 7) Clear the Intersection Filter's Shape Entity Id reference
@@ -119,12 +138,16 @@ def ShapeIntersectionFilter_InstancesPlantInAssignedShape():
 
     # Validate instance counts. Instances should now fill the entire spawner_entity's area
     num_expected = 20 * 20
-    success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                             num_expected), 5.0)
+    success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.unfiltered_instance_count, success)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(ShapeIntersectionFilter_InstancesPlantInAssignedShape)

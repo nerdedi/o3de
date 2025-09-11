@@ -49,7 +49,6 @@ def ShapeCollider_CylinderShapeCollides():
     :return:
     """
 
-
     from editor_python_test_tools.editor_entity_utils import EditorEntity
     import azlmbr.legacy.general as general
     import azlmbr.bus
@@ -71,13 +70,16 @@ def ShapeCollider_CylinderShapeCollides():
     Report.result(Tests.create_terrain, terrain.id.IsValid())
 
     terrain.add_component(PHYSX_SHAPE_COLLIDER)
-    Report.result(Tests.add_physx_shape_collider, terrain.has_component(PHYSX_SHAPE_COLLIDER))
+    Report.result(
+        Tests.add_physx_shape_collider, terrain.has_component(PHYSX_SHAPE_COLLIDER)
+    )
 
     box_shape_component = terrain.add_component("Box Shape")
     Report.result(Tests.add_box_shape, terrain.has_component("Box Shape"))
 
-    box_shape_component.set_component_property_value("Box Shape|Box Configuration|Dimensions",
-                                                     math.Vector3(1024.0, 1024.0, 0.01))
+    box_shape_component.set_component_property_value(
+        "Box Shape|Box Configuration|Dimensions", math.Vector3(1024.0, 1024.0, 0.01)
+    )
 
     # 2)Enter game mode
     helper.enter_game_mode(Tests.enter_game_mode)
@@ -86,14 +88,16 @@ def ShapeCollider_CylinderShapeCollides():
     cylinder_id = general.find_game_entity("PhysX_Cylinder")
     Report.critical_result(Tests.find_cylinder, cylinder_id.IsValid())
 
-
     terrain_id = general.find_game_entity("Terrain")
     Report.critical_result(Tests.find_terrain, terrain_id.IsValid())
 
-
-    cylinder_pos = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", cylinder_id)
-    #Cylinder position is 64,84,35
-    terrain_pos = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", terrain_id)
+    cylinder_pos = azlmbr.components.TransformBus(
+        azlmbr.bus.Event, "GetWorldTranslation", cylinder_id
+    )
+    # Cylinder position is 64,84,35
+    terrain_pos = azlmbr.components.TransformBus(
+        azlmbr.bus.Event, "GetWorldTranslation", terrain_id
+    )
     Report.info_vector3(cylinder_pos, "Cylinder:")
     Report.info_vector3(terrain_pos, "Terrain:")
     Report.critical_result(
@@ -103,8 +107,12 @@ def ShapeCollider_CylinderShapeCollides():
     )
 
     # Enable gravity (just in case it is not enabled)
-    if not azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "IsGravityEnabled", cylinder_id):
-        azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "SetGravityEnabled", cylinder_id, True)
+    if not azlmbr.physics.RigidBodyRequestBus(
+        azlmbr.bus.Event, "IsGravityEnabled", cylinder_id
+    ):
+        azlmbr.physics.RigidBodyRequestBus(
+            azlmbr.bus.Event, "SetGravityEnabled", cylinder_id, True
+        )
 
     class TouchGround:
         value = False
@@ -133,4 +141,5 @@ def ShapeCollider_CylinderShapeCollides():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(ShapeCollider_CylinderShapeCollides)

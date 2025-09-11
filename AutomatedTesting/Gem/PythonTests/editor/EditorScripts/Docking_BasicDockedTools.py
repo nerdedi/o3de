@@ -11,24 +11,23 @@ C6376081: Basic Function: Docked/Undocked Tools
 class Tests:
     all_tools_docked = (
         "The tools are all docked together in a tabbed widget",
-        "Failed to dock all tools together"
+        "Failed to dock all tools together",
     )
     docked_outliner_works = (
         "Entity Outliner works when docked, can select an Entity",
-        "Failed to select an Entity in the Outliner while docked"
+        "Failed to select an Entity in the Outliner while docked",
     )
     docked_inspector_works = (
         "Entity Inspector works when docked, Entity name changed",
-        "Failed to change Entity name in the Inspector while docked"
+        "Failed to change Entity name in the Inspector while docked",
     )
     docked_console_works = (
         "Console works when docked, sent a Console Command",
-        "Failed to send Console Command in the Console while docked"
+        "Failed to send Console Command in the Console while docked",
     )
 
 
 def Docking_BasicDockedTools():
-
     import pyside_utils
 
     @pyside_utils.wrap_async
@@ -74,12 +73,16 @@ def Docking_BasicDockedTools():
         general.open_pane("Console")
 
         # Create an Entity to test with
-        entity_original_name = 'MyTestEntity'
-        entity_id = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', entity.EntityId())
-        editor.EditorEntityAPIBus(bus.Event, 'SetName', entity_id, entity_original_name)
+        entity_original_name = "MyTestEntity"
+        entity_id = editor.ToolsApplicationRequestBus(
+            bus.Broadcast, "CreateNewEntity", entity.EntityId()
+        )
+        editor.EditorEntityAPIBus(bus.Event, "SetName", entity_id, entity_original_name)
 
         editor_window = pyside_utils.get_editor_main_window()
-        entity_outliner = editor_window.findChild(QtWidgets.QDockWidget, "Entity Outliner")
+        entity_outliner = editor_window.findChild(
+            QtWidgets.QDockWidget, "Entity Outliner"
+        )
 
         # 1) Open the tools and dock them together in a floating tabbed widget.
         # We drag/drop it over the viewport since it doesn't allow docking, so this will undock it
@@ -88,7 +91,9 @@ def Docking_BasicDockedTools():
 
         # We need to grab a new reference to the Entity Outliner QDockWidget because when it gets moved
         # to the floating window, its parent changes so the wrapped instance we had becomes invalid
-        entity_outliner = editor_window.findChild(QtWidgets.QDockWidget, "Entity Outliner")
+        entity_outliner = editor_window.findChild(
+            QtWidgets.QDockWidget, "Entity Outliner"
+        )
 
         # Dock the Entity Inspector tabbed with the floating Entity Outliner
         entity_inspector = editor_window.findChild(QtWidgets.QDockWidget, "Inspector")
@@ -104,45 +109,69 @@ def Docking_BasicDockedTools():
 
         # Check to ensure all the tools are parented to the same QStackedWidget
         def check_all_panes_tabbed():
-            entity_inspector = editor_window.findChild(QtWidgets.QDockWidget, "Inspector")
-            entity_outliner = editor_window.findChild(QtWidgets.QDockWidget, "Entity Outliner")
+            entity_inspector = editor_window.findChild(
+                QtWidgets.QDockWidget, "Inspector"
+            )
+            entity_outliner = editor_window.findChild(
+                QtWidgets.QDockWidget, "Entity Outliner"
+            )
             console = editor_window.findChild(QtWidgets.QDockWidget, "Console")
             entity_inspector_parent = entity_inspector.parentWidget()
             entity_outliner_parent = entity_outliner.parentWidget()
             console_parent = console.parentWidget()
-            Report.info(f"Entity Inspector parent = {entity_inspector_parent}, Entity Outliner parent = "
-                        f"{entity_outliner_parent}, Console parent = {console_parent}")
-            return isinstance(entity_inspector_parent, QtWidgets.QStackedWidget) and \
-                   (entity_inspector_parent == entity_outliner_parent) and \
-                   (entity_outliner_parent == console_parent)
+            Report.info(
+                f"Entity Inspector parent = {entity_inspector_parent}, Entity Outliner parent = "
+                f"{entity_outliner_parent}, Console parent = {console_parent}"
+            )
+            return (
+                isinstance(entity_inspector_parent, QtWidgets.QStackedWidget)
+                and (entity_inspector_parent == entity_outliner_parent)
+                and (entity_outliner_parent == console_parent)
+            )
 
-        success = await pyside_utils.wait_for_condition(lambda: check_all_panes_tabbed, timeout=5.0)
+        success = await pyside_utils.wait_for_condition(
+            lambda: check_all_panes_tabbed, timeout=5.0
+        )
         Report.result(Tests.all_tools_docked, success)
 
         # 2.1,2) Select an Entity in the Entity Outliner.
         entity_inspector = editor_window.findChild(QtWidgets.QDockWidget, "Inspector")
-        entity_outliner = editor_window.findChild(QtWidgets.QDockWidget, "Entity Outliner")
+        entity_outliner = editor_window.findChild(
+            QtWidgets.QDockWidget, "Entity Outliner"
+        )
         console = editor_window.findChild(QtWidgets.QDockWidget, "Console")
         object_tree = entity_outliner.findChild(QtWidgets.QTreeView, "m_objectTree")
-        test_entity_index = pyside_utils.find_child_by_pattern(object_tree, entity_original_name)
+        test_entity_index = pyside_utils.find_child_by_pattern(
+            object_tree, entity_original_name
+        )
         object_tree.clearSelection()
         object_tree.setCurrentIndex(test_entity_index)
-        Report.result(Tests.docked_outliner_works, object_tree.currentIndex() == test_entity_index)
+        Report.result(
+            Tests.docked_outliner_works, object_tree.currentIndex() == test_entity_index
+        )
 
         # 2.3,4) Change the name of the selected Entity via the Entity Inspector.
-        entity_inspector_name_field = entity_inspector.findChild(QtWidgets.QLineEdit, "m_entityNameEditor")
+        entity_inspector_name_field = entity_inspector.findChild(
+            QtWidgets.QLineEdit, "m_entityNameEditor"
+        )
         expected_new_name = "DifferentName"
         entity_inspector_name_field.setText(expected_new_name)
         QtTest.QTest.keyClick(entity_inspector_name_field, QtCore.Qt.Key_Enter)
-        entity_new_name = editor.EditorEntityInfoRequestBus(bus.Event, "GetName", entity_id)
-        Report.result(Tests.docked_inspector_works, entity_new_name == expected_new_name)
+        entity_new_name = editor.EditorEntityInfoRequestBus(
+            bus.Event, "GetName", entity_id
+        )
+        Report.result(
+            Tests.docked_inspector_works, entity_new_name == expected_new_name
+        )
 
         # 2.5,6) Send a console command.
         console_line_edit = console.findChild(QtWidgets.QLineEdit, "lineEdit")
         console_line_edit.setText("t_simulationTickScale 2")
         QtTest.QTest.keyClick(console_line_edit, QtCore.Qt.Key_Enter)
         general.get_cvar("t_simulationTickScale")
-        Report.result(Tests.docked_console_works, general.get_cvar("t_simulationTickScale") == "2")
+        Report.result(
+            Tests.docked_console_works, general.get_cvar("t_simulationTickScale") == "2"
+        )
 
         # Reset the altered cvar
         console_line_edit.setText("t_simulationTickScale 1")
@@ -152,6 +181,6 @@ def Docking_BasicDockedTools():
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Docking_BasicDockedTools)
