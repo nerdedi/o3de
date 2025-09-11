@@ -5,6 +5,7 @@ For complete copyright and license terms please see the LICENSE at the root of t
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
+
 def DeleteEntity_UnderNestedInstance():
     """
     Test description:
@@ -49,41 +50,66 @@ def DeleteEntity_UnderNestedInstance():
     prefab_test_utils.open_base_tests_level()
 
     # Create a new entity at the root level.
-    tire_entity = EditorEntity.create_editor_entity_at((100.0, 100.0, 100.0), TIRE_ENTITY_NAME)
+    tire_entity = EditorEntity.create_editor_entity_at(
+        (100.0, 100.0, 100.0), TIRE_ENTITY_NAME
+    )
     assert tire_entity.id.IsValid(), f"Failed to create new entity: {TIRE_ENTITY_NAME}."
 
     # Create a wheel prefab and front wheel instance from the tire entity.
     wheel_prefab_entities = [tire_entity]
-    wheel_prefab, front_wheel_instance = Prefab.create_prefab(wheel_prefab_entities, WHEEL_PREFAB_FILE_NAME, \
-        FRONT_WHEEL_NAME)
-    assert front_wheel_instance.is_valid(), f"Failed to instantiate instance: {FRONT_WHEEL_NAME}."
+    wheel_prefab, front_wheel_instance = Prefab.create_prefab(
+        wheel_prefab_entities, WHEEL_PREFAB_FILE_NAME, FRONT_WHEEL_NAME
+    )
+    assert front_wheel_instance.is_valid(), (
+        f"Failed to instantiate instance: {FRONT_WHEEL_NAME}."
+    )
 
     # Create a back wheel instance.
     back_wheel_instance = wheel_prefab.instantiate(name=BACK_WHEEL_NAME)
-    assert back_wheel_instance.is_valid(), f"Failed to instantiate instance: {BACK_WHEEL_NAME}."
+    assert back_wheel_instance.is_valid(), (
+        f"Failed to instantiate instance: {BACK_WHEEL_NAME}."
+    )
 
     # Create a car prefab and the first car instance from two wheels.
-    car_prefab_entities = [front_wheel_instance.container_entity, back_wheel_instance.container_entity]
-    car_prefab, car_instance_1 = Prefab.create_prefab(car_prefab_entities, CAR_PREFAB_FILE_NAME, \
-        FIRST_CAR_NAME)
-    assert car_instance_1.is_valid(), f"Failed to instantiate instance: {FIRST_CAR_NAME}."
+    car_prefab_entities = [
+        front_wheel_instance.container_entity,
+        back_wheel_instance.container_entity,
+    ]
+    car_prefab, car_instance_1 = Prefab.create_prefab(
+        car_prefab_entities, CAR_PREFAB_FILE_NAME, FIRST_CAR_NAME
+    )
+    assert car_instance_1.is_valid(), (
+        f"Failed to instantiate instance: {FIRST_CAR_NAME}."
+    )
 
     # Create a second car instance.
     car_instance_2 = car_prefab.instantiate(name=SECOND_CAR_NAME)
-    assert car_instance_2.is_valid(), f"Failed to instantiate instance: {SECOND_CAR_NAME}."
+    assert car_instance_2.is_valid(), (
+        f"Failed to instantiate instance: {SECOND_CAR_NAME}."
+    )
 
     # Focus on the first car instance.
     car_instance_1.container_entity.focus_on_owning_prefab()
 
     # Delete the tire entity in the front wheel instance in the first car instance.
-    wheel_container_entities_in_car_instance_1 = car_instance_1.get_direct_child_entities()
-    filtered_wheel_list = list(filter(lambda wheel_container_entity: \
-        wheel_container_entity.get_name() == FRONT_WHEEL_NAME, \
-        wheel_container_entities_in_car_instance_1))
-    assert len(filtered_wheel_list) == 1, f"Found {len(filtered_wheel_list)} {FRONT_WHEEL_NAME}. " \
-                                          f"Expected 1 {FRONT_WHEEL_NAME} in {FIRST_CAR_NAME} to delete."
+    wheel_container_entities_in_car_instance_1 = (
+        car_instance_1.get_direct_child_entities()
+    )
+    filtered_wheel_list = list(
+        filter(
+            lambda wheel_container_entity: wheel_container_entity.get_name()
+            == FRONT_WHEEL_NAME,
+            wheel_container_entities_in_car_instance_1,
+        )
+    )
+    assert len(filtered_wheel_list) == 1, (
+        f"Found {len(filtered_wheel_list)} {FRONT_WHEEL_NAME}. "
+        f"Expected 1 {FRONT_WHEEL_NAME} in {FIRST_CAR_NAME} to delete."
+    )
 
-    tire_entity_in_front_wheel_in_car_instance_1 = filtered_wheel_list[0].get_children()[0]
+    tire_entity_in_front_wheel_in_car_instance_1 = filtered_wheel_list[
+        0
+    ].get_children()[0]
     tire_entity_in_front_wheel_in_car_instance_1.delete()
 
     # Wait till prefab propagation finishes before validating deletion.
@@ -111,16 +137,24 @@ def DeleteEntity_UnderNestedInstance():
     prefab_test_utils.validate_child_count_for_named_editor_entity(BACK_WHEEL_NAME, 1)
 
     # Focus on first wheel instance in first car. Deleted tire entity should appear in Prefab Edit Mode.
-    front_wheel_container_entities = EditorEntity.find_editor_entities([FRONT_WHEEL_NAME])
-    filtered_front_wheel_list = list(filter(lambda front_wheel: \
-        front_wheel.get_parent_id() == car_instance_1.container_entity.id, \
-        front_wheel_container_entities))
-    assert len(filtered_front_wheel_list) == 1, f"Found {len(filtered_front_wheel_list)} {FRONT_WHEEL_NAME}. " \
-                                                f"Expected 1 {FRONT_WHEEL_NAME} in {FIRST_CAR_NAME} to focus on."
+    front_wheel_container_entities = EditorEntity.find_editor_entities(
+        [FRONT_WHEEL_NAME]
+    )
+    filtered_front_wheel_list = list(
+        filter(
+            lambda front_wheel: front_wheel.get_parent_id()
+            == car_instance_1.container_entity.id,
+            front_wheel_container_entities,
+        )
+    )
+    assert len(filtered_front_wheel_list) == 1, (
+        f"Found {len(filtered_front_wheel_list)} {FRONT_WHEEL_NAME}. "
+        f"Expected 1 {FRONT_WHEEL_NAME} in {FIRST_CAR_NAME} to focus on."
+    )
     front_wheel_in_car_instance_1 = filtered_front_wheel_list[0]
 
     front_wheel_in_car_instance_1.focus_on_owning_prefab()
-    PrefabWaiter.wait_for_propagation() # propagate source template changes after focusing on
+    PrefabWaiter.wait_for_propagation()  # propagate source template changes after focusing on
 
     prefab_test_utils.check_entity_children_count(front_wheel_in_car_instance_1.id, 1)
 
@@ -130,4 +164,5 @@ def DeleteEntity_UnderNestedInstance():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(DeleteEntity_UnderNestedInstance)

@@ -9,16 +9,15 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     asset_filtered = (
         "Asset was filtered to in the Asset Browser",
-        "Failed to filter to the expected asset"
+        "Failed to filter to the expected asset",
     )
     asset_type_filtered = (
         "Expected asset type was filtered to in the Asset Browser",
-        "Failed to filter to the expected asset type"
+        "Failed to filter to the expected asset type",
     )
 
 
 def AssetBrowser_SearchFiltering():
-
     import pyside_utils
 
     @pyside_utils.wrap_async
@@ -62,7 +61,9 @@ def AssetBrowser_SearchFiltering():
         import editor_python_test_tools.hydra_editor_utils as hydra
         from editor_python_test_tools.utils import Report
 
-        def verify_files_appeared(model, allowed_asset_extensions, parent_index=QtCore.QModelIndex()):
+        def verify_files_appeared(
+            model, allowed_asset_extensions, parent_index=QtCore.QModelIndex()
+        ):
             indexes = [parent_index]
             while len(indexes) > 0:
                 parent_index = indexes.pop(0)
@@ -71,7 +72,10 @@ def AssetBrowser_SearchFiltering():
                     cur_data = cur_index.data(Qt.DisplayRole)
                     if (
                         "." in cur_data
-                        and (cur_data.lower().split(".")[-1] not in allowed_asset_extensions)
+                        and (
+                            cur_data.lower().split(".")[-1]
+                            not in allowed_asset_extensions
+                        )
                         and not cur_data[-1] == ")"
                     ):
                         Report.info(f"Incorrect file found: {cur_data}")
@@ -87,7 +91,9 @@ def AssetBrowser_SearchFiltering():
         asset_browser_open = general.is_pane_visible("Asset Browser")
         if not asset_browser_open:
             Report.info("Opening Asset Browser")
-            action = pyside_utils.get_action_for_menu_path(editor_window, "Tools", "Asset Browser")
+            action = pyside_utils.get_action_for_menu_path(
+                editor_window, "Tools", "Asset Browser"
+            )
             action.trigger()
         else:
             Report.info("Asset Browser is already open")
@@ -96,7 +102,9 @@ def AssetBrowser_SearchFiltering():
 
         # 3) Switch to list view, type the name of an asset in the search bar and make sure it is filtered to and selectable
         asset_browser = editor_window.findChild(QtWidgets.QDockWidget, "Asset Browser")
-        tree_view_button = asset_browser.findChild(QtWidgets.QToolButton, "m_treeViewButton")
+        tree_view_button = asset_browser.findChild(
+            QtWidgets.QToolButton, "m_treeViewButton"
+        )
         tree_view_button.click()
         general.idle_wait(1.0)
         search_bar = asset_browser.findChild(QtWidgets.QLineEdit, "textSearch")
@@ -107,16 +115,24 @@ def AssetBrowser_SearchFiltering():
         search_bar.setText("Cedar.fbx")
         general.idle_wait(0.5)
 
-        asset_browser_tree = asset_browser.findChild(QtWidgets.QTreeView, "m_assetBrowserTreeViewWidget")
-        found = await pyside_utils.wait_for_condition(lambda: pyside_utils.find_child_by_pattern(asset_browser_tree, "cedar.fbx"), 5.0)
+        asset_browser_tree = asset_browser.findChild(
+            QtWidgets.QTreeView, "m_assetBrowserTreeViewWidget"
+        )
+        found = await pyside_utils.wait_for_condition(
+            lambda: pyside_utils.find_child_by_pattern(asset_browser_tree, "cedar.fbx"),
+            5.0,
+        )
         if found:
-            model_index = pyside_utils.find_child_by_pattern(asset_browser_tree, "cedar.fbx")
+            model_index = pyside_utils.find_child_by_pattern(
+                asset_browser_tree, "cedar.fbx"
+            )
         else:
             Report.result(Tests.asset_filtered, found)
         asset_browser_tree.scrollTo(model_index)
         pyside_utils.item_view_index_mouse_click(asset_browser_tree, model_index)
         is_filtered = await pyside_utils.wait_for_condition(
-            lambda: asset_browser_tree.currentIndex() == model_index, 5.0)
+            lambda: asset_browser_tree.currentIndex() == model_index, 5.0
+        )
         Report.result(Tests.asset_filtered, is_filtered)
 
         # 4) Click the "X" in the search bar.
@@ -124,26 +140,47 @@ def AssetBrowser_SearchFiltering():
         clear_search.click()
 
         # 5) Select an asset type to filter by (Animation)
-        tool_button = asset_browser.findChild(QtWidgets.QToolButton, "assetTypeSelector")
+        tool_button = asset_browser.findChild(
+            QtWidgets.QToolButton, "assetTypeSelector"
+        )
         pyside_utils.click_button_async(tool_button)
-        line_edit = tool_button.findChildren(QtWidgets.QLineEdit, "filteredSearchWidget")[0]
+        line_edit = tool_button.findChildren(
+            QtWidgets.QLineEdit, "filteredSearchWidget"
+        )[0]
         line_edit.setText("Animation")
         tree = tool_button.findChildren(QtWidgets.QTreeView)[0]
-        animation_model_index = await pyside_utils.wait_for_child_by_pattern(tree, "Animation")
+        animation_model_index = await pyside_utils.wait_for_child_by_pattern(
+            tree, "Animation"
+        )
         tree.model().setData(animation_model_index, 2, Qt.CheckStateRole)
         general.idle_wait(1.0)
         # check asset types after clicking on Animation filter
-        asset_type_filter = verify_files_appeared(asset_browser_tree.model(), ["i_caf", "fbx", "xml", "animgraph", "motionset", "actor", "motion"])
+        asset_type_filter = verify_files_appeared(
+            asset_browser_tree.model(),
+            ["i_caf", "fbx", "xml", "animgraph", "motionset", "actor", "motion"],
+        )
         Report.result(Tests.asset_type_filtered, asset_type_filter)
 
         # 6) Add additional filter(FileTag) from the filter menu
         line_edit.setText("FileTag")
-        filetag_model_index = await pyside_utils.wait_for_child_by_pattern(tree, "FileTag")
+        filetag_model_index = await pyside_utils.wait_for_child_by_pattern(
+            tree, "FileTag"
+        )
         tree.model().setData(filetag_model_index, 2, Qt.CheckStateRole)
         general.idle_wait(1.0)
         # check asset types after clicking on FileTag filter
         more_types_filtered = verify_files_appeared(
-                asset_browser_tree.model(), ["i_caf", "fbx", "xml", "animgraph", "motionset", "filetag", "actor", "motion"]
+            asset_browser_tree.model(),
+            [
+                "i_caf",
+                "fbx",
+                "xml",
+                "animgraph",
+                "motionset",
+                "filetag",
+                "actor",
+                "motion",
+            ],
         )
         Report.result(Tests.asset_type_filtered, more_types_filtered)
 
@@ -151,7 +188,9 @@ def AssetBrowser_SearchFiltering():
         filter_layout = asset_browser.findChild(QtWidgets.QFrame, "containerLayout")
 
         animation_close_button = filter_layout.children()[4]
-        first_close_button = animation_close_button.findChild(QtWidgets.QPushButton, "closeTag")
+        first_close_button = animation_close_button.findChild(
+            QtWidgets.QPushButton, "closeTag"
+        )
         first_close_button.click()
         general.idle_wait(1.0)
         # check asset types after removing Animation filter
@@ -160,7 +199,9 @@ def AssetBrowser_SearchFiltering():
 
         # 8) Remove all of the filter asset types from the list of filters
         filetag_close_button = filter_layout.children()[3]
-        second_close_button = filetag_close_button.findChild(QtWidgets.QPushButton, "closeTag")
+        second_close_button = filetag_close_button.findChild(
+            QtWidgets.QPushButton, "closeTag"
+        )
         second_close_button.click()
 
         # Click off of the Asset Browser filter window to close it
@@ -175,6 +216,6 @@ def AssetBrowser_SearchFiltering():
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(AssetBrowser_SearchFiltering)

@@ -58,7 +58,9 @@ def ScriptCanvasTools_Toggle_OpenCloseSuccess():
     import azlmbr.legacy.general as general
 
     def click_menu_option(window, option_text):
-        action = pyside_utils.find_child_by_pattern(window, {"text": option_text, "type": QtWidgets.QAction})
+        action = pyside_utils.find_child_by_pattern(
+            window, {"text": option_text, "type": QtWidgets.QAction}
+        )
         action.trigger()
 
     def find_pane(window, pane_name):
