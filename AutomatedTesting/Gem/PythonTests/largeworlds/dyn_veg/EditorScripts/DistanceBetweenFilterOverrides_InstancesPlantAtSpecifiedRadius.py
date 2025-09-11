@@ -9,19 +9,19 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     initial_instance_counts = (
         "Initial instance counts are as expected",
-        "Unexpected number of initial instances found"
+        "Unexpected number of initial instances found",
     )
     instance_counts_1m = (
         "Instance counts with 1 meters between instances are as expected",
-        "Unexpected number of instances found with 1 meters between instances"
+        "Unexpected number of instances found with 1 meters between instances",
     )
     instance_counts_2m = (
         "Instance counts with 2 meters between instances are as expected",
-        "Unexpected number of instances found with 2 meters between instances"
+        "Unexpected number of instances found with 2 meters between instances",
     )
     instance_counts_16m = (
         "Instance counts with 16 meters between instances are as expected",
-        "Unexpected number of instances found with 16 meters between instances"
+        "Unexpected number of instances found with 16 meters between instances",
     )
 
 
@@ -69,53 +69,116 @@ def DistanceBetweenFilterOverrides_InstancesPlantAtSpecifiedRadius():
 
     # 2) Create a new entity with required vegetation area components
     spawner_center_point = math.Vector3(520.0, 520.0, 32.0)
-    cube_asset_path = os.path.join("testdata", "multi-mat_fbx", "multi-mat_1m_cube.fbx.azmodel")
-    cube_prefab = dynveg.create_temp_mesh_prefab(cube_asset_path, "DistanceBetween_1m_cube2")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", spawner_center_point, 16.0, 16.0, 16.0,
-                                                               cube_prefab)
+    cube_asset_path = os.path.join(
+        "testdata", "multi-mat_fbx", "multi-mat_1m_cube.fbx.azmodel"
+    )
+    cube_prefab = dynveg.create_temp_mesh_prefab(
+        cube_asset_path, "DistanceBetween_1m_cube2"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", spawner_center_point, 16.0, 16.0, 16.0, cube_prefab
+    )
 
     # 3) Create a surface to plant on
     surface_center_point = math.Vector3(512.0, 512.0, 32.0)
-    dynveg.create_surface_entity("Planting Surface", surface_center_point, 128.0, 128.0, 1.0)
+    dynveg.create_surface_entity(
+        "Planting Surface", surface_center_point, 128.0, 128.0, 1.0
+    )
 
     # 4) Add a Vegetation System Settings Level component and set Sector Point Snap Mode to Center
-    veg_system_settings_component = hydra.add_level_component("Vegetation System Settings")
-    editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", veg_system_settings_component,
-                                 'Configuration|Area System Settings|Sector Point Snap Mode', 1)
-    editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", veg_system_settings_component,
-                                 'Configuration|Area System Settings|Sector Point Density', 16)
+    veg_system_settings_component = hydra.add_level_component(
+        "Vegetation System Settings"
+    )
+    editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "SetComponentProperty",
+        veg_system_settings_component,
+        "Configuration|Area System Settings|Sector Point Snap Mode",
+        1,
+    )
+    editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "SetComponentProperty",
+        veg_system_settings_component,
+        "Configuration|Area System Settings|Sector Point Density",
+        16,
+    )
 
     # 5) Add a Vegetation Distance Between Filter, toggle overrides on both the component and descriptor,
     # and verify initial instance counts are accurate
     spawner_entity.add_component("Vegetation Distance Between Filter")
     spawner_entity.get_set_test(3, "Configuration|Allow Per-Item Overrides", True)
-    spawner_entity.get_set_test(2, "Configuration|Embedded Assets|[0]|Distance Between Filter (Radius)|Override Enabled", True)
+    spawner_entity.get_set_test(
+        2,
+        "Configuration|Embedded Assets|[0]|Distance Between Filter (Radius)|Override Enabled",
+        True,
+    )
     num_expected = 16 * 16
-    initial_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id, num_expected), 5.0)
+    initial_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.initial_instance_counts, initial_success)
 
     # 6) Change Radius Min to 1.0, refresh, and verify instance counts are accurate
-    spawner_entity.get_set_test(2, "Configuration|Embedded Assets|[0]|Distance Between Filter (Radius)|Radius Min", 1.0)
-    point_a_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(instance_query_point_a, 0.5, 1), 5.0)
-    point_b_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(instance_query_point_b, 0.5, 0), 5.0)
-    point_c_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(instance_query_point_c, 0.5, 1), 5.0)
-    Report.result(Tests.instance_counts_1m, point_a_success and point_b_success and point_c_success)
+    spawner_entity.get_set_test(
+        2,
+        "Configuration|Embedded Assets|[0]|Distance Between Filter (Radius)|Radius Min",
+        1.0,
+    )
+    point_a_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(instance_query_point_a, 0.5, 1), 5.0
+    )
+    point_b_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(instance_query_point_b, 0.5, 0), 5.0
+    )
+    point_c_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(instance_query_point_c, 0.5, 1), 5.0
+    )
+    Report.result(
+        Tests.instance_counts_1m,
+        point_a_success and point_b_success and point_c_success,
+    )
 
     # 7) Change Radius Min to 2.0, refresh, and verify instance counts are accurate
-    spawner_entity.get_set_test(2, "Configuration|Embedded Assets|[0]|Distance Between Filter (Radius)|Radius Min", 2.0)
-    point_a_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(instance_query_point_a, 0.5, 1), 5.0)
-    point_b_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(instance_query_point_b, 0.5, 0), 5.0)
-    point_c_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(instance_query_point_c, 0.5, 0), 5.0)
-    Report.result(Tests.instance_counts_2m, point_a_success and point_b_success and point_c_success)
+    spawner_entity.get_set_test(
+        2,
+        "Configuration|Embedded Assets|[0]|Distance Between Filter (Radius)|Radius Min",
+        2.0,
+    )
+    point_a_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(instance_query_point_a, 0.5, 1), 5.0
+    )
+    point_b_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(instance_query_point_b, 0.5, 0), 5.0
+    )
+    point_c_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(instance_query_point_c, 0.5, 0), 5.0
+    )
+    Report.result(
+        Tests.instance_counts_2m,
+        point_a_success and point_b_success and point_c_success,
+    )
 
     # 8) Change Radius Min to 16.0, refresh, and verify instance counts are accurate, only a single instance should plant
-    spawner_entity.get_set_test(2, "Configuration|Embedded Assets|[0]|Distance Between Filter (Radius)|Radius Min", 16.0)
+    spawner_entity.get_set_test(
+        2,
+        "Configuration|Embedded Assets|[0]|Distance Between Filter (Radius)|Radius Min",
+        16.0,
+    )
     num_expected_instances = 1
-    final_check_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id, num_expected_instances), 5.0)
+    final_check_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected_instances
+        ),
+        5.0,
+    )
     Report.result(Tests.instance_counts_16m, final_check_success)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(DistanceBetweenFilterOverrides_InstancesPlantAtSpecifiedRadius)

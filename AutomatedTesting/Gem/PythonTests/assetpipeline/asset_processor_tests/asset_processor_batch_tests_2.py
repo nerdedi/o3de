@@ -38,15 +38,21 @@ targetProjects = ["AutomatedTesting"]
 @pytest.fixture
 def local_resources(request, workspace, ap_setup_fixture):
     # Test-level asset folder. Directory contains a subfolder for each test (i.e. C1234567)
-    ap_setup_fixture["tests_dir"] = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..',
-                                                                 "asset_processor_tests"))
+    ap_setup_fixture["tests_dir"] = os.path.abspath(
+        os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "..", "asset_processor_tests"
+        )
+    )
 
 
-def run_and_check_output(workspace, project, error_expected, error_search_terms, platform=None):
+def run_and_check_output(
+    workspace, project, error_expected, error_search_terms, platform=None
+):
     # Capture AP Batch Console Output
     ap_batch_output = asset_processor_utils.assetprocessorbatch_check_output(
-        workspace, project, platform, log_info=True)
-    ap_batch_output = [line.decode('utf-8') for line in ap_batch_output]
+        workspace, project, platform, log_info=True
+    )
+    ap_batch_output = [line.decode("utf-8") for line in ap_batch_output]
 
     # Check for error in output
     if error_expected:
@@ -69,9 +75,13 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
     @pytest.mark.assetpipeline
     @pytest.mark.test_case_id("C3594360")
     @pytest.mark.test_case_id("C3688013")
-    @pytest.mark.SUITE_sandbox(reason="Disabling flaky test, replacing with a more deterministic version")
+    @pytest.mark.SUITE_sandbox(
+        reason="Disabling flaky test, replacing with a more deterministic version"
+    )
     # fmt:off
-    def test_AllSupportedPlatforms_FastScanWorks_FasterThanFullScan(self, workspace, asset_processor, ap_setup_fixture):
+    def test_AllSupportedPlatforms_FastScanWorks_FasterThanFullScan(
+        self, workspace, asset_processor, ap_setup_fixture
+    ):
         # fmt:on
         """
         Tests that fast scan mode can be used and is faster than full scan mode.
@@ -88,7 +98,10 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
 
         # Prepare the test environment.
         env = ap_setup_fixture
-        source_dir, _ = asset_processor.prepare_test_environment(env["tests_dir"], "test_AllSupportedPlatforms_FastScanWorks_FasterThanFullScan")
+        source_dir, _ = asset_processor.prepare_test_environment(
+            env["tests_dir"],
+            "test_AllSupportedPlatforms_FastScanWorks_FasterThanFullScan",
+        )
         assets_name = "manyfiles_forscanning.zip"
         test_assets_zip = os.path.join(source_dir, assets_name)
         destination_path = source_dir
@@ -101,7 +114,9 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         assert asset_processor.batch_process(fastscan=True), "AP batch full scan failed"
 
         # Run with fast scan disabled, to measure the time it takes to perform a slow scan.
-        assert asset_processor.batch_process(fastscan=False), "AP batch full scan failed"
+        assert asset_processor.batch_process(fastscan=False), (
+            "AP batch full scan failed"
+        )
 
         log = APLogParser(workspace.paths.ap_batch_log())
 
@@ -109,7 +124,9 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         full_scan_analysis = log.runs[-1]["Full Analysis"]
 
         logger.info(f"First scan time: {full_scan_time}")
-        logger.info(f" - full analysis required on {full_scan_analysis[0]} / {full_scan_analysis[1]} files")
+        logger.info(
+            f" - full analysis required on {full_scan_analysis[0]} / {full_scan_analysis[1]} files"
+        )
 
         assert asset_processor.batch_process(fastscan=True)
 
@@ -118,10 +135,14 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         fast_scan_analysis = log.runs[-1]["Full Analysis"]
 
         logger.info(f"Fast scan time: {fast_scan_time}")
-        logger.info(f" - full analysis required on {fast_scan_analysis[0]} / {fast_scan_analysis[1]} files")
+        logger.info(
+            f" - full analysis required on {fast_scan_analysis[0]} / {fast_scan_analysis[1]} files"
+        )
 
         assert full_scan_time > fast_scan_time, "Fast scan was slower that full scan"
-        assert full_scan_analysis[0] > fast_scan_analysis[0], "Full scan did not process more assets than fast scan"
+        assert full_scan_analysis[0] > fast_scan_analysis[0], (
+            "Full scan did not process more assets than fast scan"
+        )
 
     @pytest.mark.test_case_id("C4874121")
     @pytest.mark.BAT
@@ -129,7 +150,8 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
     @pytest.mark.parametrize("clear_type", ["rewrite", "delete_asset", "delete_dir"])
     @pytest.mark.SUITE_sandbox(reason="Disabling flaky test")
     def test_AllSupportedPlatforms_DeleteBadAssets_BatchFailedJobsCleared(
-            self, workspace, request, ap_setup_fixture, asset_processor,  clear_type):
+        self, workspace, request, ap_setup_fixture, asset_processor, clear_type
+    ):
         """
         Tests the ability of Asset Processor to recover from processing of bad assets by removing them from scan folder
 
@@ -149,7 +171,9 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         asset_processor.prepare_test_environment(env["tests_dir"], "TestAssets")
         # Ensure that the project is built in cache
         asset_processor.batch_process()
-        test_dir = asset_processor.add_scan_folder(os.path.join(workspace.project, "TestAssets", "multiple_corrupted_prefab"))
+        test_dir = asset_processor.add_scan_folder(
+            os.path.join(workspace.project, "TestAssets", "multiple_corrupted_prefab")
+        )
         # Setup End #
 
         # Ensure that the test file failed to process
@@ -190,7 +214,9 @@ class TestsAssetProcessorBatch_Windows(object):
     @pytest.mark.test_case_id("C1564068")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    def test_WindowsPlatforms_RunAPBatchAndConnectGui_RunsWithoutEditor(self, asset_processor):
+    def test_WindowsPlatforms_RunAPBatchAndConnectGui_RunsWithoutEditor(
+        self, asset_processor
+    ):
         """
         Verify the AP batch and Gui can run and process assets independent of the Editor
         We do not want or need to kill running Editors here as they can be involved in other tests
@@ -208,7 +234,11 @@ class TestsAssetProcessorBatch_Windows(object):
         asset_processor.create_temp_asset_root()
         # Start the processor
         # using -ap_disableAssetTreeView=true to skip the UI building of the Asset Tree for this test
-        asset_processor.gui_process(quitonidle=False, connect_to_ap=True, extra_params=['-ap_disableAssetTreeView=true'])
+        asset_processor.gui_process(
+            quitonidle=False,
+            connect_to_ap=True,
+            extra_params=["-ap_disableAssetTreeView=true"],
+        )
         asset_processor.stop()
 
         # fmt:off
@@ -216,12 +246,13 @@ class TestsAssetProcessorBatch_Windows(object):
             "AP Batch failed to complete in the required time."
         # fmt:on
 
-
     @pytest.mark.test_case_id("C1591341")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
     # fmt:off
-    def test_WindowsPlatforms_BatchProcessUnknownPlatform_UnknownPlatformMessageInLog(self, asset_processor):
+    def test_WindowsPlatforms_BatchProcessUnknownPlatform_UnknownPlatformMessageInLog(
+        self, asset_processor
+    ):
         # fmt:on
         """
         Request a run for an invalid platform
@@ -233,8 +264,11 @@ class TestsAssetProcessorBatch_Windows(object):
         3. Check that asset processor returns an Error notifying the user that the invalid platform is not supported
         """
         asset_processor.create_temp_asset_root()
-        error_search_terms = 'AssetProcessor: Error: The list of enabled platforms in the settings registry does not contain platform ' \
-                             '"notaplatform"'
+        error_search_terms = (
+            "AssetProcessor: Error: The list of enabled platforms in the settings registry does not contain platform "
+            '"notaplatform"'
+        )
         # Run APBatch expecting it to fail
-        asset_processor.run_and_check_output(True, error_search_terms, platforms='notaplatform')
-
+        asset_processor.run_and_check_output(
+            True, error_search_terms, platforms="notaplatform"
+        )
