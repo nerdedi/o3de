@@ -31,7 +31,10 @@ def EditEntity_UnderNestedInstance():
     ---- Wheel_Entity
     """
 
-    from editor_python_test_tools.editor_entity_utils import EditorEntity, EditorComponent
+    from editor_python_test_tools.editor_entity_utils import (
+        EditorEntity,
+        EditorComponent,
+    )
     from editor_python_test_tools.prefab_utils import Prefab
     from editor_python_test_tools.wait_utils import PrefabWaiter
     from pathlib import Path
@@ -45,14 +48,18 @@ def EditEntity_UnderNestedInstance():
 
     prefab_test_utils.open_base_tests_level()
 
-    WHEEL_PREFAB_FILE_NAME = Path(__file__).stem + '_wheel_prefab'
-    MOTORCYCLE_PREFAB_FILE_NAME = Path(__file__).stem + '_motorcycle_prefab'
+    WHEEL_PREFAB_FILE_NAME = Path(__file__).stem + "_wheel_prefab"
+    MOTORCYCLE_PREFAB_FILE_NAME = Path(__file__).stem + "_motorcycle_prefab"
     CREATION_POSITION = azlmbr.math.Vector3(0.0, 0.0, 0.0)
     UPDATED_POSITION = azlmbr.math.Vector3(10.0, 0.0, 0.0)
 
     # Create a wheel prefab/instance from a wheel entity
-    wheel_entity = EditorEntity.create_editor_entity_at(CREATION_POSITION, "Wheel_Entity")
-    wheel_prefab, wheel_instance_1 = Prefab.create_prefab([wheel_entity], WHEEL_PREFAB_FILE_NAME)
+    wheel_entity = EditorEntity.create_editor_entity_at(
+        CREATION_POSITION, "Wheel_Entity"
+    )
+    wheel_prefab, wheel_instance_1 = Prefab.create_prefab(
+        [wheel_entity], WHEEL_PREFAB_FILE_NAME
+    )
     wheel_entity = wheel_instance_1.get_direct_child_entities()[0]
 
     # Focus on the new instance and add a component, then focus back on the level prefab
@@ -66,7 +73,9 @@ def EditEntity_UnderNestedInstance():
 
     # Create a motorcycle prefab with two wheel instances. Also creates first motorcycle instance
     motorcycle_prefab, motorcycle_instance_1 = Prefab.create_prefab(
-        [wheel_instance_1.container_entity, wheel_instance_2.container_entity], MOTORCYCLE_PREFAB_FILE_NAME)
+        [wheel_instance_1.container_entity, wheel_instance_2.container_entity],
+        MOTORCYCLE_PREFAB_FILE_NAME,
+    )
 
     # Create a second motorcycle instance
     motorcycle_instance_2 = motorcycle_prefab.instantiate()
@@ -84,11 +93,18 @@ def EditEntity_UnderNestedInstance():
 
     # Change the position of the focused motorcycle's front wheel entity, and add another component as overrides.
     get_transform_component_outcome = editor.EditorComponentAPIBus(
-        bus.Broadcast, "GetComponentOfType", front_wheel_entity.id, globals.property.EditorTransformComponentTypeId
+        bus.Broadcast,
+        "GetComponentOfType",
+        front_wheel_entity.id,
+        globals.property.EditorTransformComponentTypeId,
     )
-    entity_transform_component = EditorComponent(globals.property.EditorTransformComponentTypeId)
+    entity_transform_component = EditorComponent(
+        globals.property.EditorTransformComponentTypeId
+    )
     entity_transform_component.id = get_transform_component_outcome.GetValue()
-    hydra.set_component_property_value(entity_transform_component.id, "Values|Translate", UPDATED_POSITION)
+    hydra.set_component_property_value(
+        entity_transform_component.id, "Values|Translate", UPDATED_POSITION
+    )
     front_wheel_entity.add_component("Comment")
 
     PrefabWaiter.wait_for_propagation()
@@ -109,18 +125,28 @@ def EditEntity_UnderNestedInstance():
 
     # Instance 1, which is already in focus
     prefab_test_utils.validate_expected_override_status(front_wheel_entity, True)
-    prefab_test_utils.validate_expected_components(front_wheel_entity, expected_components=["Mesh", "Comment"])
+    prefab_test_utils.validate_expected_components(
+        front_wheel_entity, expected_components=["Mesh", "Comment"]
+    )
     prefab_test_utils.validate_expected_override_status(back_wheel_entity, True)
-    prefab_test_utils.validate_expected_components(back_wheel_entity, expected_components=["Mesh"],
-                                                   unexpected_components=["Comment"])
+    prefab_test_utils.validate_expected_components(
+        back_wheel_entity,
+        expected_components=["Mesh"],
+        unexpected_components=["Comment"],
+    )
 
     # Focus instance 2, and validate
     motorcycle_instance_2.container_entity.focus_on_owning_prefab()
     front_wheel_entity_2 = motorcycle_instance_2.get_child_entity_by_name("Front_Wheel")
-    prefab_test_utils.validate_expected_components(front_wheel_entity_2, expected_components=["Mesh", "Comment"])
+    prefab_test_utils.validate_expected_components(
+        front_wheel_entity_2, expected_components=["Mesh", "Comment"]
+    )
     back_wheel_entity_2 = motorcycle_instance_2.get_child_entity_by_name("Back_Wheel")
-    prefab_test_utils.validate_expected_components(back_wheel_entity_2, expected_components=["Mesh"],
-                                                   unexpected_components=["Comment"])
+    prefab_test_utils.validate_expected_components(
+        back_wheel_entity_2,
+        expected_components=["Mesh"],
+        unexpected_components=["Comment"],
+    )
     prefab_test_utils.validate_expected_override_status(front_wheel_entity_2, True)
     prefab_test_utils.validate_expected_override_status(back_wheel_entity_2, True)
 
@@ -138,10 +164,16 @@ def EditEntity_UnderNestedInstance():
     for back_wheel in back_wheels:
         back_wheel.validate_world_translate_position(CREATION_POSITION)
 
-    prefab_test_utils.validate_expected_components(front_wheel_entity, expected_components=["Mesh"],
-                                                   unexpected_components=["Comment"])
-    prefab_test_utils.validate_expected_components(back_wheel_entity, expected_components=["Mesh"],
-                                                   unexpected_components=["Comment"])
+    prefab_test_utils.validate_expected_components(
+        front_wheel_entity,
+        expected_components=["Mesh"],
+        unexpected_components=["Comment"],
+    )
+    prefab_test_utils.validate_expected_components(
+        back_wheel_entity,
+        expected_components=["Mesh"],
+        unexpected_components=["Comment"],
+    )
 
     # Redo the override
     general.redo()  # Redo the transform override
@@ -164,7 +196,9 @@ def EditEntity_UnderNestedInstance():
     # Validate the revert. All wheel entities should now have the initial name "Wheel_Entity" and be at the
     # initial position.
     wheels = EditorEntity.find_editor_entities(["Wheel_Entity"])
-    assert len(wheels) == 4, f"Expected to find a total of four wheels. Found {len(wheels)}"
+    assert len(wheels) == 4, (
+        f"Expected to find a total of four wheels. Found {len(wheels)}"
+    )
     for wheel in wheels:
         wheel.validate_world_translate_position(CREATION_POSITION)
         prefab_test_utils.validate_expected_override_status(wheel, False)
@@ -172,4 +206,5 @@ def EditEntity_UnderNestedInstance():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(EditEntity_UnderNestedInstance)

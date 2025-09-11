@@ -9,15 +9,15 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     gradient_entity_created = (
         "Successfully created Gradient entity",
-        "Failed to create Gradient entity"
+        "Failed to create Gradient entity",
     )
     instance_count = (
         "Found the expected number of instances",
-        "Found an unexpected number of instances"
+        "Found an unexpected number of instances",
     )
     instances_properly_scaled = (
         "All instances scaled within appropriate range",
-        "Found instances scaled outside of the appropriate range"
+        "Found instances scaled outside of the appropriate range",
     )
 
 
@@ -72,12 +72,20 @@ def ScaleModifier_InstancesProperlyScale():
         # Check the initial instance count
         num_expected = 20 * 20
         success = helper.wait_for_condition(
-            lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id, num_expected), 5.0)
+            lambda: dynveg.validate_instance_count_in_entity_shape(
+                spawner_entity.id, num_expected
+            ),
+            5.0,
+        )
         Report.critical_result(Tests.instance_count, success)
 
         # Validate scale values of instances
-        box = azlmbr.shape.ShapeComponentRequestsBus(bus.Event, 'GetEncompassingAabb', entity.id)
-        instances = areasystem.AreaSystemRequestBus(bus.Broadcast, 'GetInstancesInAabb', box)
+        box = azlmbr.shape.ShapeComponentRequestsBus(
+            bus.Event, "GetEncompassingAabb", entity.id
+        )
+        instances = areasystem.AreaSystemRequestBus(
+            bus.Broadcast, "GetInstancesInAabb", box
+        )
         for instance in instances:
             if min_scale <= instance.scale <= max_scale:
                 return True
@@ -92,10 +100,15 @@ def ScaleModifier_InstancesProperlyScale():
     # 2) Create a new entity with components Vegetation Layer Spawner, Vegetation Asset List, Box Shape and
     # Vegetation Scale Modifier
     entity_position = math.Vector3(512.0, 512.0, 32.0)
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "ScaleMod_PinkFlower")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", entity_position, 16.0, 16.0, 16.0,
-                                                               pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "ScaleMod_PinkFlower"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", entity_position, 16.0, 16.0, 16.0, pink_flower_prefab
+    )
     spawner_entity.add_component("Vegetation Scale Modifier")
 
     # Create a surface to plant on and add a Vegetation Debugger Level component to allow refreshes
@@ -107,21 +120,32 @@ def ScaleModifier_InstancesProperlyScale():
     gradient_entity.create_entity(
         entity_position,
         ["Random Noise Gradient", "Gradient Transform Modifier", "Box Shape"],
-        parent_id=spawner_entity.id
+        parent_id=spawner_entity.id,
     )
     Report.critical_result(Tests.gradient_entity_created, gradient_entity.id.IsValid())
 
     # 4) Pin the Random Noise entity to the Gradient Entity Id field for the Gradient group.
-    spawner_entity.get_set_test(3, "Configuration|Gradient|Gradient Entity Id", gradient_entity.id)
+    spawner_entity.get_set_test(
+        3, "Configuration|Gradient|Gradient Entity Id", gradient_entity.id
+    )
 
     # 5) Set Range Min/Max on the Vegetation Scale Modifier component to diff values, and verify instance scale is
     # within bounds
-    Report.result(Tests.instances_properly_scaled, set_and_validate_scale(spawner_entity, 2.0, 4.0))
-    Report.result(Tests.instances_properly_scaled, set_and_validate_scale(spawner_entity, 12.0, 40.0))
-    Report.result(Tests.instances_properly_scaled, set_and_validate_scale(spawner_entity, 0.5, 2.5))
+    Report.result(
+        Tests.instances_properly_scaled,
+        set_and_validate_scale(spawner_entity, 2.0, 4.0),
+    )
+    Report.result(
+        Tests.instances_properly_scaled,
+        set_and_validate_scale(spawner_entity, 12.0, 40.0),
+    )
+    Report.result(
+        Tests.instances_properly_scaled,
+        set_and_validate_scale(spawner_entity, 0.5, 2.5),
+    )
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(ScaleModifier_InstancesProperlyScale)

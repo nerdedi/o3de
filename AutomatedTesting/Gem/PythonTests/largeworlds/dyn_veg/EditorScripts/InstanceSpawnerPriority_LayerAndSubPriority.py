@@ -9,15 +9,15 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     initial_instance_count = (
         "Initial instance count is as expected",
-        "Initial instance count does not match expected results"
+        "Initial instance count does not match expected results",
     )
     layer_priority_instance_count = (
         "Instance count is as expected after updating layer priorities",
-        "Instance count does not match expected results after updating layer priorities"
+        "Instance count does not match expected results after updating layer priorities",
     )
     sub_priority_instance_count = (
         "Instance count is as expected after updating sub priorities",
-        "Instance count does not match expected results after updating sub priorities"
+        "Instance count does not match expected results after updating sub priorities",
     )
 
 
@@ -68,52 +68,86 @@ def InstanceSpawnerPriority_LayerAndSubPriority():
 
     # 2) Create overlapping areas: 1 instance spawner area, and 1 blocker area
     spawner_center_point = math.Vector3(508.0, 508.0, 32.0)
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "Priority_PinkFlower")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", spawner_center_point, 16.0, 16.0, 1.0,
-                                                               pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "Priority_PinkFlower"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", spawner_center_point, 16.0, 16.0, 1.0, pink_flower_prefab
+    )
     blocker_center_point = math.Vector3(516.0, 516.0, 32.0)
-    blocker_entity = dynveg.create_blocker_area("Instance Blocker", blocker_center_point, 16.0, 16.0, 1.0)
+    blocker_entity = dynveg.create_blocker_area(
+        "Instance Blocker", blocker_center_point, 16.0, 16.0, 1.0
+    )
 
     # 3) Create a surface for planting
     planting_surface_center_point = math.Vector3(512.0, 512.0, 32.0)
-    dynveg.create_surface_entity("Planting Surface", planting_surface_center_point, 64.0, 64.0, 1.0)
+    dynveg.create_surface_entity(
+        "Planting Surface", planting_surface_center_point, 64.0, 64.0, 1.0
+    )
 
     # Set instances to spawn on a center snap point to avoid unexpected instances around the edges of the box shape
-    veg_system_settings_component = hydra.add_level_component("Vegetation System Settings")
-    editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", veg_system_settings_component,
-                                 'Configuration|Area System Settings|Sector Point Snap Mode', 1)
+    veg_system_settings_component = hydra.add_level_component(
+        "Vegetation System Settings"
+    )
+    editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "SetComponentProperty",
+        veg_system_settings_component,
+        "Configuration|Area System Settings|Sector Point Snap Mode",
+        1,
+    )
 
     # 4) Validate the expected instance count with initial setup. GetAreaProductCount is used as
     # GetInstanceCountInAabb does not filter out blocked instances
-    num_expected = (20 * 20) - (10 * 10)  # 20 instances per 16m per side minus 1 blocked quadrant
-    result = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                            num_expected), 5.0)
+    num_expected = (20 * 20) - (
+        10 * 10
+    )  # 20 instances per 16m per side minus 1 blocked quadrant
+    result = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.initial_instance_count, result)
 
     # 5) Change the Instance Spawner area to a higher layer priority than the Instance Blocker
-    blocker_entity.get_set_test(0, 'Configuration|Layer Priority', 0)
+    blocker_entity.get_set_test(0, "Configuration|Layer Priority", 0)
 
     # 6) Validate the expected instance count with changed area priorities
-    num_expected = 20 * 20  # 20 instances per 16m per side, no instances should be blocked at this point
-    result = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                            num_expected), 5.0)
+    num_expected = (
+        20 * 20
+    )  # 20 instances per 16m per side, no instances should be blocked at this point
+    result = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.layer_priority_instance_count, result)
 
     # 7) Revert Layer Priority changes so both areas are equal, and change Sub Priority to a higher value on the
     # Instance Spawner area
-    blocker_entity.get_set_test(0, 'Configuration|Layer Priority', 1)
-    spawner_entity.get_set_test(0, 'Configuration|Sub Priority', 100)
-    blocker_entity.get_set_test(0, 'Configuration|Sub Priority', 1)
+    blocker_entity.get_set_test(0, "Configuration|Layer Priority", 1)
+    spawner_entity.get_set_test(0, "Configuration|Sub Priority", 100)
+    blocker_entity.get_set_test(0, "Configuration|Sub Priority", 1)
 
     # 8) Validate the expected instance count with changed area priorities
-    num_expected = 20 * 20  # 20 instances per 16m per side, no instances should be blocked at this point
-    result = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                            num_expected), 5.0)
+    num_expected = (
+        20 * 20
+    )  # 20 instances per 16m per side, no instances should be blocked at this point
+    result = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.sub_priority_instance_count, result)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(InstanceSpawnerPriority_LayerAndSubPriority)
