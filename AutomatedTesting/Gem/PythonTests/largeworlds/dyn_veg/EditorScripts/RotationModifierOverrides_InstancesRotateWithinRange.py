@@ -9,15 +9,15 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     gradient_entity_created = (
         "Successfully created new Gradient entity",
-        "Failed to create Gradient entity"
+        "Failed to create Gradient entity",
     )
     non_override_rotation_check = (
         "Instances are rotated at expected values after initial setup",
-        "Found unexpectedly rotated instances after initial setup"
+        "Found unexpectedly rotated instances after initial setup",
     )
     override_rotation_check = (
         "Instances are rotated at expected values after configuring overrides",
-        "Found unexpectedly rotated instances after configuring overrides"
+        "Found unexpectedly rotated instances after configuring overrides",
     )
 
 
@@ -65,11 +65,15 @@ def RotationModifierOverrides_InstancesRotateWithinRange():
     def validate_rotation(center, radius, num_expected, rot_degrees_vector):
         # Verify that every instance in the given area has the expected rotation.
         box = math.Aabb_CreateCenterRadius(center, radius)
-        instances = areasystem.AreaSystemRequestBus(bus.Broadcast, 'GetInstancesInAabb', box)
+        instances = areasystem.AreaSystemRequestBus(
+            bus.Broadcast, "GetInstancesInAabb", box
+        )
         num_found = len(instances)
         num_validated = 0
-        result = (num_found == num_expected)
-        Report.info(f'instance count validation: {result} (found={num_found}, expected={num_expected})')
+        result = num_found == num_expected
+        Report.info(
+            f"instance count validation: {result} (found={num_found}, expected={num_expected})"
+        )
         expected_rotation = math.Quaternion()
         expected_rotation.SetFromEulerDegrees(rot_degrees_vector)
         for instance in instances:
@@ -77,7 +81,9 @@ def RotationModifierOverrides_InstancesRotateWithinRange():
             result = result and is_close
             if is_close:
                 num_validated = num_validated + 1
-        Report.info(f'instance rotation validation: {result} (num_validated={num_validated})')
+        Report.info(
+            f"instance rotation validation: {result} (num_validated={num_validated})"
+        )
         return result
 
     # 1) Open an existing simple level
@@ -86,10 +92,15 @@ def RotationModifierOverrides_InstancesRotateWithinRange():
 
     # 2) Create vegetation entity and add components
     entity_position = math.Vector3(512.0, 512.0, 32.0)
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "RotMod_PinkFlower2")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", entity_position, 16.0, 16.0, 16.0,
-                                                               pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "RotMod_PinkFlower2"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", entity_position, 16.0, 16.0, 16.0, pink_flower_prefab
+    )
     spawner_entity.add_component("Vegetation Rotation Modifier")
     # Our default vegetation settings places 20 instances per 16 meters, so we expect 20 * 20 total instances.
     num_expected = 20 * 20
@@ -102,42 +113,60 @@ def RotationModifierOverrides_InstancesRotateWithinRange():
 
     # 3) Set properties for the rotation override on the descriptor, but don't set "allow overrides" on the rotation
     # modifier yet
-    spawner_entity.get_set_test(2, "Configuration|Embedded Assets|[0]|Rotation Modifier|Override Enabled", True)
-    spawner_entity.get_set_test(2, "Configuration|Embedded Assets|[0]|Rotation Modifier|Min Z", -70.0)
-    spawner_entity.get_set_test(2, "Configuration|Embedded Assets|[0]|Rotation Modifier|Max Z", 30.0)
+    spawner_entity.get_set_test(
+        2, "Configuration|Embedded Assets|[0]|Rotation Modifier|Override Enabled", True
+    )
+    spawner_entity.get_set_test(
+        2, "Configuration|Embedded Assets|[0]|Rotation Modifier|Min Z", -70.0
+    )
+    spawner_entity.get_set_test(
+        2, "Configuration|Embedded Assets|[0]|Rotation Modifier|Max Z", 30.0
+    )
 
     # 4) Create new child entity with a constant gradient
     constant_gradient_value = 0.25
     gradient_entity = hydra.Entity("Gradient Entity")
     gradient_entity.create_entity(
-        entity_position,
-        ["Constant Gradient"],
-        parent_id=spawner_entity.id
+        entity_position, ["Constant Gradient"], parent_id=spawner_entity.id
     )
     Report.critical_result(Tests.gradient_entity_created, gradient_entity.id.IsValid())
     gradient_entity.get_set_test(0, "Configuration|Value", constant_gradient_value)
 
     # 5) Pin the child entity to vegetation entity as gradient entity id
-    spawner_entity.get_set_test(3, "Configuration|Rotation Z|Gradient|Gradient Entity Id", gradient_entity.id)
+    spawner_entity.get_set_test(
+        3, "Configuration|Rotation Z|Gradient|Gradient Entity Id", gradient_entity.id
+    )
 
     # 6) Verify that without per-item overrides, the rotation matches the one calculated from the default rotation range
     general.idle_wait(1.0)
     rotation_degrees = get_expected_rotation(-180.0, 180.0, constant_gradient_value)
     rotation_success = helper.wait_for_condition(
-        lambda: validate_rotation(entity_position, area_radius, num_expected, math.Vector3(0.0, 0.0, rotation_degrees)),
-        5.0)
+        lambda: validate_rotation(
+            entity_position,
+            area_radius,
+            num_expected,
+            math.Vector3(0.0, 0.0, rotation_degrees),
+        ),
+        5.0,
+    )
     Report.result(Tests.non_override_rotation_check, rotation_success)
 
     # 7) Verify that with per-item overrides enabled, the rotation matches the one calculated from the override range.
     spawner_entity.get_set_test(3, "Configuration|Allow Per-Item Overrides", True)
     rotation_degrees = get_expected_rotation(-70.0, 30.0, constant_gradient_value)
     rotation_success = helper.wait_for_condition(
-        lambda: validate_rotation(entity_position, area_radius, num_expected, math.Vector3(0.0, 0.0, rotation_degrees)),
-        5.0)
+        lambda: validate_rotation(
+            entity_position,
+            area_radius,
+            num_expected,
+            math.Vector3(0.0, 0.0, rotation_degrees),
+        ),
+        5.0,
+    )
     Report.result(Tests.override_rotation_check, rotation_success)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(RotationModifierOverrides_InstancesRotateWithinRange)

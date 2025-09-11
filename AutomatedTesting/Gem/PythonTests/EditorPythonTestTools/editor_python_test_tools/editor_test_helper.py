@@ -60,7 +60,9 @@ class EditorTestHelper:
         # Give everything a second to initialize
         general.idle_wait(1.0)
         general.update_viewport()
-        general.idle_wait(0.5)  # half a second is more than enough for updating the viewport.
+        general.idle_wait(
+            0.5
+        )  # half a second is more than enough for updating the viewport.
         self.original_settings = settings.get_misc_editor_settings()
         self.helpers_visible = general.is_helpers_shown()
         self.viewport_size = general.get_viewport_size()
@@ -88,7 +90,9 @@ class EditorTestHelper:
             new_viewport_width = int(new_viewport_size.x)
             new_viewport_height = int(new_viewport_size.y)
 
-            if (new_viewport_width != screen_width) or (new_viewport_height != screen_height):
+            if (new_viewport_width != screen_width) or (
+                new_viewport_height != screen_height
+            ):
                 self.log(
                     f"set_viewport_size failed - expected ({screen_width},{screen_height}), got ({new_viewport_width},{new_viewport_height})"
                 )
@@ -148,7 +152,9 @@ class EditorTestHelper:
         Report.info(self.log_prefix + log_line)
 
     # isclose:  Compares two floating-point values for "nearly-equal"
-    def isclose(self, a: float, b: float, rel_tol: float = 1e-9, abs_tol: float = 0.0) -> bool:
+    def isclose(
+        self, a: float, b: float, rel_tol: float = 1e-9, abs_tol: float = 0.0
+    ) -> bool:
         return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
     # Create a new empty level
@@ -164,7 +170,12 @@ class EditorTestHelper:
     ) -> bool:
         self.log(f"Creating level {level_name} from template '{template_name}'")
         result = general.create_level_no_prompt(
-            template_name, level_name, heightmap_resolution, heightmap_meters_per_pixel, terrain_texture_resolution, use_terrain
+            template_name,
+            level_name,
+            heightmap_resolution,
+            heightmap_meters_per_pixel,
+            terrain_texture_resolution,
+            use_terrain,
         )
 
         # Result codes are ECreateLevelResult defined in CryEdit.h
@@ -191,7 +202,9 @@ class EditorTestHelper:
 
     def open_level(self, level_name: str, bypass_viewport_resize: bool = False) -> bool:
         # Open the level non-interactively
-        if self.editor_already_running and (general.get_current_level_name() == level_name):
+        if self.editor_already_running and (
+            general.get_current_level_name() == level_name
+        ):
             self.log(f"Level {level_name} already open")
             result = True
         else:
@@ -208,7 +221,13 @@ class EditorTestHelper:
 
     # Take Screenshot
     def take_viewport_screenshot(
-        self, posX: float, posY: float, posZ: float, rotX: float, rotY: float, rotZ: float
+        self,
+        posX: float,
+        posY: float,
+        posZ: float,
+        rotX: float,
+        rotY: float,
+        rotZ: float,
     ) -> None:
         # Set our camera position / rotation and wait for the Editor to acknowledge it
         general.set_current_view_position(posX, posY, posZ)
@@ -240,7 +259,9 @@ class EditorTestHelper:
         general.idle_wait_frames(1)
         self.critical_result(success_message, not general.is_in_game_mode())
 
-    def critical_result(self, success_message: str, condition: bool, fast_fail_message: str = None) -> None:
+    def critical_result(
+        self, success_message: str, condition: bool, fast_fail_message: str = None
+    ) -> None:
         """
         if condition is False we will fail fast
 
@@ -291,7 +312,9 @@ class EditorTestHelper:
 
                 ret = function()
                 if not isinstance(ret, bool):
-                    raise TypeError("return value for wait_for_condition function must be a bool")
+                    raise TypeError(
+                        "return value for wait_for_condition function must be a bool"
+                    )
                 if ret:
                     return True
 

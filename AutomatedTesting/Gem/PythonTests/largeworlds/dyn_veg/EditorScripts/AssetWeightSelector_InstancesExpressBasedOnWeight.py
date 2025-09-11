@@ -9,11 +9,11 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     highest_weight_instance_count = (
         "Found the expected number of instances when sorting by highest weight",
-        "Found an unexpected number of instances when sorting by highest weight"
+        "Found an unexpected number of instances when sorting by highest weight",
     )
     lowest_weight_instance_count = (
         "Found the expected number of instances when sorting by lowest weight",
-        "Found an unexpected number of instances when sorting by lowest weight"
+        "Found an unexpected number of instances when sorting by lowest weight",
     )
 
 
@@ -65,50 +65,74 @@ def AssetWeightSelector_InstancesExpressBasedOnWeight():
     # 2) Create a new instance spawner entity with multiple Prefab Instance Spawner descriptors, one set to a
     # valid prefab entity, and one set to None
     spawner_center_point = math.Vector3(512.0, 512.0, 32.0)
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "AssetWeight_PinkFlower")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", spawner_center_point, 16.0, 16.0, 16.0,
-                                                               pink_flower_prefab)
-    desc_asset = hydra.get_component_property_value(spawner_entity.components[2],
-                                                    "Configuration|Embedded Assets")[0]
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "AssetWeight_PinkFlower"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", spawner_center_point, 16.0, 16.0, 16.0, pink_flower_prefab
+    )
+    desc_asset = hydra.get_component_property_value(
+        spawner_entity.components[2], "Configuration|Embedded Assets"
+    )[0]
     desc_list = [desc_asset, desc_asset]
     spawner_entity.get_set_test(2, "Configuration|Embedded Assets", desc_list)
-    spawner_entity.get_set_test(2, "Configuration|Embedded Assets|[1]|Instance|Prefab Asset", None)
+    spawner_entity.get_set_test(
+        2, "Configuration|Embedded Assets|[1]|Instance|Prefab Asset", None
+    )
 
     # Add an Asset Weight Selector component to the spawner entity
     spawner_entity.add_component("Vegetation Asset Weight Selector")
 
     # 3) Create a planting surface
-    dynveg.create_surface_entity("Planting Surface", spawner_center_point, 32.0, 32.0, 1.0)
+    dynveg.create_surface_entity(
+        "Planting Surface", spawner_center_point, 32.0, 32.0, 1.0
+    )
 
     # 4) Create a child entity of the spawner entity with a Constant Gradient component
     components_to_add = ["Constant Gradient"]
     gradient_entity = hydra.Entity("Gradient Entity")
-    gradient_entity.create_entity(spawner_center_point, components_to_add, parent_id=spawner_entity.id)
+    gradient_entity.create_entity(
+        spawner_center_point, components_to_add, parent_id=spawner_entity.id
+    )
 
     # 5) Pin the Constant Gradient to the Vegetation Asset Weight Selector
-    spawner_entity.get_set_test(3, 'Configuration|Gradient|Gradient Entity Id', gradient_entity.id)
+    spawner_entity.get_set_test(
+        3, "Configuration|Gradient|Gradient Entity Id", gradient_entity.id
+    )
 
     # 6) Set the first descriptor weight to a higher value and toggle off Allow Empty Assets on the Layer Spawner
     # component
-    spawner_entity.get_set_test(2, 'Configuration|Embedded Assets|[0]|Weight', 50)
-    spawner_entity.get_set_test(0, 'Configuration|Allow Empty Assets', False)
+    spawner_entity.get_set_test(2, "Configuration|Embedded Assets|[0]|Weight", 50)
+    spawner_entity.get_set_test(0, "Configuration|Allow Empty Assets", False)
 
     # 7) Query for expected instances with default settings. We should have 0 instances with default Constant
     # Gradient setup sorting by higher weight first
     num_expected = 0
-    initial_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id, num_expected), 5.0)
+    initial_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.highest_weight_instance_count, initial_success)
 
     # 8) Sort by lowest weight first, and verify instance counts. We should now have 400 instances as the highest
     # priority instance won't be allowed to claim space due to "Allow Empty Assets" being False
-    spawner_entity.get_set_test(3, 'Configuration|Sort By Weight', 1)
+    spawner_entity.get_set_test(3, "Configuration|Sort By Weight", 1)
     num_expected = 20 * 20
-    final_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id, num_expected), 5.0)
+    final_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.lowest_weight_instance_count, final_success)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(AssetWeightSelector_InstancesExpressBasedOnWeight)

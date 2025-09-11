@@ -9,23 +9,20 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     lc_tool_opened = (
         "Landscape Canvas tool opened",
-        "Failed to open Landscape Canvas tool"
+        "Failed to open Landscape Canvas tool",
     )
-    new_graph_created = (
-        "Successfully created new graph",
-        "Failed to create new graph"
-    )
+    new_graph_created = ("Successfully created new graph", "Failed to create new graph")
     graph_registered = (
         "Graph registered with Landscape Canvas",
-        "Failed to register graph"
+        "Failed to register graph",
     )
     component_added = (
         "Expected component is present on entity",
-        "Expected component was not found on entity"
+        "Expected component was not found on entity",
     )
     component_removed = (
         "Expected component was removed from entity",
-        "Component is unexpectedly still present on entity"
+        "Component is unexpectedly still present on entity",
     )
 
 
@@ -67,34 +64,44 @@ def TerrainExtenderNodes_ComponentEntitySync():
     hydra.open_base_level()
 
     # Open Landscape Canvas tool and verify
-    general.open_pane('Landscape Canvas')
-    Report.critical_result(Tests.lc_tool_opened, general.is_pane_visible('Landscape Canvas'))
+    general.open_pane("Landscape Canvas")
+    Report.critical_result(
+        Tests.lc_tool_opened, general.is_pane_visible("Landscape Canvas")
+    )
 
     # Create a new graph in Landscape Canvas
-    newGraphId = graph.AssetEditorRequestBus(bus.Event, 'CreateNewGraph', editorId)
+    newGraphId = graph.AssetEditorRequestBus(bus.Event, "CreateNewGraph", editorId)
     Report.critical_result(Tests.new_graph_created, newGraphId is not None)
 
     # Make sure the graph we created is in Landscape Canvas
-    graph_registered = graph.AssetEditorRequestBus(bus.Event, 'ContainsGraph', editorId, newGraphId)
+    graph_registered = graph.AssetEditorRequestBus(
+        bus.Event, "ContainsGraph", editorId, newGraphId
+    )
     Report.result(Tests.graph_registered, graph_registered)
 
     # Listen for entity creation notifications so we can check if the
     # proper components are added when we add nodes
     handler = editor.EditorEntityContextNotificationBusHandler()
     handler.connect()
-    handler.add_callback('OnEditorEntityCreated', onEntityCreated)
+    handler.add_callback("OnEditorEntityCreated", onEntityCreated)
 
     # Extender mapping with the key being the node name and the value is the
     # expected Component(s) that should be added to the layer Entity for that wrapped node
     # The heightfield colliders are a special case where they add each-other to make
     # the workflow easier since they depend on each-other
     extenders = {
-        'TerrainMacroMaterialNode': ['Terrain Macro Material'],
-        'PhysXHeightfieldColliderNode': ['PhysX Heightfield Collider', 'Terrain Physics Heightfield Collider'],
-        'TerrainPhysicsHeightfieldColliderNode': ['Terrain Physics Heightfield Collider', 'PhysX Heightfield Collider'],
-        'TerrainSurfaceGradientListNode': ['Terrain Surface Gradient List'],
-        'TerrainHeightGradientListNode': ['Terrain Height Gradient List'],
-        'TerrainSurfaceMaterialsListNode': ['Terrain Surface Materials List'],
+        "TerrainMacroMaterialNode": ["Terrain Macro Material"],
+        "PhysXHeightfieldColliderNode": [
+            "PhysX Heightfield Collider",
+            "Terrain Physics Heightfield Collider",
+        ],
+        "TerrainPhysicsHeightfieldColliderNode": [
+            "Terrain Physics Heightfield Collider",
+            "PhysX Heightfield Collider",
+        ],
+        "TerrainSurfaceGradientListNode": ["Terrain Surface Gradient List"],
+        "TerrainHeightGradientListNode": ["Terrain Height Gradient List"],
+        "TerrainSurfaceMaterialsListNode": ["Terrain Surface Materials List"],
     }
 
     # Retrieve a mapping of the TypeIds for all the components
@@ -104,35 +111,39 @@ def TerrainExtenderNodes_ComponentEntitySync():
         componentNames += extenders[name]
     componentTypeIds = hydra.get_component_type_id_map(componentNames)
 
-    areas = [
-        'TerrainLayerSpawnerNode'
-    ]
+    areas = ["TerrainLayerSpawnerNode"]
 
     # Add/remove all our supported extender nodes to the Layer Areas and check if the appropriate
     # Components are added/removed to the wrapper node's Entity
-    newGraph = graph.GraphManagerRequestBus(bus.Broadcast, 'GetGraph', newGraphId)
+    newGraph = graph.GraphManagerRequestBus(bus.Broadcast, "GetGraph", newGraphId)
     x = 10.0
     y = 10.0
     nodePosition = math.Vector2(x, y)
     for areaName in areas:
         success = True
         for extenderName in extenders:
-            areaNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(bus.Broadcast, 'CreateNodeForTypeName',
-                                                                        newGraph, areaName)
-            graph.GraphControllerRequestBus(bus.Event, 'AddNode', newGraphId, areaNode, nodePosition)
+            areaNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(
+                bus.Broadcast, "CreateNodeForTypeName", newGraph, areaName
+            )
+            graph.GraphControllerRequestBus(
+                bus.Event, "AddNode", newGraphId, areaNode, nodePosition
+            )
 
             # Add the wrapped node for the extender
-            extenderNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(bus.Broadcast,
-                                                                                'CreateNodeForTypeName', newGraph,
-                                                                                extenderName)
-            graph.GraphControllerRequestBus(bus.Event, 'WrapNode', newGraphId, areaNode, extenderNode)
+            extenderNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(
+                bus.Broadcast, "CreateNodeForTypeName", newGraph, extenderName
+            )
+            graph.GraphControllerRequestBus(
+                bus.Event, "WrapNode", newGraphId, areaNode, extenderNode
+            )
 
             # Check that the appropriate Component(s) were added when the extender node was added
             extenderComponents = extenders[extenderName]
             for extenderComponent in extenderComponents:
                 componentTypeId = componentTypeIds[extenderComponent]
-                success = success and editor.EditorComponentAPIBus(bus.Broadcast, 'HasComponentOfType', newEntityId,
-                                                                   componentTypeId)
+                success = success and editor.EditorComponentAPIBus(
+                    bus.Broadcast, "HasComponentOfType", newEntityId, componentTypeId
+                )
             Report.info(f"Component(s): {extenderComponents}")
             Report.result(Tests.component_added, success)
             if not success:
@@ -142,15 +153,20 @@ def TerrainExtenderNodes_ComponentEntitySync():
             # Only need to check that the first component was removed, because the special case
             # that adds multiple components will leave the additional
             componentTypeId = componentTypeIds[extenderComponents[0]]
-            graph.GraphControllerRequestBus(bus.Event, 'RemoveNode', newGraphId, extenderNode)
-            success = success and not editor.EditorComponentAPIBus(bus.Broadcast, 'HasComponentOfType', newEntityId,
-                                                                   componentTypeId)
+            graph.GraphControllerRequestBus(
+                bus.Event, "RemoveNode", newGraphId, extenderNode
+            )
+            success = success and not editor.EditorComponentAPIBus(
+                bus.Broadcast, "HasComponentOfType", newEntityId, componentTypeId
+            )
             Report.info(f"Component(s): {extenderComponents}")
             Report.result(Tests.component_removed, success)
             if not success:
                 break
 
-            graph.GraphControllerRequestBus(bus.Event, 'RemoveNode', newGraphId, areaNode)
+            graph.GraphControllerRequestBus(
+                bus.Event, "RemoveNode", newGraphId, areaNode
+            )
 
         if success:
             Report.info(f"{areaName} successfully added and removed all wrapped nodes")
@@ -160,6 +176,6 @@ def TerrainExtenderNodes_ComponentEntitySync():
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(TerrainExtenderNodes_ComponentEntitySync)
