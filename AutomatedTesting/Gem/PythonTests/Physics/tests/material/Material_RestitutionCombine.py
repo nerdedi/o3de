@@ -9,7 +9,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # Test Case Title : Verify that when two objects with different materials collide, the restitution combine works
 
 
-
 # fmt: off
 class Tests():
     enter_game_mode           = ("Entered game mode",                                    "Failed to enter game mode")
@@ -120,16 +119,24 @@ def Material_RestitutionCombine():
             self.set_gravity_enabled(False)
 
         def get_position(self):
-            return azlmbr.components.TransformBus(bus.Event, "GetWorldTranslation", self.id)
+            return azlmbr.components.TransformBus(
+                bus.Event, "GetWorldTranslation", self.id
+            )
 
         def get_velocity(self):
-            return azlmbr.physics.RigidBodyRequestBus(bus.Event, "GetLinearVelocity", self.id)
+            return azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "GetLinearVelocity", self.id
+            )
 
         def set_velocity(self, value):
-            return azlmbr.physics.RigidBodyRequestBus(bus.Event, "SetLinearVelocity", self.id, value)
+            return azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "SetLinearVelocity", self.id, value
+            )
 
         def set_gravity_enabled(self, value):
-            azlmbr.physics.RigidBodyRequestBus(bus.Event, "SetGravityEnabled", self.id, value)
+            azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "SetGravityEnabled", self.id, value
+            )
 
     def on_collision_begin(args):
         other_id = args[0]
@@ -146,7 +153,9 @@ def Material_RestitutionCombine():
             box.bounce_height = current_height
             return False
         else:
-            Report.info("Box {} reached {:.3f}M high".format(box.name, box.bounce_height))
+            Report.info(
+                "Box {} reached {:.3f}M high".format(box.name, box.bounce_height)
+            )
             return True
 
     def is_falling(box):
@@ -210,25 +219,37 @@ def Material_RestitutionCombine():
 
         # 5) Drop the box
         box.set_gravity_enabled(True)
-        Report.critical_result(box.fell_test, helper.wait_for_condition(lambda: is_falling(box), TIMEOUT))
+        Report.critical_result(
+            box.fell_test, helper.wait_for_condition(lambda: is_falling(box), TIMEOUT)
+        )
 
         # 6) Wait for the box to hit the ground
-        Report.result(box.hit_ramp_test, helper.wait_for_condition(lambda: box.hit_ramp, TIMEOUT))
+        Report.result(
+            box.hit_ramp_test, helper.wait_for_condition(lambda: box.hit_ramp, TIMEOUT)
+        )
 
         # 7) Measure the bounce height
-        Report.result(box.peaked_test, helper.wait_for_condition(lambda: reached_max_height(box), TIMEOUT))
+        Report.result(
+            box.peaked_test,
+            helper.wait_for_condition(lambda: reached_max_height(box), TIMEOUT),
+        )
 
         # Freeze the box so it does not interfere with the other boxes
         box.set_velocity(lymath.Vector3(0.0, 0.0, 0.0))
         box.set_gravity_enabled(False)
 
     # 8) Special case: assert that minimum and multiply bounce the same height
-    boxes_are_close = float_is_close(box_minimum.bounce_height, box_multiply.bounce_height, DISTANCE_TOLERANCE)
+    boxes_are_close = float_is_close(
+        box_minimum.bounce_height, box_multiply.bounce_height, DISTANCE_TOLERANCE
+    )
     Report.result(Tests.minimum_equals_multiply, boxes_are_close)
 
     # 9) Assert that greater coefficients result in higher bounces
     distance_ordered = (
-        boxes_are_close and box_minimum.bounce_height < box_average.bounce_height < box_maximum.bounce_height
+        boxes_are_close
+        and box_minimum.bounce_height
+        < box_average.bounce_height
+        < box_maximum.bounce_height
     )
     Report.result(Tests.distance_ordered, distance_ordered)
 
@@ -236,7 +257,7 @@ def Material_RestitutionCombine():
     helper.exit_game_mode(Tests.exit_game_mode)
 
 
-
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_RestitutionCombine)
