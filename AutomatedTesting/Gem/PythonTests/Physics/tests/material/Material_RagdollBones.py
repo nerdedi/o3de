@@ -10,7 +10,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # Test Case Title : Verify that Material can be assigned to Ragdoll Bones and they behave as per their material
 
 
-
 # fmt: off
 class Tests:
     enter_game_mode                      = ("Entered game mode",                                   "Failed to enter game mode")
@@ -85,7 +84,14 @@ def Material_RagdollBones():
             self.found_valid_test = found_valid_test
 
     class Ragdoll(Entity):
-        def __init__(self, name, found_valid_test, target_terrain, above_terrain_test, contacted_terrain_test):
+        def __init__(
+            self,
+            name,
+            found_valid_test,
+            target_terrain,
+            above_terrain_test,
+            contacted_terrain_test,
+        ):
             Entity.__init__(self, name, found_valid_test)
             self.target_terrain = target_terrain
             self.above_terrain_test = above_terrain_test
@@ -100,14 +106,20 @@ def Material_RagdollBones():
             self.handler.add_callback("OnCollisionBegin", self.on_collision_begin)
 
         def get_z_position(self):
-            z_position = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldZ", self.id)
+            z_position = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldZ", self.id
+            )
             return z_position
 
         # Set up collision detection with the terrain
         def on_collision_begin(self, args):
             other_id = args[0]
             if other_id.Equal(self.target_terrain.id):
-                Report.info("{} collision began with {}".format(self.name, self.target_terrain.name))
+                Report.info(
+                    "{} collision began with {}".format(
+                        self.name, self.target_terrain.name
+                    )
+                )
                 if not self.contacted_terrain:
                     self.hit_terrain_z = self.get_z_position()
                     self.contacted_terrain = True
@@ -142,11 +154,14 @@ def Material_RagdollBones():
         Report.critical_result(ragdoll.found_valid_test, ragdoll.id.IsValid())
 
         # 3) Check that each ragdoll is above the terrain
-        Report.critical_result(ragdoll.above_terrain_test, ragdoll.get_z_position() > TERRAIN_START_Z)
+        Report.critical_result(
+            ragdoll.above_terrain_test, ragdoll.get_z_position() > TERRAIN_START_Z
+        )
 
     # 4) Wait for the initial collision between the ragdolls and the terrain or timeout
     terrain_collision_detected = helper.wait_for_condition(
-        lambda: concrete_ragdoll.contacted_terrain and rubber_ragdoll.contacted_terrain, TIME_OUT_SECONDS
+        lambda: concrete_ragdoll.contacted_terrain and rubber_ragdoll.contacted_terrain,
+        TIME_OUT_SECONDS,
     )
     Report.critical_result(Tests.terrain_collision_detected, terrain_collision_detected)
     for ragdoll in ragdolls:
@@ -163,23 +178,32 @@ def Material_RagdollBones():
                     ragdoll.reached_max_bounce = True
         return concrete_ragdoll.reached_max_bounce and rubber_ragdoll.reached_max_bounce
 
-    helper.wait_for_condition(lambda: check_for_max_bounce_heights(ragdolls), TIME_OUT_SECONDS)
+    helper.wait_for_condition(
+        lambda: check_for_max_bounce_heights(ragdolls), TIME_OUT_SECONDS
+    )
     for ragdoll in ragdolls:
-        Report.info("{}'s maximum bounce height: {}".format(ragdoll.name, ragdoll.max_bounce_height))
+        Report.info(
+            "{}'s maximum bounce height: {}".format(
+                ragdoll.name, ragdoll.max_bounce_height
+            )
+        )
 
     # 6) Verify that the rubber ragdoll bounced higher than the concrete ragdoll
     Report.result(
-        Tests.rubber_ragdoll_bounced_higher, rubber_ragdoll.max_bounce_height > concrete_ragdoll.max_bounce_height
+        Tests.rubber_ragdoll_bounced_higher,
+        rubber_ragdoll.max_bounce_height > concrete_ragdoll.max_bounce_height,
     )
 
     # 7) Verify that each ragdoll bounced approximately to its expected maximum height
     Report.result(
         Tests.concrete_ragdoll_bounced_as_expected,
-        abs(concrete_ragdoll.max_bounce_height - CONCRETE_EXPECTED_MAX_BOUNCE_HEIGHT) < TOLERANCE,
+        abs(concrete_ragdoll.max_bounce_height - CONCRETE_EXPECTED_MAX_BOUNCE_HEIGHT)
+        < TOLERANCE,
     )
     Report.result(
         Tests.rubber_ragdoll_bounced_as_expected,
-        abs(rubber_ragdoll.max_bounce_height - RUBBER_EXPECTED_MAX_BOUNCE_HEIGHT) < TOLERANCE,
+        abs(rubber_ragdoll.max_bounce_height - RUBBER_EXPECTED_MAX_BOUNCE_HEIGHT)
+        < TOLERANCE,
     )
 
     # 8) Exit game mode and close editor
@@ -188,4 +212,5 @@ def Material_RagdollBones():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_RagdollBones)

@@ -9,23 +9,23 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     viewport_config_updated = (
         "Viewport is now configured for test",
-        "Failed to configure viewport for test"
+        "Failed to configure viewport for test",
     )
     first_viewport_active_instance_count = (
         "Expected number of instances found in left viewport",
-        "Unexpected number of instances found in left viewport"
+        "Unexpected number of instances found in left viewport",
     )
     second_viewport_inactive_instance_count = (
         "No instances found in right viewport",
-        "Unexpectedly found instances in right viewport while not active"
+        "Unexpectedly found instances in right viewport while not active",
     )
     first_viewport_inactive_instance_count = (
         "No instances found in left viewport",
-        "Unexpectedly found instances in left viewport while not active"
+        "Unexpectedly found instances in left viewport while not active",
     )
     second_viewport_active_instance_count = (
         "Expected number of instances found in right viewport",
-        "Unexpected number of instances found in right viewport"
+        "Unexpected number of instances found in right viewport",
     )
 
 
@@ -75,62 +75,111 @@ def LayerSpawner_InstancesRefreshUsingCorrectViewportCamera():
 
     # Change the Editor view to contain two viewports
     general.set_view_pane_layout(1)
-    get_view_pane_layout_success = helper.wait_for_condition(lambda: (general.get_view_pane_layout() == 1), 2)
-    get_viewport_count_success = helper.wait_for_condition(lambda: (general.get_viewport_count() == 2), 2)
-    Report.critical_result(Tests.viewport_config_updated, get_view_pane_layout_success and get_viewport_count_success)
+    get_view_pane_layout_success = helper.wait_for_condition(
+        lambda: (general.get_view_pane_layout() == 1), 2
+    )
+    get_viewport_count_success = helper.wait_for_condition(
+        lambda: (general.get_viewport_count() == 2), 2
+    )
+    Report.critical_result(
+        Tests.viewport_config_updated,
+        get_view_pane_layout_success and get_viewport_count_success,
+    )
 
     # Set the view in the first viewport to point down at the first box
     general.set_active_viewport(0)
     helper.wait_for_condition(lambda: general.get_active_viewport() == 0, 2)
-    general.set_current_view_position(first_entity_center_point.x, first_entity_center_point.y,
-                                      first_entity_center_point.z + 30.0)
+    general.set_current_view_position(
+        first_entity_center_point.x,
+        first_entity_center_point.y,
+        first_entity_center_point.z + 30.0,
+    )
     general.set_current_view_rotation(-85.0, 0.0, 0.0)
 
     # Set the view in the second viewport to point down at the second box
     general.set_active_viewport(1)
     helper.wait_for_condition(lambda: general.get_active_viewport() == 1, 2)
-    general.set_current_view_position(second_entity_center_point.x, second_entity_center_point.y,
-                                      second_entity_center_point.z + 30.0)
+    general.set_current_view_position(
+        second_entity_center_point.x,
+        second_entity_center_point.y,
+        second_entity_center_point.z + 30.0,
+    )
     general.set_current_view_rotation(-85.0, 0.0, 0.0)
 
     # Create the "flat surface" entities to use as our vegetation surfaces
-    dynveg.create_surface_entity("Surface 1", first_entity_center_point, box_size, box_size,
-                                                        surface_height)
-    dynveg.create_surface_entity("Surface 2", second_entity_center_point, box_size, box_size,
-                                                         surface_height)
+    dynveg.create_surface_entity(
+        "Surface 1", first_entity_center_point, box_size, box_size, surface_height
+    )
+    dynveg.create_surface_entity(
+        "Surface 2", second_entity_center_point, box_size, box_size, surface_height
+    )
 
     # Create the two vegetation areas
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "SpawnerViewportRefresh_PinkFlower")[0]
-    dynveg.create_temp_prefab_vegetation_area("Veg Area 1", first_entity_center_point, box_size, box_size,
-                                                                 box_size, pink_flower_prefab)
-    dynveg.create_temp_prefab_vegetation_area("Veg Area 2", second_entity_center_point, box_size, box_size,
-                                                                  box_size, pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "SpawnerViewportRefresh_PinkFlower"
+    )[0]
+    dynveg.create_temp_prefab_vegetation_area(
+        "Veg Area 1",
+        first_entity_center_point,
+        box_size,
+        box_size,
+        box_size,
+        pink_flower_prefab,
+    )
+    dynveg.create_temp_prefab_vegetation_area(
+        "Veg Area 2",
+        second_entity_center_point,
+        box_size,
+        box_size,
+        box_size,
+        pink_flower_prefab,
+    )
 
     # When the first viewport is active, the first area should be full of instances, and the second should be empty
     general.set_active_viewport(0)
     helper.wait_for_condition(lambda: general.get_active_viewport() == 0, 2)
-    viewport_0_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(first_entity_center_point,
-                                                                                        box_size / 2.0,
-                                                                                        filled_vegetation_area_instance_count), 5)
-    viewport_1_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(second_entity_center_point,
-                                                                                        box_size / 2.0, 0), 5)
+    viewport_0_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(
+            first_entity_center_point,
+            box_size / 2.0,
+            filled_vegetation_area_instance_count,
+        ),
+        5,
+    )
+    viewport_1_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(
+            second_entity_center_point, box_size / 2.0, 0
+        ),
+        5,
+    )
     Report.result(Tests.first_viewport_active_instance_count, viewport_0_success)
     Report.result(Tests.second_viewport_inactive_instance_count, viewport_1_success)
 
     # When the second viewport is active, the second area should be full of instances, and the first should be empty
     general.set_active_viewport(1)
     helper.wait_for_condition(lambda: general.get_active_viewport() == 1, 2)
-    viewport_0_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(first_entity_center_point,
-                                                                                        box_size / 2.0, 0), 5)
+    viewport_0_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(
+            first_entity_center_point, box_size / 2.0, 0
+        ),
+        5,
+    )
     Report.result(Tests.first_viewport_inactive_instance_count, viewport_0_success)
-    viewport_1_success = helper.wait_for_condition(lambda: dynveg.validate_instance_count(second_entity_center_point,
-                                                                                        box_size / 2.0,
-                                                                                        filled_vegetation_area_instance_count), 5)
+    viewport_1_success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count(
+            second_entity_center_point,
+            box_size / 2.0,
+            filled_vegetation_area_instance_count,
+        ),
+        5,
+    )
     Report.result(Tests.second_viewport_active_instance_count, viewport_1_success)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(LayerSpawner_InstancesRefreshUsingCorrectViewportCamera)

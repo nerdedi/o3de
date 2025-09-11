@@ -5,85 +5,82 @@ For complete copyright and license terms please see the LICENSE at the root of t
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
+
 class Tests:
-    creation_undo = (
-        "UNDO Entity creation success",
-        "P0: UNDO Entity creation failed")
-    creation_redo = (
-        "REDO Entity creation success",
-        "P0: REDO Entity creation failed")
+    creation_undo = ("UNDO Entity creation success", "P0: UNDO Entity creation failed")
+    creation_redo = ("REDO Entity creation success", "P0: REDO Entity creation failed")
     mesh_entity_creation = (
         "Mesh Entity successfully created",
-        "P0: Mesh Entity failed to be created")
+        "P0: Mesh Entity failed to be created",
+    )
     mesh_component_added = (
         "Entity has a Mesh component",
-        "P0: Entity failed to find Mesh component")
-    model_asset_specified = (
-        "Model Asset set",
-        "P0: Model Asset not set")
-    enter_game_mode = (
-        "Entered game mode",
-        "P0: Failed to enter game mode")
-    exit_game_mode = (
-        "Exited game mode",
-        "P0: Couldn't exit game mode")
-    is_visible = (
-        "Entity is visible",
-        "P0: Entity was not visible")
-    is_hidden = (
-        "Entity is hidden",
-        "P0: Entity was not hidden")
-    entity_deleted = (
-        "Entity deleted",
-        "P0: Entity was not deleted")
-    deletion_undo = (
-        "UNDO deletion success",
-        "P0: UNDO deletion failed")
-    deletion_redo = (
-        "REDO deletion success",
-        "P0: REDO deletion failed")
+        "P0: Entity failed to find Mesh component",
+    )
+    model_asset_specified = ("Model Asset set", "P0: Model Asset not set")
+    enter_game_mode = ("Entered game mode", "P0: Failed to enter game mode")
+    exit_game_mode = ("Exited game mode", "P0: Couldn't exit game mode")
+    is_visible = ("Entity is visible", "P0: Entity was not visible")
+    is_hidden = ("Entity is hidden", "P0: Entity was not hidden")
+    entity_deleted = ("Entity deleted", "P0: Entity was not deleted")
+    deletion_undo = ("UNDO deletion success", "P0: UNDO deletion failed")
+    deletion_redo = ("REDO deletion success", "P0: REDO deletion failed")
     mesh_sort_key = (
         "Mesh Sort key property set",
-        "P1: Mesh Sort key property not correctly set")
+        "P1: Mesh Sort key property not correctly set",
+    )
     mesh_ray_tracing = (
         "Mesh Use ray tracing property set",
-        "P1: Mesh Use ray tracing property not correctly set")
+        "P1: Mesh Use ray tracing property not correctly set",
+    )
     mesh_cubemap = (
         "Mesh Exclude from reflection cubemaps property set",
-        "P1: Mesh Exclude from reflection cubemaps property not correctly set")
+        "P1: Mesh Exclude from reflection cubemaps property not correctly set",
+    )
     mesh_forward_pass = (
         "Mesh Use Forward Pass IBL Specular property set",
-        "P1: Mesh Use Forward Pass IBL Specular property not correctly set")
+        "P1: Mesh Use Forward Pass IBL Specular property not correctly set",
+    )
     mesh_lod_type_screen_coverage = (
         "Mesh LOD type screen coverage set",
-        "P1: Mesh LOD type screen coverage not correctly set")
+        "P1: Mesh LOD type screen coverage not correctly set",
+    )
     mesh_lod_type_specific_lod = (
         "Mesh LOD type Specific LOD set",
-        "P1: Mesh LOD type Specific LOD not correctly set")
+        "P1: Mesh LOD type Specific LOD not correctly set",
+    )
     mesh_lod_type_default = (
         "Mesh LOD type default set",
-        "P1: Mesh LOD type default not correctly set")
+        "P1: Mesh LOD type default not correctly set",
+    )
     mesh_screen_coverage = (
         "Mesh Minimum Screen Coverage property set",
-        "P1: Mesh Minimum Screen Coverage property not correctly set")
+        "P1: Mesh Minimum Screen Coverage property not correctly set",
+    )
     mesh_quality_decay = (
         "Mesh Quality Decay Rate property set",
-        "P1: Mesh Quality Decay Rate property not correctly set")
+        "P1: Mesh Quality Decay Rate property not correctly set",
+    )
     mesh_lod_override = (
         "Mesh Lod Override property set",
-        "P1: Mesh Lod Override property property not correctly set")
+        "P1: Mesh Lod Override property property not correctly set",
+    )
     has_material = (
         "Mesh entity has a material component",
-        "P1: Mesh entity did not add a material component")
+        "P1: Mesh entity did not add a material component",
+    )
     mesh_component_removed = (
         "Mesh component removed successfully",
-        "P1: Mesh component was not correctly removed from the entity")
+        "P1: Mesh component was not correctly removed from the entity",
+    )
     model_asset_is_optimized = (
         "tube.fbx.azmodel has <= 66 vertices",
-        "P0: Model has not been fully optimized")
+        "P0: Model has not been fully optimized",
+    )
     model_different_bone_ids_same_position_should_weld_vertices = (
         "sameposition_differentboneIds_shouldnotweldvertices.fbx.azmodel has 48 vertices",
-        "P0: Vertices were welded when they shouldnt be")
+        "P0: Vertices were welded when they shouldnt be",
+    )
 
 
 def AtomEditorComponents_Mesh_AddedToEntity():
@@ -137,8 +134,7 @@ def AtomEditorComponents_Mesh_AddedToEntity():
     import azlmbr.bus
     from functools import partial
     import azlmbr.legacy.general as general
-    from Atom.atom_utils.atom_constants import (MESH_LOD_TYPE,
-                                                AtomComponentProperties)
+    from Atom.atom_utils.atom_constants import MESH_LOD_TYPE, AtomComponentProperties
     import pyside_utils
     from editor_python_test_tools.asset_utils import Asset
     from editor_python_test_tools.editor_entity_utils import EditorEntity
@@ -161,13 +157,17 @@ def AtomEditorComponents_Mesh_AddedToEntity():
             self.isModelReady = False
             # Connect to the MeshNotificationBus
             # Listen for notifications when entities are created/deleted
-            self.onModelReadyHandler = azlmbr.bus.NotificationHandler('MeshComponentNotificationBus')
+            self.onModelReadyHandler = azlmbr.bus.NotificationHandler(
+                "MeshComponentNotificationBus"
+            )
             self.onModelReadyHandler.connect(entityId)
-            self.onModelReadyHandler.add_callback('OnModelReady', self.on_model_ready)
+            self.onModelReadyHandler.add_callback("OnModelReady", self.on_model_ready)
 
             waitCondition = partial(self.model_is_ready_predicate)
 
-            mesh_component.set_component_property_value(AtomComponentProperties.mesh('Model Asset'), model_id)
+            mesh_component.set_component_property_value(
+                AtomComponentProperties.mesh("Model Asset"), model_id
+            )
             if TestHelper.wait_for_condition(waitCondition, 20.0):
                 return True
             else:
@@ -188,7 +188,8 @@ def AtomEditorComponents_Mesh_AddedToEntity():
         mesh_component = mesh_entity.add_component(AtomComponentProperties.mesh())
         Report.critical_result(
             Tests.mesh_component_added,
-            mesh_entity.has_component(AtomComponentProperties.mesh()))
+            mesh_entity.has_component(AtomComponentProperties.mesh()),
+        )
 
         # 3. UNDO the entity creation and component addition.
         # -> UNDO component addition.
@@ -215,12 +216,20 @@ def AtomEditorComponents_Mesh_AddedToEntity():
         Report.result(Tests.creation_redo, mesh_entity.exists())
 
         # 5. Set Mesh component asset property
-        model_path = os.path.join('testdata', 'objects', 'modelhotreload', 'sphere_5lods.fbx.azmodel')
+        model_path = os.path.join(
+            "testdata", "objects", "modelhotreload", "sphere_5lods.fbx.azmodel"
+        )
         model = Asset.find_asset_by_path(model_path)
-        mesh_component.set_component_property_value(AtomComponentProperties.mesh('Model Asset'), model.id)
-        Report.result(Tests.model_asset_specified,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Model Asset')) == model.id)
+        mesh_component.set_component_property_value(
+            AtomComponentProperties.mesh("Model Asset"), model.id
+        )
+        Report.result(
+            Tests.model_asset_specified,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Model Asset")
+            )
+            == model.id,
+        )
 
         # 6. Set Mesh component Sort Key property
         # This part of the test is currently disabled due to a bug.
@@ -232,84 +241,147 @@ def AtomEditorComponents_Mesh_AddedToEntity():
         #                   AtomComponentProperties.mesh('Sort Key')) == 23456789)
 
         # 7. Set Mesh component Use ray tracing property
-        mesh_component.set_component_property_value(AtomComponentProperties.mesh('Use ray tracing'), value=False)
-        Report.result(Tests.mesh_ray_tracing,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Use ray tracing')) is False)
+        mesh_component.set_component_property_value(
+            AtomComponentProperties.mesh("Use ray tracing"), value=False
+        )
+        Report.result(
+            Tests.mesh_ray_tracing,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Use ray tracing")
+            )
+            is False,
+        )
 
         # 8. Set Mesh component Exclude from reflection cubemaps property
         mesh_component.set_component_property_value(
-            AtomComponentProperties.mesh('Exclude from reflection cubemaps'), value=True)
-        Report.result(Tests.mesh_cubemap,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Exclude from reflection cubemaps')) is True)
+            AtomComponentProperties.mesh("Exclude from reflection cubemaps"), value=True
+        )
+        Report.result(
+            Tests.mesh_cubemap,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Exclude from reflection cubemaps")
+            )
+            is True,
+        )
 
         # 9. Set Mesh component Use Forward Pass IBL Specular property
         mesh_component.set_component_property_value(
-            AtomComponentProperties.mesh('Use Forward Pass IBL Specular'), value=True)
-        Report.result(Tests.mesh_forward_pass,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Use Forward Pass IBL Specular')) is True)
+            AtomComponentProperties.mesh("Use Forward Pass IBL Specular"), value=True
+        )
+        Report.result(
+            Tests.mesh_forward_pass,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Use Forward Pass IBL Specular")
+            )
+            is True,
+        )
 
         # 10. Set Mesh component LOD Type: Screen Coverage property
-        print(mesh_component.get_component_property_value(AtomComponentProperties.mesh('Lod Type')))
+        print(
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Lod Type")
+            )
+        )
         mesh_component.set_component_property_value(
-            AtomComponentProperties.mesh('Lod Type'), value=MESH_LOD_TYPE['screen coverage'])
-        Report.result(Tests.mesh_lod_type_screen_coverage,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Lod Type')) == MESH_LOD_TYPE['screen coverage'])
+            AtomComponentProperties.mesh("Lod Type"),
+            value=MESH_LOD_TYPE["screen coverage"],
+        )
+        Report.result(
+            Tests.mesh_lod_type_screen_coverage,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Lod Type")
+            )
+            == MESH_LOD_TYPE["screen coverage"],
+        )
 
         # 11. Set Mesh component Minimum Screen Coverage property
         mesh_component.set_component_property_value(
-            AtomComponentProperties.mesh('Minimum Screen Coverage'), value=1.0)
-        Report.result(Tests.mesh_screen_coverage,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Minimum Screen Coverage')) == 1.0)
+            AtomComponentProperties.mesh("Minimum Screen Coverage"), value=1.0
+        )
+        Report.result(
+            Tests.mesh_screen_coverage,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Minimum Screen Coverage")
+            )
+            == 1.0,
+        )
 
         # 12. Set Mesh component Quality Decay Rate property
         mesh_component.set_component_property_value(
-            AtomComponentProperties.mesh('Quality Decay Rate'), value=1.0)
-        Report.result(Tests.mesh_quality_decay,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Quality Decay Rate')) == 1.0)
+            AtomComponentProperties.mesh("Quality Decay Rate"), value=1.0
+        )
+        Report.result(
+            Tests.mesh_quality_decay,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Quality Decay Rate")
+            )
+            == 1.0,
+        )
 
         # 13. Set Mesh component LOD Type: Specific Lod property
         mesh_component.set_component_property_value(
-            AtomComponentProperties.mesh('Lod Type'), value=MESH_LOD_TYPE['specific lod'])
-        Report.result(Tests.mesh_lod_type_specific_lod,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Lod Type')) == MESH_LOD_TYPE['specific lod'])
+            AtomComponentProperties.mesh("Lod Type"),
+            value=MESH_LOD_TYPE["specific lod"],
+        )
+        Report.result(
+            Tests.mesh_lod_type_specific_lod,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Lod Type")
+            )
+            == MESH_LOD_TYPE["specific lod"],
+        )
 
         # 14. Set Mesh component Lod Override property
         mesh_component.set_component_property_value(
-            AtomComponentProperties.mesh('Lod Override'), value=2)
-        Report.result(Tests.mesh_lod_override,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Lod Override')) == 2)
+            AtomComponentProperties.mesh("Lod Override"), value=2
+        )
+        Report.result(
+            Tests.mesh_lod_override,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Lod Override")
+            )
+            == 2,
+        )
 
         # 15. Set Mesh component LOD Type: Default property
         mesh_component.set_component_property_value(
-            AtomComponentProperties.mesh('Lod Type'), value=MESH_LOD_TYPE['default'])
-        Report.result(Tests.mesh_lod_type_default,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Lod Type')) == MESH_LOD_TYPE['default'])
+            AtomComponentProperties.mesh("Lod Type"), value=MESH_LOD_TYPE["default"]
+        )
+        Report.result(
+            Tests.mesh_lod_type_default,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Lod Type")
+            )
+            == MESH_LOD_TYPE["default"],
+        )
 
         # 16. Set Mesh component Add Material Component and confirm a Material component added
         # Make sure the Entity Inspector is open and trigger the "Add Material Component" button
         general.open_pane("Inspector")
         editor_window = pyside_utils.get_editor_main_window()
         entity_inspector = editor_window.findChild(QtWidgets.QDockWidget, "Inspector")
-        add_material_component_button = pyside_utils.find_child_by_pattern(entity_inspector, "Add Material Component")
+        add_material_component_button = pyside_utils.find_child_by_pattern(
+            entity_inspector, "Add Material Component"
+        )
         add_material_component_button.click()
-        Report.result(Tests.has_material, mesh_entity.has_component(AtomComponentProperties.material()))
+        Report.result(
+            Tests.has_material,
+            mesh_entity.has_component(AtomComponentProperties.material()),
+        )
 
         # 17. Remove Mesh component then UNDO the remove
         mesh_component.remove()
         general.idle_wait_frames(1)
-        Report.result(Tests.mesh_component_removed, not mesh_entity.has_component(AtomComponentProperties.mesh()))
+        Report.result(
+            Tests.mesh_component_removed,
+            not mesh_entity.has_component(AtomComponentProperties.mesh()),
+        )
         general.undo()
         general.idle_wait_frames(1)
-        Report.result(Tests.mesh_component_added, mesh_entity.has_component(AtomComponentProperties.mesh()))
+        Report.result(
+            Tests.mesh_component_added,
+            mesh_entity.has_component(AtomComponentProperties.mesh()),
+        )
 
         # 18. Enter/Exit game mode.
         TestHelper.enter_game_mode(Tests.enter_game_mode)
@@ -326,30 +398,56 @@ def AtomEditorComponents_Mesh_AddedToEntity():
         Report.result(Tests.is_visible, mesh_entity.is_visible() is True)
 
         # 21. Test that vertex welding is functioning
-        model_path = os.path.join('testdata', 'objects', 'tube.fbx.azmodel')
+        model_path = os.path.join("testdata", "objects", "tube.fbx.azmodel")
         model = Asset.find_asset_by_path(model_path)
         onModelReadyHelper = OnModelReadyHelper()
-        onModelReadyHelper.wait_for_on_model_ready(mesh_entity.id, mesh_component, model.id)
-        Report.result(Tests.model_asset_specified,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Model Asset')) == model.id)
+        onModelReadyHelper.wait_for_on_model_ready(
+            mesh_entity.id, mesh_component, model.id
+        )
+        Report.result(
+            Tests.model_asset_specified,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Model Asset")
+            )
+            == model.id,
+        )
 
-        Report.result(Tests.model_asset_is_optimized,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Vertex Count LOD0')) <= 66)
+        Report.result(
+            Tests.model_asset_is_optimized,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Vertex Count LOD0")
+            )
+            <= 66,
+        )
 
         # 22. Test that vertices with the same position but different boneId's aren't unintentionally welded
-        model_path = os.path.join('testdata', 'objects', 'skinnedmesh', 'meshoptimization', 'sameposition_differentjointids_shouldnotweldvertices.fbx.azmodel')
+        model_path = os.path.join(
+            "testdata",
+            "objects",
+            "skinnedmesh",
+            "meshoptimization",
+            "sameposition_differentjointids_shouldnotweldvertices.fbx.azmodel",
+        )
         model = Asset.find_asset_by_path(model_path)
         onModelReadyHelper = OnModelReadyHelper()
-        onModelReadyHelper.wait_for_on_model_ready(mesh_entity.id, mesh_component, model.id)
-        Report.result(Tests.model_asset_specified,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Model Asset')) == model.id)
+        onModelReadyHelper.wait_for_on_model_ready(
+            mesh_entity.id, mesh_component, model.id
+        )
+        Report.result(
+            Tests.model_asset_specified,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Model Asset")
+            )
+            == model.id,
+        )
 
-        Report.result(Tests.model_different_bone_ids_same_position_should_weld_vertices,
-                      mesh_component.get_component_property_value(
-                          AtomComponentProperties.mesh('Vertex Count LOD0')) == 48)
+        Report.result(
+            Tests.model_different_bone_ids_same_position_should_weld_vertices,
+            mesh_component.get_component_property_value(
+                AtomComponentProperties.mesh("Vertex Count LOD0")
+            )
+            == 48,
+        )
 
         # 23. Delete Mesh entity.
         mesh_entity.delete()
@@ -366,13 +464,20 @@ def AtomEditorComponents_Mesh_AddedToEntity():
         Report.result(Tests.deletion_redo, not mesh_entity.exists())
 
         # 26. Look for errors or asserts.
-        TestHelper.wait_for_condition(lambda: error_tracer.has_errors or error_tracer.has_asserts, 1.0)
+        TestHelper.wait_for_condition(
+            lambda: error_tracer.has_errors or error_tracer.has_asserts, 1.0
+        )
         for error_info in error_tracer.errors:
-            Report.info(f"Error: {error_info.filename} {error_info.function} | {error_info.message}")
+            Report.info(
+                f"Error: {error_info.filename} {error_info.function} | {error_info.message}"
+            )
         for assert_info in error_tracer.asserts:
-            Report.info(f"Assert: {assert_info.filename} {assert_info.function} | {assert_info.message}")
+            Report.info(
+                f"Assert: {assert_info.filename} {assert_info.function} | {assert_info.message}"
+            )
 
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(AtomEditorComponents_Mesh_AddedToEntity)
