@@ -6,9 +6,11 @@
 #
 def check_result(result, msg):
     from editor_python_test_tools.utils import Report
+
     if not result:
         Report.result(msg, False)
         raise Exception(msg + " : FAILED")
+
 
 def Editor_LayerEntity_Works():
     # Description:
@@ -30,119 +32,156 @@ def Editor_LayerEntity_Works():
     azlmbr.legacy.general.idle_wait_frames(1)
 
     def add_component(typename, entityId):
-        typeIdsList = editor.EditorComponentAPIBus(bus.Broadcast, 'FindComponentTypeIdsByEntityType', [typename], entity.EntityType().Game)
-        componentOutcome = editor.EditorComponentAPIBus(bus.Broadcast, 'AddComponentsOfType', entityId, typeIdsList)
+        typeIdsList = editor.EditorComponentAPIBus(
+            bus.Broadcast,
+            "FindComponentTypeIdsByEntityType",
+            [typename],
+            entity.EntityType().Game,
+        )
+        componentOutcome = editor.EditorComponentAPIBus(
+            bus.Broadcast, "AddComponentsOfType", entityId, typeIdsList
+        )
         return componentOutcome.IsSuccess()
 
     def change_entity_status(desiredStatusProperty, entityId):
-        editor.EditorEntityAPIBus(bus.Event, 'SetStartStatus', entityId, desiredStatusProperty)
-        status = editor.EditorEntityInfoRequestBus(bus.Event, 'GetStartStatus', entityId)
-        if (status == desiredStatusProperty):
-            print('[PASS] successfully changed status: ' + str(desiredStatusProperty))
-        check_result(False, '[FAIL] unable to set status: ' + str(desiredStatusProperty))
+        editor.EditorEntityAPIBus(
+            bus.Event, "SetStartStatus", entityId, desiredStatusProperty
+        )
+        status = editor.EditorEntityInfoRequestBus(
+            bus.Event, "GetStartStatus", entityId
+        )
+        if status == desiredStatusProperty:
+            print("[PASS] successfully changed status: " + str(desiredStatusProperty))
+        check_result(
+            False, "[FAIL] unable to set status: " + str(desiredStatusProperty)
+        )
 
     # Test creating layer entity
-    layerId = layers.EditorLayerComponent_CreateLayerEntityFromName('testLayer')
-    if(layerId):
-        print('[PASS] layer has been created')
-    check_result(False, '[FAIL] layer was not created')
+    layerId = layers.EditorLayerComponent_CreateLayerEntityFromName("testLayer")
+    if layerId:
+        print("[PASS] layer has been created")
+    check_result(False, "[FAIL] layer was not created")
 
     # Test getting and setting the name property for the layer
-    name = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', layerId)
-    if(name):
-        print('[PASS] Get name request succeeded')
-    check_result(False, '[FAIL] Get name request failed')
+    name = editor.EditorEntityInfoRequestBus(bus.Event, "GetName", layerId)
+    if name:
+        print("[PASS] Get name request succeeded")
+    check_result(False, "[FAIL] Get name request failed")
 
-    editor.EditorEntityAPIBus(bus.Event, 'SetName', layerId, "test_layer")
-    name = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', layerId)
-    if(name == 'test_layer'):
-        print('[PASS] Layer name changed')
+    editor.EditorEntityAPIBus(bus.Event, "SetName", layerId, "test_layer")
+    name = editor.EditorEntityInfoRequestBus(bus.Event, "GetName", layerId)
+    if name == "test_layer":
+        print("[PASS] Layer name changed")
     else:
-        check_result(False, '[FAIL] Did not complete layer name change')
+        check_result(False, "[FAIL] Did not complete layer name change")
 
     # Test Getting and Setting the color for the layer
-    color = math.Color_ConstructFromValues(255,255,0,1)
-    oldColor = layers.EditorLayerComponentRequestBus(bus.Event, 'GetColorPropertyValue', layerId)
-    layers.EditorLayerComponentRequestBus(bus.Event, 'SetLayerColor', layerId, color)
-    newColor = layers.EditorLayerComponentRequestBus(bus.Event, 'GetColorPropertyValue', layerId)
-    if(oldColor and newColor):
-        if (oldColor != newColor):
-            print('[PASS] Layer color changed')
+    color = math.Color_ConstructFromValues(255, 255, 0, 1)
+    oldColor = layers.EditorLayerComponentRequestBus(
+        bus.Event, "GetColorPropertyValue", layerId
+    )
+    layers.EditorLayerComponentRequestBus(bus.Event, "SetLayerColor", layerId, color)
+    newColor = layers.EditorLayerComponentRequestBus(
+        bus.Event, "GetColorPropertyValue", layerId
+    )
+    if oldColor and newColor:
+        if oldColor != newColor:
+            print("[PASS] Layer color changed")
         else:
-            check_result(False, '[FAIL] Was unable to change layer color property')
+            check_result(False, "[FAIL] Was unable to change layer color property")
     else:
-        check_result(False, '[FAIL] Was unable to get color property of layer')
-
+        check_result(False, "[FAIL] Was unable to get color property of layer")
 
     # Test creating child entity in layer entity
-    layerChild = editor.ToolsApplicationRequestBus(bus.Broadcast, 'CreateNewEntity', layerId)
-    if (layerChild):
-        print('[PASS] layer child entity has been created')
+    layerChild = editor.ToolsApplicationRequestBus(
+        bus.Broadcast, "CreateNewEntity", layerId
+    )
+    if layerChild:
+        print("[PASS] layer child entity has been created")
     else:
-        check_result(False, '[FAIL] layer child entity was not created')
+        check_result(False, "[FAIL] layer child entity was not created")
 
-    queryParent = editor.EditorEntityInfoRequestBus(bus.Event, 'GetParent', layerChild)
-    if(queryParent.ToString() == layerId.ToString()):
-        print('[PASS] Query parent returned layer ID')
+    queryParent = editor.EditorEntityInfoRequestBus(bus.Event, "GetParent", layerChild)
+    if queryParent.ToString() == layerId.ToString():
+        print("[PASS] Query parent returned layer ID")
     else:
-        check_result(False, '[FAIL] layer is not parented to entity')
+        check_result(False, "[FAIL] layer is not parented to entity")
 
     # Test getting child entity IDs
-    childList = editor.EditorEntityInfoRequestBus(bus.Event, 'GetChildren', layerId)
-    if(childList):
-        print('[PASS] EditorEntityInfoRequestBus GetChildren return list of decendants')
+    childList = editor.EditorEntityInfoRequestBus(bus.Event, "GetChildren", layerId)
+    if childList:
+        print("[PASS] EditorEntityInfoRequestBus GetChildren return list of decendants")
     else:
-        check_result(False, '[FAILL] EditorEntityInfoRequestBus GetChildren did not return list of decendants')
+        check_result(
+            False,
+            "[FAILL] EditorEntityInfoRequestBus GetChildren did not return list of decendants",
+        )
 
     # Test adding component to layer entity
-    result = add_component('Comment', layerId)
-    if(result):
-        print('[PASS] comment component has been added')
+    result = add_component("Comment", layerId)
+    if result:
+        print("[PASS] comment component has been added")
     else:
-        check_result(False, '[FAIL] comment component was not added to layer')
+        check_result(False, "[FAIL] comment component was not added to layer")
 
     # Test locking layer entity. Note: layers themselves are not locked or unlocked;
     # setting lock on a layer effectively sets the lock for all child entities
-    queryLock = editor.EditorEntityInfoRequestBus(bus.Event, 'IsLocked', layerId)
-    check_result(not queryLock, '[INFO] layer is not locked')
+    queryLock = editor.EditorEntityInfoRequestBus(bus.Event, "IsLocked", layerId)
+    check_result(not queryLock, "[INFO] layer is not locked")
 
-    editor.EditorEntityAPIBus(bus.Event, 'SetLockState', layerId, True)
-    queryLock = editor.EditorEntityInfoRequestBus(bus.Event, 'IsLocked', layerId)
-    check_result(queryLock, '[PASS] layer has been locked')
+    editor.EditorEntityAPIBus(bus.Event, "SetLockState", layerId, True)
+    queryLock = editor.EditorEntityInfoRequestBus(bus.Event, "IsLocked", layerId)
+    check_result(queryLock, "[PASS] layer has been locked")
 
     # Test layer visibility. Note: layers themselves are not visible or invisible;
     # setting visibility on a layer effectively sets visibility for all child entities
-    queryVisibility = editor.EditorEntityInfoRequestBus(bus.Event, 'IsVisible', layerChild)
-    check_result(queryVisibility, '[INFO] layer children are visible')
+    queryVisibility = editor.EditorEntityInfoRequestBus(
+        bus.Event, "IsVisible", layerChild
+    )
+    check_result(queryVisibility, "[INFO] layer children are visible")
 
-    layers.EditorLayerComponentRequestBus(azlmbr.bus.Event, 'SetVisibility', layerId, False)
-    queryVisibility = editor.EditorEntityInfoRequestBus(bus.Event, 'IsVisible', layerChild)
-    if(not queryVisibility):
-        print('[PASS] layer children are hidden')
+    layers.EditorLayerComponentRequestBus(
+        azlmbr.bus.Event, "SetVisibility", layerId, False
+    )
+    queryVisibility = editor.EditorEntityInfoRequestBus(
+        bus.Event, "IsVisible", layerChild
+    )
+    if not queryVisibility:
+        print("[PASS] layer children are hidden")
     else:
-        check_result(False, '[FAIL] unable to set layer visibility to hidden')
+        check_result(False, "[FAIL] unable to set layer visibility to hidden")
 
     # Test layer status property
     # start active
-    change_entity_status(azlmbr.globals.property.EditorEntityStartStatus_StartActive, layerId)
+    change_entity_status(
+        azlmbr.globals.property.EditorEntityStartStatus_StartActive, layerId
+    )
 
     # start inactive
-    change_entity_status(azlmbr.globals.property.EditorEntityStartStatus_StartInactive, layerId)
+    change_entity_status(
+        azlmbr.globals.property.EditorEntityStartStatus_StartInactive, layerId
+    )
 
     # editor only
-    change_entity_status(azlmbr.globals.property.EditorEntityStartStatus_EditorOnly, layerId)
+    change_entity_status(
+        azlmbr.globals.property.EditorEntityStartStatus_EditorOnly, layerId
+    )
 
     # Test deleting layer
-    editor.ToolsApplicationRequestBus(bus.Broadcast, 'DeleteEntityAndAllDescendants', layerId)
-    entityName = editor.EditorEntityInfoRequestBus(bus.Event, 'GetName', layerId)
-    if (entityName):
-        check_result(False, '[FAIL] Layer entity found after delete request')
+    editor.ToolsApplicationRequestBus(
+        bus.Broadcast, "DeleteEntityAndAllDescendants", layerId
+    )
+    entityName = editor.EditorEntityInfoRequestBus(bus.Event, "GetName", layerId)
+    if entityName:
+        check_result(False, "[FAIL] Layer entity found after delete request")
     else:
-        print('[PASS] Layer entity not found after delete request')
+        print("[PASS] Layer entity not found after delete request")
 
     # all tests worked
     Report.result("Editor_LayerEntity_Works ran", True)
 
+
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Editor_LayerEntity_Works)

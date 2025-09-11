@@ -45,11 +45,13 @@ class TestsAssetProcessorBatch_DependencyTests(object):
     """
     AssetProcessorBatch Dependency tests
     """
+
     @pytest.mark.test_case_id("C18108049")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
     def test_SchemaGem_BatchLoadsSchema(
-            self, asset_processor, workspace, ap_setup_fixture):
+        self, asset_processor, workspace, ap_setup_fixture
+    ):
         """
 
         Test Steps:
@@ -66,11 +68,19 @@ class TestsAssetProcessorBatch_DependencyTests(object):
         file_scan_pattern = "--dsp=%font_with_dependency.xml"
 
         # Verifies the XML schema can be used to address a missing dependency
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "test_xml_schema")
-        _, ap_batch_output = asset_processor.batch_process(capture_output=True, extra_params=file_scan_pattern)
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"], "test_xml_schema"
+        )
+        _, ap_batch_output = asset_processor.batch_process(
+            capture_output=True, extra_params=file_scan_pattern
+        )
 
-        font_lines = [line for line in ap_batch_output if "Scanning for missing" in line]
-        missing_lines = [line for line in ap_batch_output if "Missing dependency" in line]
+        font_lines = [
+            line for line in ap_batch_output if "Scanning for missing" in line
+        ]
+        missing_lines = [
+            line for line in ap_batch_output if "Missing dependency" in line
+        ]
 
         # If the test is going to fail, print the log output from AP to assist in debugging.
         # Skip printing otherwise, to keep the tests from slowing down due to excessive logging.
@@ -84,19 +94,35 @@ class TestsAssetProcessorBatch_DependencyTests(object):
 
         # Copy the schema out of the engine, so if the font schema changes, this test will use the most current schema.
         # Don't use the engine folder directly, to keep test run time fast.
-        engine_schema_path = os.path.join(workspace.paths.engine_root(), "Assets", "Engine", "Schema", "Font.xmlschema")
+        engine_schema_path = os.path.join(
+            workspace.paths.engine_root(),
+            "Assets",
+            "Engine",
+            "Schema",
+            "Font.xmlschema",
+        )
 
         # The project_test_source_folder is the source folder for the test assets, and not the test project,
         # so use a directory change marker to go up one folder.
         # This is because the XML schema files have to be in a very specific relative path location to be used.
-        target_schema_folder = os.path.join(asset_processor.project_test_source_folder(), "..", "Schema")
+        target_schema_folder = os.path.join(
+            asset_processor.project_test_source_folder(), "..", "Schema"
+        )
         os.makedirs(target_schema_folder)
-        shutil.copy(engine_schema_path, os.path.join(target_schema_folder, "Font.xmlschema"))
+        shutil.copy(
+            engine_schema_path, os.path.join(target_schema_folder, "Font.xmlschema")
+        )
 
-        _, ap_batch_output_second = asset_processor.batch_process(capture_output=True, extra_params=file_scan_pattern)
+        _, ap_batch_output_second = asset_processor.batch_process(
+            capture_output=True, extra_params=file_scan_pattern
+        )
 
-        font_lines_second = [line for line in ap_batch_output_second if "Scanning for missing" in line]
-        missing_lines_second = [line for line in ap_batch_output_second if "Missing dependency" in line]
+        font_lines_second = [
+            line for line in ap_batch_output_second if "Scanning for missing" in line
+        ]
+        missing_lines_second = [
+            line for line in ap_batch_output_second if "Missing dependency" in line
+        ]
 
         if len(font_lines_second) != len(font_lines) or len(missing_lines_second) != 0:
             # If the test is going to fail, print the before and after logs for asset processor, having both assists in debugging.
@@ -107,5 +133,9 @@ class TestsAssetProcessorBatch_DependencyTests(object):
             for log_line in ap_batch_output_second:
                 logger.info(log_line)
 
-        assert len(font_lines_second) == len(font_lines), "Failed to scan the same set of fonts"
-        assert len(missing_lines_second) == 0, "Some fonts still had missing dependencies"
+        assert len(font_lines_second) == len(font_lines), (
+            "Failed to scan the same set of fonts"
+        )
+        assert len(missing_lines_second) == 0, (
+            "Some fonts still had missing dependencies"
+        )
