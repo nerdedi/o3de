@@ -9,7 +9,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # Test Case Title : Verify the functionality of restitution
 
 
-
 # fmt: off
 class Tests():
     enter_game_mode         = ("Entered game mode",                                    "Failed to enter game mode")
@@ -111,16 +110,24 @@ def Material_Restitution():
             self.set_gravity_enabled(False)
 
         def get_position(self):
-            return azlmbr.components.TransformBus(bus.Event, "GetWorldTranslation", self.id)
+            return azlmbr.components.TransformBus(
+                bus.Event, "GetWorldTranslation", self.id
+            )
 
         def get_velocity(self):
-            return azlmbr.physics.RigidBodyRequestBus(bus.Event, "GetLinearVelocity", self.id)
+            return azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "GetLinearVelocity", self.id
+            )
 
         def set_velocity(self, value):
-            return azlmbr.physics.RigidBodyRequestBus(bus.Event, "SetLinearVelocity", self.id, value)
+            return azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "SetLinearVelocity", self.id, value
+            )
 
         def set_gravity_enabled(self, value):
-            azlmbr.physics.RigidBodyRequestBus(bus.Event, "SetGravityEnabled", self.id, value)
+            azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "SetGravityEnabled", self.id, value
+            )
 
     def on_collision_begin(args):
         other_id = args[0]
@@ -137,7 +144,9 @@ def Material_Restitution():
             box.bounce_height = current_height
             return False
         else:
-            Report.info("Box {} reached {:.3f}M high".format(box.name, box.bounce_height))
+            Report.info(
+                "Box {} reached {:.3f}M high".format(box.name, box.bounce_height)
+            )
             return True
 
     def is_falling(box):
@@ -198,30 +207,46 @@ def Material_Restitution():
 
         # 5) Drop the box
         box.set_gravity_enabled(True)
-        Report.critical_result(box.fell_test, helper.wait_for_condition(lambda: is_falling(box), FALLING_TIMEOUT))
+        Report.critical_result(
+            box.fell_test,
+            helper.wait_for_condition(lambda: is_falling(box), FALLING_TIMEOUT),
+        )
 
         # 6) Wait for the box to hit the ramp
-        Report.result(box.hit_ramp_test, helper.wait_for_condition(lambda: box.hit_ramp, TIMEOUT))
+        Report.result(
+            box.hit_ramp_test, helper.wait_for_condition(lambda: box.hit_ramp, TIMEOUT)
+        )
 
         # 7) Measure the bounce height
-        Report.result(box.peaked_test, helper.wait_for_condition(lambda: reached_max_height(box), TIMEOUT))
+        Report.result(
+            box.peaked_test,
+            helper.wait_for_condition(lambda: reached_max_height(box), TIMEOUT),
+        )
 
         # Freeze the box so it does not interfere with the other boxes
         box.set_velocity(lymath.Vector3(0.0, 0.0, 0.0))
         box.set_gravity_enabled(False)
 
     # 8) Special case: Assert the a box with zero restitution did not bounce
-    Report.result(Tests.box_zero_did_not_bounce, box_zero.bounce_height < ZERO_RESTITUTION_BOUNCE_TOLERANCE)
+    Report.result(
+        Tests.box_zero_did_not_bounce,
+        box_zero.bounce_height < ZERO_RESTITUTION_BOUNCE_TOLERANCE,
+    )
 
     # 9) Assert that greater restitution coefficients result in higher bounces
-    ordered_bounces = box_high.bounce_height > box_mid.bounce_height > box_low.bounce_height > box_zero.bounce_height
+    ordered_bounces = (
+        box_high.bounce_height
+        > box_mid.bounce_height
+        > box_low.bounce_height
+        > box_zero.bounce_height
+    )
     Report.result(Tests.bounce_height_ordered, ordered_bounces)
 
     # 10) Exit game mode
     helper.exit_game_mode(Tests.exit_game_mode)
 
 
-
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_Restitution)

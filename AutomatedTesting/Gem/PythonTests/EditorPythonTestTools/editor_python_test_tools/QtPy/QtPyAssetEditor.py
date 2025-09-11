@@ -14,10 +14,14 @@ import azlmbr.editor as editor
 import azlmbr.bus as bus
 import os
 from editor_python_test_tools.QtPy.QtPyCommon import QtPyCommon
-from consts.asset_editor import (ASSET_EDITOR_UI, EVENTS_QT, DEFAULT_SCRIPT_EVENT, DEFAULT_METHOD_NAME)
-from consts.general import (WAIT_TIME_SEC_3, SAVE_STRING, NAME_STRING)
-from consts.scripting import (PARAMETERS_QT, INDICATOR_QT)
-
+from consts.asset_editor import (
+    ASSET_EDITOR_UI,
+    EVENTS_QT,
+    DEFAULT_SCRIPT_EVENT,
+    DEFAULT_METHOD_NAME,
+)
+from consts.general import WAIT_TIME_SEC_3, SAVE_STRING, NAME_STRING
+from consts.scripting import PARAMETERS_QT, INDICATOR_QT
 
 
 class QtPyAssetEditor(QtPyCommon):
@@ -28,9 +32,15 @@ class QtPyAssetEditor(QtPyCommon):
 
     def __init__(self, editor_main_window: QtWidgets.QMainWindow):
         super().__init__()
-        self.asset_editor = editor_main_window.findChild(QtWidgets.QDockWidget, ASSET_EDITOR_UI)
-        self.asset_editor_widget = self.asset_editor.findChild(QtWidgets.QWidget, "AssetEditorWindowClass")
-        self.asset_editor_row_container = self.asset_editor_widget.findChild(QtWidgets.QWidget, "ContainerForRows")
+        self.asset_editor = editor_main_window.findChild(
+            QtWidgets.QDockWidget, ASSET_EDITOR_UI
+        )
+        self.asset_editor_widget = self.asset_editor.findChild(
+            QtWidgets.QWidget, "AssetEditorWindowClass"
+        )
+        self.asset_editor_row_container = self.asset_editor_widget.findChild(
+            QtWidgets.QWidget, "ContainerForRows"
+        )
         self.menu_bar = self.asset_editor_widget.findChild(QtWidgets.QMenuBar)
 
     def add_method_to_script_event(self, method_name: str) -> None:
@@ -44,29 +54,35 @@ class QtPyAssetEditor(QtPyCommon):
         """
         self.add_event_to_script_event()
 
-        helper.wait_for_condition(lambda: self.asset_editor_widget.findChild(
-            QtWidgets.QFrame, DEFAULT_SCRIPT_EVENT) is not None, WAIT_TIME_SEC_3)
+        helper.wait_for_condition(
+            lambda: self.asset_editor_widget.findChild(
+                QtWidgets.QFrame, DEFAULT_SCRIPT_EVENT
+            )
+            is not None,
+            WAIT_TIME_SEC_3,
+        )
 
         self.expand_qt_container_rows(DEFAULT_SCRIPT_EVENT)
         self.expand_qt_container_rows(NAME_STRING)
         self.update_new_method_name(DEFAULT_METHOD_NAME, method_name)
 
-    def add_parameter_to_method(self, new_parameter_name: str, parameter_index = 0):
+    def add_parameter_to_method(self, new_parameter_name: str, parameter_index=0):
         """
         function for adding a new parameter to the script event method. This will need to be updated to support
         adding parameters to specific events or adding multiple parameters to a method.
 
         returns reference to the parameter's qtwidget
         """
-        add_parameters_button = self.asset_editor_row_container.findChild(QtWidgets.QFrame, PARAMETERS_QT).findChild(
-            QtWidgets.QToolButton, "")
+        add_parameters_button = self.asset_editor_row_container.findChild(
+            QtWidgets.QFrame, PARAMETERS_QT
+        ).findChild(QtWidgets.QToolButton, "")
         add_parameters_button.click()
 
         self.__refresh_qt_references()
 
         self.update_parameter_name("ParameterName", new_parameter_name, parameter_index)
 
-    def change_parameter_type(self, parameter_index: int, type_index: int)-> None:
+    def change_parameter_type(self, parameter_index: int, type_index: int) -> None:
         """
         function for changing the data type of the script event method's parameters
 
@@ -74,7 +90,9 @@ class QtPyAssetEditor(QtPyCommon):
         params type_index: the index of the data type to change the parameter to
         """
 
-        type_qframes = self.asset_editor_row_container.findChildren(QtWidgets.QFrame, "Type")
+        type_qframes = self.asset_editor_row_container.findChildren(
+            QtWidgets.QFrame, "Type"
+        )
 
         type_combo_boxes = []
 
@@ -90,7 +108,9 @@ class QtPyAssetEditor(QtPyCommon):
 
         assert set_type is type_index, "Failed to set parameter type index."
 
-    def update_parameter_name(self, old_parameter_name: str,updated_parameter_name: str, parameter_index: int) -> None:
+    def update_parameter_name(
+        self, old_parameter_name: str, updated_parameter_name: str, parameter_index: int
+    ) -> None:
         """
         helper function for updating the name of a parameter in the list of method parameters. This also needs to
         be updated if we are to support multiple parameters
@@ -114,9 +134,13 @@ class QtPyAssetEditor(QtPyCommon):
                 line_edit.setText(f"{updated_parameter_name}")
                 break
 
-        assert old_parameter_exists, f"Failed to find parameter {old_parameter_name} in Asset Editor."
+        assert old_parameter_exists, (
+            f"Failed to find parameter {old_parameter_name} in Asset Editor."
+        )
 
-    def update_new_method_name(self, old_method_name: str, updated_method_name: str) -> None:
+    def update_new_method_name(
+        self, old_method_name: str, updated_method_name: str
+    ) -> None:
         """
         Function for finding a default script event and changing its name
 
@@ -124,13 +148,14 @@ class QtPyAssetEditor(QtPyCommon):
 
         Returns: None
         """
-        children = self.asset_editor_row_container.findChildren(QtWidgets.QFrame, "Name")
+        children = self.asset_editor_row_container.findChildren(
+            QtWidgets.QFrame, "Name"
+        )
 
         method_name_field = ""
         old_method_exists = False
 
         for child in children:
-
             line_edit = child.findChild(QtWidgets.QLineEdit)
 
             if line_edit and line_edit.text() == old_method_name:
@@ -138,8 +163,12 @@ class QtPyAssetEditor(QtPyCommon):
                 line_edit.setText(f"{updated_method_name}")
                 method_name_field = line_edit.text()
 
-        assert old_method_exists, f"Failed to find method {old_method_name} in Asset Editor."
-        assert method_name_field == updated_method_name, "Failed to set method name in Asset Editor."
+        assert old_method_exists, (
+            f"Failed to find method {old_method_name} in Asset Editor."
+        )
+        assert method_name_field == updated_method_name, (
+            "Failed to set method name in Asset Editor."
+        )
 
     def delete_parameter_from_method(self, parameter_index: int) -> None:
         """
@@ -148,16 +177,22 @@ class QtPyAssetEditor(QtPyCommon):
         param parameter_index: the index of the parameter to delete
         """
 
-        parameter_qframe = self.asset_editor_row_container.findChild(QtWidgets.QFrame, f"[{parameter_index}]")
+        parameter_qframe = self.asset_editor_row_container.findChild(
+            QtWidgets.QFrame, f"[{parameter_index}]"
+        )
 
         toolbuttons = parameter_qframe.findChildren(QtWidgets.QToolButton)
         for button in toolbuttons:
             if button.objectName() != INDICATOR_QT:
                 button.click()
 
-        assert toolbuttons is not None, "Failed to delete parameter from Script Event method."
+        assert toolbuttons is not None, (
+            "Failed to delete parameter from Script Event method."
+        )
 
-    def delete_method_from_script_events(self, ) -> None:
+    def delete_method_from_script_events(
+        self,
+    ) -> None:
         """
         Function for deleting a method from an open script event file.
 
@@ -173,7 +208,9 @@ class QtPyAssetEditor(QtPyCommon):
         Refer to github issue #12262. If it has been resolved and this comment still exists please update
         the QToolButton name
         """
-        methods = self.asset_editor_row_container.findChildren(QtWidgets.QFrame, DEFAULT_SCRIPT_EVENT)
+        methods = self.asset_editor_row_container.findChildren(
+            QtWidgets.QFrame, DEFAULT_SCRIPT_EVENT
+        )
         for method in methods:
             if method.findChild(QtWidgets.QToolButton, ""):
                 method.findChild(QtWidgets.QToolButton, "").click()
@@ -187,10 +224,13 @@ class QtPyAssetEditor(QtPyCommon):
         returns: None
         """
         editor.AssetEditorWidgetRequestsBus(bus.Broadcast, "SaveAssetAs", file_path)
-        action = pyside_utils.find_child_by_pattern(self.menu_bar,
-                                                    {"type": QtWidgets.QAction, "iconText": SAVE_STRING})
+        action = pyside_utils.find_child_by_pattern(
+            self.menu_bar, {"type": QtWidgets.QAction, "iconText": SAVE_STRING}
+        )
 
-        assert action is not None, "Unable to complete save action. Filepath may be invalid."
+        assert action is not None, (
+            "Unable to complete save action. Filepath may be invalid."
+        )
 
         action.trigger()
         self.__verify_save_action(file_path)
@@ -205,8 +245,12 @@ class QtPyAssetEditor(QtPyCommon):
         returns: None
         """
         label = self.asset_editor.findChild(QtWidgets.QLabel, "textEdit")
-        saved = helper.wait_for_condition(lambda: "*" not in label.text(), WAIT_TIME_SEC_3)
-        exists = helper.wait_for_condition(lambda: os.path.exists(file_path), WAIT_TIME_SEC_3)
+        saved = helper.wait_for_condition(
+            lambda: "*" not in label.text(), WAIT_TIME_SEC_3
+        )
+        exists = helper.wait_for_condition(
+            lambda: os.path.exists(file_path), WAIT_TIME_SEC_3
+        )
 
         assert saved, "Save file failed. Save action not detected in UI (* in label)."
         assert exists, "Save file failed. File not located on disk."
@@ -229,10 +273,18 @@ class QtPyAssetEditor(QtPyCommon):
 
         returns: None
         """
-        self.asset_editor_widget = self.asset_editor.findChild(QtWidgets.QWidget, "AssetEditorWindowClass")
-        helper.wait_for_condition(lambda: self.asset_editor_widget is not None, WAIT_TIME_SEC_3)
-        self.asset_editor_row_container = self.asset_editor_widget.findChild(QtWidgets.QWidget, "ContainerForRows")
-        helper.wait_for_condition(lambda: self.asset_editor_row_container is not None, WAIT_TIME_SEC_3)
+        self.asset_editor_widget = self.asset_editor.findChild(
+            QtWidgets.QWidget, "AssetEditorWindowClass"
+        )
+        helper.wait_for_condition(
+            lambda: self.asset_editor_widget is not None, WAIT_TIME_SEC_3
+        )
+        self.asset_editor_row_container = self.asset_editor_widget.findChild(
+            QtWidgets.QWidget, "ContainerForRows"
+        )
+        helper.wait_for_condition(
+            lambda: self.asset_editor_row_container is not None, WAIT_TIME_SEC_3
+        )
 
     def add_event_to_script_event(self):
         """
@@ -242,11 +294,11 @@ class QtPyAssetEditor(QtPyCommon):
         returns None
         """
         add_event = self.asset_editor.findChild(QtWidgets.QFrame, EVENTS_QT).findChild(
-            QtWidgets.QToolButton, "")
+            QtWidgets.QToolButton, ""
+        )
 
         assert add_event is not None, "Failed to add new method to script event."
 
         add_event.click()
         # refresh our handle on the asset editor widget since the qt object structure has changed
         self.__refresh_qt_references()
-
