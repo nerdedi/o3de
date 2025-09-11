@@ -21,12 +21,14 @@ from wait_dialog import WaitDialog
 from keystore_generator import KeystoreGenerator
 from project_generator import ProjectGenerator
 
-DEFAULT_APG_CONFIG_FILE="apg_config.json"
+DEFAULT_APG_CONFIG_FILE = "apg_config.json"
+
 
 class TkApp(tk.Tk):
     """
     This is the main UI of the Android Project Generator, known as APG for short.
     """
+
     def __init__(self, config: ConfigData, config_file_path: str = ""):
         super().__init__()
         self.title("Android Project Generator")
@@ -51,38 +53,53 @@ class TkApp(tk.Tk):
         self._init_additional_build_settings_ui()
 
         # Add the project generation button.
-        btn = tk.Button(self, text="Generate Project", command=self.on_generate_project_button)
+        btn = tk.Button(
+            self, text="Generate Project", command=self.on_generate_project_button
+        )
         btn.grid()
 
         self._init_report_ui()
 
-
     def _init_load_save_ui(self):
-
-        apg_settings_frame = tk.LabelFrame(self, text="Android Project Generator Settings")
+        apg_settings_frame = tk.LabelFrame(
+            self, text="Android Project Generator Settings"
+        )
         apg_settings_frame.columnconfigure(0, weight=0)
         apg_settings_frame.columnconfigure(1, weight=1)
-        apg_settings_frame.grid(padx=self._frame_pad_x, pady=self._frame_pad_y, ipadx=2, ipady=2, sticky=tk.EW)
+        apg_settings_frame.grid(
+            padx=self._frame_pad_x,
+            pady=self._frame_pad_y,
+            ipadx=2,
+            ipady=2,
+            sticky=tk.EW,
+        )
 
-        self._config_file_path_var, _, row_number = self._add_label_entry(apg_settings_frame,
-                                                                         "Config Path",
-                                                                          self._config_file_path_var.get(),
-                                                                          entry_colspan=1,
-                                                                          label_width=28,
-                                                                          entry_read_only=True)
+        self._config_file_path_var, _, row_number = self._add_label_entry(
+            apg_settings_frame,
+            "Config Path",
+            self._config_file_path_var.get(),
+            entry_colspan=1,
+            label_width=28,
+            entry_read_only=True,
+        )
 
-        btn = tk.Button(apg_settings_frame, text="Load", command=self.on_load_settings_button)
+        btn = tk.Button(
+            apg_settings_frame, text="Load", command=self.on_load_settings_button
+        )
         btn.grid(row=row_number, column=2, padx=2, sticky=tk.E)
 
-        btn = tk.Button(apg_settings_frame, text="Save", command=self.on_save_settings_button)
+        btn = tk.Button(
+            apg_settings_frame, text="Save", command=self.on_save_settings_button
+        )
         btn.grid(row=row_number, column=3, padx=2, sticky=tk.E)
-
 
     def _init_keystore_settings_ui(self):
         # Create a button widget with an event handler.
         keystore_frame = tk.LabelFrame(self, text="Keystore Settings")
         keystore_frame.columnconfigure(0, weight=1)
-        keystore_frame.grid(padx=self._frame_pad_x, pady=self._frame_pad_y, sticky=tk.EW)
+        keystore_frame.grid(
+            padx=self._frame_pad_x, pady=self._frame_pad_y, sticky=tk.EW
+        )
 
         # Let's add the fields that make the Distinguished Name.
         self._init_keystore_distinguished_name_ui(keystore_frame, 0)
@@ -92,63 +109,134 @@ class TkApp(tk.Tk):
         keystore_details_frame.columnconfigure(0, weight=0)
         keystore_details_frame.columnconfigure(1, weight=1)
 
-        keystore_details_frame.grid(padx=self._frame_pad_x, pady=self._frame_pad_y,row=1, column=0, sticky=tk.EW)
+        keystore_details_frame.grid(
+            padx=self._frame_pad_x,
+            pady=self._frame_pad_y,
+            row=1,
+            column=0,
+            sticky=tk.EW,
+        )
         ks_data = self._config.keystore_settings
-        self._keystore_validity_days_var = self._add_label_entry(keystore_details_frame, "Validity Days", ks_data.validity_days, entry_colspan=3, label_width=28)[0]
-        self._keystore_key_size_var = self._add_label_entry(keystore_details_frame, "Key Size", ks_data.key_size, entry_colspan=3)[0]
-        self._keystore_app_key_alias_var = self._add_label_entry(keystore_details_frame, "App Key Alias", ks_data.key_alias, entry_colspan=3)[0]
-        self._keystore_app_key_password_var = self._add_label_entry(keystore_details_frame, "App Key Password", ks_data.key_password, entry_colspan=3)[0]
-        self._keystore_keystore_password_var = self._add_label_entry(keystore_details_frame, "Keystore Password", ks_data.keystore_password, entry_colspan=3)[0]
-        self._keystore_file_var, _, row_number =  self._add_label_entry(keystore_details_frame, "Keystore File", ks_data.keystore_file)
-        btn = tk.Button(keystore_details_frame, text="...", command=self.on_select_keystore_file_button)
+        self._keystore_validity_days_var = self._add_label_entry(
+            keystore_details_frame,
+            "Validity Days",
+            ks_data.validity_days,
+            entry_colspan=3,
+            label_width=28,
+        )[0]
+        self._keystore_key_size_var = self._add_label_entry(
+            keystore_details_frame, "Key Size", ks_data.key_size, entry_colspan=3
+        )[0]
+        self._keystore_app_key_alias_var = self._add_label_entry(
+            keystore_details_frame, "App Key Alias", ks_data.key_alias, entry_colspan=3
+        )[0]
+        self._keystore_app_key_password_var = self._add_label_entry(
+            keystore_details_frame,
+            "App Key Password",
+            ks_data.key_password,
+            entry_colspan=3,
+        )[0]
+        self._keystore_keystore_password_var = self._add_label_entry(
+            keystore_details_frame,
+            "Keystore Password",
+            ks_data.keystore_password,
+            entry_colspan=3,
+        )[0]
+        self._keystore_file_var, _, row_number = self._add_label_entry(
+            keystore_details_frame, "Keystore File", ks_data.keystore_file
+        )
+        btn = tk.Button(
+            keystore_details_frame,
+            text="...",
+            command=self.on_select_keystore_file_button,
+        )
         btn.grid(row=row_number, column=3)
 
-        btn = tk.Button(keystore_frame, text="Create Keystore", command=self.on_create_keystore_button)
+        btn = tk.Button(
+            keystore_frame,
+            text="Create Keystore",
+            command=self.on_create_keystore_button,
+        )
         btn.grid()
 
-
-    def _init_keystore_distinguished_name_ui(self, parent_frame: tk.Frame, row:int):
-        dn_frame = tk.LabelFrame(parent_frame, text='Distinguished Name Settings')
+    def _init_keystore_distinguished_name_ui(self, parent_frame: tk.Frame, row: int):
+        dn_frame = tk.LabelFrame(parent_frame, text="Distinguished Name Settings")
         dn_frame.columnconfigure(0, weight=0)
         dn_frame.columnconfigure(1, weight=1)
-        dn_frame.grid(padx=self._frame_pad_x, pady=self._frame_pad_y,row=row, sticky=tk.EW)
+        dn_frame.grid(
+            padx=self._frame_pad_x, pady=self._frame_pad_y, row=row, sticky=tk.EW
+        )
 
         ks_data = self._config.keystore_settings
-        self._dn_country_code_var = self._add_label_entry(dn_frame, f"Country Code", ks_data.dn_country_code, label_width=28)[0]
-        self._dn_company_var = self._add_label_entry(dn_frame, f"Company (aka Organization)", ks_data.dn_organization)[0]
-        self._dn_organizational_unit_var = self._add_label_entry(dn_frame, f"Organizational Unit", ks_data.dn_organizational_unit)[0]
-        self._dn_app_name_var = self._add_label_entry(dn_frame, f"App Name (aka Common Name)", ks_data.dn_common_name)[0]
-
+        self._dn_country_code_var = self._add_label_entry(
+            dn_frame, "Country Code", ks_data.dn_country_code, label_width=28
+        )[0]
+        self._dn_company_var = self._add_label_entry(
+            dn_frame, "Company (aka Organization)", ks_data.dn_organization
+        )[0]
+        self._dn_organizational_unit_var = self._add_label_entry(
+            dn_frame, "Organizational Unit", ks_data.dn_organizational_unit
+        )[0]
+        self._dn_app_name_var = self._add_label_entry(
+            dn_frame, "App Name (aka Common Name)", ks_data.dn_common_name
+        )[0]
 
     def _init_sdk_settings_ui(self):
         sdk_frame = tk.LabelFrame(self, text="Android SDK/NDK Settings")
         sdk_frame.columnconfigure(0, weight=0)
         sdk_frame.columnconfigure(1, weight=1)
-        sdk_frame.grid(padx=self._frame_pad_x, pady=self._frame_pad_y,sticky=tk.EW)
+        sdk_frame.grid(padx=self._frame_pad_x, pady=self._frame_pad_y, sticky=tk.EW)
 
         cf = self._config
-        self._android_ndk_version_var = self._add_label_entry(sdk_frame, "NDK Version", cf.android_ndk_version, entry_colspan=3, label_width=28)[0]
-        self._android_sdk_api_level_var = self._add_label_entry(sdk_frame, "SDK API Level", cf.android_sdk_api_level, entry_colspan=3)[0]
-        self._android_sdk_path_var, _, row_number = self._add_label_entry(sdk_frame, "SDK Path", cf.android_sdk_path)
-        sdk_path_btn = tk.Button(sdk_frame, text="...", command=self.on_select_sdk_path_button)
+        self._android_ndk_version_var = self._add_label_entry(
+            sdk_frame,
+            "NDK Version",
+            cf.android_ndk_version,
+            entry_colspan=3,
+            label_width=28,
+        )[0]
+        self._android_sdk_api_level_var = self._add_label_entry(
+            sdk_frame, "SDK API Level", cf.android_sdk_api_level, entry_colspan=3
+        )[0]
+        self._android_sdk_path_var, _, row_number = self._add_label_entry(
+            sdk_frame, "SDK Path", cf.android_sdk_path
+        )
+        sdk_path_btn = tk.Button(
+            sdk_frame, text="...", command=self.on_select_sdk_path_button
+        )
         sdk_path_btn.grid(row=row_number, column=2)
 
         # Add the meta quest project checkbox
-        self._android_quest_flag_var, _, row_number = self._add_checkbox(sdk_frame, "This is a Meta Quest project", cf.is_meta_quest_project)
+        self._android_quest_flag_var, _, row_number = self._add_checkbox(
+            sdk_frame, "This is a Meta Quest project", cf.is_meta_quest_project
+        )
 
-    
     def _init_additional_build_settings_ui(self):
         build_settings_frame = tk.LabelFrame(self, text="Additional Build Settings")
         build_settings_frame.columnconfigure(0, weight=0)
         build_settings_frame.columnconfigure(1, weight=1)
-        build_settings_frame.grid(padx=self._frame_pad_x, pady=self._frame_pad_y,sticky=tk.EW)
+        build_settings_frame.grid(
+            padx=self._frame_pad_x, pady=self._frame_pad_y, sticky=tk.EW
+        )
 
         cf = self._config
-        self._extra_cmake_args_var = self._add_label_entry(build_settings_frame, "Extra CMake Arguments", cf.extra_cmake_args, entry_colspan=3, label_width=28)[0]
+        self._extra_cmake_args_var = self._add_label_entry(
+            build_settings_frame,
+            "Extra CMake Arguments",
+            cf.extra_cmake_args,
+            entry_colspan=3,
+            label_width=28,
+        )[0]
 
-
-
-    def _add_label_entry(self, parent_frame: tk.Frame, lbl_name: str, default_value: str = "", entry_colspan=1, label_width=None, entry_read_only=False) -> tuple[tk.StringVar, tk.Entry, int]:
+    def _add_label_entry(
+        self,
+        parent_frame: tk.Frame,
+        lbl_name: str,
+        default_value: str = "",
+        entry_colspan=1,
+        label_width=None,
+        entry_read_only=False,
+    ) -> tuple[tk.StringVar, tk.Entry, int]:
         """
         Returns the tuple (string_var, entry, row_frame),
         where  @string_var is the TK StringVar bound to the Entry widget,
@@ -159,16 +247,23 @@ class TkApp(tk.Tk):
         lbl.grid(column=0, padx=5, pady=2, sticky=tk.W)
         row = lbl.grid_info().get("row")
 
-        entry = tk.Entry(parent_frame, justify='right',state=tk.DISABLED if entry_read_only else tk.NORMAL)
-        entry.grid(row=row, column=1, padx=5, pady=2, sticky=tk.EW, columnspan=entry_colspan)
+        entry = tk.Entry(
+            parent_frame,
+            justify="right",
+            state=tk.DISABLED if entry_read_only else tk.NORMAL,
+        )
+        entry.grid(
+            row=row, column=1, padx=5, pady=2, sticky=tk.EW, columnspan=entry_colspan
+        )
 
         string_var = tk.StringVar()
         string_var.set(default_value)
         entry["textvariable"] = string_var
         return string_var, entry, row
 
-
-    def _add_checkbox(self, parent_frame: tk.Frame, lbl_name: str, default_value: bool = False) -> tuple[tk.BooleanVar, tk.Checkbutton, int]:
+    def _add_checkbox(
+        self, parent_frame: tk.Frame, lbl_name: str, default_value: bool = False
+    ) -> tuple[tk.BooleanVar, tk.Checkbutton, int]:
         """
         Returns the tuple (BooleanVar, check_box, row_frame),
         where  @BooleanVar is the TK BooleanVar bound to the CheckBox widget,
@@ -183,7 +278,6 @@ class TkApp(tk.Tk):
         row_number = checkbutton.grid_info().get("row")
         return bool_var, checkbutton, row_number
 
-
     def _init_report_ui(self):
         """
         Instanties the scrollable text widget where this app will report
@@ -193,22 +287,31 @@ class TkApp(tk.Tk):
         operations_report_frame = tk.LabelFrame(self, text="Operations Report")
         operations_report_frame.columnconfigure(0, weight=1)
         operations_report_frame.rowconfigure(0, weight=1)
-        operations_report_frame.grid(padx=self._frame_pad_x, pady=self._frame_pad_y,sticky=tk.NSEW)
+        operations_report_frame.grid(
+            padx=self._frame_pad_x, pady=self._frame_pad_y, sticky=tk.NSEW
+        )
 
         last_row = operations_report_frame.grid_info().get("row")
         self.rowconfigure(last_row, weight=1)
 
-        self._report_text_widget = tk.Text(operations_report_frame, wrap=tk.WORD, borderwidth=2, relief=tk.SUNKEN)
-        self._report_scrollbar_widget = tk.Scrollbar(operations_report_frame, orient=tk.VERTICAL, command=self._report_text_widget.yview)
+        self._report_text_widget = tk.Text(
+            operations_report_frame, wrap=tk.WORD, borderwidth=2, relief=tk.SUNKEN
+        )
+        self._report_scrollbar_widget = tk.Scrollbar(
+            operations_report_frame,
+            orient=tk.VERTICAL,
+            command=self._report_text_widget.yview,
+        )
         # Configure the Text widget and the Scrollbar widget.
-        self._report_text_widget.configure(yscrollcommand=self._report_scrollbar_widget.set)
+        self._report_text_widget.configure(
+            yscrollcommand=self._report_scrollbar_widget.set
+        )
         self._report_text_widget.grid(sticky=tk.NSEW)
-        self._report_scrollbar_widget.grid(row=0, column=1,sticky=tk.NSEW)
-
+        self._report_scrollbar_widget.grid(row=0, column=1, sticky=tk.NSEW)
 
     def _get_time_now_str(self) -> str:
         """
-        @returns The current local time as a formatted string. 
+        @returns The current local time as a formatted string.
         """
         time_secs = time.time()
         time_st = time.localtime(time_secs)
@@ -216,16 +319,17 @@ class TkApp(tk.Tk):
         fractional_secs = int(str(time_secs).split(".")[1])
         return f"{no_millis_str}.{fractional_secs}"
 
-
     def _append_log_message(self, msg: str):
         """
         Append the msg with a timestamp to the report widget, and automatically scrolls to
         the bottom of the report.
         """
         timestamp_str = self._get_time_now_str()
-        self._report_text_widget.insert(tk.END, f">>{timestamp_str}>>\n{msg}\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n")
-        self._report_text_widget.see(tk.END) #scroll to the end.
-
+        self._report_text_widget.insert(
+            tk.END,
+            f">>{timestamp_str}>>\n{msg}\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n",
+        )
+        self._report_text_widget.see(tk.END)  # scroll to the end.
 
     def create_keystore_settings_from_widgets(self) -> KeystoreSettings:
         """
@@ -245,7 +349,6 @@ class TkApp(tk.Tk):
         ks.dn_country_code = self._dn_country_code_var.get()
         return ks
 
-
     def create_config_data_from_widgets(self) -> ConfigData:
         """
         @returns A new ConfigData object, where all the values are read from the
@@ -260,7 +363,6 @@ class TkApp(tk.Tk):
         config.keystore_settings = self.create_keystore_settings_from_widgets()
         return config
 
-
     def update_widgets_from_keystore_settings(self, ks: KeystoreSettings):
         self._keystore_file_var.set(ks.keystore_file)
         self._keystore_keystore_password_var.set(ks.keystore_password)
@@ -273,7 +375,6 @@ class TkApp(tk.Tk):
         self._dn_company_var.set(ks.dn_organization)
         self._dn_country_code_var.set(ks.dn_country_code)
 
-
     def update_widgets_from_config(self, config: ConfigData):
         self._android_sdk_path_var.set(config.android_sdk_path)
         self._android_ndk_version_var.set(config.android_ndk_version)
@@ -282,14 +383,15 @@ class TkApp(tk.Tk):
         self._extra_cmake_args_var.set(config.extra_cmake_args)
         self.update_widgets_from_keystore_settings(config.keystore_settings)
 
-
     def on_load_settings_button(self):
         """
         Invoked when the user clicks the `Load Settings` button.
         """
         suggested_file_path = self._config_file_path_var.get()
         if suggested_file_path == "":
-            suggested_file_path = os.path.join(self._config.project_path, DEFAULT_APG_CONFIG_FILE)
+            suggested_file_path = os.path.join(
+                self._config.project_path, DEFAULT_APG_CONFIG_FILE
+            )
         initial_dir, initial_file = os.path.split(suggested_file_path)
         filename = filedialog.askopenfilename(
             initialdir=initial_dir,
@@ -297,18 +399,23 @@ class TkApp(tk.Tk):
             title="Load Settings",
             filetypes=[("JSON files", "*.json"), ("All files", "*")],
             defaultextension=".json",
-            parent=self
-            )
+            parent=self,
+        )
         if (not filename) or (not os.path.isfile(filename)):
-            messagebox.showinfo("Invalid Settings File Path", f"The path {filename} is invalid!")
+            messagebox.showinfo(
+                "Invalid Settings File Path", f"The path {filename} is invalid!"
+            )
             return
         if not self._config.load_from_json_file(filename):
-            messagebox.showerror("File I/O Error", f"Failed to read settings from file:\n{filename}")
+            messagebox.showerror(
+                "File I/O Error", f"Failed to read settings from file:\n{filename}"
+            )
             return
         self._config_file_path_var.set(filename)
-        messagebox.showinfo("Success!", f"Current settings were loaded from file:\n{filename}")
+        messagebox.showinfo(
+            "Success!", f"Current settings were loaded from file:\n{filename}"
+        )
         self.update_widgets_from_config(self._config)
-
 
     def on_save_settings_button(self):
         """
@@ -317,7 +424,9 @@ class TkApp(tk.Tk):
         configData = self.create_config_data_from_widgets()
         suggested_file_path = self._config_file_path_var.get()
         if suggested_file_path == "":
-            suggested_file_path = os.path.join(configData.project_path, DEFAULT_APG_CONFIG_FILE)
+            suggested_file_path = os.path.join(
+                configData.project_path, DEFAULT_APG_CONFIG_FILE
+            )
         initial_dir, initial_file = os.path.split(suggested_file_path)
         filename = filedialog.asksaveasfilename(
             initialdir=initial_dir,
@@ -325,16 +434,19 @@ class TkApp(tk.Tk):
             title="Save Settings",
             filetypes=[("JSON files", "*.json"), ("All files", "*")],
             defaultextension=".json",
-            parent=self
-            )
+            parent=self,
+        )
         if (filename is None) or (filename == ""):
-            return # Cancelled by user.
+            return  # Cancelled by user.
         if not configData.save_to_json_file(filename):
-            messagebox.showerror("File I/O Error", f"Failed to save settings to file {filename}")
+            messagebox.showerror(
+                "File I/O Error", f"Failed to save settings to file {filename}"
+            )
         self._config = configData
         self._config_file_path_var.set(filename)
-        messagebox.showinfo("Success!", f"Current settings were saved as file:\n{filename}")
-
+        messagebox.showinfo(
+            "Success!", f"Current settings were saved as file:\n{filename}"
+        )
 
     def _on_user_cancel_task(self):
         """
@@ -343,8 +455,7 @@ class TkApp(tk.Tk):
         """
         self._wait_dialog = None
         self._cancel_current_operation()
-        self._current_operation = None # Doesn't hurt to force this to None.
-
+        self._current_operation = None  # Doesn't hurt to force this to None.
 
     def _tick_operation(self):
         """
@@ -354,16 +465,15 @@ class TkApp(tk.Tk):
             # The operation completed. Time to close the progress dialog
             # and report the results.
             if self._wait_dialog:
-                 self._wait_dialog.close()
-                 self._wait_dialog = None
+                self._wait_dialog.close()
+                self._wait_dialog = None
             self._on_current_operation_finished()
             return
         # Keep ticking, until next time if the operation is finished or the user
         # decides to cancel the current operation.
         if self._wait_dialog:
-            self._wait_dialog.on_tick(float(self._tick_delta_ms)/1000.0)
+            self._wait_dialog.on_tick(float(self._tick_delta_ms) / 1000.0)
             self.after(self._tick_delta_ms, self._tick_operation)
-
 
     def _cancel_current_operation(self):
         """
@@ -372,9 +482,11 @@ class TkApp(tk.Tk):
         self._current_operation.cancel()
         report_msg = self._current_operation.get_report_msg()
         self._append_log_message(report_msg)
-        messagebox.showinfo("Cancelled By User", f"{self._current_operation.get_basic_description()}\nwas cancelled by user!")
+        messagebox.showinfo(
+            "Cancelled By User",
+            f"{self._current_operation.get_basic_description()}\nwas cancelled by user!",
+        )
         self._current_operation = None
-
 
     def _on_current_operation_finished(self):
         # The current operation is finished. But it could have
@@ -382,11 +494,16 @@ class TkApp(tk.Tk):
         report_msg = self._current_operation.get_report_msg()
         self._append_log_message(report_msg)
         if self._current_operation.is_success():
-            messagebox.showinfo("Success", f"{self._current_operation.get_basic_description()}\ncompleted succesfully!")
+            messagebox.showinfo(
+                "Success",
+                f"{self._current_operation.get_basic_description()}\ncompleted succesfully!",
+            )
         else:
-            messagebox.showerror("Error", f"{self._current_operation.get_basic_description()}\ncompleted with errors!")
+            messagebox.showerror(
+                "Error",
+                f"{self._current_operation.get_basic_description()}\ncompleted with errors!",
+            )
         self._current_operation = None
-
 
     def on_select_keystore_file_button(self):
         """
@@ -399,7 +516,9 @@ class TkApp(tk.Tk):
             suggested_file_path = self._config.keystore_settings.keystore_file
         if suggested_file_path == "":
             # If the cached data is empty, let's try a default
-            suggested_file_path = os.path.join(self._config.project_path, "app.keystore")
+            suggested_file_path = os.path.join(
+                self._config.project_path, "app.keystore"
+            )
 
         initial_dir, initial_file = os.path.split(suggested_file_path)
         filename = filedialog.asksaveasfilename(
@@ -408,14 +527,13 @@ class TkApp(tk.Tk):
             title="Select Keystore File",
             filetypes=[("keystore files", "*.keystore"), ("All files", "*")],
             defaultextension=".json",
-            parent=self
-            )
+            parent=self,
+        )
         if (not filename) or (filename == ""):
-            messagebox.showerror("Error", f"Invalid Keystore File Path!")
+            messagebox.showerror("Error", "Invalid Keystore File Path!")
             return
         self._keystore_file_var.set(filename)
         self._config.keystore_settings.keystore_file = filename
-
 
     def on_select_sdk_path_button(self):
         """
@@ -424,20 +542,22 @@ class TkApp(tk.Tk):
         """
         configData = self.create_config_data_from_widgets()
         initial_dir = configData.android_sdk_path
-        directory  = filedialog.askdirectory(
-            initialdir=initial_dir,
-            title="Pick Android SDK Location",
-            parent=self
+        directory = filedialog.askdirectory(
+            initialdir=initial_dir, title="Pick Android SDK Location", parent=self
+        )
+        if (not directory) or (directory == "") or (not os.path.isdir(directory)):
+            messagebox.showerror(
+                "Invalid SDK Path", f"The path {directory} is invalid!"
             )
-        if (not directory ) or (directory == "") or (not os.path.isdir(directory)):
-            messagebox.showerror("Invalid SDK Path", f"The path {directory} is invalid!")
             return
         if not discovery.could_be_android_sdk_directory(directory):
-            messagebox.showwarning("Warning", f"The directory:\n{directory}\nDoesn't appear to be an Android SDK directory.")
+            messagebox.showwarning(
+                "Warning",
+                f"The directory:\n{directory}\nDoesn't appear to be an Android SDK directory.",
+            )
         configData.android_sdk_path = directory
-        self._config = configData 
+        self._config = configData
         self.update_widgets_from_config(self._config)
-
 
     def on_create_keystore_button(self):
         """
@@ -445,10 +565,13 @@ class TkApp(tk.Tk):
         """
         ks = self.create_keystore_settings_from_widgets()
         if (not ks.keystore_file) or (ks.keystore_file == ""):
-            messagebox.showerror("Error", f"A vaid `Keystore File` is required.")
+            messagebox.showerror("Error", "A vaid `Keystore File` is required.")
             return
         if os.path.isfile(ks.keystore_file):
-            result = messagebox.askyesno("Attention!", f"Do you want to replace the Keystore File:\n{ks.keystore_file}?")
+            result = messagebox.askyesno(
+                "Attention!",
+                f"Do you want to replace the Keystore File:\n{ks.keystore_file}?",
+            )
             if not result:
                 return
             else:
@@ -456,19 +579,27 @@ class TkApp(tk.Tk):
                 try:
                     os.remove(ks.keystore_file)
                 except Exception as err:
-                    messagebox.showerror("Error", f"Failed to delete keystore file {ks.keystore_file}. Got Exception:\n{err}")
+                    messagebox.showerror(
+                        "Error",
+                        f"Failed to delete keystore file {ks.keystore_file}. Got Exception:\n{err}",
+                    )
                     return
         self._config.keystore_settings = ks
+
         # Start the in-progress modal dialog.
         def _inner_cancel_cb():
             self._on_user_cancel_task()
-        self._wait_dialog = WaitDialog(self, "Creating Keystore.\nThis operation takes around 5 seconds.", _inner_cancel_cb)
+
+        self._wait_dialog = WaitDialog(
+            self,
+            "Creating Keystore.\nThis operation takes around 5 seconds.",
+            _inner_cancel_cb,
+        )
         self._tick_delta_ms = 250
         self.after(self._tick_delta_ms, self._tick_operation)
         # Instantiate and start the job.
         self._current_operation = KeystoreGenerator(self._config)
         self._current_operation.start()
-
 
     def on_generate_project_button(self):
         """
@@ -478,15 +609,27 @@ class TkApp(tk.Tk):
         # Make sure the keystore file exist.
         ks = configData.keystore_settings
         if (not ks.keystore_file) or (ks.keystore_file == ""):
-            messagebox.showerror("Error", f"Can not generate an android project without a valid `Keystore File`.")
+            messagebox.showerror(
+                "Error",
+                "Can not generate an android project without a valid `Keystore File`.",
+            )
             return
         if not os.path.isfile(ks.keystore_file):
-            messagebox.showerror("Error", f"The keystore file {ks.keystore_file} doesn't exist.\nPush the `Create Keystore` button to create it.")
+            messagebox.showerror(
+                "Error",
+                f"The keystore file {ks.keystore_file} doesn't exist.\nPush the `Create Keystore` button to create it.",
+            )
             return
+
         # Start the in-progress modal dialog.
         def _inner_cancel_cb():
             self._on_user_cancel_task()
-        self._wait_dialog = WaitDialog(self, "Generating the android project.\nThis operation takes around 30 seconds.", _inner_cancel_cb)
+
+        self._wait_dialog = WaitDialog(
+            self,
+            "Generating the android project.\nThis operation takes around 30 seconds.",
+            _inner_cancel_cb,
+        )
         self._tick_delta_ms = 250
         self.after(self._tick_delta_ms, self._tick_operation)
         # Instantiate and start the job.
@@ -494,19 +637,26 @@ class TkApp(tk.Tk):
         self._current_operation = ProjectGenerator(configData)
         self._current_operation.start()
 
+
 # class TkApp END
 ######################################################
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Presents a UI that automates the generation of an Android Project and its keystore.')
-    parser.add_argument('--engine', '--e', required=True,
-                    help='Path to the engine root directory.')
-    parser.add_argument('--project', '--p', required=True,
-                    help='Path to the project root directory.')
-    parser.add_argument('--build', '--b', required=True,
-                    help='Path to the build directory.')
-    parser.add_argument('--third_party', '--t', required=True,
-                    help='Path to the 3rd Party root folder.')
+    parser = argparse.ArgumentParser(
+        description="Presents a UI that automates the generation of an Android Project and its keystore."
+    )
+    parser.add_argument(
+        "--engine", "--e", required=True, help="Path to the engine root directory."
+    )
+    parser.add_argument(
+        "--project", "--p", required=True, help="Path to the project root directory."
+    )
+    parser.add_argument(
+        "--build", "--b", required=True, help="Path to the build directory."
+    )
+    parser.add_argument(
+        "--third_party", "--t", required=True, help="Path to the 3rd Party root folder."
+    )
 
     args = parser.parse_args()
 

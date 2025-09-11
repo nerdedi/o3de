@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 
 Functions to aid in monitoring log files being actively written to for a set of lines to read for.
 """
+
 import logging
 import os
 import re
@@ -40,14 +41,16 @@ def check_exact_match(line, expected_line):
 
     # Look for either start of line or whitespace, then the expected_line, then either end of the line or whitespace.
     # This way we don't partial match inside of a string.  So for example, 'foo' matches 'foo bar' but not 'foobar'
-    regex_pattern = re.compile("(^|\\s){}($|\\s)".format(re.escape(expected_line)), re.UNICODE)
+    regex_pattern = re.compile(
+        "(^|\\s){}($|\\s)".format(re.escape(expected_line)), re.UNICODE
+    )
     if regex_pattern.search(line) is not None:
         return expected_line
 
     return None
 
-class LogMonitor(object):
 
+class LogMonitor(object):
     def __init__(self, launcher, log_file_path, log_creation_max_wait_time=5):
         """
         Log monitor object for monitoring a single log file for expected or unexpected line values.
@@ -64,11 +67,13 @@ class LogMonitor(object):
         self.py_log = ""
         self.log_creation_max_wait_time = log_creation_max_wait_time
 
-    def monitor_log_for_lines(self,
-                              expected_lines=None,
-                              unexpected_lines=None,
-                              halt_on_unexpected=False,
-                              timeout=30):
+    def monitor_log_for_lines(
+        self,
+        expected_lines=None,
+        unexpected_lines=None,
+        halt_on_unexpected=False,
+        timeout=30,
+    ):
         """
         Monitor for expected or unexpected lines for the log file attached to this LogMonitor object.
         Returns True on success or raises LogMonitorException on failure.
@@ -84,7 +89,9 @@ class LogMonitor(object):
         waiter.wait_for(
             lambda: os.path.exists(self.log_file_path),
             timeout=self.log_creation_max_wait_time,
-            exc=LogMonitorException(f"Log file '{self.log_file_path}' was never created by another process."),
+            exc=LogMonitorException(
+                f"Log file '{self.log_file_path}' was never created by another process."
+            ),
             interval=1,
         )
 
@@ -92,11 +99,16 @@ class LogMonitor(object):
         launcher_class = ly_test_tools.launchers.platforms.base.Launcher
         if not os.path.exists(self.log_file_path):
             raise LogMonitorException(
-                "Referenced self.log_file_path file does not exist: {}".format(self.log_file_path))
+                "Referenced self.log_file_path file does not exist: {}".format(
+                    self.log_file_path
+                )
+            )
         if not isinstance(self.launcher, launcher_class):
             raise LogMonitorException(
                 "Referenced launcher type: '{}' is not a valid launcher class. Must be of type: '{}'".format(
-                    type(self.launcher), launcher_class))
+                    type(self.launcher), launcher_class
+                )
+            )
         if not expected_lines and not unexpected_lines:
             logger.warning("Requested log monitoring for no lines, aborting")
             return
@@ -108,46 +120,81 @@ class LogMonitor(object):
             expected_lines = []
             logger.warning(
                 "Requested log monitoring without providing any expected lines. "
-                "Log monitoring will continue for '{}' seconds to search for unexpected lines.".format(timeout))
+                "Log monitoring will continue for '{}' seconds to search for unexpected lines.".format(
+                    timeout
+                )
+            )
         if type(expected_lines) is not list or type(unexpected_lines) is not list:
             raise LogMonitorException(
                 "expected_lines or unexpected_lines must be 'list' type variables. "
                 "Got types: type(expected_lines) == {} & type(unexpected_lines) == {}".format(
-                    type(expected_lines), type(unexpected_lines)))
-                    
+                    type(expected_lines), type(unexpected_lines)
+                )
+            )
+
         # Make sure the expected_lines don't have any common lines with unexpected_lines
-        expected_lines_in_unexpected = [line for line in unexpected_lines if line in expected_lines]
+        expected_lines_in_unexpected = [
+            line for line in unexpected_lines if line in expected_lines
+        ]
         if expected_lines_in_unexpected:
-            raise LogMonitorException("Found unexpected_lines in expected_lines:\n{}".format("\n".join(expected_lines_in_unexpected)))
-            
-        unexpected_lines_in_expected = [line for line in expected_lines if line in unexpected_lines]
+            raise LogMonitorException(
+                "Found unexpected_lines in expected_lines:\n{}".format(
+                    "\n".join(expected_lines_in_unexpected)
+                )
+            )
+
+        unexpected_lines_in_expected = [
+            line for line in expected_lines if line in unexpected_lines
+        ]
         if unexpected_lines_in_expected:
-            raise LogMonitorException("Found expected_lines in unexpected_lines:\n{}".format("\n".join(unexpected_lines_in_expected)))
+            raise LogMonitorException(
+                "Found expected_lines in unexpected_lines:\n{}".format(
+                    "\n".join(unexpected_lines_in_expected)
+                )
+            )
 
         # Log file is now opened by our process, start monitoring log lines:
         self.py_log = ""
         try:
-            with open(self.log_file_path, mode='r', encoding='utf-8') as log:
+            with open(self.log_file_path, mode="r", encoding="utf-8") as log:
                 logger.info(
-                    "Monitoring log file '{}' for '{}' seconds".format(self.log_file_path, timeout))
-                    
+                    "Monitoring log file '{}' for '{}' seconds".format(
+                        self.log_file_path, timeout
+                    )
+                )
+
                 search_expected_lines = expected_lines.copy()
                 search_unexpected_lines = unexpected_lines.copy()
                 waiter.wait_for(  # Sets the values for self.unexpected_lines_found & self.expected_lines_not_found
-                    lambda: self._find_lines(log, search_expected_lines, search_unexpected_lines, halt_on_unexpected),
+                    lambda: self._find_lines(
+                        log,
+                        search_expected_lines,
+                        search_unexpected_lines,
+                        halt_on_unexpected,
+                    ),
                     timeout=timeout,
-                    interval=LOG_MONITOR_INTERVAL)
+                    interval=LOG_MONITOR_INTERVAL,
+                )
         except AssertionError:  # Raised by waiter when timeout is reached.
-            logger.warning(f"Timeout of '{timeout}' seconds was reached, log lines may not have been found")
+            logger.warning(
+                f"Timeout of '{timeout}' seconds was reached, log lines may not have been found"
+            )
             # exception will be raised below by _validate_results with failure analysis
         finally:
             logger.info("Python log output:\n" + self.py_log)
             logger.info(
                 "Finished log monitoring for '{}' seconds, validating results.\n"
                 "expected_lines_not_found: {}\n unexpected_lines_found: {}".format(
-                    timeout, self.expected_lines_not_found, self.unexpected_lines_found))
+                    timeout, self.expected_lines_not_found, self.unexpected_lines_found
+                )
+            )
 
-        return self._validate_results(self.expected_lines_not_found, self.unexpected_lines_found, expected_lines, unexpected_lines)
+        return self._validate_results(
+            self.expected_lines_not_found,
+            self.unexpected_lines_found,
+            expected_lines,
+            unexpected_lines,
+        )
 
     def _find_expected_lines(self, line, expected_lines):
         """
@@ -164,7 +211,9 @@ class LogMonitor(object):
         for expected_line in expected_lines:
             searched_line = check_exact_match(line, expected_line)
             if expected_line == searched_line:
-                logger.debug("Found expected line: {} from line: {}".format(expected_line, line))
+                logger.debug(
+                    "Found expected line: {} from line: {}".format(expected_line, line)
+                )
                 expected_lines_to_remove.append(expected_line)
 
         for expected_line in expected_lines_to_remove:
@@ -190,10 +239,17 @@ class LogMonitor(object):
         for unexpected_line in unexpected_lines:
             searched_line = check_exact_match(line, unexpected_line)
             if unexpected_line == searched_line:
-                logger.debug("Found unexpected line: {} from line: {}".format(unexpected_line, line))
+                logger.debug(
+                    "Found unexpected line: {} from line: {}".format(
+                        unexpected_line, line
+                    )
+                )
                 if halt_on_unexpected:
                     raise LogMonitorException(
-                        "Unexpected line appeared: {} from line: {}".format(unexpected_line, line))
+                        "Unexpected line appeared: {} from line: {}".format(
+                            unexpected_line, line
+                        )
+                    )
                 unexpected_lines_found.append(unexpected_line)
                 unexpected_lines_to_remove.append(unexpected_line)
 
@@ -202,7 +258,13 @@ class LogMonitor(object):
 
         return unexpected_lines_found
 
-    def _validate_results(self, expected_lines_not_found, unexpected_lines_found, expected_lines, unexpected_lines):
+    def _validate_results(
+        self,
+        expected_lines_not_found,
+        unexpected_lines_found,
+        expected_lines,
+        unexpected_lines,
+    ):
         """
         Parses the values in the expected_lines_not_found & unexpected_lines_found lists.
         If any expected lines were NOT found or unexpected lines WERE found, a LogMonitorException will be raised.
@@ -214,8 +276,10 @@ class LogMonitor(object):
         """
         failure_found = False
         fail_message = "While monitoring file '{}':\n".format(self.log_file_path)
-        expected_line_failures = ''
-        expected_lines_found = [line for line in expected_lines if line not in expected_lines_not_found]
+        expected_line_failures = ""
+        expected_lines_found = [
+            line for line in expected_lines if line not in expected_lines_not_found
+        ]
 
         # Find out if any error strings need to be constructed.
         if expected_lines_not_found or unexpected_lines_found:
@@ -228,25 +292,39 @@ class LogMonitor(object):
                 expected_lines_info += "[ FOUND ] {}\n".format(line)
             else:
                 expected_lines_info += "[ NOT FOUND ] {}\n".format(line)
-            
-        logger.info("LogMonitor Result:\n"
-                    "--- Expected lines ---\n"
-                    f"{expected_lines_info}"
-                    f"Found {len(expected_lines_found)}/{len(expected_lines)} expected lines")
-        
+
+        logger.info(
+            "LogMonitor Result:\n"
+            "--- Expected lines ---\n"
+            f"{expected_lines_info}"
+            f"Found {len(expected_lines_found)}/{len(expected_lines)} expected lines"
+        )
+
         if failure_found:
             if expected_lines_not_found:
                 expected_line_failures = "\n".join(expected_lines_not_found)
-                logger.error('Following expected lines *NOT FOUND*:\n{}'.format(expected_line_failures))
-                fail_message += "Failed to find expected line(s):\n{}".format(expected_line_failures)
+                logger.error(
+                    "Following expected lines *NOT FOUND*:\n{}".format(
+                        expected_line_failures
+                    )
+                )
+                fail_message += "Failed to find expected line(s):\n{}".format(
+                    expected_line_failures
+                )
             if unexpected_lines_found:
                 unexpected_line_failures = "\n".join(unexpected_lines_found)
-                logger.error('Following unexpected lines *FOUND*:\n{}'.format(unexpected_line_failures))
+                logger.error(
+                    "Following unexpected lines *FOUND*:\n{}".format(
+                        unexpected_line_failures
+                    )
+                )
                 fail_message += "Additionally, " if expected_line_failures else ""
-                fail_message += "Found unexpected line(s):\n{}".format(unexpected_line_failures)
-                
+                fail_message += "Found unexpected line(s):\n{}".format(
+                    unexpected_line_failures
+                )
+
             raise LogMonitorException(fail_message)
-    
+
         return True
 
     def _find_lines(self, log, expected_lines, unexpected_lines, halt_on_unexpected):
@@ -266,9 +344,11 @@ class LogMonitor(object):
         log_filename = os.path.basename(self.log_file_path)
 
         def process_line(line):
-            self.py_log += ("|%s| %s\n" % (log_filename, line))
+            self.py_log += "|%s| %s\n" % (log_filename, line)
             expected_lines_not_found = self._find_expected_lines(line, expected_lines)
-            unexpected_lines_found = self._find_unexpected_lines(line, unexpected_lines, halt_on_unexpected)
+            unexpected_lines_found = self._find_unexpected_lines(
+                line, unexpected_lines, halt_on_unexpected
+            )
             self.unexpected_lines_found = unexpected_lines_found
             self.expected_lines_not_found = expected_lines_not_found
 
@@ -277,7 +357,7 @@ class LogMonitor(object):
         # To avoid race conditions, we will check *before reading*
         # If in the mean time the file is closed, we will make sure we read everything by issuing an extra call
         # by returning the previous alive state
-        process_runing = self.launcher.is_alive() 
+        process_runing = self.launcher.is_alive()
         for line in log:
             line = line[:-1]  # remove /n
             try:
