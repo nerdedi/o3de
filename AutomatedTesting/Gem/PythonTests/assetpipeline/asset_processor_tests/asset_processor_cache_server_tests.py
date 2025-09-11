@@ -29,15 +29,23 @@ logger = logging.getLogger(__name__)
 # Helper: variables we will use for parameter values in the test:
 targetProjects = ["AutomatedTesting"]
 
+
 @pytest.fixture
 def local_resources(request, workspace, ap_setup_fixture):
     # Test-level asset folder. Directory contains a sub-folder for each test (i.e. C1234567)
     ap_setup_fixture["tests_dir"] = os.path.dirname(os.path.realpath(__file__))
 
+
 @pytest.fixture
 def ap_idle(workspace, ap_setup_fixture):
     gui_timeout_max = 30
-    return TimestampChecker(workspace.paths.asset_catalog(ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]), gui_timeout_max)
+    return TimestampChecker(
+        workspace.paths.asset_catalog(
+            ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]
+        ),
+        gui_timeout_max,
+    )
+
 
 @pytest.mark.usefixtures("asset_processor")
 @pytest.mark.usefixtures("ap_setup_fixture")
@@ -57,7 +65,7 @@ class TestsAssetProcessorGUI_AllPlatforms(object):
         BUF_SIZE = 1024
         sha1 = hashlib.sha1()
 
-        with open(filename, 'rb') as f:
+        with open(filename, "rb") as f:
             while True:
                 data = f.read(BUF_SIZE)
                 if not data:
@@ -72,22 +80,26 @@ class TestsAssetProcessorGUI_AllPlatforms(object):
         for _, _, files in os.walk(path):
             for name in files:
                 if name.startswith(prefix):
-                    fingerprint = name[(len(prefix)):]
+                    fingerprint = name[(len(prefix)) :]
                     result[fingerprint] = name
         return result, files
 
-    def cycle_asset_processor(self, asset_processor, cache_mode, cache_folder, cache_pattern_name):
+    def cycle_asset_processor(
+        self, asset_processor, cache_mode, cache_folder, cache_pattern_name
+    ):
         """
         This launches the Asset Processor with the Asset Cache Server mode either enabled or inactive
         """
         extra_parameters = [
             f' --regset="/O3DE/AssetProcessor/Settings/Server/cacheServerAddress={cache_folder}" ',
             f' --regset="/O3DE/AssetProcessor/Settings/Server/assetCacheServerMode={cache_mode}" ',
-            f' --regset="/O3DE/AssetProcessor/Settings/Server/ACS {cache_pattern_name}/checkServer=true" '
+            f' --regset="/O3DE/AssetProcessor/Settings/Server/ACS {cache_pattern_name}/checkServer=true" ',
         ]
 
         # execute in cache mode
-        result, _ = asset_processor.gui_process(quitonidle=False, extra_params=extra_parameters)
+        result, _ = asset_processor.gui_process(
+            quitonidle=False, extra_params=extra_parameters
+        )
         assert result, "AP GUI failed"
 
         # Wait for AP to have finished processing
@@ -95,7 +107,9 @@ class TestsAssetProcessorGUI_AllPlatforms(object):
         asset_processor.terminate()
 
     @pytest.mark.assetpipeline
-    def test_AssetCacheServer_LocalWorkUnaffected(self, workspace, asset_processor, ap_setup_fixture):
+    def test_AssetCacheServer_LocalWorkUnaffected(
+        self, workspace, asset_processor, ap_setup_fixture
+    ):
         """
         Test to make sure that a client working on local changes is not affected by the remote server folder changes.
 
@@ -114,10 +128,14 @@ class TestsAssetProcessorGUI_AllPlatforms(object):
         """
 
         # Copy test assets to project folder and verify test assets folder exists
-        test_folder = 'acs_local_change'
+        test_folder = "acs_local_change"
         asset_path = ap_setup_fixture["tests_dir"]
-        test_assets_folder, cache_path = asset_processor.prepare_test_environment(asset_path, test_folder)
-        assert os.path.exists(test_assets_folder), f"Test asset was not copied to test folder: {test_assets_folder}"
+        test_assets_folder, cache_path = asset_processor.prepare_test_environment(
+            asset_path, test_folder
+        )
+        assert os.path.exists(test_assets_folder), (
+            f"Test asset was not copied to test folder: {test_assets_folder}"
+        )
 
         # Save path to test asset in project folder and path to test asset in cache
         source_asset_a = os.path.join(test_assets_folder, "test_00.png")
@@ -128,17 +146,22 @@ class TestsAssetProcessorGUI_AllPlatforms(object):
         asset_cache_target_folder = os.path.join(asset_cache_folder, test_folder)
 
         # check that source files exist (sanity checks)
-        assert os.path.exists(source_asset_a), "{source_asset_a} source one file does not exist"
-        assert os.path.exists(source_asset_b), "{source_asset_b} source two file does not exist"
+        assert os.path.exists(source_asset_a), (
+            "{source_asset_a} source one file does not exist"
+        )
+        assert os.path.exists(source_asset_b), (
+            "{source_asset_b} source two file does not exist"
+        )
 
         # 1. Start Asset Processor - in Server Mode
         # 2. Process a source asset
         # 3. Stop Asset Processor
         self.cycle_asset_processor(
             asset_processor,
-            cache_mode='Server',
+            cache_mode="Server",
             cache_folder=asset_cache_folder,
-            cache_pattern_name='Atom Image Builder')
+            cache_pattern_name="Atom Image Builder",
+        )
 
         # check that product entries exist (sanity checks)
         assert os.path.exists(product_asset_a), "{product_asset_a} does not exist"
@@ -147,15 +170,17 @@ class TestsAssetProcessorGUI_AllPlatforms(object):
         # make sure the product asset archive was created
         results, files = self.find_archive_parts(
             asset_cache_target_folder,
-            f'test_00_Image Compile  PNG_{ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]}_'
+            f"test_00_Image Compile  PNG_{ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]}_",
         )
-        assert len(results.keys()) == 1, f"{results} should have exactly one entry; found files {files}"
+        assert len(results.keys()) == 1, (
+            f"{results} should have exactly one entry; found files {files}"
+        )
 
         # 5. Make a local change
         # Modify contents of test asset in project folder
         file_hash_a = self.get_file_hash(source_asset_a)
         file_hash_b = self.get_file_hash(source_asset_b)
-        assert not(file_hash_a == file_hash_b), "The source files should not be equal"
+        assert not (file_hash_a == file_hash_b), "The source files should not be equal"
         shutil.copyfile(source_asset_b, source_asset_a)
 
         # 4. Cycle Asset Processor - in Server Mode
@@ -163,15 +188,18 @@ class TestsAssetProcessorGUI_AllPlatforms(object):
         # 7. Stop Asset Processor
         self.cycle_asset_processor(
             asset_processor,
-            cache_mode='Server',
+            cache_mode="Server",
             cache_folder=asset_cache_folder,
-            cache_pattern_name='Atom Image Builder')
+            cache_pattern_name="Atom Image Builder",
+        )
 
         # Result(s):
         # 1. The client's change is now the definitive edition of the source asset
         # 2. The cache was updated with the local client change
         results, files = self.find_archive_parts(
             asset_cache_target_folder,
-            f'test_00_Image Compile  PNG_{ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]}_'
+            f"test_00_Image Compile  PNG_{ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]}_",
         )
-        assert len(results.keys()) == 2, f"{results} should have exactly two entries; found files {files}"
+        assert len(results.keys()) == 2, (
+            f"{results} should have exactly two entries; found files {files}"
+        )
