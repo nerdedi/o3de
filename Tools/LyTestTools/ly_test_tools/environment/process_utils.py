@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 
 Process management functions, to supplement normal use of psutil and subprocess
 """
+
 import logging
 import os
 import psutil
@@ -16,14 +17,18 @@ import ly_test_tools
 import ly_test_tools.environment.waiter as waiter
 
 logger = logging.getLogger(__name__)
-_PROCESS_OUTPUT_ENCODING = 'utf-8'
+_PROCESS_OUTPUT_ENCODING = "utf-8"
 
 # Default list of processes names to kill
 LY_PROCESS_KILL_LIST = [
-    'AssetBuilder', 'AssetProcessor', 'AssetProcessorBatch',
-    'CrySCompileServer', 'Editor',
-    'Profiler', 'RemoteConsole',
-    'rc'  # Resource Compiler
+    "AssetBuilder",
+    "AssetProcessor",
+    "AssetProcessorBatch",
+    "CrySCompileServer",
+    "Editor",
+    "Profiler",
+    "RemoteConsole",
+    "rc",  # Resource Compiler
 ]
 
 
@@ -59,19 +64,28 @@ def kill_processes_named(names, ignore_extensions=False):
 
     logger.info(f"Killing all processes named {name_set}")
     process_set_to_kill = set()
-    for process in _safe_get_processes(['name', 'pid']):
+    for process in _safe_get_processes(["name", "pid"]):
         try:
             proc_name = process.name()
         except psutil.AccessDenied:
-            logger.warning(f"Process {process} permissions error during kill_processes_named()", exc_info=True)
+            logger.warning(
+                f"Process {process} permissions error during kill_processes_named()",
+                exc_info=True,
+            )
             continue
         except psutil.ProcessLookupError:
-            logger.debug(f"Process {process} could not be killed during kill_processes_named() and was likely already "
-                         f"stopped", exc_info=True)
+            logger.debug(
+                f"Process {process} could not be killed during kill_processes_named() and was likely already "
+                f"stopped",
+                exc_info=True,
+            )
             continue
         except psutil.NoSuchProcess:
-            logger.debug(f"Process '{process}' was active when list of processes was requested but it was not found "
-                         f"during kill_processes_named()", exc_info=True)
+            logger.debug(
+                f"Process '{process}' was active when list of processes was requested but it was not found "
+                f"during kill_processes_named()",
+                exc_info=True,
+            )
             continue
 
         if proc_name in name_set:
@@ -124,12 +138,15 @@ def kill_processes_with_name_not_started_from(name, path):
         for process in _safe_get_processes(["name", "pid"]):
             try:
                 process_path = process.exe()
-            except (psutil.AccessDenied, psutil.NoSuchProcess) as ex:
+            except (psutil.AccessDenied, psutil.NoSuchProcess):
                 continue
 
             process_name = os.path.splitext(os.path.basename(process_path))[0]
 
-            if process_name == os.path.basename(name) and not os.path.dirname(process_path.lower()) == path:
+            if (
+                process_name == os.path.basename(name)
+                and not os.path.dirname(process_path.lower()) == path
+            ):
                 logger.info("%s -> %s" % (os.path.dirname(process_path.lower()), path))
                 proccesses_to_kill.append(process)
 
@@ -146,7 +163,9 @@ def kill_process_with_pid(pid, raise_on_missing=False):
     :param raise_on_missing: if set to True, raise RuntimeError if the process does not already exist
     """
     if pid is None:
-        logger.warning("Killing process id of 'None' will terminate the current python process!")
+        logger.warning(
+            "Killing process id of 'None' will terminate the current python process!"
+        )
     logger.info(f"Killing processes with id '{pid}'")
     process = psutil.Process(pid)
     if process.is_running():
@@ -175,12 +194,18 @@ def process_exists(name, ignore_extensions=False):
     for process in _safe_get_processes(["name"]):
         try:
             proc_name = process.name().lower()
-        except psutil.NoSuchProcess as e:
-            logger.debug(f"Process '{process}' was active when list of processes was requested but it was not found "
-                         f"during process_exists()", exc_info=True)
+        except psutil.NoSuchProcess:
+            logger.debug(
+                f"Process '{process}' was active when list of processes was requested but it was not found "
+                f"during process_exists()",
+                exc_info=True,
+            )
             continue
-        except psutil.AccessDenied as e:
-            logger.warning(f"Permissions issue on {process} during process_exists check", exc_info=True)
+        except psutil.AccessDenied:
+            logger.warning(
+                f"Permissions issue on {process} during process_exists check",
+                exc_info=True,
+            )
             continue
 
         if proc_name == name:  # abc.exe matches abc.exe
@@ -207,9 +232,15 @@ def process_is_unresponsive(name):
     :return: True if the specified process is unresponsive and False otherwise
     """
     if ly_test_tools.WINDOWS:
-        output = check_output(['tasklist',
-                               '/FI', f'IMAGENAME eq {name}',
-                               '/FI', 'STATUS eq NOT RESPONDING'])
+        output = check_output(
+            [
+                "tasklist",
+                "/FI",
+                f"IMAGENAME eq {name}",
+                "/FI",
+                "STATUS eq NOT RESPONDING",
+            ]
+        )
         output = output.split(os.linesep)
         for line in output:
             if line and name.startswith(line.split()[0]):
@@ -222,7 +253,7 @@ def process_is_unresponsive(name):
         cmd = ["ps", "-axc", "-o", "command,state"]
         output = check_output(cmd)
         for line in output.splitlines()[1:]:
-            info = [l.strip() for l in line.split(" ") if l.strip() != '']
+            info = [l.strip() for l in line.split(" ") if l.strip() != ""]
             state = info[-1]
             pname = " ".join(info[0:-1])
 
@@ -247,13 +278,17 @@ def check_output(command, **kwargs):
     """
     cmd_string = command
     if type(command) == list:
-        cmd_string = ' '.join(command)
+        cmd_string = " ".join(command)
 
     logger.info(f'Executing "check_output({cmd_string})"')
     try:
-        output = subprocess.check_output(command, **kwargs).decode(_PROCESS_OUTPUT_ENCODING)
+        output = subprocess.check_output(command, **kwargs).decode(
+            _PROCESS_OUTPUT_ENCODING
+        )
     except subprocess.CalledProcessError as e:
-        logger.error(f'Command "{cmd_string}" failed with returncode {e.returncode}, output:\n{e.output}')
+        logger.error(
+            f'Command "{cmd_string}" failed with returncode {e.returncode}, output:\n{e.output}'
+        )
         raise
     logger.info(f'Successfully executed "check_output({cmd_string})"')
     return output
@@ -272,14 +307,18 @@ def safe_check_output(command, **kwargs):
     """
     cmd_string = command
     if type(command) == list:
-        cmd_string = ' '.join(command)
+        cmd_string = " ".join(command)
 
     logger.info(f'Executing "check_output({cmd_string})"')
     try:
-        output = subprocess.check_output(command, **kwargs).decode(_PROCESS_OUTPUT_ENCODING)
+        output = subprocess.check_output(command, **kwargs).decode(
+            _PROCESS_OUTPUT_ENCODING
+        )
     except subprocess.CalledProcessError as e:
         output = e.output
-        logger.warning(f'Command "{cmd_string}" failed with returncode {e.returncode}, output:\n{e.output}')
+        logger.warning(
+            f'Command "{cmd_string}" failed with returncode {e.returncode}, output:\n{e.output}'
+        )
     else:
         logger.info(f'Successfully executed "check_output({cmd_string})"')
     return output
@@ -295,7 +334,7 @@ def check_call(command, **kwargs):
     """
     cmd_string = command
     if type(command) == list:
-        cmd_string = ' '.join(command)
+        cmd_string = " ".join(command)
 
     logger.info(f'Executing "check_call({cmd_string})"')
     try:
@@ -318,7 +357,7 @@ def safe_check_call(command, **kwargs):
     """
     cmd_string = command
     if type(command) == list:
-        cmd_string = ' '.join(command)
+        cmd_string = " ".join(command)
 
     logger.info(f'Executing "check_call({cmd_string})"')
     try:
@@ -361,7 +400,10 @@ def _safe_kill_process(proc):
     except psutil.AccessDenied:
         logger.warning("Termination failed, Access Denied", exc_info=True)
     except psutil.NoSuchProcess:
-        logger.debug("Termination request ignored, process was already terminated during iteration", exc_info=True)
+        logger.debug(
+            "Termination request ignored, process was already terminated during iteration",
+            exc_info=True,
+        )
     except Exception:  # purposefully broad
         logger.warning("Unexpected exception while terminating process", exc_info=True)
 
@@ -377,28 +419,51 @@ def _safe_kill_processes(processes):
             logger.info(f"Terminating process '{proc.name()}' with id '{proc.pid}'")
             proc.kill()
         except psutil.AccessDenied:
-            logger.warning("Termination failed, Access Denied with stacktrace:", exc_info=True)
+            logger.warning(
+                "Termination failed, Access Denied with stacktrace:", exc_info=True
+            )
         except psutil.NoSuchProcess:
-            logger.debug("Termination request ignored, process was already terminated during iteration with stacktrace:", exc_info=True)
+            logger.debug(
+                "Termination request ignored, process was already terminated during iteration with stacktrace:",
+                exc_info=True,
+            )
         except Exception:  # purposefully broad
-            logger.debug("Unexpected exception ignored while terminating process, with stacktrace:", exc_info=True)
+            logger.debug(
+                "Unexpected exception ignored while terminating process, with stacktrace:",
+                exc_info=True,
+            )
 
     def on_terminate(proc):
         try:
-            logger.info(f"process '{proc.name()}' with id '{proc.pid}' terminated with exit code {proc.returncode}")
+            logger.info(
+                f"process '{proc.name()}' with id '{proc.pid}' terminated with exit code {proc.returncode}"
+            )
         except psutil.AccessDenied:
-            logger.warning("Termination failed, Access Denied with stacktrace:", exc_info=True)
+            logger.warning(
+                "Termination failed, Access Denied with stacktrace:", exc_info=True
+            )
         except psutil.NoSuchProcess:
-            logger.debug("Termination request ignored, process was already terminated during iteration with stacktrace:", exc_info=True)
+            logger.debug(
+                "Termination request ignored, process was already terminated during iteration with stacktrace:",
+                exc_info=True,
+            )
 
     try:
         psutil.wait_procs(processes, timeout=30, callback=on_terminate)
     except psutil.AccessDenied:
-        logger.warning("Termination failed, Access Denied with stacktrace:", exc_info=True)
+        logger.warning(
+            "Termination failed, Access Denied with stacktrace:", exc_info=True
+        )
     except psutil.NoSuchProcess:
-        logger.debug("Termination request ignored, process was already terminated during iteration with stacktrace:", exc_info=True)
+        logger.debug(
+            "Termination request ignored, process was already terminated during iteration with stacktrace:",
+            exc_info=True,
+        )
     except Exception:  # purposefully broad
-        logger.debug("Unexpected exception while waiting for processes to terminate, with stacktrace:", exc_info=True)
+        logger.debug(
+            "Unexpected exception while waiting for processes to terminate, with stacktrace:",
+            exc_info=True,
+        )
 
 
 def _terminate_and_confirm_dead(proc):
@@ -407,11 +472,14 @@ def _terminate_and_confirm_dead(proc):
 
     :param proc: A process to kill, and wait for proper termination
     """
+
     def killed():
         return not proc.is_running()
 
     proc.kill()
-    waiter.wait_for(killed, exc=RuntimeError("Process did not terminate after kill command"))
+    waiter.wait_for(
+        killed, exc=RuntimeError("Process did not terminate after kill command")
+    )
 
 
 def _remove_extension(filename):
@@ -438,7 +506,9 @@ def close_windows_process(pid, timeout=20, raise_on_missing=False):
     :param raise_on_missing: if set to True, raise RuntimeError if the process does not already exist
     """
     if not ly_test_tools.WINDOWS:
-        raise NotImplementedError("close_windows_process() is only implemented on Windows.")
+        raise NotImplementedError(
+            "close_windows_process() is only implemented on Windows."
+        )
 
     if pid is None:
         raise TypeError("Cannot close window with pid of None")
@@ -449,20 +519,19 @@ def close_windows_process(pid, timeout=20, raise_on_missing=False):
             logger.error(message)
             raise RuntimeError(message)
         else:
-            logger.warning(f"Process with id {pid} was not present but option raise_on_missing is disabled. Unless "
-                           f"a matching process gets opened, calling close_windows_process will spin until its timeout")
+            logger.warning(
+                f"Process with id {pid} was not present but option raise_on_missing is disabled. Unless "
+                f"a matching process gets opened, calling close_windows_process will spin until its timeout"
+            )
 
     # Gain access to windows api
     user32 = ctypes.windll.user32
     # Set up C data types and function params
-    WNDENUMPROC = ctypes.WINFUNCTYPE(ctypes.wintypes.BOOL,
-                                     ctypes.wintypes.HWND,
-                                     ctypes.wintypes.LPARAM)
-    user32.EnumWindows.argtypes = [
-        WNDENUMPROC,
-        ctypes.wintypes.LPARAM]
-    user32.GetWindowTextLengthW.argtypes = [
-        ctypes.wintypes.HWND]
+    WNDENUMPROC = ctypes.WINFUNCTYPE(
+        ctypes.wintypes.BOOL, ctypes.wintypes.HWND, ctypes.wintypes.LPARAM
+    )
+    user32.EnumWindows.argtypes = [WNDENUMPROC, ctypes.wintypes.LPARAM]
+    user32.GetWindowTextLengthW.argtypes = [ctypes.wintypes.HWND]
 
     # This is called for each process window
     def _close_matched_process_window(hwnd, _):
@@ -496,8 +565,11 @@ def close_windows_process(pid, timeout=20, raise_on_missing=False):
     user32.EnumWindows(close_process_func, 0)
 
     # Wait for asyncronous termination
-    waiter.wait_for(lambda: pid not in psutil.pids(), timeout=timeout,
-                    exc=TimeoutError(f"Process {pid} never terminated"))
+    waiter.wait_for(
+        lambda: pid not in psutil.pids(),
+        timeout=timeout,
+        exc=TimeoutError(f"Process {pid} never terminated"),
+    )
 
 
 def get_display_env():
@@ -508,7 +580,7 @@ def get_display_env():
     """
     env = os.environ.copy()
     if not ly_test_tools.WINDOWS:
-        if 'DISPLAY' not in env.keys():
+        if "DISPLAY" not in env.keys():
             # assume Display 1 is available in another session
-            env['DISPLAY'] = ':1'
+            env["DISPLAY"] = ":1"
     return env
