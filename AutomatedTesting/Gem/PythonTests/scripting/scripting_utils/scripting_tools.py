@@ -19,14 +19,34 @@ import azlmbr.math as math
 import azlmbr.bus as bus
 import azlmbr.legacy.general as general
 import azlmbr.scriptcanvas as scriptcanvas
-from scripting_utils.scripting_constants import (SCRIPT_CANVAS_UI, ASSET_EDITOR_UI, NODE_PALETTE_UI, NODE_PALETTE_QT,
-                                 TREE_VIEW_QT, SEARCH_FRAME_QT, SEARCH_FILTER_QT, SAVE_STRING, NAME_STRING,
-                                 SAVE_ASSET_AS, WAIT_TIME_3, NODE_INSPECTOR_TITLE_KEY, WAIT_FRAMES, SCRIPT_EVENT_UI,
-                                 EVENTS_QT, DEFAULT_SCRIPT_EVENT, PARAMETERS_QT, NODE_INSPECTOR_QT, NODE_INSPECTOR_UI,
-                                 VARIABLE_PALETTE_QT, ADD_BUTTON_QT, VARIABLE_TYPES, ENTITY_STATES)
+from scripting_utils.scripting_constants import (
+    SCRIPT_CANVAS_UI,
+    ASSET_EDITOR_UI,
+    NODE_PALETTE_UI,
+    NODE_PALETTE_QT,
+    TREE_VIEW_QT,
+    SEARCH_FRAME_QT,
+    SEARCH_FILTER_QT,
+    SAVE_STRING,
+    NAME_STRING,
+    SAVE_ASSET_AS,
+    WAIT_TIME_3,
+    NODE_INSPECTOR_TITLE_KEY,
+    WAIT_FRAMES,
+    SCRIPT_EVENT_UI,
+    EVENTS_QT,
+    DEFAULT_SCRIPT_EVENT,
+    PARAMETERS_QT,
+    NODE_INSPECTOR_QT,
+    NODE_INSPECTOR_UI,
+    VARIABLE_PALETTE_QT,
+    ADD_BUTTON_QT,
+    VARIABLE_TYPES,
+    ENTITY_STATES,
+)
 
 
-class Tests():
+class Tests:
     new_event_created = ("New Script Event created", "Failed to create a new event")
     child_event_created = ("Child Event created", "Failed to create Child Event")
     parameter_created = ("Successfully added parameter", "Failed to add parameter")
@@ -44,7 +64,9 @@ def save_script_event_file(self, file_path):
     returns: true if the Save action is successful and the * character disappears from the asset editor label
     """
     editor.AssetEditorWidgetRequestsBus(bus.Broadcast, SAVE_ASSET_AS, file_path)
-    action = pyside_utils.find_child_by_pattern(self.asset_editor_menu_bar, {"type": QtWidgets.QAction, "iconText": SAVE_STRING})
+    action = pyside_utils.find_child_by_pattern(
+        self.asset_editor_menu_bar, {"type": QtWidgets.QAction, "iconText": SAVE_STRING}
+    )
     action.trigger()
     # wait till file is saved, to validate that check the text of QLabel at the bottom of the AssetEditor,
     # if there are no unsaved changes we will not have any * in the text
@@ -57,7 +79,9 @@ def initialize_editor_object(self):
 
 
 def initialize_sc_editor_objects(self):
-    self.sc_editor = self.editor_main_window.findChild(QtWidgets.QDockWidget, SCRIPT_CANVAS_UI)
+    self.sc_editor = self.editor_main_window.findChild(
+        QtWidgets.QDockWidget, SCRIPT_CANVAS_UI
+    )
     self.sc_editor_main_window = self.sc_editor.findChild(QtWidgets.QMainWindow)
 
 
@@ -69,9 +93,15 @@ def initialize_asset_editor_object(self):
 
     returns: None
     """
-    self.asset_editor = self.editor_main_window.findChild(QtWidgets.QDockWidget, ASSET_EDITOR_UI)
-    self.asset_editor_widget = self.asset_editor.findChild(QtWidgets.QWidget, "AssetEditorWindowClass")
-    self.asset_editor_row_container = self.asset_editor_widget.findChild(QtWidgets.QWidget, "ContainerForRows")
+    self.asset_editor = self.editor_main_window.findChild(
+        QtWidgets.QDockWidget, ASSET_EDITOR_UI
+    )
+    self.asset_editor_widget = self.asset_editor.findChild(
+        QtWidgets.QWidget, "AssetEditorWindowClass"
+    )
+    self.asset_editor_row_container = self.asset_editor_widget.findChild(
+        QtWidgets.QWidget, "ContainerForRows"
+    )
     self.asset_editor_menu_bar = self.asset_editor_widget.findChild(QtWidgets.QMenuBar)
 
 
@@ -85,8 +115,12 @@ def initialize_node_palette_object(self):
     """
     self.node_palette = self.sc_editor.findChild(QtWidgets.QDockWidget, NODE_PALETTE_QT)
     self.node_tree_view = self.node_palette.findChild(QtWidgets.QTreeView, TREE_VIEW_QT)
-    self.node_tree_search_frame = self.node_palette.findChild(QtWidgets.QFrame, SEARCH_FRAME_QT)
-    self.node_tree_search_box = self.node_tree_search_frame.findChild(QtWidgets.QLineEdit, SEARCH_FILTER_QT)
+    self.node_tree_search_frame = self.node_palette.findChild(
+        QtWidgets.QFrame, SEARCH_FRAME_QT
+    )
+    self.node_tree_search_box = self.node_tree_search_frame.findChild(
+        QtWidgets.QLineEdit, SEARCH_FILTER_QT
+    )
 
 
 def expand_qt_container_rows(self, object_name):
@@ -98,11 +132,15 @@ def expand_qt_container_rows(self, object_name):
 
     returns: none
     """
-    children = self.asset_editor_row_container.findChildren(QtWidgets.QFrame, object_name)
+    children = self.asset_editor_row_container.findChildren(
+        QtWidgets.QFrame, object_name
+    )
     for child in children:
         check_box = child.findChild(QtWidgets.QCheckBox)
         if check_box and not check_box.isChecked():
-            QtTest.QTest.mouseClick(check_box, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
+            QtTest.QTest.mouseClick(
+                check_box, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier
+            )
 
 
 def open_node_palette(self):
@@ -114,7 +152,9 @@ def open_node_palette(self):
     returns none
     """
     if self.sc_editor.findChild(QtWidgets.QDockWidget, NODE_PALETTE_QT) is None:
-        action = pyside_utils.find_child_by_pattern(self.sc_editor, {"text": NODE_PALETTE_UI, "type": QtWidgets.QAction})
+        action = pyside_utils.find_child_by_pattern(
+            self.sc_editor, {"text": NODE_PALETTE_UI, "type": QtWidgets.QAction}
+        )
         action.trigger()
 
 
@@ -125,8 +165,11 @@ def open_script_canvas():
     returns true / false result of helper function's attempt
     """
     general.open_pane(SCRIPT_CANVAS_UI)
-    result = helper.wait_for_condition(lambda: general.is_pane_visible(SCRIPT_CANVAS_UI), WAIT_TIME_3)
+    result = helper.wait_for_condition(
+        lambda: general.is_pane_visible(SCRIPT_CANVAS_UI), WAIT_TIME_3
+    )
     return result
+
 
 def open_asset_editor():
     """
@@ -135,8 +178,11 @@ def open_asset_editor():
     returns true/false result of helper function's attempt
     """
     general.open_pane(ASSET_EDITOR_UI)
-    result = helper.wait_for_condition(lambda: general.is_pane_visible(ASSET_EDITOR_UI), WAIT_TIME_3)
+    result = helper.wait_for_condition(
+        lambda: general.is_pane_visible(ASSET_EDITOR_UI), WAIT_TIME_3
+    )
     return result
+
 
 def canvas_node_palette_search(self, node_name, number_of_retries):
     """
@@ -150,18 +196,28 @@ def canvas_node_palette_search(self, node_name, number_of_retries):
     returns: boolean value of the search attempt
     """
     self.node_tree_search_box.setText(node_name)
-    helper.wait_for_condition(lambda: self.node_tree_search_box.text() == node_name, WAIT_TIME_3)
+    helper.wait_for_condition(
+        lambda: self.node_tree_search_box.text() == node_name, WAIT_TIME_3
+    )
     # Try clicking ENTER in search box multiple times
     found_node = False
     for _ in range(number_of_retries):
-        QtTest.QTest.keyClick(self.node_tree_search_box, QtCore.Qt.Key_Enter, QtCore.Qt.NoModifier)
+        QtTest.QTest.keyClick(
+            self.node_tree_search_box, QtCore.Qt.Key_Enter, QtCore.Qt.NoModifier
+        )
         found_node = helper.wait_for_condition(
-            lambda: pyside_utils.find_child_by_pattern(self.node_tree_view, {"text": node_name}) is not None, WAIT_TIME_3)
+            lambda: pyside_utils.find_child_by_pattern(
+                self.node_tree_view, {"text": node_name}
+            )
+            is not None,
+            WAIT_TIME_3,
+        )
         if found_node is True:
             break
     return found_node
 
-def get_node_palette_node_tree_qt_object (self):
+
+def get_node_palette_node_tree_qt_object(self):
     """
     function for retrieving the tree view qt object for the node palette
 
@@ -169,8 +225,12 @@ def get_node_palette_node_tree_qt_object (self):
 
     returns: a tree view qt object
     """
-    node_palette_widget = self.sc_editor.findChild(QtWidgets.QDockWidget, NODE_PALETTE_QT)
-    node_palette_node_tree = node_palette_widget.findChild(QtWidgets.QTreeView, TREE_VIEW_QT)
+    node_palette_widget = self.sc_editor.findChild(
+        QtWidgets.QDockWidget, NODE_PALETTE_QT
+    )
+    node_palette_node_tree = node_palette_widget.findChild(
+        QtWidgets.QTreeView, TREE_VIEW_QT
+    )
     return node_palette_node_tree
 
 
@@ -184,8 +244,11 @@ def get_node_palette_category_qt_object(self, category_name):
     returns: the qt object for the node palette category
     """
     node_palette_node_tree = get_node_palette_node_tree_qt_object(self)
-    node_palette_category = pyside_utils.find_child_by_pattern(node_palette_node_tree, category_name)
+    node_palette_category = pyside_utils.find_child_by_pattern(
+        node_palette_node_tree, category_name
+    )
     return node_palette_category
+
 
 def get_node_inspector_node_titles(self, sc_graph_node_inspector, sc_graph):
     """
@@ -199,16 +262,23 @@ def get_node_inspector_node_titles(self, sc_graph_node_inspector, sc_graph):
     returns: a list of node titles (i.e Print - Utilities/Debug). If there are duplicates of a node then the title
     will include ( X Selected) in the string.
     """
-    node_inspector_scroll_area = sc_graph_node_inspector.findChild(QtWidgets.QScrollArea, "")
+    node_inspector_scroll_area = sc_graph_node_inspector.findChild(
+        QtWidgets.QScrollArea, ""
+    )
     # perform ctrl+a keystroke to highlight all nodes on the graph
     QtTest.QTest.keyClick(sc_graph, "a", Qt.ControlModifier, WAIT_FRAMES)
-    node_inspector_backgrounds = node_inspector_scroll_area.findChildren(QtWidgets.QFrame, "Background")
+    node_inspector_backgrounds = node_inspector_scroll_area.findChildren(
+        QtWidgets.QFrame, "Background"
+    )
     titles = []
     for background in node_inspector_backgrounds:
-        background_title = background.findChild(QtWidgets.QLabel, NODE_INSPECTOR_TITLE_KEY)
+        background_title = background.findChild(
+            QtWidgets.QLabel, NODE_INSPECTOR_TITLE_KEY
+        )
         if background_title.text() != "":
             titles.append(background_title.text())
     return titles
+
 
 def create_new_sc_graph(sc_editor_main_window):
     """
@@ -220,7 +290,8 @@ def create_new_sc_graph(sc_editor_main_window):
     returns: none
     """
     create_new_graph_action = pyside_utils.find_child_by_pattern(
-        sc_editor_main_window, {"objectName": "action_New_Script", "type": QtWidgets.QAction}
+        sc_editor_main_window,
+        {"objectName": "action_New_Script", "type": QtWidgets.QAction},
     )
     create_new_graph_action.trigger()
 
@@ -245,12 +316,23 @@ def create_new_variable(self, new_variable_type):
     if not valid_type:
         Report.critical_result(["Invalid variable type provided", ""], False)
 
-    add_new_variable_button = self.variable_manager.findChild(QtWidgets.QPushButton, ADD_BUTTON_QT)
+    add_new_variable_button = self.variable_manager.findChild(
+        QtWidgets.QPushButton, ADD_BUTTON_QT
+    )
     add_new_variable_button.click()  # Click on Create Variable button
-    helper.wait_for_condition((
-        lambda: self.variable_manager.findChild(QtWidgets.QTableView, VARIABLE_PALETTE_QT) is not None), WAIT_TIME_3)
+    helper.wait_for_condition(
+        (
+            lambda: self.variable_manager.findChild(
+                QtWidgets.QTableView, VARIABLE_PALETTE_QT
+            )
+            is not None
+        ),
+        WAIT_TIME_3,
+    )
     # Select variable type
-    table_view = self.variable_manager.findChild(QtWidgets.QTableView, VARIABLE_PALETTE_QT)
+    table_view = self.variable_manager.findChild(
+        QtWidgets.QTableView, VARIABLE_PALETTE_QT
+    )
     model_index = pyside_utils.find_child_by_pattern(table_view, new_variable_type)
     # Click on it to create variable
     pyside_utils.item_view_index_mouse_click(table_view, model_index)
@@ -265,9 +347,13 @@ def get_sc_editor_node_inspector(sc_editor):
     returns: the node inspector qt widget object
 
     """
-    node_inspector_widget = sc_editor.findChild(QtWidgets.QDockWidget, NODE_INSPECTOR_QT)
+    node_inspector_widget = sc_editor.findChild(
+        QtWidgets.QDockWidget, NODE_INSPECTOR_QT
+    )
     if sc_editor.findChild(QtWidgets.QDockWidget, NODE_INSPECTOR_QT) is None:
-        action = pyside_utils.find_child_by_pattern(sc_editor, {"text": NODE_INSPECTOR_UI, "type": QtWidgets.QAction})
+        action = pyside_utils.find_child_by_pattern(
+            sc_editor, {"text": NODE_INSPECTOR_UI, "type": QtWidgets.QAction}
+        )
         action.trigger()
 
     return node_inspector_widget
@@ -281,36 +367,55 @@ def create_script_event(self):
 
     returns None
     """
-    action = pyside_utils.find_child_by_pattern(self.asset_editor_menu_bar, {"type": QtWidgets.QAction, "text": SCRIPT_EVENT_UI})
+    action = pyside_utils.find_child_by_pattern(
+        self.asset_editor_menu_bar, {"type": QtWidgets.QAction, "text": SCRIPT_EVENT_UI}
+    )
     action.trigger()
     result = helper.wait_for_condition(
-        lambda: self.asset_editor_row_container.findChild(QtWidgets.QFrame, EVENTS_QT) is not None, WAIT_TIME_3
+        lambda: self.asset_editor_row_container.findChild(QtWidgets.QFrame, EVENTS_QT)
+        is not None,
+        WAIT_TIME_3,
     )
     Report.result(Tests.new_event_created, result)
 
     # Add new child event
-    add_event = self.asset_editor_row_container.findChild(QtWidgets.QFrame, EVENTS_QT).findChild(QtWidgets.QToolButton, "")
+    add_event = self.asset_editor_row_container.findChild(
+        QtWidgets.QFrame, EVENTS_QT
+    ).findChild(QtWidgets.QToolButton, "")
     add_event.click()
     result = helper.wait_for_condition(
-        lambda: self.asset_editor_widget.findChild(QtWidgets.QFrame, DEFAULT_SCRIPT_EVENT) is not None, WAIT_TIME_3
+        lambda: self.asset_editor_widget.findChild(
+            QtWidgets.QFrame, DEFAULT_SCRIPT_EVENT
+        )
+        is not None,
+        WAIT_TIME_3,
     )
     Report.result(Tests.child_event_created, result)
 
+
 def create_script_event_parameter(self):
-    add_param = self.asset_editor_row_container.findChild(QtWidgets.QFrame, "Parameters").findChild(QtWidgets.QToolButton, "")
+    add_param = self.asset_editor_row_container.findChild(
+        QtWidgets.QFrame, "Parameters"
+    ).findChild(QtWidgets.QToolButton, "")
     add_param.click()
     result = helper.wait_for_condition(
-        lambda: self.asset_editor_widget.findChild(QtWidgets.QFrame, "[0]") is not None, WAIT_TIME_3
+        lambda: self.asset_editor_widget.findChild(QtWidgets.QFrame, "[0]") is not None,
+        WAIT_TIME_3,
     )
     Report.result(Tests.parameter_created, result)
 
+
 def remove_script_event_parameter(self):
-    remove_param = self.asset_editor_row_container.findChild(QtWidgets.QFrame, "[0]").findChild(QtWidgets.QToolButton, "")
+    remove_param = self.asset_editor_row_container.findChild(
+        QtWidgets.QFrame, "[0]"
+    ).findChild(QtWidgets.QToolButton, "")
     remove_param.click()
     result = helper.wait_for_condition(
-        lambda: self.asset_editor_widget.findChild(QtWidgets.QFrame, "[0]") is None, WAIT_TIME_3
+        lambda: self.asset_editor_widget.findChild(QtWidgets.QFrame, "[0]") is None,
+        WAIT_TIME_3,
     )
     Report.result(Tests.parameter_removed, result)
+
 
 def add_empty_parameter_to_script_event(self, number_of_parameters):
     """
@@ -322,12 +427,20 @@ def add_empty_parameter_to_script_event(self, number_of_parameters):
     returns none
     """
     helper.wait_for_condition(
-        lambda: self.asset_editor_row_container.findChild(QtWidgets.QFrame, PARAMETERS_QT) is not None, WAIT_TIME_3)
-    parameters = self.asset_editor_row_container.findChild(QtWidgets.QFrame, PARAMETERS_QT)
+        lambda: self.asset_editor_row_container.findChild(
+            QtWidgets.QFrame, PARAMETERS_QT
+        )
+        is not None,
+        WAIT_TIME_3,
+    )
+    parameters = self.asset_editor_row_container.findChild(
+        QtWidgets.QFrame, PARAMETERS_QT
+    )
     add_parameter = parameters.findChild(QtWidgets.QToolButton, "")
 
     for _ in range(number_of_parameters):
         add_parameter.click()
+
 
 def get_script_event_parameter_name_text(self):
     """
@@ -337,12 +450,15 @@ def get_script_event_parameter_name_text(self):
 
     returns a container with all the parameters' editable name fields
     """
-    parameter_names = self.asset_editor_row_container.findChildren(QtWidgets.QFrame, NAME_STRING)
+    parameter_names = self.asset_editor_row_container.findChildren(
+        QtWidgets.QFrame, NAME_STRING
+    )
     name_fields = []
     for parameter_name in parameter_names:
         name_fields.append(parameter_name.findChild(QtWidgets.QLineEdit))
 
     return name_fields
+
 
 def get_script_event_parameter_type_combobox(self):
     """
@@ -352,8 +468,10 @@ def get_script_event_parameter_type_combobox(self):
 
     returns a container with all the parameters' editable type combo boxes
     """
-    parameter_types = self.asset_editor_row_container.findChildren(QtWidgets.QFrame, "Type")
-    type_combo_boxes =[]
+    parameter_types = self.asset_editor_row_container.findChildren(
+        QtWidgets.QFrame, "Type"
+    )
+    type_combo_boxes = []
     for parameter_type in parameter_types:
         type_combo_boxes.append(parameter_type.findChild(QtWidgets.QComboBox))
 
@@ -409,7 +527,10 @@ def located_expected_tracer_lines(section_tracer, lines):
 
     return matching_lines >= expected_lines
 
-def create_entity_with_sc_component_asset(entity_name, source_file, position = math.Vector3(512.0, 512.0, 32.0)):
+
+def create_entity_with_sc_component_asset(
+    entity_name, source_file, position=math.Vector3(512.0, 512.0, 32.0)
+):
     """
     function for creating a new entity in the scene w/ a script canvas component. Function also adds as
     script canvas file to the script canvas component's source file property.
@@ -426,11 +547,16 @@ def create_entity_with_sc_component_asset(entity_name, source_file, position = m
     entity.create_entity(position, ["Script Canvas"])
 
     script_canvas_component = entity.components[0]
-    hydra.set_component_property_value(script_canvas_component, SCRIPT_CANVAS_COMPONENT_PROPERTY_PATH, sourcehandle)
+    hydra.set_component_property_value(
+        script_canvas_component, SCRIPT_CANVAS_COMPONENT_PROPERTY_PATH, sourcehandle
+    )
 
     return entity
 
-def create_entity_with_multiple_sc_component_asset(entity_name, source_files, position = math.Vector3(512.0, 512.0, 32.0)):
+
+def create_entity_with_multiple_sc_component_asset(
+    entity_name, source_files, position=math.Vector3(512.0, 512.0, 32.0)
+):
     """
     function for creating a new entity with multiple script canvas components and adding a source file to each.
 
@@ -443,7 +569,7 @@ def create_entity_with_multiple_sc_component_asset(entity_name, source_files, po
 
     number_of_files = len(source_files)
 
-    components_array =[]
+    components_array = []
     for num in range(number_of_files):
         components_array.append("Script Canvas")
 
@@ -453,11 +579,16 @@ def create_entity_with_multiple_sc_component_asset(entity_name, source_files, po
     for num in range(number_of_files):
         script_canvas_component = entity.components[num]
         sourcehandle = scriptcanvas.SourceHandleFromPath(source_files[num])
-        hydra.set_component_property_value(script_canvas_component, SCRIPT_CANVAS_COMPONENT_PROPERTY_PATH, sourcehandle)
+        hydra.set_component_property_value(
+            script_canvas_component, SCRIPT_CANVAS_COMPONENT_PROPERTY_PATH, sourcehandle
+        )
 
     return entity
 
-def change_entity_sc_variable_entity(entity_name, target_entity_name, component_property_path, component_index = 0):
+
+def change_entity_sc_variable_entity(
+    entity_name, target_entity_name, component_property_path, component_index=0
+):
     """
     function for finding an entity by its name and changing an exposed entity variable on the script canvas component.
 
@@ -476,6 +607,7 @@ def change_entity_sc_variable_entity(entity_name, target_entity_name, component_
     sc_component = entity.get_components_of_type(["Script Canvas"])[component_index]
     sc_component.set_component_property_value(component_property_path, target_entity.id)
 
+
 def change_entity_start_status(entity_name, start_status):
     """
     function for finding an entity by name and changing its start status
@@ -489,6 +621,7 @@ def change_entity_start_status(entity_name, start_status):
     entity = EditorEntity.find_editor_entity(entity_name)
     entity.set_start_status(start_status)
 
+
 def validate_entity_start_state_by_name(entity_name, expected_state):
     """
     function for finding and validating the start state of an entity by name. If the actual state does not match
@@ -501,7 +634,9 @@ def validate_entity_start_state_by_name(entity_name, expected_state):
     entity = EditorEntity.find_editor_entity(entity_name)
 
     if expected_state.lower() not in ENTITY_STATES.keys():
-        raise ValueError(f"{expected_state} is an invalid option; valid options: active, inactive, or editor.")
+        raise ValueError(
+            f"{expected_state} is an invalid option; valid options: active, inactive, or editor."
+        )
 
     state = entity.get_start_status()
     if state != ENTITY_STATES[expected_state]:
@@ -511,6 +646,7 @@ def validate_entity_start_state_by_name(entity_name, expected_state):
 
     # return the start state that we were able to set the entity to
     return state == ENTITY_STATES[expected_state]
+
 
 def validate_entity_exists_by_name(entity_name, test_results):
     """
