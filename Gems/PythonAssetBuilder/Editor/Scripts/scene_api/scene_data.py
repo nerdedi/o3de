@@ -510,7 +510,6 @@ class SceneManifest:
     def __add_physx_base_mesh_group(
         self, name: str, physics_material_asset_hint: typing.Optional[str] = None
     ) -> dict:
-
         group = {
             "$type": "{5B03C8E6-8CEE-4DA0-A7FA-CD88689DD45B} MeshGroup",
             "name": name,

@@ -72,8 +72,6 @@ from DccScriptingInterface import USER_HOME
 # # {user_home}\.o3de\registry\bootstrap.setreg
 
 
-
-
 # path string constructor
 PATH_USER_O3DE = f"{USER_HOME}\\{TAG_USER_O3DE}"
 # user home o3se registry
