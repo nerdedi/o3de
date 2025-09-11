@@ -10,7 +10,6 @@
 import o3de.export_project as exp
 
 
-
 import logging
 import pathlib
 
