@@ -7,6 +7,7 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 Class for querying and setting a windows registry setting.
 
 """
+
 import pytest
 import logging
 from typing import List, Optional, Tuple, Any
@@ -32,14 +33,22 @@ logger = logging.getLogger(__name__)
 
 
 class WindowsRegistrySetting(PlatformSetting):
-    def __init__(self, workspace: pytest.fixture, subkey: str, key: str, hive: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        workspace: pytest.fixture,
+        subkey: str,
+        key: str,
+        hive: Optional[str] = None,
+    ) -> None:
         super().__init__(workspace, subkey, key)
         self._hive = None
         try:
             if hive is not None:
                 self._hive = self._str_to_hive(hive)
         except ValueError:
-            logger.warning(f"Windows Registry Hive {hive} not recognized, using default: HKEY_CURRENT_USER")
+            logger.warning(
+                f"Windows Registry Hive {hive} not recognized, using default: HKEY_CURRENT_USER"
+            )
         finally:
             if self._hive is None:
                 self._hive = HKEY_CURRENT_USER
@@ -56,7 +65,9 @@ class WindowsRegistrySetting(PlatformSetting):
             return value if get_type else value[0]
 
         else:
-            logger.warning(f"Could not retrieve Registry entry; key: {self._key}, subkey: {self._subkey}.")
+            logger.warning(
+                f"Could not retrieve Registry entry; key: {self._key}, subkey: {self._subkey}."
+            )
             return None
 
     def set_value(self, value: Any) -> bool:
@@ -70,7 +81,9 @@ class WindowsRegistrySetting(PlatformSetting):
             SetValueEx(registryKey, self._subkey, 0, win_type, value)
             result = True
         except WindowsError as e:
-            logger.warning(f"Windows error caught while setting fast scan registry: {e}")
+            logger.warning(
+                f"Windows error caught while setting fast scan registry: {e}"
+            )
         finally:
             if registryKey is not None:
                 # Close key if it's been opened successfully
@@ -86,7 +99,9 @@ class WindowsRegistrySetting(PlatformSetting):
                 registryKey.Close()
                 return True
         except WindowsError:
-            logger.error(f"Could not delete registry entry; key: {self._key}, subkey: {self._subkey}")
+            logger.error(
+                f"Could not delete registry entry; key: {self._key}, subkey: {self._subkey}"
+            )
         finally:
             return False
 
@@ -103,7 +118,9 @@ class WindowsRegistrySetting(PlatformSetting):
             return False
 
     @staticmethod
-    def _format_data(value: bool or int or str or List[str]) -> Tuple[int or str or List[str], int]:
+    def _format_data(
+        value: bool or int or str or List[str],
+    ) -> Tuple[int or str or List[str], int]:
         """Formats the type of the value provided. Returns the formatted value and the windows registry type (int)."""
         if type(value) == str:
             return value, REG_SZ
@@ -112,7 +129,9 @@ class WindowsRegistrySetting(PlatformSetting):
             return value, REG_SZ
         elif type(value) == int or type(value) == float:
             if type(value) == float:
-                logger.warning(f"Windows registry does not support floats. Truncating {value} to integer")
+                logger.warning(
+                    f"Windows registry does not support floats. Truncating {value} to integer"
+                )
             value = int(value)
             return value, REG_DWORD
         elif type(value) == list:
@@ -124,10 +143,14 @@ class WindowsRegistrySetting(PlatformSetting):
                     # fmt:on
             return value, REG_MULTI_SZ
         else:
-            raise ValueError(f"Windows registry expected types: int, str and [str], found {type(value)}")
+            raise ValueError(
+                f"Windows registry expected types: int, str and [str], found {type(value)}"
+            )
 
     @staticmethod
-    def _convert_value(value_tuple: Tuple[Any, int]) -> Tuple[Any, PlatformSetting.DATA_TYPE]:
+    def _convert_value(
+        value_tuple: Tuple[Any, int],
+    ) -> Tuple[Any, PlatformSetting.DATA_TYPE]:
         """Converts the Windows registry data and type (tuple) to a (standardized) data and PlatformSetting.DATA_TYPE"""
         value, windows_type = value_tuple
         if windows_type == REG_SZ:
@@ -144,7 +167,12 @@ class WindowsRegistrySetting(PlatformSetting):
     @staticmethod
     def _str_to_hive(hive_str: str) -> int:
         """Converts a string to a Windows Registry Hive enum (int)"""
-        from winreg import HKEY_CLASSES_ROOT, HKEY_CURRENT_CONFIG, HKEY_LOCAL_MACHINE, HKEY_USERS
+        from winreg import (
+            HKEY_CLASSES_ROOT,
+            HKEY_CURRENT_CONFIG,
+            HKEY_LOCAL_MACHINE,
+            HKEY_USERS,
+        )
 
         lower = hive_str.lower()
         if lower == "hkey_current_user" or lower == "current_user":

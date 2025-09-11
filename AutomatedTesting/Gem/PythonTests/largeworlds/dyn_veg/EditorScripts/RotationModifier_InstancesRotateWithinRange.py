@@ -9,35 +9,35 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     gradient_entity_created = (
         "Successfully created new Gradient entity",
-        "Failed to create Gradient entity"
+        "Failed to create Gradient entity",
     )
     rotation_baseline = (
         "Instances are not rotated after initial setup",
-        "Unexpectedly found rotated instances after initial setup"
+        "Unexpectedly found rotated instances after initial setup",
     )
     x_axis_rotation_180 = (
         "Instances rotated 180 degrees on X-axis as expected",
-        "Found unexpected instance rotation on X-axis"
+        "Found unexpected instance rotation on X-axis",
     )
     x_axis_rotation_90 = (
         "Instances rotated 90 degrees on X-axis as expected",
-        "Found unexpected instance rotation on X-axis"
+        "Found unexpected instance rotation on X-axis",
     )
     y_axis_rotation_180 = (
         "Instances rotated 180 degrees on Y-axis as expected",
-        "Found unexpected instance rotation on Y-axis"
+        "Found unexpected instance rotation on Y-axis",
     )
     y_axis_rotation_90 = (
         "Instances rotated 90 degrees on Y-axis as expected",
-        "Found unexpected instance rotation on Y-axis"
+        "Found unexpected instance rotation on Y-axis",
     )
     z_axis_rotation_180 = (
         "Instances rotated 180 degrees on Z-axis as expected",
-        "Found unexpected instance rotation on Z-axis"
+        "Found unexpected instance rotation on Z-axis",
     )
     z_axis_rotation_90 = (
         "Instances rotated 90 degrees on Z-axis as expected",
-        "Found unexpected instance rotation on Z-axis"
+        "Found unexpected instance rotation on Z-axis",
     )
 
 
@@ -96,10 +96,14 @@ def RotationModifier_InstancesRotateWithinRange():
 
     # Helper Functions
     def change_range_max(axis, value):
-        spawner_entity.get_set_test(3, f"Configuration|Rotation {axis}|Range Max", value)
+        spawner_entity.get_set_test(
+            3, f"Configuration|Rotation {axis}|Range Max", value
+        )
 
     def change_range_min(axis, value):
-        spawner_entity.get_set_test(3, f"Configuration|Rotation {axis}|Range Min", value)
+        spawner_entity.get_set_test(
+            3, f"Configuration|Rotation {axis}|Range Min", value
+        )
 
     def get_expected_rotation(min, max, gradient_value):
         return min + ((max - min) * gradient_value)
@@ -107,15 +111,21 @@ def RotationModifier_InstancesRotateWithinRange():
     def validate_rotation(center, radius, num_expected, rot_degrees_vector):
         # Verify that every instance in the given area has the expected rotation.
         box = math.Aabb_CreateCenterRadius(center, radius)
-        instances = areasystem.AreaSystemRequestBus(bus.Broadcast, 'GetInstancesInAabb', box)
+        instances = areasystem.AreaSystemRequestBus(
+            bus.Broadcast, "GetInstancesInAabb", box
+        )
         num_found = len(instances)
-        result = (num_found == num_expected)
-        Report.info(f'instance count validation: {result} (found={num_found}, expected={num_expected})')
+        result = num_found == num_expected
+        Report.info(
+            f"instance count validation: {result} (found={num_found}, expected={num_expected})"
+        )
         expected_rotation = math.Quaternion()
         expected_rotation.SetFromEulerDegrees(rot_degrees_vector)
         for instance in instances:
             result = result and instance.rotation.IsClose(expected_rotation)
-            Report.info(f'instance rotation validation: {result} (rotation={instance.rotation} expected={expected_rotation})')
+            Report.info(
+                f"instance rotation validation: {result} (rotation={instance.rotation} expected={expected_rotation})"
+            )
         return result
 
     # Main Script
@@ -124,14 +134,17 @@ def RotationModifier_InstancesRotateWithinRange():
     general.set_current_view_position(512.0, 480.0, 38.0)
 
     # 2) Set up vegetation entities
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "RotMod_PinkFlower")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", LEVEL_CENTER, 2.0, 2.0, 2.0,
-                                                               pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "RotMod_PinkFlower"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", LEVEL_CENTER, 2.0, 2.0, 2.0, pink_flower_prefab
+    )
 
-    additional_components = [
-        "Vegetation Rotation Modifier"
-    ]
+    additional_components = ["Vegetation Rotation Modifier"]
     for component in additional_components:
         spawner_entity.add_component(component)
 
@@ -141,9 +154,7 @@ def RotationModifier_InstancesRotateWithinRange():
     # Create Gradient Entity
     gradient_entity = hydra.Entity("Gradient Entity")
     gradient_entity.create_entity(
-        LEVEL_CENTER,
-        ["Constant Gradient"],
-        parent_id=spawner_entity.id
+        LEVEL_CENTER, ["Constant Gradient"], parent_id=spawner_entity.id
     )
     Report.critical_result(Tests.gradient_entity_created, gradient_entity.id.IsValid())
     gradient_entity.get_set_test(0, "Configuration|Value", constant_gradient_value)
@@ -151,7 +162,9 @@ def RotationModifier_InstancesRotateWithinRange():
     # Vegetation Rotation Modifier
     for axis in ["X", "Y", "Z"]:
         spawner_entity.get_set_test(
-            3, f"Configuration|Rotation {axis}|Gradient|Gradient Entity Id", gradient_entity.id
+            3,
+            f"Configuration|Rotation {axis}|Gradient|Gradient Entity Id",
+            gradient_entity.id,
         )
 
     # Set up constants used across all the rotation checks
@@ -168,7 +181,11 @@ def RotationModifier_InstancesRotateWithinRange():
     change_range_min("Z", 0.0)
     change_range_max("Z", 0.0)
     rotation_success = helper.wait_for_condition(
-        lambda: validate_rotation(area_center, area_radius, num_expected, math.Vector3(0.0, 0.0, 0.0)), 5.0)
+        lambda: validate_rotation(
+            area_center, area_radius, num_expected, math.Vector3(0.0, 0.0, 0.0)
+        ),
+        5.0,
+    )
     Report.result(Tests.rotation_baseline, rotation_success)
 
     # Adjust x-axis range min / max to (-180, 0).
@@ -177,8 +194,14 @@ def RotationModifier_InstancesRotateWithinRange():
     change_range_min("X", -180.0)
     rotation_degrees = get_expected_rotation(-180.0, 0.0, constant_gradient_value)
     rotation_success = helper.wait_for_condition(
-        lambda: validate_rotation(area_center, area_radius, num_expected, math.Vector3(rotation_degrees, 0.0, 0.0)),
-        5.0)
+        lambda: validate_rotation(
+            area_center,
+            area_radius,
+            num_expected,
+            math.Vector3(rotation_degrees, 0.0, 0.0),
+        ),
+        5.0,
+    )
     Report.result(Tests.x_axis_rotation_180, rotation_success)
 
     # Set the min / max to (0, 90), with an expected result of (0 + (90 - 0) * 0.25)
@@ -186,8 +209,14 @@ def RotationModifier_InstancesRotateWithinRange():
     change_range_max("X", 90.0)
     rotation_degrees = get_expected_rotation(0.0, 90.0, constant_gradient_value)
     rotation_success = helper.wait_for_condition(
-        lambda: validate_rotation(area_center, area_radius, num_expected, math.Vector3(rotation_degrees, 0.0, 0.0)),
-        5.0)
+        lambda: validate_rotation(
+            area_center,
+            area_radius,
+            num_expected,
+            math.Vector3(rotation_degrees, 0.0, 0.0),
+        ),
+        5.0,
+    )
     Report.result(Tests.x_axis_rotation_90, rotation_success)
     change_range_max("X", 0.0)
 
@@ -195,16 +224,28 @@ def RotationModifier_InstancesRotateWithinRange():
     change_range_min("Y", -180.0)
     rotation_degrees = get_expected_rotation(-180.0, 0.0, constant_gradient_value)
     rotation_success = helper.wait_for_condition(
-        lambda: validate_rotation(area_center, area_radius, num_expected, math.Vector3(0.0, rotation_degrees, 0.0)),
-        5.0)
+        lambda: validate_rotation(
+            area_center,
+            area_radius,
+            num_expected,
+            math.Vector3(0.0, rotation_degrees, 0.0),
+        ),
+        5.0,
+    )
     Report.result(Tests.y_axis_rotation_180, rotation_success)
 
     change_range_min("Y", 0.0)
     change_range_max("Y", 90.0)
     rotation_degrees = get_expected_rotation(0.0, 90.0, constant_gradient_value)
     rotation_success = helper.wait_for_condition(
-        lambda: validate_rotation(area_center, area_radius, num_expected, math.Vector3(0.0, rotation_degrees, 0.0)),
-        5.0)
+        lambda: validate_rotation(
+            area_center,
+            area_radius,
+            num_expected,
+            math.Vector3(0.0, rotation_degrees, 0.0),
+        ),
+        5.0,
+    )
     Report.result(Tests.y_axis_rotation_90, rotation_success)
     change_range_max("Y", 0.0)
 
@@ -212,20 +253,32 @@ def RotationModifier_InstancesRotateWithinRange():
     change_range_min("Z", -180.0)
     rotation_degrees = get_expected_rotation(-180.0, 0.0, constant_gradient_value)
     rotation_success = helper.wait_for_condition(
-        lambda: validate_rotation(area_center, area_radius, num_expected, math.Vector3(0.0, 0.0, rotation_degrees)),
-        5.0)
+        lambda: validate_rotation(
+            area_center,
+            area_radius,
+            num_expected,
+            math.Vector3(0.0, 0.0, rotation_degrees),
+        ),
+        5.0,
+    )
     Report.result(Tests.z_axis_rotation_180, rotation_success)
 
     change_range_min("Z", 0.0)
     change_range_max("Z", 90.0)
     rotation_degrees = get_expected_rotation(0.0, 90.0, constant_gradient_value)
     rotation_success = helper.wait_for_condition(
-        lambda: validate_rotation(area_center, area_radius, num_expected, math.Vector3(0.0, 0.0, rotation_degrees)),
-        5.0)
+        lambda: validate_rotation(
+            area_center,
+            area_radius,
+            num_expected,
+            math.Vector3(0.0, 0.0, rotation_degrees),
+        ),
+        5.0,
+    )
     Report.result(Tests.z_axis_rotation_90, rotation_success)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(RotationModifier_InstancesRotateWithinRange)
