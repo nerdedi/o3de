@@ -9,11 +9,11 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     default_exclusion_weight = (
         "Found the expected number of instances with Exclusion Weight set to defaults",
-        "Found an unexpected number of instances with Exclusion Weight set to defaults"
+        "Found an unexpected number of instances with Exclusion Weight set to defaults",
     )
     exclusion_weight_below_one = (
         "Found the expected number of instances with Exclusion Weight set below 1",
-        "Found an unexpected number of instances with Exclusion Weight set below 1"
+        "Found an unexpected number of instances with Exclusion Weight set below 1",
     )
 
 
@@ -60,29 +60,41 @@ def SurfaceMaskFilter_ExclusionList():
         tag_list = [surface_data.SurfaceTag()]
 
         # assign list with one surface tag to exclusion list
-        hydra.get_set_test(Entity, component_index, "Configuration|Exclusion|Surface Tags", tag_list)
+        hydra.get_set_test(
+            Entity, component_index, "Configuration|Exclusion|Surface Tags", tag_list
+        )
 
         # set that one surface tag element to required surface tag
         component = Entity.components[component_index]
         path = "Configuration|Exclusion|Surface Tags|[0]|Surface Tag"
-        editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", component, path, surface_tag)
+        editor.EditorComponentAPIBus(
+            bus.Broadcast, "SetComponentProperty", component, path, surface_tag
+        )
         new_value = hydra.get_component_property_value(component, path)
 
         if new_value == surface_tag:
-            Report.info(f"Exclusive surface mask filter of {surface_tag} is added successfully")
+            Report.info(
+                f"Exclusive surface mask filter of {surface_tag} is added successfully"
+            )
         else:
-            Report.info(f"Failed to add an Exclusive surface mask filter of {surface_tag}")
+            Report.info(
+                f"Failed to add an Exclusive surface mask filter of {surface_tag}"
+            )
 
     def update_generated_surface_tag(Entity, component_index, surface_tag):
         tag_list = [surface_data.SurfaceTag()]
 
         # assign list with one surface tag to Generated Tags list
-        hydra.get_set_test(Entity, component_index, "Configuration|Generated Tags", tag_list)
+        hydra.get_set_test(
+            Entity, component_index, "Configuration|Generated Tags", tag_list
+        )
 
         # set that one surface tag element to required surface tag
         component = Entity.components[component_index]
         path = "Configuration|Generated Tags|[0]|Surface Tag"
-        editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", component, path, surface_tag)
+        editor.EditorComponentAPIBus(
+            bus.Broadcast, "SetComponentProperty", component, path, surface_tag
+        )
         new_value = hydra.get_component_property_value(component, path)
 
         if new_value == surface_tag:
@@ -97,10 +109,15 @@ def SurfaceMaskFilter_ExclusionList():
 
     # 2) Create entity with components "Vegetation Layer Spawner", "Vegetation Asset List", "Box Shape"
     entity_position = math.Vector3(512.0, 512.0, 32.0)
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "SurfaceMaskTagExclusion_PinkFlower")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", entity_position, 10.0, 10.0, 10.0,
-                                                               pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "SurfaceMaskTagExclusion_PinkFlower"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", entity_position, 10.0, 10.0, 10.0, pink_flower_prefab
+    )
 
     # 3) Add a Vegetation Surface Mask Filter component to the entity.
     spawner_entity.add_component("Vegetation Surface Mask Filter")
@@ -108,15 +125,15 @@ def SurfaceMaskFilter_ExclusionList():
     # 4) Create 2 surface entities to represent terrain and terrain hole surfaces
     surface_tags: dict = {"terrainHole": 1327698037, "terrain": 3363197873}
     entity_position = math.Vector3(510.0, 512.0, 32.0)
-    surface_entity_1 = dynveg.create_surface_entity("Surface Entity 1",
-                                                    entity_position,
-                                                    10.0, 10.0, 1.0)
+    surface_entity_1 = dynveg.create_surface_entity(
+        "Surface Entity 1", entity_position, 10.0, 10.0, 1.0
+    )
     update_generated_surface_tag(surface_entity_1, 1, surface_tags["terrainHole"])
 
     entity_position = math.Vector3(520.0, 512.0, 32.0)
-    surface_entity_2 = dynveg.create_surface_entity("Surface Entity 2",
-                                                    entity_position,
-                                                    10.0, 10.0, 1.0)
+    surface_entity_2 = dynveg.create_surface_entity(
+        "Surface Entity 2", entity_position, 10.0, 10.0, 1.0
+    )
     update_generated_surface_tag(surface_entity_2, 1, surface_tags["terrain"])
 
     # 5) Add an Exclusion List tag to the component, and set it to "terrainHole".
@@ -124,19 +141,27 @@ def SurfaceMaskFilter_ExclusionList():
 
     # 6) Check spawn count with default Exclusion Weights
     num_expected_instances = 39
-    success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                               num_expected_instances), 2.0)
+    success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected_instances
+        ),
+        2.0,
+    )
     Report.result(Tests.default_exclusion_weight, success)
 
     # 7) Check spawn count with Exclusion Weight Max set below 1.0
     hydra.get_set_test(spawner_entity, 3, "Configuration|Exclusion|Weight Max", 0.9)
     num_expected_instances = 169
-    success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                               num_expected_instances), 2.0)
+    success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected_instances
+        ),
+        2.0,
+    )
     Report.result(Tests.exclusion_weight_below_one, success)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(SurfaceMaskFilter_ExclusionList)

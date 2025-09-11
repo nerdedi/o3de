@@ -9,23 +9,20 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     lc_tool_opened = (
         "Landscape Canvas tool opened",
-        "Failed to open Landscape Canvas tool"
+        "Failed to open Landscape Canvas tool",
     )
-    new_graph_created = (
-        "Successfully created new graph",
-        "Failed to create new graph"
-    )
+    new_graph_created = ("Successfully created new graph", "Failed to create new graph")
     graph_registered = (
         "Graph registered with Landscape Canvas",
-        "Failed to register graph"
+        "Failed to register graph",
     )
     component_added = (
         "Expected component is present on entity",
-        "Expected component was not found on entity"
+        "Expected component was not found on entity",
     )
     component_removed = (
         "Expected component was removed from entity",
-        "Component is unexpectedly still present on entity"
+        "Component is unexpectedly still present on entity",
     )
 
 
@@ -74,38 +71,42 @@ def LayerExtenderNodes_ComponentEntitySync():
     hydra.open_base_level()
 
     # Open Landscape Canvas tool and verify
-    general.open_pane('Landscape Canvas')
-    Report.critical_result(Tests.lc_tool_opened, general.is_pane_visible('Landscape Canvas'))
+    general.open_pane("Landscape Canvas")
+    Report.critical_result(
+        Tests.lc_tool_opened, general.is_pane_visible("Landscape Canvas")
+    )
 
     # Create a new graph in Landscape Canvas
-    newGraphId = graph.AssetEditorRequestBus(bus.Event, 'CreateNewGraph', editorId)
+    newGraphId = graph.AssetEditorRequestBus(bus.Event, "CreateNewGraph", editorId)
     Report.critical_result(Tests.new_graph_created, newGraphId is not None)
 
     # Make sure the graph we created is in Landscape Canvas
-    graph_registered = graph.AssetEditorRequestBus(bus.Event, 'ContainsGraph', editorId, newGraphId)
+    graph_registered = graph.AssetEditorRequestBus(
+        bus.Event, "ContainsGraph", editorId, newGraphId
+    )
     Report.result(Tests.graph_registered, graph_registered)
 
     # Listen for entity creation notifications so we can check if the
     # proper components are added when we add nodes
     handler = editor.EditorEntityContextNotificationBusHandler()
     handler.connect()
-    handler.add_callback('OnEditorEntityCreated', onEntityCreated)
+    handler.add_callback("OnEditorEntityCreated", onEntityCreated)
 
     # Extender mapping with the key being the node name and the value is the
     # expected Component that should be added to the layer Entity for that wrapped node
     extenders = {
-        'AltitudeFilterNode': 'Vegetation Altitude Filter',
-        'DistanceBetweenFilterNode': 'Vegetation Distance Between Filter',
-        'DistributionFilterNode': 'Vegetation Distribution Filter',
-        'ShapeIntersectionFilterNode': 'Vegetation Shape Intersection Filter',
-        'SlopeFilterNode': 'Vegetation Slope Filter',
-        'SurfaceMaskDepthFilterNode': 'Vegetation Surface Mask Depth Filter',
-        'SurfaceMaskFilterNode': 'Vegetation Surface Mask Filter',
-        'PositionModifierNode': 'Vegetation Position Modifier',
-        'RotationModifierNode': 'Vegetation Rotation Modifier',
-        'ScaleModifierNode': 'Vegetation Scale Modifier',
-        'SlopeAlignmentModifierNode': 'Vegetation Slope Alignment Modifier',
-        'AssetWeightSelectorNode': 'Vegetation Asset Weight Selector'
+        "AltitudeFilterNode": "Vegetation Altitude Filter",
+        "DistanceBetweenFilterNode": "Vegetation Distance Between Filter",
+        "DistributionFilterNode": "Vegetation Distribution Filter",
+        "ShapeIntersectionFilterNode": "Vegetation Shape Intersection Filter",
+        "SlopeFilterNode": "Vegetation Slope Filter",
+        "SurfaceMaskDepthFilterNode": "Vegetation Surface Mask Depth Filter",
+        "SurfaceMaskFilterNode": "Vegetation Surface Mask Filter",
+        "PositionModifierNode": "Vegetation Position Modifier",
+        "RotationModifierNode": "Vegetation Rotation Modifier",
+        "ScaleModifierNode": "Vegetation Scale Modifier",
+        "SlopeAlignmentModifierNode": "Vegetation Slope Alignment Modifier",
+        "AssetWeightSelectorNode": "Vegetation Asset Weight Selector",
     }
 
     # Retrieve a mapping of the TypeIds for all the components
@@ -115,57 +116,65 @@ def LayerExtenderNodes_ComponentEntitySync():
         componentNames.append(extenders[name])
     componentTypeIds = hydra.get_component_type_id_map(componentNames)
 
-    areas = [
-        'AreaBlenderNode',
-        'SpawnerAreaNode'
-    ]
+    areas = ["AreaBlenderNode", "SpawnerAreaNode"]
 
     # Add/remove all our supported extender nodes to the Layer Areas and check if the appropriate
     # Components are added/removed to the wrapper node's Entity
-    newGraph = graph.GraphManagerRequestBus(bus.Broadcast, 'GetGraph', newGraphId)
+    newGraph = graph.GraphManagerRequestBus(bus.Broadcast, "GetGraph", newGraphId)
     x = 10.0
     y = 10.0
     for areaName in areas:
         nodePosition = math.Vector2(x, y)
-        areaNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(bus.Broadcast, 'CreateNodeForTypeName',
-                                                                        newGraph, areaName)
-        graph.GraphControllerRequestBus(bus.Event, 'AddNode', newGraphId, areaNode, nodePosition)
+        areaNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(
+            bus.Broadcast, "CreateNodeForTypeName", newGraph, areaName
+        )
+        graph.GraphControllerRequestBus(
+            bus.Event, "AddNode", newGraphId, areaNode, nodePosition
+        )
 
         success = True
         for extenderName in extenders:
             # Add the wrapped node for the extender
-            extenderNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(bus.Broadcast,
-                                                                                'CreateNodeForTypeName', newGraph,
-                                                                                extenderName)
-            graph.GraphControllerRequestBus(bus.Event, 'WrapNode', newGraphId, areaNode, extenderNode)
+            extenderNode = landscapecanvas.LandscapeCanvasNodeFactoryRequestBus(
+                bus.Broadcast, "CreateNodeForTypeName", newGraph, extenderName
+            )
+            graph.GraphControllerRequestBus(
+                bus.Event, "WrapNode", newGraphId, areaNode, extenderNode
+            )
 
             # Check that the appropriate Component was added when the extender node was added
             extenderComponent = extenders[extenderName]
             componentTypeId = componentTypeIds[extenderComponent]
-            success = success and editor.EditorComponentAPIBus(bus.Broadcast, 'HasComponentOfType', newEntityId,
-                                                               componentTypeId)
+            success = success and editor.EditorComponentAPIBus(
+                bus.Broadcast, "HasComponentOfType", newEntityId, componentTypeId
+            )
             Report.info(f"Component: {extenderComponent}")
             Report.result(Tests.component_added, success)
             if not success:
                 break
 
             # Check that the appropriate Component was removed when the extender node was removed
-            graph.GraphControllerRequestBus(bus.Event, 'RemoveNode', newGraphId, extenderNode)
-            success = success and not editor.EditorComponentAPIBus(bus.Broadcast, 'HasComponentOfType', newEntityId,
-                                                                   componentTypeId)
+            graph.GraphControllerRequestBus(
+                bus.Event, "RemoveNode", newGraphId, extenderNode
+            )
+            success = success and not editor.EditorComponentAPIBus(
+                bus.Broadcast, "HasComponentOfType", newEntityId, componentTypeId
+            )
             Report.info(f"Component: {extenderComponent}")
             Report.result(Tests.component_removed, success)
             if not success:
                 break
 
         if success:
-            Report.info(f"{areaName} successfully added and removed all filters/modifiers/selectors")
+            Report.info(
+                f"{areaName} successfully added and removed all filters/modifiers/selectors"
+            )
 
     # Stop listening for entity creation notifications
     handler.disconnect()
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(LayerExtenderNodes_ComponentEntitySync)

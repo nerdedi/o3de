@@ -10,7 +10,9 @@ import os
 import sys
 
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../automatedtesting_shared')
+sys.path.append(
+    os.path.dirname(os.path.abspath(__file__)) + "/../automatedtesting_shared"
+)
 
 from base import TestAutomationBase
 import ly_test_tools.environment.file_system as file_system
@@ -20,42 +22,61 @@ TEST_DIRECTORY = os.path.dirname(__file__)
 
 
 @pytest.mark.SUITE_sandbox
-@pytest.mark.parametrize("launcher_platform", ['windows_editor'])
+@pytest.mark.parametrize("launcher_platform", ["windows_editor"])
 @pytest.mark.parametrize("project", ["AutomatedTesting"])
 class TestAutomation(TestAutomationBase):
-
     def test_Opening_Closing_Pane(self, request, workspace, editor, launcher_platform):
         from . import Opening_Closing_Pane as test_module
+
         self._run_test(request, workspace, editor, test_module)
 
 
 @pytest.mark.REQUIRES_gpu
 @pytest.mark.SUITE_sandbox
-@pytest.mark.parametrize("launcher_platform", ['windows_editor'])
+@pytest.mark.parametrize("launcher_platform", ["windows_editor"])
 @pytest.mark.parametrize("project", ["AutomatedTesting"])
 class TestAutomationQtPyTests(TestAutomationBase):
-
-    def test_VariableManager_ExposeVarsToComponent(self, request, workspace, editor, launcher_platform):
+    def test_VariableManager_ExposeVarsToComponent(
+        self, request, workspace, editor, launcher_platform
+    ):
         from . import VariableManager_ExposeVarsToComponent as test_module
+
         self._run_test(request, workspace, editor, test_module)
 
 
 @pytest.mark.REQUIRES_gpu
 @pytest.mark.SUITE_sandbox
-@pytest.mark.parametrize("launcher_platform", ['windows_editor'])
+@pytest.mark.parametrize("launcher_platform", ["windows_editor"])
 @pytest.mark.parametrize("project", ["AutomatedTesting"])
 class TestAutomation(TestAutomationBase):
-
-    def test_ScriptEvent_HappyPath_CreatedWithoutError(self, request, workspace, editor, launcher_platform, project):
+    def test_ScriptEvent_HappyPath_CreatedWithoutError(
+        self, request, workspace, editor, launcher_platform, project
+    ):
         def teardown():
             file_system.delete(
-                [os.path.join(workspace.paths.project(), "ScriptCanvas", "test_file.scriptevent")], True, True
+                [
+                    os.path.join(
+                        workspace.paths.project(),
+                        "ScriptCanvas",
+                        "test_file.scriptevent",
+                    )
+                ],
+                True,
+                True,
             )
+
         request.addfinalizer(teardown)
         file_system.delete(
-            [os.path.join(workspace.paths.project(), "ScriptCanvas", "test_file.scriptevent")], True, True
+            [
+                os.path.join(
+                    workspace.paths.project(), "ScriptCanvas", "test_file.scriptevent"
+                )
+            ],
+            True,
+            True,
         )
         from . import ScriptEvent_HappyPath_CreatedWithoutError as test_module
+
         self._run_test(request, workspace, editor, test_module)
 
 
@@ -63,12 +84,13 @@ class TestAutomation(TestAutomationBase):
 @pytest.mark.parametrize("launcher_platform", ["windows_editor"])
 @pytest.mark.parametrize("project", ["AutomatedTesting"])
 class TestScriptCanvasTests(object):
-
     """
     The following tests use hydra_test_utils.py to launch the editor and validate the results.
     """
 
-    def test_ScriptEvent_AddRemoveMethod_UpdatesInSC(self, request, workspace, editor, launcher_platform):
+    def test_ScriptEvent_AddRemoveMethod_UpdatesInSC(
+        self, request, workspace, editor, launcher_platform
+    ):
         expected_lines = [
             "Node found in Node Palette",
             "Method removed from scriptevent file",
@@ -115,7 +137,9 @@ class TestScriptCanvasTests(object):
             timeout=60,
         )
 
-    def test_ScriptEvent_AddRemoveParameter_ActionsSuccessful(self, request, editor, launcher_platform):
+    def test_ScriptEvent_AddRemoveParameter_ActionsSuccessful(
+        self, request, editor, launcher_platform
+    ):
         expected_lines = [
             "Success: New Script Event created",
             "Success: Child Event created",
@@ -133,14 +157,31 @@ class TestScriptCanvasTests(object):
             timeout=60,
         )
 
-    def test_ScriptEvents_AllParamDatatypes_CreationSuccess(self, request, workspace, editor, launcher_platform):
+    def test_ScriptEvents_AllParamDatatypes_CreationSuccess(
+        self, request, workspace, editor, launcher_platform
+    ):
         def teardown():
             file_system.delete(
-                [os.path.join(workspace.paths.project(), "TestAssets", "test_file.scriptevents")], True, True
+                [
+                    os.path.join(
+                        workspace.paths.project(),
+                        "TestAssets",
+                        "test_file.scriptevents",
+                    )
+                ],
+                True,
+                True,
             )
+
         request.addfinalizer(teardown)
         file_system.delete(
-            [os.path.join(workspace.paths.project(), "TestAssets", "test_file.scriptevents")], True, True
+            [
+                os.path.join(
+                    workspace.paths.project(), "TestAssets", "test_file.scriptevents"
+                )
+            ],
+            True,
+            True,
         )
         expected_lines = [
             "Success: New Script Event created",
@@ -163,7 +204,7 @@ class TestScriptCanvasTests(object):
         expected_lines = [
             "Verified no tabs open: True",
             "New tab opened successfully: True",
-            "Open file window triggered successfully: True"
+            "Open file window triggered successfully: True",
         ]
         hydra.launch_and_validate_results(
             request,
@@ -175,7 +216,9 @@ class TestScriptCanvasTests(object):
             timeout=60,
         )
 
-    def test_NewScriptEventButton_HappyPath_ContainsSCCategory(self, request, editor, launcher_platform):
+    def test_NewScriptEventButton_HappyPath_ContainsSCCategory(
+        self, request, editor, launcher_platform
+    ):
         expected_lines = [
             "New Script event action found: True",
             "Asset Editor opened: True",
@@ -208,10 +251,26 @@ class TestScriptCanvasTests(object):
             timeout=160,
         )
 
-    def test_VariableManager_Default_CreateDeleteVars(self, request, editor, launcher_platform):
-        var_types = ["Boolean", "Color", "EntityId", "Number", "String", "Transform", "Vector2", "Vector3", "Vector4"]
-        expected_lines = [f"{var_type} variable is created: True" for var_type in var_types]
-        expected_lines.extend([f"{var_type} variable is deleted: True" for var_type in var_types])
+    def test_VariableManager_Default_CreateDeleteVars(
+        self, request, editor, launcher_platform
+    ):
+        var_types = [
+            "Boolean",
+            "Color",
+            "EntityId",
+            "Number",
+            "String",
+            "Transform",
+            "Vector2",
+            "Vector3",
+            "Vector4",
+        ]
+        expected_lines = [
+            f"{var_type} variable is created: True" for var_type in var_types
+        ]
+        expected_lines.extend(
+            [f"{var_type} variable is deleted: True" for var_type in var_types]
+        )
         hydra.launch_and_validate_results(
             request,
             TEST_DIRECTORY,
@@ -244,14 +303,16 @@ class TestScriptCanvasTests(object):
             },
         ],
     )
-    def test_Pane_PropertiesChanged_RetainsOnRestart(self, request, editor, config, project, launcher_platform):
+    def test_Pane_PropertiesChanged_RetainsOnRestart(
+        self, request, editor, config, project, launcher_platform
+    ):
         hydra.launch_and_validate_results(
             request,
             TEST_DIRECTORY,
             editor,
             "Pane_PropertiesChanged_RetainsOnRestart.py",
-            config.get('expected_lines'),
-            cfg_args=[config.get('cfg_args')],
+            config.get("expected_lines"),
+            cfg_args=[config.get("cfg_args")],
             auto_test_mode=False,
             timeout=60,
         )
