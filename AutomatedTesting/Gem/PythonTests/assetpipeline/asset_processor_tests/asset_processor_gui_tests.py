@@ -36,7 +36,6 @@ logger = logging.getLogger(__name__)
 targetProjects = ["AutomatedTesting"]
 
 
-
 @pytest.fixture
 def local_resources(request, workspace, ap_setup_fixture):
     # Test-level asset folder. Directory contains a subfolder for each test (i.e. C1234567)
@@ -46,7 +45,12 @@ def local_resources(request, workspace, ap_setup_fixture):
 @pytest.fixture
 def ap_idle(workspace, ap_setup_fixture):
     gui_timeout_max = 30
-    return TimestampChecker(workspace.paths.asset_catalog(ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]), gui_timeout_max)
+    return TimestampChecker(
+        workspace.paths.asset_catalog(
+            ASSET_PROCESSOR_PLATFORM_MAP[workspace.asset_processor_platform]
+        ),
+        gui_timeout_max,
+    )
 
 
 @pytest.mark.usefixtures("asset_processor")
@@ -79,7 +83,9 @@ class TestsAssetProcessorGUI(object):
         asset_processor.gui_process()
         asset_processor.send_message("ping")
         output_message = asset_processor.read_message()
-        assert output_message == "pong", "Failed to receive response on control channel socket"
+        assert output_message == "pong", (
+            "Failed to receive response on control channel socket"
+        )
         asset_processor.stop()
 
     @pytest.mark.skip(reason="https://github.com/o3de/o3de/issues/14930")
@@ -92,7 +98,9 @@ class TestsAssetProcessorGUI(object):
         """
 
         asset_processor.create_temp_asset_root()
-        asset_processor.add_source_folder_assets(os.path.join(workspace.project, 'Fonts'))
+        asset_processor.add_source_folder_assets(
+            os.path.join(workspace.project, "Fonts")
+        )
         font_path = os.path.join(asset_processor.temp_project_cache(), "fonts")
 
         # start the AP
@@ -103,13 +111,17 @@ class TestsAssetProcessorGUI(object):
         assert os.path.exists(font_path), "Fonts folder was not found initially."
 
         # delete the cached files
-        assert fs.delete([font_path], True, True), "File System could not delete the Fonts directory."
+        assert fs.delete([font_path], True, True), (
+            "File System could not delete the Fonts directory."
+        )
 
         # Wait for the above work to complete
         asset_processor.next_idle()
 
         # check that the cached files exist again
-        assert os.path.exists(font_path), "Fonts folder was not found after waiting for rebuild."
+        assert os.path.exists(font_path), (
+            "Fonts folder was not found after waiting for rebuild."
+        )
 
         # close the AP
         asset_processor.stop()
@@ -117,10 +129,11 @@ class TestsAssetProcessorGUI(object):
     @pytest.mark.test_case_id("C1564065")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-
-    def test_RemoveProjectAssets_ProcessedAssetsDeleted(self, asset_processor, ap_setup_fixture,
-                                                                         ):
-
+    def test_RemoveProjectAssets_ProcessedAssetsDeleted(
+        self,
+        asset_processor,
+        ap_setup_fixture,
+    ):
         """
         Asset Processor Deletes processed assets when source is removed from project folder (while running)
 
@@ -135,8 +148,12 @@ class TestsAssetProcessorGUI(object):
         env = ap_setup_fixture
 
         # Copy test assets to project folder and verify test assets folder exists
-        test_assets_folder, _ = asset_processor.prepare_test_environment(env["tests_dir"], "C1564065")
-        assert os.path.exists(test_assets_folder), f"Test assets folder was not copied {test_assets_folder}"
+        test_assets_folder, _ = asset_processor.prepare_test_environment(
+            env["tests_dir"], "C1564065"
+        )
+        assert os.path.exists(test_assets_folder), (
+            f"Test assets folder was not copied {test_assets_folder}"
+        )
 
         # Start Asset Processor GUI
         result, _ = asset_processor.gui_process(quitonidle=False)
@@ -144,21 +161,27 @@ class TestsAssetProcessorGUI(object):
 
         # Wait for test assets to be copied to cache or timeout
         def test_assets_copied_to_cache() -> bool:
-            missing_assets, _ = asset_processor.compare_assets_with_cache(
-            )
+            missing_assets, _ = asset_processor.compare_assets_with_cache()
             return not missing_assets
 
-        waiter.wait_for(test_assets_copied_to_cache, timeout=10, exc=Exception("Test assets are missing from cache"))
+        waiter.wait_for(
+            test_assets_copied_to_cache,
+            timeout=10,
+            exc=Exception("Test assets are missing from cache"),
+        )
 
         asset_processor.clear_project_test_assets_dir()
 
         # Wait for test assets to be deleted from cache or timeout
         def test_assets_deleted_from_cache() -> bool:
-            _, existing_assets = asset_processor.compare_assets_with_cache(
-            )
+            _, existing_assets = asset_processor.compare_assets_with_cache()
             return not existing_assets
 
-        waiter.wait_for(test_assets_deleted_from_cache, timeout=10, exc=Exception("Test assets are lingering in cache"))
+        waiter.wait_for(
+            test_assets_deleted_from_cache,
+            timeout=10,
+            exc=Exception("Test assets are lingering in cache"),
+        )
 
         # Stop Asset Processor GUI
         asset_processor.stop()
@@ -166,10 +189,11 @@ class TestsAssetProcessorGUI(object):
     @pytest.mark.test_case_id("C1591563")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-
-    def test_ModifyAsset_UpdatedAssetProcessed(self, asset_processor, ap_setup_fixture,
-                                                                ):
-
+    def test_ModifyAsset_UpdatedAssetProcessed(
+        self,
+        asset_processor,
+        ap_setup_fixture,
+    ):
         """
         Processing changed files (while running)
 
@@ -187,8 +211,12 @@ class TestsAssetProcessorGUI(object):
         env = ap_setup_fixture
 
         # Copy test assets to project folder and verify test assets folder exists
-        test_assets_folder, cache_path = asset_processor.prepare_test_environment(env["tests_dir"], "C1591563")
-        assert os.path.exists(test_assets_folder), f"Test assets folder was not copied {test_assets_folder}"
+        test_assets_folder, cache_path = asset_processor.prepare_test_environment(
+            env["tests_dir"], "C1591563"
+        )
+        assert os.path.exists(test_assets_folder), (
+            f"Test assets folder was not copied {test_assets_folder}"
+        )
 
         # Save path to test asset in project folder and path to test asset in cache
         project_asset_path = os.path.join(test_assets_folder, "C1591563_test_asset.txt")
@@ -238,7 +266,9 @@ class TestsAssetProcessorGUI(object):
         """
 
         CPU_USAGE_THRESHOLD = 1.0  # CPU usage percentage delimiting idle from active
-        CPU_USAGE_WIND_DOWN = 10  # Time allowed in seconds for idle processes to stop using CPU
+        CPU_USAGE_WIND_DOWN = (
+            10  # Time allowed in seconds for idle processes to stop using CPU
+        )
 
         asset_processor.create_temp_asset_root()
 
@@ -281,15 +311,23 @@ class TestsAssetProcessorGUI(object):
 
         asset_processor.create_temp_asset_root()
         assets_src_path = os.path.join(env["tests_dir"], "assets", "C1564064")
-        level_dst_path = os.path.join(asset_processor.temp_asset_root(), workspace.project, "Levels")
+        level_dst_path = os.path.join(
+            asset_processor.temp_asset_root(), workspace.project, "Levels"
+        )
         project_level_dir = os.path.join(level_dst_path, level_name)
-        cache_level_dir = os.path.join(asset_processor.temp_project_cache(), "levels", level_name.lower())
+        cache_level_dir = os.path.join(
+            asset_processor.temp_project_cache(), "levels", level_name.lower()
+        )
 
         # Expected test asset sources and products
         exp_project_level_assets = ["TestDependenciesLevel.prefab"]
         exp_project_test_assets = [new_asset]
         exp_cache_level_assets = ["TestDependenciesLevel.spawnable".lower()]
-        exp_cache_test_assets = [f"{new_asset_lower}_compiled", f"{new_asset_lower}_fn_compiled", "c1564064_vm.luac"]
+        exp_cache_test_assets = [
+            f"{new_asset_lower}_compiled",
+            f"{new_asset_lower}_fn_compiled",
+            "c1564064_vm.luac",
+        ]
 
         result, _ = asset_processor.gui_process(quitonidle=False)
         assert result, "AP GUI failed"
@@ -298,31 +336,42 @@ class TestsAssetProcessorGUI(object):
         if not os.path.isdir(level_dst_path):
             os.makedirs(level_dst_path)
         fs.unzip(level_dst_path, os.path.join(assets_src_path, f"{level_name}.zip"))
-        test_project_asset_dir = os.path.join(asset_processor.temp_asset_root(), workspace.project,
-                                              env["test_asset_dir_name"])
+        test_project_asset_dir = os.path.join(
+            asset_processor.temp_asset_root(),
+            workspace.project,
+            env["test_asset_dir_name"],
+        )
 
-        asset_processor.copy_assets_to_project([new_asset], assets_src_path, test_project_asset_dir)
+        asset_processor.copy_assets_to_project(
+            [new_asset], assets_src_path, test_project_asset_dir
+        )
         asset_processor.next_idle()
 
         # Verify level and test assets in project folder
         level_assets_list = utils.get_relative_file_paths(project_level_dir)
         test_assets_list = utils.get_relative_file_paths(test_project_asset_dir)
 
-        assert utils.compare_lists(level_assets_list, exp_project_level_assets), \
+        assert utils.compare_lists(level_assets_list, exp_project_level_assets), (
             "One or more assets is missing between the level in the project and its expected source assets"
-        assert utils.compare_lists(test_assets_list, exp_project_test_assets), \
+        )
+        assert utils.compare_lists(test_assets_list, exp_project_test_assets), (
             "One or more assets is missing between the test assets in the project and the expected source assets"
-
+        )
 
         # Verify level and test assets in cache folder
         level_assets_list = utils.get_relative_file_paths(cache_level_dir)
-        test_assets_list = utils.get_relative_file_paths(os.path.join(asset_processor.temp_project_cache(),
-                                                                      env["test_asset_dir_name"]))
+        test_assets_list = utils.get_relative_file_paths(
+            os.path.join(
+                asset_processor.temp_project_cache(), env["test_asset_dir_name"]
+            )
+        )
 
-        assert utils.compare_lists(level_assets_list, exp_cache_level_assets), \
+        assert utils.compare_lists(level_assets_list, exp_cache_level_assets), (
             "One or more assets is missing between the level in the cache and its expected product assets"
-        assert utils.compare_lists(test_assets_list, exp_cache_test_assets), \
+        )
+        assert utils.compare_lists(test_assets_list, exp_cache_test_assets), (
             "One or more assets is missing between the test assets in the cache and the expected product assets"
+        )
 
         asset_processor.stop()
 
@@ -340,7 +389,9 @@ class TestsAssetProcessorGUI(object):
         asset_processor.create_temp_asset_root()
         asset_processor.start()
         stop = asset_processor.stop(timeout=-1)
-        assert stop == StopReason.TIMEOUT, f"AP did not time out as expected, Expected: {StopReason.TIMEOUT} Actual: {stop}"
+        assert stop == StopReason.TIMEOUT, (
+            f"AP did not time out as expected, Expected: {StopReason.TIMEOUT} Actual: {stop}"
+        )
 
     @pytest.mark.assetpipeline
     def test_APStopDefaultTimeout_DoesNotTimeOut(self, asset_processor):
@@ -363,7 +414,9 @@ class TestsAssetProcessorGUI(object):
         assert asset_processor.stop() is None, "AP timed out"
 
     @pytest.mark.assetpipeline
-    def test_APStopNoControlConnection_Terminates(self, ap_setup_fixture, asset_processor):
+    def test_APStopNoControlConnection_Terminates(
+        self, ap_setup_fixture, asset_processor
+    ):
         """
         Tests AP successfully terminates if no control connection is found during an stop call.
 
@@ -377,4 +430,6 @@ class TestsAssetProcessorGUI(object):
         asset_processor.create_temp_asset_root()
         asset_processor.start()
         asset_processor.set_control_connection(None)
-        assert asset_processor.stop() == StopReason.NO_CONTROL, "AP was not terminated as expected"
+        assert asset_processor.stop() == StopReason.NO_CONTROL, (
+            "AP was not terminated as expected"
+        )
