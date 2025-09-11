@@ -62,8 +62,6 @@ def ScriptCanvas_PreUpdateEvent():
     :return: None
     """
 
-
-
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
 
@@ -96,27 +94,42 @@ def ScriptCanvas_PreUpdateEvent():
 
         @property
         def position(self):
-            return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
+            return azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldTranslation", self.id
+            )
 
         @property
         def velocity(self):
-                return azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "GetLinearVelocity", self.id)
+            return azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "GetLinearVelocity", self.id
+            )
 
         def set_velocity(self, x_velocity, y_velocity, z_velocity):
             velocity = math.Vector3(x_velocity, y_velocity, z_velocity)
-            azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "SetLinearVelocity", self.id, velocity)
+            azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "SetLinearVelocity", self.id, velocity
+            )
 
         def moved_enough(self):
-            current_position = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
-            return abs(self.initial_position.x - current_position.x) >= REQUIRED_MOVEMENT
+            current_position = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldTranslation", self.id
+            )
+            return (
+                abs(self.initial_position.x - current_position.x) >= REQUIRED_MOVEMENT
+            )
 
         def report_values(self):
-            Report.info_vector3(self.initial_position, "{} initial position: ".format(self.name))
-            Report.info_vector3(self.final_position, "{} final position: ".format(self.name))
+            Report.info_vector3(
+                self.initial_position, "{} initial position: ".format(self.name)
+            )
+            Report.info_vector3(
+                self.final_position, "{} final position: ".format(self.name)
+            )
 
     def check_relative_position(lead_sphere_position, follow_sphere_position, offset):
         return (
-            abs((lead_sphere_position.x - follow_sphere_position.x) - offset) < OFFSET_TOLERANCE
+            abs((lead_sphere_position.x - follow_sphere_position.x) - offset)
+            < OFFSET_TOLERANCE
             and abs(lead_sphere_position.y - follow_sphere_position.y) < FLOAT_THRESHOLD
             and abs(lead_sphere_position.z - follow_sphere_position.z) < FLOAT_THRESHOLD
         )
@@ -149,13 +162,16 @@ def ScriptCanvas_PreUpdateEvent():
 
     # 4) Validate Spheres are not moving
     Report.critical_result(
-        Tests.no_movement, velocity_zero(lead_sphere.velocity) and velocity_zero(follow_sphere.velocity)
+        Tests.no_movement,
+        velocity_zero(lead_sphere.velocity) and velocity_zero(follow_sphere.velocity),
     )
 
     # 5) Check Position of Sphere
     Report.result(
         Tests.initial_position,
-        check_relative_position(lead_sphere.initial_position, follow_sphere.initial_position, INITIAL_OFFSET),
+        check_relative_position(
+            lead_sphere.initial_position, follow_sphere.initial_position, INITIAL_OFFSET
+        ),
     )
 
     # 6) Start moving sphere and check that it acts correctly
@@ -163,14 +179,20 @@ def ScriptCanvas_PreUpdateEvent():
     Report.result(Tests.lead_sphere_velocity, velocity_valid(lead_sphere.velocity))
 
     # 7) Wait until Lead_Sphere has moved a set distance
-    Report.result(Tests.spheres_moving, helper.wait_for_condition(lead_sphere.moved_enough, TIMEOUT))
+    Report.result(
+        Tests.spheres_moving,
+        helper.wait_for_condition(lead_sphere.moved_enough, TIMEOUT),
+    )
 
     # 8) Verify Follow_Sphere follow distance
     lead_sphere.final_position = lead_sphere.position
     follow_sphere.final_position = follow_sphere.position
 
     Report.result(
-        Tests.follow_condition_true, check_relative_position(lead_sphere.final_position, follow_sphere.final_position, FINAL_OFFSET)
+        Tests.follow_condition_true,
+        check_relative_position(
+            lead_sphere.final_position, follow_sphere.final_position, FINAL_OFFSET
+        ),
     )
 
     # 9) Log results
@@ -183,7 +205,7 @@ def ScriptCanvas_PreUpdateEvent():
     helper.exit_game_mode(Tests.exit_game_mode)
 
 
-
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(ScriptCanvas_PreUpdateEvent)

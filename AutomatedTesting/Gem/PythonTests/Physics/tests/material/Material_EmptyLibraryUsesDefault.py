@@ -9,7 +9,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # Test Case Title : Verify that if we add an empty Material library in Collider Component, the object continues to use Default material values
 
 
-
 # fmt: off
 class Tests:
     enter_game_mode             = ("Entered game mode",                                             "Failed to enter game mode")
@@ -84,7 +83,9 @@ def Material_EmptyLibraryUsesDefault():
 
         @property
         def position(self):
-            return azlmbr.components.TransformBus(bus.Event, "GetWorldTranslation", self.id)
+            return azlmbr.components.TransformBus(
+                bus.Event, "GetWorldTranslation", self.id
+            )
 
     class Box(Entity):
         def __init__(self, name):
@@ -92,11 +93,15 @@ def Material_EmptyLibraryUsesDefault():
             self.start_position = self.position
 
         def is_stationary(self):
-            velocity = azlmbr.physics.RigidBodyRequestBus(bus.Event, "GetLinearVelocity", self.id)
+            velocity = azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "GetLinearVelocity", self.id
+            )
             return velocity.IsZero()
 
         def push(self):
-            azlmbr.physics.RigidBodyRequestBus(bus.Event, "ApplyLinearImpulse", self.id, FORCE_IMPULSE)
+            azlmbr.physics.RigidBodyRequestBus(
+                bus.Event, "ApplyLinearImpulse", self.id, FORCE_IMPULSE
+            )
 
     class Sphere(Entity):
         def __init__(self, name):
@@ -118,7 +123,9 @@ def Material_EmptyLibraryUsesDefault():
     def wait_for_bounce():
         for sphere in [default_sphere, empty_sphere]:
             if sphere.hit_terrain:
-                current_bounce_height = sphere.position.z - sphere.hit_terrain_position.z
+                current_bounce_height = (
+                    sphere.position.z - sphere.hit_terrain_position.z
+                )
                 if current_bounce_height >= sphere.max_bounce:
                     sphere.max_bounce = current_bounce_height
                 elif sphere.max_bounce > 0.0:
@@ -162,19 +169,25 @@ def Material_EmptyLibraryUsesDefault():
     Report.result(Tests.empty_sphere_bounced, empty_sphere.reached_max_bounce)
 
     # 4) Compare 'default_sphere' to 'empty_sphere'
-    sphere_bounces_equal = lymath.Math_IsClose(default_sphere.max_bounce, empty_sphere.max_bounce, DISTANCE_TOLERANCE)
+    sphere_bounces_equal = lymath.Math_IsClose(
+        default_sphere.max_bounce, empty_sphere.max_bounce, DISTANCE_TOLERANCE
+    )
     Report.result(Tests.default_sphere_equals_empty, sphere_bounces_equal)
 
     # 5) Push the boxes and wait for them to come to rest
     default_box.push()
     empty_box.push()
     Report.result(Tests.boxes_moved, helper.wait_for_condition(boxes_moved, TIMEOUT))
-    Report.result(Tests.boxes_at_rest, helper.wait_for_condition(boxes_are_stationary, TIMEOUT))
+    Report.result(
+        Tests.boxes_at_rest, helper.wait_for_condition(boxes_are_stationary, TIMEOUT)
+    )
 
     # 6) Compare 'default_box' to 'empty_box'
     default_distance = default_box.position.GetDistance(default_box.start_position)
     empty_distance = empty_box.position.GetDistance(empty_box.start_position)
-    box_distances_equal = lymath.Math_IsClose(default_distance, empty_distance, DISTANCE_TOLERANCE)
+    box_distances_equal = lymath.Math_IsClose(
+        default_distance, empty_distance, DISTANCE_TOLERANCE
+    )
     Report.result(Tests.default_box_equals_empty, box_distances_equal)
 
     # 7) Exit game mode and close editor
@@ -183,4 +196,5 @@ def Material_EmptyLibraryUsesDefault():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_EmptyLibraryUsesDefault)
