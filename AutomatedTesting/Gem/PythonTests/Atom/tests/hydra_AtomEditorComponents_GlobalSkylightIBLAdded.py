@@ -5,67 +5,61 @@ For complete copyright and license terms please see the LICENSE at the root of t
 SPDX-License-Identifier: Apache-2.0 OR MIT
 """
 
+
 class Tests:
     camera_creation = (
         "Camera Entity successfully created",
-        "Camera Entity failed to be created")
+        "Camera Entity failed to be created",
+    )
     camera_component_added = (
         "Camera component was added to entity",
-        "Camera component failed to be added to entity")
+        "Camera component failed to be added to entity",
+    )
     camera_component_check = (
         "Entity has a Camera component",
-        "Entity failed to find Camera component")
-    creation_undo = (
-        "UNDO Entity creation success",
-        "UNDO Entity creation failed")
-    creation_redo = (
-        "REDO Entity creation success",
-        "REDO Entity creation failed")
+        "Entity failed to find Camera component",
+    )
+    creation_undo = ("UNDO Entity creation success", "UNDO Entity creation failed")
+    creation_redo = ("REDO Entity creation success", "REDO Entity creation failed")
     global_skylight_creation = (
         "Global Skylight (IBL) Entity successfully created",
-        "P0: Global Skylight (IBL) Entity failed to be created")
+        "P0: Global Skylight (IBL) Entity failed to be created",
+    )
     global_skylight_component = (
         "Entity has a Global Skylight (IBL) component",
-        "P0: Entity failed to find Global Skylight (IBL) component")
+        "P0: Entity failed to find Global Skylight (IBL) component",
+    )
     default_diffuse_image_set = (
         "Entity has the default Diffuse Image set",
-        "P0: Entity failed to set default Diffuse Image")
+        "P0: Entity failed to set default Diffuse Image",
+    )
     default_specular_image_set = (
         "Entity has the default Specular Image set",
-        "P0: Entity failed to set default Specular Diffuse Image")
+        "P0: Entity failed to set default Specular Diffuse Image",
+    )
     exposure_set_max_value = (
         "Exposure set to maximum value",
-        "P1: Exposure failed to set maximum value")
+        "P1: Exposure failed to set maximum value",
+    )
     exposure_set_min_value = (
         "Exposure set to minimum value",
-        "P1: Exposure failed to set minimum value")
+        "P1: Exposure failed to set minimum value",
+    )
     high_contrast_diffuse_image_set = (
         "Entity has the high contrast Diffuse Image set",
-        "P1: Entity failed to set high contrast Diffuse Image")
+        "P1: Entity failed to set high contrast Diffuse Image",
+    )
     high_contrast_specular_image_set = (
         "Entity has the high contrast Specular Image set",
-        "P1: Entity failed to set high contrast Specular Diffuse Image")
-    enter_game_mode = (
-        "Entered game mode",
-        "P0: Failed to enter game mode")
-    exit_game_mode = (
-        "Exited game mode",
-        "P0: Couldn't exit game mode")
-    is_visible = (
-        "Entity is visible",
-        "P0: Entity was not visible")
-    is_hidden = (
-        "Entity is hidden",
-        "P0: Entity was not hidden")
-    entity_deleted = (
-        "Entity deleted",
-        "P0: Entity was not deleted")
-    deletion_undo = (
-        "UNDO deletion success",
-        "P0: UNDO deletion failed")
-    deletion_redo = (
-        "REDO deletion success",
-        "P0: REDO deletion failed")
+        "P1: Entity failed to set high contrast Specular Diffuse Image",
+    )
+    enter_game_mode = ("Entered game mode", "P0: Failed to enter game mode")
+    exit_game_mode = ("Exited game mode", "P0: Couldn't exit game mode")
+    is_visible = ("Entity is visible", "P0: Entity was not visible")
+    is_hidden = ("Entity is hidden", "P0: Entity was not hidden")
+    entity_deleted = ("Entity deleted", "P0: Entity was not deleted")
+    deletion_undo = ("UNDO deletion success", "P0: UNDO deletion failed")
+    deletion_redo = ("REDO deletion success", "P0: REDO deletion failed")
 
 
 def AtomEditorComponents_GlobalSkylightIBL_AddedToEntity():
@@ -115,14 +109,23 @@ def AtomEditorComponents_GlobalSkylightIBL_AddedToEntity():
 
         # Test steps begin.
         # 1. Create a Global Skylight (IBL) entity with no components.
-        global_skylight_entity = EditorEntity.create_editor_entity(AtomComponentProperties.global_skylight())
-        Report.critical_result(Tests.global_skylight_creation, global_skylight_entity.exists())
+        global_skylight_entity = EditorEntity.create_editor_entity(
+            AtomComponentProperties.global_skylight()
+        )
+        Report.critical_result(
+            Tests.global_skylight_creation, global_skylight_entity.exists()
+        )
 
         # 2. Add Global Skylight (IBL) component to Global Skylight (IBL) entity.
-        global_skylight_component = global_skylight_entity.add_component(AtomComponentProperties.global_skylight())
+        global_skylight_component = global_skylight_entity.add_component(
+            AtomComponentProperties.global_skylight()
+        )
         Report.critical_result(
             Tests.global_skylight_component,
-            global_skylight_entity.has_component(AtomComponentProperties.global_skylight()))
+            global_skylight_entity.has_component(
+                AtomComponentProperties.global_skylight()
+            ),
+        )
 
         # 3. UNDO the entity creation and component addition.
         # -> UNDO component addition.
@@ -158,73 +161,111 @@ def AtomEditorComponents_GlobalSkylightIBL_AddedToEntity():
         Report.result(Tests.is_visible, global_skylight_entity.is_visible() is True)
 
         # 7. Set the default Diffuse Image asset on the Global Skylight (IBL) entity.
-        diffuse_image_path = os.path.join("lightingpresets", "default_iblskyboxcm.exr.streamingimage")
+        diffuse_image_path = os.path.join(
+            "lightingpresets", "default_iblskyboxcm.exr.streamingimage"
+        )
         diffuse_image_asset = Asset.find_asset_by_path(diffuse_image_path, False)
         global_skylight_component.set_component_property_value(
-            AtomComponentProperties.global_skylight('Diffuse Image'), diffuse_image_asset.id)
+            AtomComponentProperties.global_skylight("Diffuse Image"),
+            diffuse_image_asset.id,
+        )
         Report.result(
             Tests.default_diffuse_image_set,
-            diffuse_image_asset.id == global_skylight_component.get_component_property_value(
-                                          AtomComponentProperties.global_skylight('Diffuse Image')))
+            diffuse_image_asset.id
+            == global_skylight_component.get_component_property_value(
+                AtomComponentProperties.global_skylight("Diffuse Image")
+            ),
+        )
 
         # 8. Set the default Specular Image asset on the Global Light (IBL) entity.
-        specular_image_path = os.path.join("lightingpresets", "default_iblskyboxcm.exr.streamingimage")
+        specular_image_path = os.path.join(
+            "lightingpresets", "default_iblskyboxcm.exr.streamingimage"
+        )
         specular_image_asset = Asset.find_asset_by_path(specular_image_path, False)
         global_skylight_component.set_component_property_value(
-            AtomComponentProperties.global_skylight('Specular Image'), specular_image_asset.id)
+            AtomComponentProperties.global_skylight("Specular Image"),
+            specular_image_asset.id,
+        )
         Report.result(
             Tests.default_specular_image_set,
-            specular_image_asset.id == global_skylight_component.get_component_property_value(
-                                           AtomComponentProperties.global_skylight('Specular Image')))
+            specular_image_asset.id
+            == global_skylight_component.get_component_property_value(
+                AtomComponentProperties.global_skylight("Specular Image")
+            ),
+        )
 
         # 9. Set Exposure value to min value
         global_skylight_component.set_component_property_value(
-            AtomComponentProperties.global_skylight('Exposure'), value=-5)
+            AtomComponentProperties.global_skylight("Exposure"), value=-5
+        )
         current_exposure_value = global_skylight_component.get_component_property_value(
-            AtomComponentProperties.global_skylight('Exposure'))
+            AtomComponentProperties.global_skylight("Exposure")
+        )
         Report.result(Tests.exposure_set_min_value, current_exposure_value == -5)
 
         # 10. Set Exposure value to max value
         global_skylight_component.set_component_property_value(
-            AtomComponentProperties.global_skylight('Exposure'), value=5)
+            AtomComponentProperties.global_skylight("Exposure"), value=5
+        )
         current_exposure_value = global_skylight_component.get_component_property_value(
-            AtomComponentProperties.global_skylight('Exposure'))
+            AtomComponentProperties.global_skylight("Exposure")
+        )
         Report.result(Tests.exposure_set_max_value, current_exposure_value == 5)
 
         # 11. Set the High Contrast Diffuse Image asset on the Global Skylight (IBL) entity.
         diffuse_image_path = os.path.join(
-            "lightingpresets", "highcontrast", "goegap_4k_iblglobalcm_ibldiffuse.exr.streamingimage")
+            "lightingpresets",
+            "highcontrast",
+            "goegap_4k_iblglobalcm_ibldiffuse.exr.streamingimage",
+        )
         diffuse_image_asset = Asset.find_asset_by_path(diffuse_image_path, False)
         global_skylight_component.set_component_property_value(
-            AtomComponentProperties.global_skylight('Diffuse Image'), diffuse_image_asset.id)
+            AtomComponentProperties.global_skylight("Diffuse Image"),
+            diffuse_image_asset.id,
+        )
         Report.result(
             Tests.high_contrast_diffuse_image_set,
-            diffuse_image_asset.id == global_skylight_component.get_component_property_value(
-                                          AtomComponentProperties.global_skylight('Diffuse Image')))
+            diffuse_image_asset.id
+            == global_skylight_component.get_component_property_value(
+                AtomComponentProperties.global_skylight("Diffuse Image")
+            ),
+        )
 
         # 12. Set the High Contrast Specular Image asset on the Global Light (IBL) entity.
         specular_image_path = os.path.join(
-            "lightingpresets", "highcontrast", "goegap_4k_iblglobalcm_iblspecular.exr.streamingimage")
+            "lightingpresets",
+            "highcontrast",
+            "goegap_4k_iblglobalcm_iblspecular.exr.streamingimage",
+        )
         specular_image_asset = Asset.find_asset_by_path(specular_image_path, False)
         global_skylight_component.set_component_property_value(
-            AtomComponentProperties.global_skylight('Specular Image'), specular_image_asset.id)
+            AtomComponentProperties.global_skylight("Specular Image"),
+            specular_image_asset.id,
+        )
         Report.result(
             Tests.high_contrast_specular_image_set,
-            specular_image_asset.id == global_skylight_component.get_component_property_value(
-                                           AtomComponentProperties.global_skylight('Specular Image')))
+            specular_image_asset.id
+            == global_skylight_component.get_component_property_value(
+                AtomComponentProperties.global_skylight("Specular Image")
+            ),
+        )
 
         # 13. Set Exposure valuye to min value
         global_skylight_component.set_component_property_value(
-            AtomComponentProperties.global_skylight('Exposure'), value=-5)
+            AtomComponentProperties.global_skylight("Exposure"), value=-5
+        )
         current_exposure_value = global_skylight_component.get_component_property_value(
-            AtomComponentProperties.global_skylight('Exposure'))
+            AtomComponentProperties.global_skylight("Exposure")
+        )
         Report.result(Tests.exposure_set_min_value, current_exposure_value == -5)
 
         # 14. Set Exposure value to max value
         global_skylight_component.set_component_property_value(
-            AtomComponentProperties.global_skylight('Exposure'), value=5)
+            AtomComponentProperties.global_skylight("Exposure"), value=5
+        )
         current_exposure_value = global_skylight_component.get_component_property_value(
-            AtomComponentProperties.global_skylight('Exposure'))
+            AtomComponentProperties.global_skylight("Exposure")
+        )
         Report.result(Tests.exposure_set_max_value, current_exposure_value == 5)
 
         # 15. Enter/Exit game mode.
@@ -244,16 +285,23 @@ def AtomEditorComponents_GlobalSkylightIBL_AddedToEntity():
         # 18. REDO deletion.
         general.redo()
         general.idle_wait_frames(1)
-        Report.result(Tests.deletion_redo, not  global_skylight_entity.exists())
+        Report.result(Tests.deletion_redo, not global_skylight_entity.exists())
 
         # 19. Look for errors and asserts.
-        TestHelper.wait_for_condition(lambda: error_tracer.has_errors or error_tracer.has_asserts, 1.0)
+        TestHelper.wait_for_condition(
+            lambda: error_tracer.has_errors or error_tracer.has_asserts, 1.0
+        )
         for error_info in error_tracer.errors:
-            Report.info(f"Error: {error_info.filename} {error_info.function} | {error_info.message}")
+            Report.info(
+                f"Error: {error_info.filename} {error_info.function} | {error_info.message}"
+            )
         for assert_info in error_tracer.asserts:
-            Report.info(f"Assert: {assert_info.filename} {assert_info.function} | {assert_info.message}")
+            Report.info(
+                f"Assert: {assert_info.filename} {assert_info.function} | {assert_info.message}"
+            )
 
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(AtomEditorComponents_GlobalSkylightIBL_AddedToEntity)

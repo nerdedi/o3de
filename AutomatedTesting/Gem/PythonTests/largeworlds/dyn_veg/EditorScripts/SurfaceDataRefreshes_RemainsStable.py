@@ -9,7 +9,7 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     editor_remains_stable = (
         "Editor did not crash following rapid surface data updates",
-        "Editor crashed"
+        "Editor crashed",
     )
 
 
@@ -44,7 +44,9 @@ def SurfaceDataRefreshes_RemainsStable():
     world_center = math.Vector3(512.0, 512.0, 32.0)
 
     # Add an entity with a 1024 x 1024 box centered at 512,512.
-    surface_entity = dynveg.create_surface_entity("Surface Data", world_center, 1024.0, 1024.0, 1.0)
+    surface_entity = dynveg.create_surface_entity(
+        "Surface Data", world_center, 1024.0, 1024.0, 1.0
+    )
 
     # Move the camera to the world center
     general.set_current_view_position(world_center.x, world_center.y, world_center.z)
@@ -61,32 +63,40 @@ def SurfaceDataRefreshes_RemainsStable():
     test_success = False
 
     # Loop through all our attempted timing test cases to cause the crash pretty consistently.
-    for test_case in range(0,3):
-        Report.info(f'Starting test case {test_case}')
-        Report.info(f'Loops per surface changed: {loops_per_surface_changed[test_case]}')
-        Report.info(f'Loops per camera reset: {loops_per_camera_reset[test_case]}')
-        Report.info(f'Camera speed per loop: {camera_speed_per_loop[test_case]}')
+    for test_case in range(0, 3):
+        Report.info(f"Starting test case {test_case}")
+        Report.info(
+            f"Loops per surface changed: {loops_per_surface_changed[test_case]}"
+        )
+        Report.info(f"Loops per camera reset: {loops_per_camera_reset[test_case]}")
+        Report.info(f"Camera speed per loop: {camera_speed_per_loop[test_case]}")
         for test_counter in range(0, 100):
-
             # Every N loops, invalidate the entire set of surface data.  It's mostly just important for this
             # not to happen *every* iteration, since we need the vegetation system to bounce between having
             # dirty surface points that cause sectors to be refreshed, and having no dirty surface points or
             # active surface areas to trigger a "delete all sectors" condition.
             if (test_counter % loops_per_surface_changed[test_case]) == 0:
-                provider_handle = azlmbr.surface_data.SurfaceDataSystemRequestBus(azlmbr.bus.Broadcast,
-                                                                'GetSurfaceDataProviderHandle',
-                                                                surface_entity.id)
-                azlmbr.surface_data.SurfaceDataSystemRequestBus(azlmbr.bus.Broadcast,
-                                                                'RefreshSurfaceData',
-                                                                provider_handle,
-                                                                azlmbr.math.Aabb())
+                provider_handle = azlmbr.surface_data.SurfaceDataSystemRequestBus(
+                    azlmbr.bus.Broadcast,
+                    "GetSurfaceDataProviderHandle",
+                    surface_entity.id,
+                )
+                azlmbr.surface_data.SurfaceDataSystemRequestBus(
+                    azlmbr.bus.Broadcast,
+                    "RefreshSurfaceData",
+                    provider_handle,
+                    azlmbr.math.Aabb(),
+                )
 
             # Move the camera back and forth along the X axis at just the right speed to invalidate sectors that are
             # queued for updating but haven't updated yet, so that when they try to update they crash.
-            x_pos = world_center.x + ((test_counter % loops_per_camera_reset[test_case]) * camera_speed_per_loop[test_case])
+            x_pos = world_center.x + (
+                (test_counter % loops_per_camera_reset[test_case])
+                * camera_speed_per_loop[test_case]
+            )
             general.set_current_view_position(x_pos, world_center.y, world_center.z)
 
-            Report.info(f'{test_counter}: {x_pos}')
+            Report.info(f"{test_counter}: {x_pos}")
 
             # Give a little processing time each iteration.
             general.idle_wait(0.01)
@@ -97,6 +107,6 @@ def SurfaceDataRefreshes_RemainsStable():
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(SurfaceDataRefreshes_RemainsStable)
