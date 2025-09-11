@@ -1201,10 +1201,11 @@ class TestsFBX_AllPlatforms(object):
         # Long term these should become errors, but right now product assets on Linux and non-Linux
         # are showing differences in hashes.
         # Linux and non-Linux platforms are also generating different floating point values.
-        diff_actual, diff_expected = (
-            TestsFBX_AllPlatforms.trim_floating_point_values_from_same_length_lists(
-                diff_actual, diff_expected, actual_file_path, expected_file_path
-            )
+        (
+            diff_actual,
+            diff_expected,
+        ) = TestsFBX_AllPlatforms.trim_floating_point_values_from_same_length_lists(
+            diff_actual, diff_expected, actual_file_path, expected_file_path
         )
 
         # If this is the XML debug file, then it will be difficult to verify if a line is a hash line or another integer.
@@ -1337,10 +1338,11 @@ class TestsFBX_AllPlatforms(object):
                 if overrideAsset
                 else blackbox_params.scene_debug_file
             )
-            expected_hashes_to_skip, actual_hashes_to_skip = (
-                self.compare_scene_debug_file(
-                    asset_processor, scene_debug_file, blackbox_params.scene_debug_file
-                )
+            (
+                expected_hashes_to_skip,
+                actual_hashes_to_skip,
+            ) = self.compare_scene_debug_file(
+                asset_processor, scene_debug_file, blackbox_params.scene_debug_file
             )
 
             # Run again for the .dbgsg.xml file
@@ -1555,10 +1557,11 @@ class TestsFBX_AllPlatforms(object):
                 f"Scene debug output missing after running AP on {extension}."
             )
 
-            expected_hashes_to_skip, actual_hashes_to_skip = (
-                self.compare_scene_debug_file(
-                    asset_processor, scene_debug_expected, scene_debug_actual
-                )
+            (
+                expected_hashes_to_skip,
+                actual_hashes_to_skip,
+            ) = self.compare_scene_debug_file(
+                asset_processor, scene_debug_expected, scene_debug_actual
             )
 
             # Run again for the .dbgsg.xml file
