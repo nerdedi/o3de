@@ -20,18 +20,20 @@ import os
 import re
 import sys
 import traceback
-import json
 from pathlib import Path
 from optparse import OptionParser
-if six.PY2:
-    from cStringIO import StringIO
-else:
-    from io import StringIO
 
-import validator_data_LEGAL_REVIEW_REQUIRED # pull in the data we need to configure this tool
+if six.PY2:
+    pass
+else:
+    pass
+
+import validator_data_LEGAL_REVIEW_REQUIRED  # pull in the data we need to configure this tool
+
 
 class Validator(object):
     """Class to contain the validator program"""
+
     # Set of all acceptable_use patterns actually used during the run
     pattern_used = set([])
 
@@ -58,7 +60,6 @@ class Validator(object):
             # Before we engage the accepted use machinery, make sure that the line contains a bad pattern that would
             # otherwise fail validation
             if self.compiled_bad_pattern.search(line) != None:
-
                 # The second stage checks against a more specific regular expression. (self.compiled_acceptable_pattern)
                 # if the regular expression is matched, then the line contains information
                 # that may be acceptable use or a false positive. We check if the line is covered by an established
@@ -66,25 +67,23 @@ class Validator(object):
                 # Make a copy of the line and replace any matching accepted uses with EXCEPTION. If something
                 # changes, then we have a possible accepted use which we'll have to vet.
                 origline = line
-                line = self.compiled_acceptable_pattern.sub('EXCEPTION', line)
+                line = self.compiled_acceptable_pattern.sub("EXCEPTION", line)
                 accepting_patterns = []
                 if line != origline:
-
                     # Convert the path to forward slashes, then loop through all instances of an accepted use match
                     # on this line
                     line = origline
-                    canonical_filepath = os.path.abspath(filepath).replace('\\', '/')
+                    canonical_filepath = os.path.abspath(filepath).replace("\\", "/")
                     while True:
                         m = self.compiled_acceptable_pattern.search(line)
                         if not m:
                             break
 
                         # Find the specific matching pattern
-                        match = line[m.start():m.end()]
+                        match = line[m.start() : m.end()]
                         found = False
-                        for pattern,compiledp,fileset in self.acceptable_use_patterns:
+                        for pattern, compiledp, fileset in self.acceptable_use_patterns:
                             if compiledp.search(match) != None:
-
                                 # If file testing isn't enabled, assume the match is good. Otherwise, search the file
                                 # patterns to see if this file is allowed
                                 if self.options.ignore_file_paths:
@@ -95,8 +94,11 @@ class Validator(object):
                                             found = True
                                             break
                                     if not found:
-                                        errors.append("File rejected by pattern '{}': {}: line {}: {}".format(
-                                            pattern, filepath, fileline, origline))
+                                        errors.append(
+                                            "File rejected by pattern '{}': {}: line {}: {}".format(
+                                                pattern, filepath, fileline, origline
+                                            )
+                                        )
 
                                 # First pattern match is good enough
                                 if found:
@@ -110,7 +112,7 @@ class Validator(object):
                             break
 
                         # We remove the accepted use from the line and replace it with "EXCEPTION" and retest the line.
-                        line = line[:m.start()] + 'EXCEPTION' + line[m.end():]
+                        line = line[: m.start()] + "EXCEPTION" + line[m.end() :]
 
                 # Once any possible accepted uses have been replaced, we check the resultant line to see if any bad
                 # patterns remain in the line. If so, then we fail the line.
@@ -118,15 +120,27 @@ class Validator(object):
                     if self.options.list:
                         self.output_unique_filepath(filepath)
                     else:
-                        errors.append('validation failure in {}: line {}:  {}'.format(filepath, fileline, origline))
+                        errors.append(
+                            "validation failure in {}: line {}:  {}".format(
+                                filepath, fileline, origline
+                            )
+                        )
                     failed = 1
 
                 # Otherwise, spit out the details of each match
                 else:
                     for a in accepting_patterns:
-                        info.append("Allowed by '{}' pattern: {}: line {}: {}".format(a, filepath, fileline, origline))
+                        info.append(
+                            "Allowed by '{}' pattern: {}: line {}: {}".format(
+                                a, filepath, fileline, origline
+                            )
+                        )
                         if self.options.exception_file:
-                            self.exceptions_output.write("Allowed by '{}' pattern: {}: line {}: {}\n".format(a, filepath, fileline, origline))
+                            self.exceptions_output.write(
+                                "Allowed by '{}' pattern: {}: line {}: {}\n".format(
+                                    a, filepath, fileline, origline
+                                )
+                            )
         return failed
 
     def output_unique_filepath(self, filepath):
@@ -134,7 +148,7 @@ class Validator(object):
         # Dictionary to use to ensure that we know which files we have already talked about
         global printed_filepath
         try:
-            if not filepath in printed_filepath:
+            if filepath not in printed_filepath:
                 print(filepath)
                 printed_filepath[filepath] = 1
         except:
@@ -153,7 +167,7 @@ class Validator(object):
         # bits are there.
         errors = []
         info = []
-        failed = self.validate_line(filepath, 'filename', 0, failed, errors, info)
+        failed = self.validate_line(filepath, "filename", 0, failed, errors, info)
         for e in errors:
             logging.error(e)
         for i in info:
@@ -163,7 +177,7 @@ class Validator(object):
         # These extensions are here because they sometimes look like text files,
         # but are not really text files in practice.
         if validator_data_LEGAL_REVIEW_REQUIRED.skip_file(filepath):
-            logging.debug('Skipping %s', filepath)
+            logging.debug("Skipping %s", filepath)
             return
 
         # Python3 requires specific encoding but the repo is a mix of UTF-8, UTF-16, and latin-1
@@ -172,7 +186,7 @@ class Validator(object):
         for encoding_format in encodings:
             try:
                 with open(filepath, encoding=encoding_format) as f:
-                    logging.debug('Validating %s', filepath)
+                    logging.debug("Validating %s", filepath)
 
                     # Take care to deal with files that have unreasonably large lines.
                     # if we don't do this, then the validator can segfault as it tries
@@ -188,11 +202,13 @@ class Validator(object):
                     # This will make the logic below much more complex.
                     fileline = 0
                     line = f.readline(10000)
-                    while line != '':
+                    while line != "":
                         fileline += 1
                         errors = []
                         info = []
-                        failed = self.validate_line(line, filepath, fileline, failed, errors, info)
+                        failed = self.validate_line(
+                            line, filepath, fileline, failed, errors, info
+                        )
                         for e in errors:
                             logging.error(e)
                         for i in info:
@@ -202,7 +218,9 @@ class Validator(object):
             except UnicodeDecodeError:
                 continue
 
-        raise UnicodeError("Could not decode {0} due to an unexpected file encoding".format(filepath))
+        raise UnicodeError(
+            "Could not decode {0} due to an unexpected file encoding".format(filepath)
+        )
 
     # Walk directory tree and find all file paths, and run the search for bad code on each file.
     # We explicitly skip "SDKs" directories, "BinTemp" and "Python" directories and various others.
@@ -216,7 +234,11 @@ class Validator(object):
         platform_failed = 0
         scanned = 0
         validations = 0
-        bypassed_directories = validator_data_LEGAL_REVIEW_REQUIRED.get_bypassed_directories(self.options.all)
+        bypassed_directories = (
+            validator_data_LEGAL_REVIEW_REQUIRED.get_bypassed_directories(
+                self.options.all
+            )
+        )
 
         for dirname, dirnames, filenames in os.walk(os.path.normpath(root)):
             # First deal with the files in the current directory
@@ -234,34 +256,49 @@ class Validator(object):
                 if name in dirnames:
                     dirnames.remove(name)
         if scanned == 0:
-            logging.error('No files scanned at target search directory: %s', root)
+            logging.error("No files scanned at target search directory: %s", root)
             platform_failed = 1
         else:
-            print('validated {} of {} files'.format(validations, scanned))
+            print("validated {} of {} files".format(validations, scanned))
         return platform_failed
-
 
     def compile_filter_patterns(self, platform):
         """Join together patterns listed in data file into single patterns and compile for speed."""
-        if not platform in validator_data_LEGAL_REVIEW_REQUIRED.restricted_platforms:
-            logging.error('platform data for platform %s not provided in validator_data_LEGAL_REVIEW_REQUIRED.py.', platform)
+        if platform not in validator_data_LEGAL_REVIEW_REQUIRED.restricted_platforms:
+            logging.error(
+                "platform data for platform %s not provided in validator_data_LEGAL_REVIEW_REQUIRED.py.",
+                platform,
+            )
             sys.exit(1)
-        restricted_platform = validator_data_LEGAL_REVIEW_REQUIRED.restricted_platforms[platform]
-        if not 'prefilter' in restricted_platform:
-            logging.error('prefilter list not found for platform %s in validator_data_LEGAL_REVIEW_REQUIRED.py', platform)
+        restricted_platform = validator_data_LEGAL_REVIEW_REQUIRED.restricted_platforms[
+            platform
+        ]
+        if "prefilter" not in restricted_platform:
+            logging.error(
+                "prefilter list not found for platform %s in validator_data_LEGAL_REVIEW_REQUIRED.py",
+                platform,
+            )
             sys.exit(1)
-        self.prefilter = restricted_platform['prefilter']
-        if not 'patterns' in restricted_platform:
-            logging.error('patterns list not found for platform %s in validator_data_LEGAL_REVIEW_REQUIRED.py', platform)
+        self.prefilter = restricted_platform["prefilter"]
+        if "patterns" not in restricted_platform:
+            logging.error(
+                "patterns list not found for platform %s in validator_data_LEGAL_REVIEW_REQUIRED.py",
+                platform,
+            )
             sys.exit(1)
-        self.bad_patterns = restricted_platform['patterns']
-        if not 'acceptable_use' in restricted_platform:
-            logging.error('acceptable_use list not found for platform %s in validator_data_LEGAL_REVIEW_REQUIRED.py', platform)
+        self.bad_patterns = restricted_platform["patterns"]
+        if "acceptable_use" not in restricted_platform:
+            logging.error(
+                "acceptable_use list not found for platform %s in validator_data_LEGAL_REVIEW_REQUIRED.py",
+                platform,
+            )
             sys.exit(1)
         self.acceptable_use_patterns = []
-        for p,fileset in restricted_platform['acceptable_use']:
+        for p, fileset in restricted_platform["acceptable_use"]:
             try:
-                self.acceptable_use_patterns.append((p, re.compile(p), [re.compile(f) for f in fileset]))
+                self.acceptable_use_patterns.append(
+                    (p, re.compile(p), [re.compile(f) for f in fileset])
+                )
             except:
                 logging.error("Couldn't compile pattern {}...".format(p))
                 traceback.print_exc()
@@ -269,38 +306,47 @@ class Validator(object):
 
         try:
             # Compile the search patterns for speed
-            bad_pattern = '|'.join(self.bad_patterns)
-            acceptable_pattern = '|'.join([p for p,compiledp,fileset in self.acceptable_use_patterns])
+            bad_pattern = "|".join(self.bad_patterns)
+            acceptable_pattern = "|".join(
+                [p for p, compiledp, fileset in self.acceptable_use_patterns]
+            )
             self.compiled_bad_pattern = re.compile(bad_pattern)
             self.compiled_acceptable_pattern = re.compile(acceptable_pattern)
         except:
-            logging.error('Could not compile patterns for validation. Check patterns in validator_data_LEGAL_REVIEW_REQUIRED.py for correctness.')
+            logging.error(
+                "Could not compile patterns for validation. Check patterns in validator_data_LEGAL_REVIEW_REQUIRED.py for correctness."
+            )
             traceback.print_exc()
             sys.exit(1)
 
     def test_prefilter_covers_bad_patterns(self):
-        double_pattern = re.compile(r'\[(.)\1\]')
+        double_pattern = re.compile(r"\[(.)\1\]")
         for bad in self.bad_patterns:
-            reduced = re.sub(double_pattern, r'\1', bad.lower())
+            reduced = re.sub(double_pattern, r"\1", bad.lower())
             found = False
             for p in self.prefilter:
                 if p in reduced:
                     found = True
                     break
             if not found:
-                logging.error('Could not find a prefilter for {}.'.format(bad))
+                logging.error("Could not find a prefilter for {}.".format(bad))
                 return False
         return True
 
     def test_all_bad_patterns_active(self, platform):
-
         # Open the canary file relative to the validator script, that way we don't have to worry about temporary files and whatnot
         # Once we split the repos we will have to worry about multiple root points etc. but that is a problem for future us.
         # All the packaging safelist stuff goes away once repo is split for platforms
         this_path = Path(__file__).resolve()
         root_folder = this_path.parents[2]
         relative_folder = os.path.relpath(this_path.parent, root_folder)
-        canary_file = os.path.join(root_folder, 'restricted', platform, relative_folder, platform.lower() + '_canary.txt')
+        canary_file = os.path.join(
+            root_folder,
+            "restricted",
+            platform,
+            relative_folder,
+            platform.lower() + "_canary.txt",
+        )
         try:
             with open(canary_file) as canary:
                 bad_patterns = self.bad_patterns
@@ -313,7 +359,10 @@ class Validator(object):
 
                     # Each validation failure needs to be tracked back to the patterns that detect it. Once we find one, eliminate it
                     # from the search list since we've found an instance where it would trigger
-                    if self.validate_line(line, canary_file, fileline, 0, errors, info) == 1:
+                    if (
+                        self.validate_line(line, canary_file, fileline, 0, errors, info)
+                        == 1
+                    ):
                         found = []
                         for bad in bad_patterns:
                             if re.search(bad, line):
@@ -327,7 +376,7 @@ class Validator(object):
                         logging.error("Could not find a canary for '{}'.".format(bad))
                     return False
         except:
-            logging.error('Could not open canary file {}.'.format(canary_file))
+            logging.error("Could not open canary file {}.".format(canary_file))
             return False
         return True
 
@@ -341,18 +390,24 @@ class Validator(object):
     def validate(self, platform):
         self.compile_filter_patterns(platform)
         if not self.test(platform):
-            logging.error('Validation could not pass {} self tests! Results cannot be trusted!'.format(platform))
+            logging.error(
+                "Validation could not pass {} self tests! Results cannot be trusted!".format(
+                    platform
+                )
+            )
             sys.exit(1)
         else:
-            print('{} self tests SUCCEEDED'.format(platform))
+            print("{} self tests SUCCEEDED".format(platform))
 
         # Add the source code / SDK paths to check
-        platform_failed = self.validate_directory_tree(os.path.abspath(self.args[0]), platform)
+        platform_failed = self.validate_directory_tree(
+            os.path.abspath(self.args[0]), platform
+        )
 
         # If the user asked, output any acceptable_use patterns that didn't get used
         if self.options.check_unused_patterns:
-            for pattern,compiledp,fileset in self.acceptable_use_patterns:
-                if not pattern in self.pattern_used:
+            for pattern, compiledp, fileset in self.acceptable_use_patterns:
+                if pattern not in self.pattern_used:
                     print("UNUSED ACCEPTABLE_USE PATTERN: '{}'".format(pattern))
 
         return platform_failed
@@ -366,49 +421,90 @@ class Validator(object):
         self.bad_patterns = None
         self.acceptable_use_patterns = None
 
+
 def parse_options():
     """Set up the options parser, and parse the options the user gave to validator."""
-    usage = 'usage: %prog [options] scandir'
+    usage = "usage: %prog [options] scandir"
     parser = OptionParser(usage)
-    platform_choices = list(validator_data_LEGAL_REVIEW_REQUIRED.restricted_platforms_for_package.keys())
+    platform_choices = list(
+        validator_data_LEGAL_REVIEW_REQUIRED.restricted_platforms_for_package.keys()
+    )
     platform_choices.sort()
-    parser.add_option('--package_platform', action='store', type='choice',
-                      choices=platform_choices,
-                      dest='package_platform',
-                      help='Package platform to validate. Must be one of {}.'.format(platform_choices))
-    parser.add_option('-s', '--store-exceptions', action='store', type='string', default='',
-                      dest='exception_file',
-                      help='Store list of lines that the validator gave exceptions to by matching accepted use patterns. These can be diffed with prior runs to see what is changing.')
-    parser.add_option('-v', '--verbose', action='store', type='choice', choices=['0', '1', '2'], default='0',
-                      dest='verbose',
-                      help='Verbose output. Level 0 = only output lines that fail validation. '
-                           'Level 1 = output of lines that would have failed without an accepted usage exception. '
-                           'Level 2 also includes output of each filename being handled.')
-    parser.add_option('-u', '--check-unused-patterns', action='store_true',
-                      dest='check_unused_patterns',
-                      help='Report on any acceptable_use patterns that are not matched.')
-    parser.add_option('-l', '--list', action='store_true',
-                      dest='list',
-                      help='Only list filenames with validation errors. Useful as input to a set of files to edit or otherwise process.')
-    parser.add_option('-a', '--all', action='store_true',
-                      dest='all',
-                      help='Do not skip any files or subdirectories when processing. Should be used on final clean code only. If you use this on your build tree in place lots of temp files will match.')
-    parser.add_option('-i', '--ignore-file-paths', action='store_true',
-                      dest='ignore_file_paths',
-                      help='disable the filepath check for accepted_use patterns. Should only be when targeting a directory other than /dev/.')
+    parser.add_option(
+        "--package_platform",
+        action="store",
+        type="choice",
+        choices=platform_choices,
+        dest="package_platform",
+        help="Package platform to validate. Must be one of {}.".format(
+            platform_choices
+        ),
+    )
+    parser.add_option(
+        "-s",
+        "--store-exceptions",
+        action="store",
+        type="string",
+        default="",
+        dest="exception_file",
+        help="Store list of lines that the validator gave exceptions to by matching accepted use patterns. These can be diffed with prior runs to see what is changing.",
+    )
+    parser.add_option(
+        "-v",
+        "--verbose",
+        action="store",
+        type="choice",
+        choices=["0", "1", "2"],
+        default="0",
+        dest="verbose",
+        help="Verbose output. Level 0 = only output lines that fail validation. "
+        "Level 1 = output of lines that would have failed without an accepted usage exception. "
+        "Level 2 also includes output of each filename being handled.",
+    )
+    parser.add_option(
+        "-u",
+        "--check-unused-patterns",
+        action="store_true",
+        dest="check_unused_patterns",
+        help="Report on any acceptable_use patterns that are not matched.",
+    )
+    parser.add_option(
+        "-l",
+        "--list",
+        action="store_true",
+        dest="list",
+        help="Only list filenames with validation errors. Useful as input to a set of files to edit or otherwise process.",
+    )
+    parser.add_option(
+        "-a",
+        "--all",
+        action="store_true",
+        dest="all",
+        help="Do not skip any files or subdirectories when processing. Should be used on final clean code only. If you use this on your build tree in place lots of temp files will match.",
+    )
+    parser.add_option(
+        "-i",
+        "--ignore-file-paths",
+        action="store_true",
+        dest="ignore_file_paths",
+        help="disable the filepath check for accepted_use patterns. Should only be when targeting a directory other than /dev/.",
+    )
 
     (options, args) = parser.parse_args()
 
-    if options.verbose == '1':
-        logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
-    elif options.verbose == '2':
-        logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
+    if options.verbose == "1":
+        logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
+    elif options.verbose == "2":
+        logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.DEBUG)
     else:
-        logging.basicConfig(format='%(levelname)s: %(message)s')
+        logging.basicConfig(format="%(levelname)s: %(message)s")
 
     if len(args) != 1:
-        parser.error('no directory to scan specified and/or incorrect number of directories specified.')
+        parser.error(
+            "no directory to scan specified and/or incorrect number of directories specified."
+        )
     return options, args
+
 
 def main():
     """Main function for validator script"""
@@ -417,31 +513,52 @@ def main():
 
     package_failed = 0
     package_platform = validator.options.package_platform
-    prohibited_platforms = validator_data_LEGAL_REVIEW_REQUIRED.get_prohibited_platforms_for_package(package_platform)
+    prohibited_platforms = (
+        validator_data_LEGAL_REVIEW_REQUIRED.get_prohibited_platforms_for_package(
+            package_platform
+        )
+    )
 
-    if validator.options.exception_file != '':
+    if validator.options.exception_file != "":
         try:
-            validator.exceptions_output = open(validator.options.exception_file, 'w', errors='ignore')
+            validator.exceptions_output = open(
+                validator.options.exception_file, "w", errors="ignore"
+            )
         except:
-            logging.error("Cannot open exceptions output file '%s'", validator.options.exception_file)
+            logging.error(
+                "Cannot open exceptions output file '%s'",
+                validator.options.exception_file,
+            )
             sys.exit(1)
 
     for platform in prohibited_platforms:
-        print('validating {} against {} for package platform {}'.format(args[0], platform, package_platform))
+        print(
+            "validating {} against {} for package platform {}".format(
+                args[0], platform, package_platform
+            )
+        )
         platform_failed = validator.validate(platform)
         if platform_failed:
-            print('{} FAILED validation against {} for package platform {}'.format(args[0], platform, package_platform))
+            print(
+                "{} FAILED validation against {} for package platform {}".format(
+                    args[0], platform, package_platform
+                )
+            )
             package_failed = platform_failed
         else:
-            print('{} is VALIDATED against {} for package platform {}'.format(args[0], platform, package_platform))
+            print(
+                "{} is VALIDATED against {} for package platform {}".format(
+                    args[0], platform, package_platform
+                )
+            )
 
-    if validator.options.exception_file != '':
+    if validator.options.exception_file != "":
         validator.exceptions_output.close()
 
     return package_failed
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # pylint: disable-msg=C0103
     main_results = main()
     sys.exit(main_results)
