@@ -121,7 +121,9 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
 
     # Helper Functions
     class Entity:
-        def __init__(self, name, expected_initial_velocity=None, expected_final_velocity=None):
+        def __init__(
+            self, name, expected_initial_velocity=None, expected_final_velocity=None
+        ):
             self.id = general.find_game_entity(name)
             self.name = name
             self.EXPECTED_INITIAL_VELOCITY = expected_initial_velocity
@@ -147,44 +149,81 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
 
         def activate_entity(self):
             Report.info("Activating Entity : " + self.name)
-            azlmbr.entity.GameEntityContextRequestBus(azlmbr.bus.Broadcast, "ActivateGameEntity", self.id)
+            azlmbr.entity.GameEntityContextRequestBus(
+                azlmbr.bus.Broadcast, "ActivateGameEntity", self.id
+            )
 
         def values_found(self):
-            self.Entity_Tests.found_position = Tests.__dict__[self.name + "_position_found"]
-            self.Entity_Tests.found_velocity = Tests.__dict__[self.name + "_velocity_found"]
+            self.Entity_Tests.found_position = Tests.__dict__[
+                self.name + "_position_found"
+            ]
+            self.Entity_Tests.found_velocity = Tests.__dict__[
+                self.name + "_velocity_found"
+            ]
 
-            Report.critical_result(self.Entity_Tests.found_position, vector_valid(self.initial_position, False))
-            Report.critical_result(self.Entity_Tests.found_velocity, vector_valid(self.initial_velocity, False))
+            Report.critical_result(
+                self.Entity_Tests.found_position,
+                vector_valid(self.initial_position, False),
+            )
+            Report.critical_result(
+                self.Entity_Tests.found_velocity,
+                vector_valid(self.initial_velocity, False),
+            )
 
         def perface_values_found(self):
-            self.Entity_Tests.found_position = Tests.__dict__[self.name + "_position_found"]
-            Report.critical_result(self.Entity_Tests.found_position, vector_valid(self.initial_position, False))
+            self.Entity_Tests.found_position = Tests.__dict__[
+                self.name + "_position_found"
+            ]
+            Report.critical_result(
+                self.Entity_Tests.found_position,
+                vector_valid(self.initial_position, False),
+            )
 
         def get_initial_position_and_velocity(self):
-            self.initial_velocity = azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "GetLinearVelocity", self.id)
-            self.initial_position = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
+            self.initial_velocity = azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "GetLinearVelocity", self.id
+            )
+            self.initial_position = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldTranslation", self.id
+            )
 
         def get_final_position_and_velocity(self):
-            self.final_velocity = azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "GetLinearVelocity", self.id)
-            self.final_position = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
+            self.final_velocity = azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "GetLinearVelocity", self.id
+            )
+            self.final_position = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldTranslation", self.id
+            )
 
         def validate_sphere_velocity(self):
             if self.collision_happened:
                 velocity_valid = (
-                    abs(self.final_velocity.x - self.EXPECTED_FINAL_VELOCITY.x) < FINAL_VELOCITY_THRESHOLD
-                    and abs(self.final_velocity.y - self.EXPECTED_FINAL_VELOCITY.y) < FINAL_VELOCITY_THRESHOLD
-                    and abs(self.final_velocity.z - self.EXPECTED_FINAL_VELOCITY.z) < FINAL_VELOCITY_THRESHOLD
+                    abs(self.final_velocity.x - self.EXPECTED_FINAL_VELOCITY.x)
+                    < FINAL_VELOCITY_THRESHOLD
+                    and abs(self.final_velocity.y - self.EXPECTED_FINAL_VELOCITY.y)
+                    < FINAL_VELOCITY_THRESHOLD
+                    and abs(self.final_velocity.z - self.EXPECTED_FINAL_VELOCITY.z)
+                    < FINAL_VELOCITY_THRESHOLD
                 )
-                self.Entity_Tests.valid_final_velocity = Tests.__dict__[self.name + "_final_velocity_valid"]
+                self.Entity_Tests.valid_final_velocity = Tests.__dict__[
+                    self.name + "_final_velocity_valid"
+                ]
                 Report.result(self.Entity_Tests.valid_final_velocity, velocity_valid)
             else:
                 velocity_valid = (
-                    abs(self.initial_velocity.x - self.EXPECTED_INITIAL_VELOCITY.x) < FLOAT_THRESHOLD
-                    and abs(self.initial_velocity.y - self.EXPECTED_INITIAL_VELOCITY.y) < FLOAT_THRESHOLD
-                    and abs(self.initial_velocity.z - self.EXPECTED_INITIAL_VELOCITY.z) < FLOAT_THRESHOLD
+                    abs(self.initial_velocity.x - self.EXPECTED_INITIAL_VELOCITY.x)
+                    < FLOAT_THRESHOLD
+                    and abs(self.initial_velocity.y - self.EXPECTED_INITIAL_VELOCITY.y)
+                    < FLOAT_THRESHOLD
+                    and abs(self.initial_velocity.z - self.EXPECTED_INITIAL_VELOCITY.z)
+                    < FLOAT_THRESHOLD
                 )
-                self.Entity_Tests.valid_init_velocity = Tests.__dict__[self.name + "_velocity_valid"]
-                Report.critical_result(self.Entity_Tests.valid_init_velocity, velocity_valid)
+                self.Entity_Tests.valid_init_velocity = Tests.__dict__[
+                    self.name + "_velocity_valid"
+                ]
+                Report.critical_result(
+                    self.Entity_Tests.valid_init_velocity, velocity_valid
+                )
 
         def on_collision_begin(self, args):
             if self.id.equal(args[0]):
@@ -196,14 +235,24 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
             self.handler.add_callback("OnCollisionBegin", self.on_collision_begin)
 
     def report_sphere_values(entity):
-        Report.info_vector3(entity.initial_position, "{} initial position: ".format(entity.name))
-        Report.info_vector3(entity.initial_velocity, "{} initial velocity: ".format(entity.name))
+        Report.info_vector3(
+            entity.initial_position, "{} initial position: ".format(entity.name)
+        )
+        Report.info_vector3(
+            entity.initial_velocity, "{} initial velocity: ".format(entity.name)
+        )
 
-        Report.info_vector3(entity.final_position, "{} final position: ".format(entity.name))
-        Report.info_vector3(entity.final_velocity, "{} final velocity: ".format(entity.name))
+        Report.info_vector3(
+            entity.final_position, "{} final position: ".format(entity.name)
+        )
+        Report.info_vector3(
+            entity.final_velocity, "{} final velocity: ".format(entity.name)
+        )
 
     def report_perface_values(entity):
-        Report.info_vector3(entity.initial_position, "{} initial position: ".format(entity.name))
+        Report.info_vector3(
+            entity.initial_position, "{} initial position: ".format(entity.name)
+        )
 
     def validate_positions():
         # Initial orientation is confirmed by z axis values, if there are further issues a collision
@@ -219,9 +268,12 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
         # Final orientation is confirmed if Sphere 0 stopped next to the Perface Entity.
         Report.info("Checking Final Orientation")
         final_orientation = (
-            abs(perface_entity.final_position.x - sphere_0.final_position.x) < FLOAT_THRESHOLD
-            and abs(perface_entity.final_position.z - sphere_0.final_position.z) < FLOAT_THRESHOLD
-            and abs(perface_entity.final_position.y - sphere_0.final_position.y) < STATIONARY_SPHERE_THRESHOLD
+            abs(perface_entity.final_position.x - sphere_0.final_position.x)
+            < FLOAT_THRESHOLD
+            and abs(perface_entity.final_position.z - sphere_0.final_position.z)
+            < FLOAT_THRESHOLD
+            and abs(perface_entity.final_position.y - sphere_0.final_position.y)
+            < STATIONARY_SPHERE_THRESHOLD
         )
 
         Report.result(Tests.final_orientation_valid, final_orientation)
@@ -241,9 +293,15 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
     helper.enter_game_mode(Tests.enter_game_mode)
 
     # 3) Create entity objects
-    sphere_0 = Entity("Sphere_0", math.Vector3(0.0, -10.0, 0.0), math.Vector3(0.0, 0.0, 0.0))
-    sphere_1 = Entity("Sphere_1", math.Vector3(-10.0, 0.0, 0.0), math.Vector3(10.09, 1.85, 1.18))
-    sphere_2 = Entity("Sphere_2", math.Vector3(10.0, 0.0, 0.0), math.Vector3(-5.0, 0.0, 0.0))
+    sphere_0 = Entity(
+        "Sphere_0", math.Vector3(0.0, -10.0, 0.0), math.Vector3(0.0, 0.0, 0.0)
+    )
+    sphere_1 = Entity(
+        "Sphere_1", math.Vector3(-10.0, 0.0, 0.0), math.Vector3(10.09, 1.85, 1.18)
+    )
+    sphere_2 = Entity(
+        "Sphere_2", math.Vector3(10.0, 0.0, 0.0), math.Vector3(-5.0, 0.0, 0.0)
+    )
     perface_entity = Entity("Perface_Entity")
     entity_list = [sphere_0, sphere_1, sphere_2, perface_entity]
     spheres = [sphere_0, sphere_1, sphere_2]
@@ -274,7 +332,9 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
         # Wait for collision
         helper.wait_for_condition(lambda: entity.collision_happened, TIMEOUT)
         # Report Collision
-        entity.Entity_Tests.collision_happened = Tests.__dict__[entity.name + "_collided_with_perface"]
+        entity.Entity_Tests.collision_happened = Tests.__dict__[
+            entity.name + "_collided_with_perface"
+        ]
         Report.result(entity.Entity_Tests.collision_happened, entity.collision_happened)
 
         # 10) Get and Validate Final Positions and Velocities
@@ -287,14 +347,15 @@ def Material_PerFaceMaterialGetsCorrectMaterial():
     # 12) Validate Orientations and Final Velocities
     validate_positions()
     Report.result(
-        Tests.speed_comparision, sphere_1.final_velocity.GetLength() > sphere_2.final_velocity.GetLength()
+        Tests.speed_comparision,
+        sphere_1.final_velocity.GetLength() > sphere_2.final_velocity.GetLength(),
     )
 
     # 13) Exit Game Mode
     helper.exit_game_mode(Tests.exit_game_mode)
 
 
-
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_PerFaceMaterialGetsCorrectMaterial)
