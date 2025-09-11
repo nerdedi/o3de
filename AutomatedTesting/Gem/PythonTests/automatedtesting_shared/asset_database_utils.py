@@ -18,6 +18,7 @@ PRODUCT_ID_INDEX = 0
 
 logger = logging.getLogger(__name__)
 
+
 def do_select(asset_db_path, cmd):
     try:
         connection = sqlite3.connect(asset_db_path)
@@ -27,7 +28,7 @@ def do_select(asset_db_path, cmd):
         connection.close()
         return return_result
     except sqlite3.Error as sqlite_error:
-        print(f'select on db {asset_db_path} failed with exception {sqlite_error}')
+        print(f"select on db {asset_db_path} failed with exception {sqlite_error}")
         return []
 
 
@@ -43,13 +44,18 @@ def get_active_platforms_from_db(asset_db_path) -> List[str]:
 # cache_platform/projectname/product_path
 def get_db_product_path(workspace, source_path, cache_platform):
     product_path = os.path.join(cache_platform, source_path)
-    product_path = product_path.replace('\\', '/')
+    product_path = product_path.replace("\\", "/")
     return product_path
 
 
 def get_product_id(asset_db_path, product_name) -> str:
     # Get ProductID from database
-    product_id = list(do_select(asset_db_path, f"SELECT ProductID FROM Products where ProductName='{product_name}'"))
+    product_id = list(
+        do_select(
+            asset_db_path,
+            f"SELECT ProductID FROM Products where ProductName='{product_name}'",
+        )
+    )
     if len(product_id) == 0:
         return product_id  # return empty list
     return product_id[0][PRODUCT_ID_INDEX]  # Get product id from 'first' row
@@ -58,11 +64,19 @@ def get_product_id(asset_db_path, product_name) -> str:
 # Retrieve a product_id given a source_path assuming the source is copied into the cache with the same
 # name or a product name without cache_platform or projectname prepended
 def get_product_id_from_relative(workspace, source_path, asset_platform):
-    return get_product_id(workspace.paths.asset_db(), get_db_product_path(workspace, source_path, asset_platform))
+    return get_product_id(
+        workspace.paths.asset_db(),
+        get_db_product_path(workspace, source_path, asset_platform),
+    )
 
 
 def get_missing_dependencies(asset_db_path, product_id) -> List[str]:
-    return list(do_select(asset_db_path, f"SELECT * FROM MissingProductDependencies where ProductPK={product_id}"))
+    return list(
+        do_select(
+            asset_db_path,
+            f"SELECT * FROM MissingProductDependencies where ProductPK={product_id}",
+        )
+    )
 
 
 def do_single_transaction(asset_db_path, cmd):
@@ -73,11 +87,16 @@ def do_single_transaction(asset_db_path, cmd):
         connection.commit()  # Save changes
         connection.close()
     except sqlite3.Error as sqlite_error:
-        print(f'transaction on db {asset_db_path} cmd {cmd} failed with exception {sqlite_error}')
+        print(
+            f"transaction on db {asset_db_path} cmd {cmd} failed with exception {sqlite_error}"
+        )
 
 
 def clear_missing_dependencies(asset_db_path, product_id) -> None:
-    do_single_transaction(asset_db_path, f"DELETE FROM MissingProductDependencies where ProductPK={product_id}")
+    do_single_transaction(
+        asset_db_path,
+        f"DELETE FROM MissingProductDependencies where ProductPK={product_id}",
+    )
 
 
 def clear_all_missing_dependencies(asset_db_path) -> None:
@@ -112,26 +131,35 @@ class DBSourceAsset:
     jobs: List[DBJob] = field(default_factory=list)
 
 
-def compare_expected_asset_to_actual_asset(asset_db_path, expected_asset: DBSourceAsset, asset_path, cache_root):
+def compare_expected_asset_to_actual_asset(
+    asset_db_path, expected_asset: DBSourceAsset, asset_path, cache_root
+):
     actual_asset = get_db_source_job_product_info(asset_db_path, asset_path, cache_root)
 
-    assert expected_asset.uuid == actual_asset.uuid, \
+    assert expected_asset.uuid == actual_asset.uuid, (
         f"UUID for asset {expected_asset.source_file_name} is '{actual_asset.uuid}', but expected '{expected_asset.uuid}'"
+    )
 
     for expected_job in expected_asset.jobs:
         for actual_job in actual_asset.jobs:
             found_job = False
-            if expected_job.job_key == actual_job.job_key and expected_job.platform == actual_job.platform:
+            if (
+                expected_job.job_key == actual_job.job_key
+                and expected_job.platform == actual_job.platform
+            ):
                 found_job = True
 
-                assert expected_job == actual_job, \
+                assert expected_job == actual_job, (
                     f"Expected job did not match actual job for key {expected_job.job_key} and platform {expected_job.platform}.\nExpected: {expected_job}\nActual: {actual_job}"
+                )
 
                 # Remove the found job to speed up other searches.
                 actual_asset.jobs.remove(actual_job)
                 break
 
-            assert found_job, f"For asset {expected_asset.source_file_name}, could not find job with key '{expected_job.job_key}' and platform '{expected_job.platform}'"
+            assert found_job, (
+                f"For asset {expected_asset.source_file_name}, could not find job with key '{expected_job.job_key}' and platform '{expected_job.platform}'"
+            )
             # Don't assert on any actual jobs remaining, they could be for platforms not checked by this test, or new job keys not yet handled.
 
 
@@ -170,19 +198,25 @@ def get_db_source_job_product_info(asset_db_path, filename, cache_root):
 
 
 def get_source_info_from_filename(asset_db_path, filename):
-    sources = do_select(asset_db_path,
-        f"SELECT SourceID,ScanFolderPK,SourceGuid FROM Sources where SourceName=\"{filename}\"")
-    assert len(sources) == 1, f"Zero or multiple source assets found when only one was expected for '{filename}'"
+    sources = do_select(
+        asset_db_path,
+        f'SELECT SourceID,ScanFolderPK,SourceGuid FROM Sources where SourceName="{filename}"',
+    )
+    assert len(sources) == 1, (
+        f"Zero or multiple source assets found when only one was expected for '{filename}'"
+    )
     return sources[0]
 
 
 def get_jobs_for_source(asset_db_path, source_id):
-    return do_select(asset_db_path,
-        f"SELECT JobID,JobKey,Fingerprint,Platform,BuilderGuid,Status,ErrorCount,WarningCount FROM Jobs where SourcePK={source_id} order by JobKey")
+    return do_select(
+        asset_db_path,
+        f"SELECT JobID,JobKey,Fingerprint,Platform,BuilderGuid,Status,ErrorCount,WarningCount FROM Jobs where SourcePK={source_id} order by JobKey",
+    )
 
 
 def get_products_for_job(asset_db_path, job_id):
-    return do_select(asset_db_path,
-        f"SELECT ProductID,ProductName,SubID,AssetType FROM Products where JobPK={job_id} order by ProductName")
-
-
+    return do_select(
+        asset_db_path,
+        f"SELECT ProductID,ProductName,SubID,AssetType FROM Products where JobPK={job_id} order by ProductName",
+    )

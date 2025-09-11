@@ -8,19 +8,19 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class HeightTests:
     single_gradient_height_correct = (
         "Successfully retrieved height for gradient1.",
-        "Failed to retrieve height for gradient1."
+        "Failed to retrieve height for gradient1.",
     )
     double_gradient_height_correct = (
         "Successfully retrieved height when two gradients exist.",
-        "Failed to retrieve height when two gradients exist."
+        "Failed to retrieve height when two gradients exist.",
     )
     triple_gradient_height_correct = (
         "Successfully retrieved height when three gradients exist.",
-        "Failed to retrieve height when three gradients exist."
+        "Failed to retrieve height when three gradients exist.",
     )
     terrain_data_changed_call_count_correct = (
         "OnTerrainDataChanged called expected number of times.",
-        "OnTerrainDataChanged call count incorrect."
+        "OnTerrainDataChanged call count incorrect.",
     )
 
 
@@ -65,7 +65,9 @@ def TerrainHeightGradientList_AddRemoveGradientWorks():
     def set_component_path_val(entity, component, path, value):
         entity.get_set_test(component, path, value)
 
-    def set_gradients_check_height(main_entity, gradient_list, expected_height, test_results):
+    def set_gradients_check_height(
+        main_entity, gradient_list, expected_height, test_results
+    ):
         nonlocal expected_terrain_changed_calls
 
         test_tolerance = 0.01
@@ -76,12 +78,19 @@ def TerrainHeightGradientList_AddRemoveGradientWorks():
         expected_terrain_changed_calls += 1
 
         # Wait until the terrain data has been updated.
-        helper.wait_for_condition(lambda: terrain_changed_call_count == expected_terrain_changed_calls, 2.0)
+        helper.wait_for_condition(
+            lambda: terrain_changed_call_count == expected_terrain_changed_calls, 2.0
+        )
 
         # Get the height at the origin.
-        height, exists = terrain.TerrainDataRequestBus(bus.Broadcast, "GetHeight", math.Vector3(0.0, 0.0, 0.0), 0)
+        height, exists = terrain.TerrainDataRequestBus(
+            bus.Broadcast, "GetHeight", math.Vector3(0.0, 0.0, 0.0), 0
+        )
 
-        Report.result(test_results, sys_math.isclose(height, expected_height, abs_tol=test_tolerance))
+        Report.result(
+            test_results,
+            sys_math.isclose(height, expected_height, abs_tol=test_tolerance),
+        )
 
     # Open a level.
     hydra.open_base_level()
@@ -95,12 +104,24 @@ def TerrainHeightGradientList_AddRemoveGradientWorks():
     box_dimensions = math.Vector3(1.0, 1.0, aabb_height)
 
     # Create a main entity with a LayerSpawner, AAbb and HeightGradientList.
-    main_entity = create_entity_at("entity2", [layerspawner_component_name, gradientlist_component_name, aabb_component_name], 0.0, 0.0, aabb_height/2.0)
+    main_entity = create_entity_at(
+        "entity2",
+        [layerspawner_component_name, gradientlist_component_name, aabb_component_name],
+        0.0,
+        0.0,
+        aabb_height / 2.0,
+    )
 
     # Create three gradient entities.
-    gradient_entity1 = create_entity_at("Constant Gradient1", ["Constant Gradient"], 0.0, 0.0, 0.0)
-    gradient_entity2 = create_entity_at("Constant Gradient2", ["Constant Gradient"], 0.0, 0.0, 0.0)
-    gradient_entity3 = create_entity_at("Constant Gradient3", ["Constant Gradient"], 0.0, 0.0, 0.0)
+    gradient_entity1 = create_entity_at(
+        "Constant Gradient1", ["Constant Gradient"], 0.0, 0.0, 0.0
+    )
+    gradient_entity2 = create_entity_at(
+        "Constant Gradient2", ["Constant Gradient"], 0.0, 0.0, 0.0
+    )
+    gradient_entity3 = create_entity_at(
+        "Constant Gradient3", ["Constant Gradient"], 0.0, 0.0, 0.0
+    )
 
     # Give everything a chance to finish initializing.
     general.idle_wait_frames(1)
@@ -115,7 +136,12 @@ def TerrainHeightGradientList_AddRemoveGradientWorks():
     general.idle_wait_frames(1)
 
     # Set the dimensions of the Aabb.
-    set_component_path_val(main_entity, 2, "Axis Aligned Box Shape|Box Configuration|Dimensions", box_dimensions)
+    set_component_path_val(
+        main_entity,
+        2,
+        "Axis Aligned Box Shape|Box Configuration|Dimensions",
+        box_dimensions,
+    )
 
     # Set up a handler to wait for notifications from the TerrainSystem.
     handler = azlmbr.terrain.TerrainDataNotificationBusHandler()
@@ -123,16 +149,31 @@ def TerrainHeightGradientList_AddRemoveGradientWorks():
     handler.add_callback("OnTerrainDataChanged", on_terrain_changed)
 
     # Add a gradient to GradientList, then check the height returned from the TerrainSystem is correct.
-    set_gradients_check_height(main_entity, [gradient_entity1.id], aabb_height * gradient_values[0], HeightTests.single_gradient_height_correct)
+    set_gradients_check_height(
+        main_entity,
+        [gradient_entity1.id],
+        aabb_height * gradient_values[0],
+        HeightTests.single_gradient_height_correct,
+    )
 
     # Add gradient2 and check height at the origin, this should have changed to match the second gradient value.
-    set_gradients_check_height(main_entity, [gradient_entity1.id, gradient_entity2.id], aabb_height * gradient_values[1], HeightTests.double_gradient_height_correct)
+    set_gradients_check_height(
+        main_entity,
+        [gradient_entity1.id, gradient_entity2.id],
+        aabb_height * gradient_values[1],
+        HeightTests.double_gradient_height_correct,
+    )
 
     # Add gradient3, the  height should still be the second value, as that was the highest.
-    set_gradients_check_height(main_entity, [gradient_entity1.id, gradient_entity2.id, gradient_entity3.id], aabb_height * gradient_values[1], HeightTests.triple_gradient_height_correct)
+    set_gradients_check_height(
+        main_entity,
+        [gradient_entity1.id, gradient_entity2.id, gradient_entity3.id],
+        aabb_height * gradient_values[1],
+        HeightTests.triple_gradient_height_correct,
+    )
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(TerrainHeightGradientList_AddRemoveGradientWorks)

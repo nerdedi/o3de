@@ -9,11 +9,11 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 class Tests:
     initial_instance_count = (
         "Initial instance count is as expected",
-        "Unexpected number of initial instances found"
+        "Unexpected number of initial instances found",
     )
     blocked_instance_count = (
         "Expected number of instances found after configuring Blocker",
-        "Unexpected number of instances found after configuring Blocker"
+        "Unexpected number of instances found after configuring Blocker",
     )
 
 
@@ -65,44 +65,66 @@ def LayerBlocker_InstancesBlockedInConfiguredArea():
 
     # 2) Create a new instance spawner entity
     spawner_center_point = math.Vector3(512.0, 512.0, 32.0)
-    pink_flower_asset_path = os.path.join("assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel")
-    pink_flower_prefab = dynveg.create_temp_mesh_prefab(pink_flower_asset_path, "Blocker_PinkFlower")[0]
-    spawner_entity = dynveg.create_temp_prefab_vegetation_area("Instance Spawner", spawner_center_point,
-                                                               16.0, 16.0, 16.0, pink_flower_prefab)
+    pink_flower_asset_path = os.path.join(
+        "assets", "objects", "foliage", "grass_flower_pink.fbx.azmodel"
+    )
+    pink_flower_prefab = dynveg.create_temp_mesh_prefab(
+        pink_flower_asset_path, "Blocker_PinkFlower"
+    )[0]
+    spawner_entity = dynveg.create_temp_prefab_vegetation_area(
+        "Instance Spawner", spawner_center_point, 16.0, 16.0, 16.0, pink_flower_prefab
+    )
 
     # 3) Create surface for planting on
-    dynveg.create_surface_entity("Surface Entity", spawner_center_point, 32.0, 32.0, 1.0)
+    dynveg.create_surface_entity(
+        "Surface Entity", spawner_center_point, 32.0, 32.0, 1.0
+    )
 
     # 4) Add a Vegetation System Settings Level component and set Sector Point Snap Mode to Center
-    veg_system_settings_component = hydra.add_level_component("Vegetation System Settings")
-    editor.EditorComponentAPIBus(bus.Broadcast, "SetComponentProperty", veg_system_settings_component,
-                                 'Configuration|Area System Settings|Sector Point Snap Mode', 1)
+    veg_system_settings_component = hydra.add_level_component(
+        "Vegetation System Settings"
+    )
+    editor.EditorComponentAPIBus(
+        bus.Broadcast,
+        "SetComponentProperty",
+        veg_system_settings_component,
+        "Configuration|Area System Settings|Sector Point Snap Mode",
+        1,
+    )
 
     # 5) Verify initial instance counts
     num_expected = 20 * 20
-    success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                             num_expected), 5.0)
+    success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.initial_instance_count, success)
 
     # 6) Create a new Vegetation Layer Blocker area overlapping the spawner area
     blocker_entity = hydra.Entity("Blocker Area")
     blocker_entity.create_entity(
-        spawner_center_point,
-        ["Vegetation Layer Blocker", "Box Shape"]
+        spawner_center_point, ["Vegetation Layer Blocker", "Box Shape"]
     )
     if blocker_entity.id.IsValid():
         print(f"'{blocker_entity.name}' created")
-    blocker_entity.get_set_test(1, "Box Shape|Box Configuration|Dimensions",
-                                math.Vector3(3.0, 3.0, 3.0))
+    blocker_entity.get_set_test(
+        1, "Box Shape|Box Configuration|Dimensions", math.Vector3(3.0, 3.0, 3.0)
+    )
 
     # 7) Validate instance counts post-blocker. 16 instances should now be blocked in the center of the spawner area
     num_expected = (20 * 20) - 16
-    success = helper.wait_for_condition(lambda: dynveg.validate_instance_count_in_entity_shape(spawner_entity.id,
-                                                                                             num_expected), 5.0)
+    success = helper.wait_for_condition(
+        lambda: dynveg.validate_instance_count_in_entity_shape(
+            spawner_entity.id, num_expected
+        ),
+        5.0,
+    )
     Report.result(Tests.blocked_instance_count, success)
 
 
 if __name__ == "__main__":
-
     from editor_python_test_tools.utils import Report
+
     Report.start_test(LayerBlocker_InstancesBlockedInConfiguredArea)
