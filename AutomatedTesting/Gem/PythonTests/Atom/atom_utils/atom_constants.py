@@ -9,193 +9,192 @@ Holds constants used across both hydra and non-hydra scripts.
 
 # Light type options for the Light component.
 LIGHT_TYPES = {
-    'unknown': 0,
-    'sphere': 1,
-    'spot_disk': 2,
-    'capsule': 3,
-    'quad': 4,
-    'polygon': 5,
-    'simple_point': 6,
-    'simple_spot': 7,
+    "unknown": 0,
+    "sphere": 1,
+    "spot_disk": 2,
+    "capsule": 3,
+    "quad": 4,
+    "polygon": 5,
+    "simple_point": 6,
+    "simple_spot": 7,
 }
 
 # Intensity mode options for the Light component.
 INTENSITY_MODE = {
-    'Candela': 0,
-    'Lumen': 1,
-    'Ev100': 3,
-    'Nit': 5,
+    "Candela": 0,
+    "Lumen": 1,
+    "Ev100": 3,
+    "Nit": 5,
 }
 
 # Attenuation Radius Mode options for the Light component.
 ATTENUATION_RADIUS_MODE = {
-    'explicit': 0,
-    'automatic': 1,
+    "explicit": 0,
+    "automatic": 1,
 }
 
 # Shadow Map Size options for the Light component.
 SHADOWMAP_SIZE = {
-    'Size256': 256,
-    'Size512': 512,
-    'Size1024': 1024,
-    'Size2048': 2048,
+    "Size256": 256,
+    "Size512": 512,
+    "Size1024": 1024,
+    "Size2048": 2048,
 }
 
 # Shadow filter method options for the Light component.
 SHADOW_FILTER_METHOD = {
-    'PCF': 1,
-    'ESM': 2,
-    'PCF+ESM': 3,
-    'None': 0,
+    "PCF": 1,
+    "ESM": 2,
+    "PCF+ESM": 3,
+    "None": 0,
 }
 
 # CubeMap capture type options for the Cubemap Capture Component
 CUBEMAP_CAPTURE_TYPE = {
-    'Specular IBL': 0,
-    'Diffuse ILB': 1,
+    "Specular IBL": 0,
+    "Diffuse ILB": 1,
 }
 
 # Specular IBL property options for the Cubemap Capture Component
 SPECULAR_IBL_QUALITY = {
-    'Very Low': 0,
-    'Low': 1,
-    'Medium': 2,
-    'High': 3,
-    'Very High': 4,
+    "Very Low": 0,
+    "Low": 1,
+    "Medium": 2,
+    "High": 3,
+    "Very High": 4,
 }
 
 # Qualiity Level settings for Diffuse Global Illumination level component
 GLOBAL_ILLUMINATION_QUALITY = {
-    'Low': 0,
-    'Medium': 1,
-    'High': 2,
+    "Low": 0,
+    "Medium": 1,
+    "High": 2,
 }
 
 # Mesh LOD type
 MESH_LOD_TYPE = {
-    'default': 0,
-    'screen coverage': 1,
-    'specific lod': 2,
+    "default": 0,
+    "screen coverage": 1,
+    "specific lod": 2,
 }
 
 # Display Mapper type
 DISPLAY_MAPPER_OPERATION_TYPE = {
-    'Aces': 0,
-    'AcesLut': 1,
-    'Passthrough': 2,
-    'GammaSRGB': 3,
-    'Reinhard': 4,
+    "Aces": 0,
+    "AcesLut": 1,
+    "Passthrough": 2,
+    "GammaSRGB": 3,
+    "Reinhard": 4,
 }
 
 # Display Mapper presets
 DISPLAY_MAPPER_PRESET = {
-    '48Nits': 0,
-    '1000Nits': 1,
-    '2000Nits': 2,
-    '4000Nits': 3,
+    "48Nits": 0,
+    "1000Nits": 1,
+    "2000Nits": 2,
+    "4000Nits": 3,
 }
 
 # Control Type options for the Exposure Control component.
-EXPOSURE_CONTROL_TYPE = {
-    'manual': 0,
-    'eye_adaptation': 1
-}
+EXPOSURE_CONTROL_TYPE = {"manual": 0, "eye_adaptation": 1}
 
-#Reflection Probe Baked Cubemap Quality
+# Reflection Probe Baked Cubemap Quality
 BAKED_CUBEMAP_QUALITY = {
-    'Very Low': 0,
-    'Low': 1,
-    'Medium': 2,
-    'High': 3,
-    'Very High': 4
+    "Very Low": 0,
+    "Low": 1,
+    "Medium": 2,
+    "High": 3,
+    "Very High": 4,
 }
 
-#Diffuse Probe Grid number of rays to cast per probe from enum DiffuseProbeGridNumRaysPerProbe
+# Diffuse Probe Grid number of rays to cast per probe from enum DiffuseProbeGridNumRaysPerProbe
 NUM_RAYS_PER_PROBE = {
-    'NumRaysPerProbe_144': 0,
-    'NumRaysPerProbe_288': 1,
-    'NumRaysPerProbe_432': 2,
-    'NumRaysPerProbe_576': 3,
-    'NumRaysPerProbe_720': 4,
-    'NumRaysPerProbe_864': 5,
-    'NumRaysPerProbe_1008': 6,
+    "NumRaysPerProbe_144": 0,
+    "NumRaysPerProbe_288": 1,
+    "NumRaysPerProbe_432": 2,
+    "NumRaysPerProbe_576": 3,
+    "NumRaysPerProbe_720": 4,
+    "NumRaysPerProbe_864": 5,
+    "NumRaysPerProbe_1008": 6,
 }
 
 # LUT Resolution options for the HDR Color Grading component.
 LUT_RESOLUTION = {
-    '16x16x16': 16,
-    '32x32x32': 32,
-    '64x64x64': 64,
+    "16x16x16": 16,
+    "32x32x32": 32,
+    "64x64x64": 64,
 }
 
 # Shaper Type options for the HDR Color Grading & Look Modification components.
 SHAPER_TYPE = {
-    'None': 0,
-    'linear_custom': 1,
-    '48_nits': 2,
-    '1000_nits': 3,
-    '2000_nits': 4,
-    '4000_nits': 5,
-    'log2_custom': 6,
-    'pq': 7,
+    "None": 0,
+    "linear_custom": 1,
+    "48_nits": 2,
+    "1000_nits": 3,
+    "2000_nits": 4,
+    "4000_nits": 5,
+    "log2_custom": 6,
+    "pq": 7,
 }
 
 # Hair Lighting Model
 HAIR_LIGHTING_MODEL = {
-    'GGX': 0,
-    'Marschner': 1,
-    'Kajiya': 2,
+    "GGX": 0,
+    "Marschner": 1,
+    "Kajiya": 2,
 }
 
 # Physical Sky Intensity Mode
 PHYSICAL_SKY_INTENSITY_MODE = {
-    'Ev100': 4,
-    'Nit': 3,
+    "Ev100": 4,
+    "Nit": 3,
 }
 
 # PostFX Layer Category as defined in
 # ./Gems/AtomLyIntegration/CommonFeatures/Assets/PostProcess/default.postfxlayercategories
 POSTFX_LAYER_CATEGORY = {
-    'FrontEnd': 1000000,
-    'Cinematics': 2000000,
-    'Gameplay': 3000000,
-    'Camera': 4000000,
-    'Volume': 5000000,
-    'Level': 6000000,
-    'Default': 2147483647,
+    "FrontEnd": 1000000,
+    "Cinematics": 2000000,
+    "Gameplay": 3000000,
+    "Camera": 4000000,
+    "Volume": 5000000,
+    "Level": 6000000,
+    "Default": 2147483647,
 }
 
 # Directional Light Intensity Mode
 DIRECTIONAL_LIGHT_INTENSITY_MODE = {
-    'Ev100': 5,
-    'Lux': 2,
+    "Ev100": 5,
+    "Lux": 2,
 }
 
 # Directional Light Shadow Filter Method
 DIRECTIONAL_LIGHT_SHADOW_FILTER_METHOD = {
-    'None': 0,
-    'PCF': 1,
-    'ESM': 2,
-    'PCF+ESM': 3,
+    "None": 0,
+    "PCF": 1,
+    "ESM": 2,
+    "PCF+ESM": 3,
 }
 
-#Origin type for Sky Atmosphere component
+# Origin type for Sky Atmosphere component
 ATMOSPHERE_ORIGIN = {
-    'GroundAtWorldOrigin': 0,
-    'GroundAtLocalOrigin': 1,
-    'PlanetCenterAtLocalOrigin': 2,
+    "GroundAtWorldOrigin": 0,
+    "GroundAtLocalOrigin": 1,
+    "PlanetCenterAtLocalOrigin": 2,
 }
 
 # Fog Mode
-FOG_MODES = {
-    'Linear': 0,
-    'Exponential': 1,
-    'ExponentialSquared': 2
-}
+FOG_MODES = {"Linear": 0, "Exponential": 1, "ExponentialSquared": 2}
 
 # Level list used in Editor Level Load Test
 # WARNING: "Sponza" level is sandboxed due to an intermittent failure.
-LEVEL_LIST = ["hermanubis", "hermanubis_high", "macbeth_shaderballs", "PbrMaterialChart", "ShadowTest"]
+LEVEL_LIST = [
+    "hermanubis",
+    "hermanubis_high",
+    "macbeth_shaderballs",
+    "PbrMaterialChart",
+    "ShadowTest",
+]
 
 
 class AtomComponentProperties:
@@ -204,7 +203,7 @@ class AtomComponentProperties:
     """
 
     @staticmethod
-    def actor(property: str = 'name') -> str:
+    def actor(property: str = "name") -> str:
         """
         Actor component properties.
           - 'Actor asset' Asset.id of the actor asset.
@@ -212,13 +211,13 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Actor',
-            'Actor asset': 'Actor asset',
+            "name": "Actor",
+            "Actor asset": "Actor asset",
         }
         return properties[property]
 
     @staticmethod
-    def bloom(property: str = 'name') -> str:
+    def bloom(property: str = "name") -> str:
         """
         Bloom component properties. Requires PostFX Layer component.
           - 'requires' a list of component names as strings required by this component.
@@ -259,45 +258,45 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Bloom',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'Enable Bloom': 'Controller|Configuration|Enable Bloom',
-            'Enabled Override': 'Controller|Configuration|Overrides|Enabled Override',
-            'Threshold Override': 'Controller|Configuration|Overrides|Threshold Override',
-            'Knee Override': 'Controller|Configuration|Overrides|Knee Override',
-            'Intensity Override': 'Controller|Configuration|Overrides|Intensity Override',
-            'BicubicEnabled Override': 'Controller|Configuration|Overrides|BicubicEnabled Override',
-            'KernelSizeScale Override': 'Controller|Configuration|Overrides|KernelSizeScale Override',
-            'KernelSizeStage0 Override': 'Controller|Configuration|Overrides|KernelSizeStage0 Override',
-            'KernelSizeStage1 Override': 'Controller|Configuration|Overrides|KernelSizeStage1 Override',
-            'KernelSizeStage2 Override': 'Controller|Configuration|Overrides|KernelSizeStage2 Override',
-            'KernelSizeStage3 Override': 'Controller|Configuration|Overrides|KernelSizeStage3 Override',
-            'KernelSizeStage4 Override': 'Controller|Configuration|Overrides|KernelSizeStage4 Override',
-            'TintStage0 Override': 'Controller|Configuration|Overrides|TintStage0 Override',
-            'TintStage1 Override': 'Controller|Configuration|Overrides|TintStage1 Override',
-            'TintStage2 Override': 'Controller|Configuration|Overrides|TintStage2 Override',
-            'TintStage3 Override': 'Controller|Configuration|Overrides|TintStage3 Override',
-            'TintStage4 Override': 'Controller|Configuration|Overrides|TintStage4 Override',
-            'Threshold': 'Controller|Configuration|Threshold',
-            'Knee': 'Controller|Configuration|Knee',
-            'Intensity': 'Controller|Configuration|Intensity',
-            'Enable Bicubic': 'Controller|Configuration|Enable Bicubic',
-            'Kernel Size Scale': 'Controller|Configuration|Kernel Size|Kernel Size Scale',
-            'Kernel Size 0': 'Controller|Configuration|Kernel Size|Kernel Size 0',
-            'Kernel Size 1': 'Controller|Configuration|Kernel Size|Kernel Size 1',
-            'Kernel Size 2': 'Controller|Configuration|Kernel Size|Kernel Size 2',
-            'Kernel Size 3': 'Controller|Configuration|Kernel Size|Kernel Size 3',
-            'Kernel Size 4': 'Controller|Configuration|Kernel Size|Kernel Size 4',
-            'Tint 0': 'Controller|Configuration|Tint|Tint 0',
-            'Tint 1': 'Controller|Configuration|Tint|Tint 1',
-            'Tint 2': 'Controller|Configuration|Tint|Tint 2',
-            'Tint 3': 'Controller|Configuration|Tint|Tint 3',
-            'Tint 4': 'Controller|Configuration|Tint|Tint 4',
+            "name": "Bloom",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "Enable Bloom": "Controller|Configuration|Enable Bloom",
+            "Enabled Override": "Controller|Configuration|Overrides|Enabled Override",
+            "Threshold Override": "Controller|Configuration|Overrides|Threshold Override",
+            "Knee Override": "Controller|Configuration|Overrides|Knee Override",
+            "Intensity Override": "Controller|Configuration|Overrides|Intensity Override",
+            "BicubicEnabled Override": "Controller|Configuration|Overrides|BicubicEnabled Override",
+            "KernelSizeScale Override": "Controller|Configuration|Overrides|KernelSizeScale Override",
+            "KernelSizeStage0 Override": "Controller|Configuration|Overrides|KernelSizeStage0 Override",
+            "KernelSizeStage1 Override": "Controller|Configuration|Overrides|KernelSizeStage1 Override",
+            "KernelSizeStage2 Override": "Controller|Configuration|Overrides|KernelSizeStage2 Override",
+            "KernelSizeStage3 Override": "Controller|Configuration|Overrides|KernelSizeStage3 Override",
+            "KernelSizeStage4 Override": "Controller|Configuration|Overrides|KernelSizeStage4 Override",
+            "TintStage0 Override": "Controller|Configuration|Overrides|TintStage0 Override",
+            "TintStage1 Override": "Controller|Configuration|Overrides|TintStage1 Override",
+            "TintStage2 Override": "Controller|Configuration|Overrides|TintStage2 Override",
+            "TintStage3 Override": "Controller|Configuration|Overrides|TintStage3 Override",
+            "TintStage4 Override": "Controller|Configuration|Overrides|TintStage4 Override",
+            "Threshold": "Controller|Configuration|Threshold",
+            "Knee": "Controller|Configuration|Knee",
+            "Intensity": "Controller|Configuration|Intensity",
+            "Enable Bicubic": "Controller|Configuration|Enable Bicubic",
+            "Kernel Size Scale": "Controller|Configuration|Kernel Size|Kernel Size Scale",
+            "Kernel Size 0": "Controller|Configuration|Kernel Size|Kernel Size 0",
+            "Kernel Size 1": "Controller|Configuration|Kernel Size|Kernel Size 1",
+            "Kernel Size 2": "Controller|Configuration|Kernel Size|Kernel Size 2",
+            "Kernel Size 3": "Controller|Configuration|Kernel Size|Kernel Size 3",
+            "Kernel Size 4": "Controller|Configuration|Kernel Size|Kernel Size 4",
+            "Tint 0": "Controller|Configuration|Tint|Tint 0",
+            "Tint 1": "Controller|Configuration|Tint|Tint 1",
+            "Tint 2": "Controller|Configuration|Tint|Tint 2",
+            "Tint 3": "Controller|Configuration|Tint|Tint 3",
+            "Tint 4": "Controller|Configuration|Tint|Tint 4",
         }
         return properties[property]
 
     @staticmethod
-    def camera(property: str = 'name') -> str:
+    def camera(property: str = "name") -> str:
         """
         Camera component properties.
           - 'Field of view': Sets the value for the camera's FOV (Field of View) in degrees, i.e. 60.0
@@ -305,13 +304,13 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Camera',
-            'Field of view': 'Controller|Configuration|Field of view'
+            "name": "Camera",
+            "Field of view": "Controller|Configuration|Field of view",
         }
         return properties[property]
 
     @staticmethod
-    def chromatic_aberration(property: str = 'name') -> str:
+    def chromatic_aberration(property: str = "name") -> str:
         """
         Chromatic Aberration component properties
           - 'Enable Chromatic Aberration' Toggle active state of the component (bool) default False
@@ -324,18 +323,18 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Chromatic Aberration',
-            'Enable Chromatic Aberration': 'Controller|Configuration|Enable Chromatic Aberration',
-            'Strength': 'Controller|Configuration|Strength',
-            'Blend': 'Controller|Configuration|Blend',
-            'Enabled Override': 'Controller|Configuration|Overrides|Enabled Override',
-            'Strength Override': 'Controller|Configuration|Overrides|Strength Override',
-            'Blend Override': 'Controller|Configuration|Overrides|Blend Override',
+            "name": "Chromatic Aberration",
+            "Enable Chromatic Aberration": "Controller|Configuration|Enable Chromatic Aberration",
+            "Strength": "Controller|Configuration|Strength",
+            "Blend": "Controller|Configuration|Blend",
+            "Enabled Override": "Controller|Configuration|Overrides|Enabled Override",
+            "Strength Override": "Controller|Configuration|Overrides|Strength Override",
+            "Blend Override": "Controller|Configuration|Overrides|Blend Override",
         }
         return properties[property]
 
     @staticmethod
-    def cube_map_capture(property: str = 'name') -> str:
+    def cube_map_capture(property: str = "name") -> str:
         """
         CubeMap capture component properties.
           - 'Specular ILB' controls the quality of Specular IBL created
@@ -345,15 +344,15 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'CubeMap Capture',
-            'Specular IBL CubeMap Quality': 'Controller|Configuration|Specular IBL CubeMap Quality',
-            'Capture Type': 'Controller|Configuration|Capture Type',
-            'Exposure': 'Controller|Configuration|Exposure',
+            "name": "CubeMap Capture",
+            "Specular IBL CubeMap Quality": "Controller|Configuration|Specular IBL CubeMap Quality",
+            "Capture Type": "Controller|Configuration|Capture Type",
+            "Exposure": "Controller|Configuration|Exposure",
         }
         return properties[property]
 
     @staticmethod
-    def decal(property: str = 'name') -> str:
+    def decal(property: str = "name") -> str:
         """
         Decal component properties.
           - 'Attenuation Angle' controls how much the angle between geometry and decal impacts opacity. 0-1 Radians
@@ -365,17 +364,17 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Decal',
-            'Attenuation Angle': 'Controller|Configuration|Attenuation Angle',
-            'Opacity': 'Controller|Configuration|Opacity',
-            'Normal Map Opacity': 'Controller|Configuration|Normal Map Opacity',
-            'Sort Key': 'Controller|Configuration|Sort Key',
-            'Material': 'Controller|Configuration|Material',
+            "name": "Decal",
+            "Attenuation Angle": "Controller|Configuration|Attenuation Angle",
+            "Opacity": "Controller|Configuration|Opacity",
+            "Normal Map Opacity": "Controller|Configuration|Normal Map Opacity",
+            "Sort Key": "Controller|Configuration|Sort Key",
+            "Material": "Controller|Configuration|Material",
         }
         return properties[property]
 
     @staticmethod
-    def deferred_fog(property: str = 'name') -> str:
+    def deferred_fog(property: str = "name") -> str:
         """
         Deferred Fog component properties. Requires PostFX Layer component.
           - 'requires' a list of component names as strings required by this component.
@@ -410,30 +409,30 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Deferred Fog',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'Enable Deferred Fog': 'Controller|Configuration|Enable Deferred Fog',
-            'Fog Color': 'Controller|Configuration|Fog Color',
-            'Fog Start Distance': 'Controller|Configuration|Distance|Fog Start Distance',
-            'Fog End Distance': 'Controller|Configuration|Distance|Fog End Distance',
-            'Fog Bottom Height': 'Controller|Configuration|Fog Layer|Fog Bottom Height',
-            'Fog Max Height': 'Controller|Configuration|Fog Layer|Fog Max Height',
-            'Noise Texture': 'Controller|Configuration|Turbulence|Noise Texture',
-            'Noise Texture First Octave Scale': 'Controller|Configuration|Turbulence|Noise Texture First Octave Scale',
-            'Noise Texture First Octave Velocity': 'Controller|Configuration|Turbulence|Noise Texture First Octave Velocity',
-            'Noise Texture Second Octave Scale': 'Controller|Configuration|Turbulence|Noise Texture Second Octave Scale',
-            'Noise Texture Second Octave Velocity': 'Controller|Configuration|Turbulence|Noise Texture Second Octave Velocity',
-            'Octaves Blend Factor': 'Controller|Configuration|Turbulence|Octaves Blend Factor',
-            'Enable Turbulence Properties': 'Controller|Configuration|Enable Turbulence Properties',
-            'Enable Fog Layer': 'Controller|Configuration|Enable Fog Layer',
-            'Fog Density': 'Controller|Configuration|Density Control|Fog Density',
-            'Fog Density Clamp': 'Controller|Configuration|Density Control|Fog Density Clamp',
-            'Fog Mode': 'Controller|Configuration|Fog Mode',
+            "name": "Deferred Fog",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "Enable Deferred Fog": "Controller|Configuration|Enable Deferred Fog",
+            "Fog Color": "Controller|Configuration|Fog Color",
+            "Fog Start Distance": "Controller|Configuration|Distance|Fog Start Distance",
+            "Fog End Distance": "Controller|Configuration|Distance|Fog End Distance",
+            "Fog Bottom Height": "Controller|Configuration|Fog Layer|Fog Bottom Height",
+            "Fog Max Height": "Controller|Configuration|Fog Layer|Fog Max Height",
+            "Noise Texture": "Controller|Configuration|Turbulence|Noise Texture",
+            "Noise Texture First Octave Scale": "Controller|Configuration|Turbulence|Noise Texture First Octave Scale",
+            "Noise Texture First Octave Velocity": "Controller|Configuration|Turbulence|Noise Texture First Octave Velocity",
+            "Noise Texture Second Octave Scale": "Controller|Configuration|Turbulence|Noise Texture Second Octave Scale",
+            "Noise Texture Second Octave Velocity": "Controller|Configuration|Turbulence|Noise Texture Second Octave Velocity",
+            "Octaves Blend Factor": "Controller|Configuration|Turbulence|Octaves Blend Factor",
+            "Enable Turbulence Properties": "Controller|Configuration|Enable Turbulence Properties",
+            "Enable Fog Layer": "Controller|Configuration|Enable Fog Layer",
+            "Fog Density": "Controller|Configuration|Density Control|Fog Density",
+            "Fog Density Clamp": "Controller|Configuration|Density Control|Fog Density Clamp",
+            "Fog Mode": "Controller|Configuration|Fog Mode",
         }
         return properties[property]
 
     @staticmethod
-    def depth_of_field(property: str = 'name') -> str:
+    def depth_of_field(property: str = "name") -> str:
         """
         Depth of Field component properties. Requires PostFX Layer component.
           - 'requires' a list of component names as strings required by this component.
@@ -469,36 +468,36 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Depth Of Field',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'Camera Entity': 'Controller|Configuration|Camera Entity',
-            'CameraEntityId Override': 'Controller|Configuration|Overrides|CameraEntityId Override',
-            'Enabled Override': 'Controller|Configuration|Overrides|Enabled Override',
-            'QualityLevel Override': 'Controller|Configuration|Overrides|QualityLevel Override',
-            'ApertureF Override': 'Controller|Configuration|Aperture F',
-            'FocusDistance Override': 'Controller|Configuration|Overrides|FocusDistance Override',
-            'EnableAutoFocus Override': 'Controller|Configuration|Overrides|EnableAutoFocus Override',
-            'AutoFocusScreenPosition Override': 'Controller|Configuration|Overrides|AutoFocusScreenPosition Override',
-            'AutoFocusSensitivity Override': 'Controller|Configuration|Overrides|AutoFocusSensitivity Override',
-            'AutoFocusSpeed Override': 'Controller|Configuration|Overrides|AutoFocusSpeed Override',
-            'AutoFocusDelay Override': 'Controller|Configuration|Overrides|AutoFocusDelay Override',
-            'EnableDebugColoring Override': 'Controller|Configuration|Overrides|EnableDebugColoring Override',
-            'Enable Depth of Field': 'Controller|Configuration|Enable Depth of Field',
-            'Quality Level': 'Controller|Configuration|Quality Level',
-            'Aperture F': 'Controller|Configuration|Aperture F',
-            'F Number': 'Controller|Configuration|F Number',
-            'Focus Distance': 'Controller|Configuration|Focus Distance',
-            'Enable Auto Focus': 'Controller|Configuration|Auto Focus|Enable Auto Focus',
-            'Focus Screen Position': 'Controller|Configuration|Auto Focus|Focus Screen Position',
-            'Auto Focus Sensitivity': 'Controller|Configuration|Auto Focus|Auto Focus Sensitivity',
-            'Auto Focus Speed': 'Controller|Configuration|Auto Focus|Auto Focus Speed',
-            'Auto Focus Delay': 'Controller|Configuration|Auto Focus|Auto Focus Delay',
-            'Enable Debug Color': 'Controller|Configuration|Debugging|Enable Debug Color'
+            "name": "Depth Of Field",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "Camera Entity": "Controller|Configuration|Camera Entity",
+            "CameraEntityId Override": "Controller|Configuration|Overrides|CameraEntityId Override",
+            "Enabled Override": "Controller|Configuration|Overrides|Enabled Override",
+            "QualityLevel Override": "Controller|Configuration|Overrides|QualityLevel Override",
+            "ApertureF Override": "Controller|Configuration|Aperture F",
+            "FocusDistance Override": "Controller|Configuration|Overrides|FocusDistance Override",
+            "EnableAutoFocus Override": "Controller|Configuration|Overrides|EnableAutoFocus Override",
+            "AutoFocusScreenPosition Override": "Controller|Configuration|Overrides|AutoFocusScreenPosition Override",
+            "AutoFocusSensitivity Override": "Controller|Configuration|Overrides|AutoFocusSensitivity Override",
+            "AutoFocusSpeed Override": "Controller|Configuration|Overrides|AutoFocusSpeed Override",
+            "AutoFocusDelay Override": "Controller|Configuration|Overrides|AutoFocusDelay Override",
+            "EnableDebugColoring Override": "Controller|Configuration|Overrides|EnableDebugColoring Override",
+            "Enable Depth of Field": "Controller|Configuration|Enable Depth of Field",
+            "Quality Level": "Controller|Configuration|Quality Level",
+            "Aperture F": "Controller|Configuration|Aperture F",
+            "F Number": "Controller|Configuration|F Number",
+            "Focus Distance": "Controller|Configuration|Focus Distance",
+            "Enable Auto Focus": "Controller|Configuration|Auto Focus|Enable Auto Focus",
+            "Focus Screen Position": "Controller|Configuration|Auto Focus|Focus Screen Position",
+            "Auto Focus Sensitivity": "Controller|Configuration|Auto Focus|Auto Focus Sensitivity",
+            "Auto Focus Speed": "Controller|Configuration|Auto Focus|Auto Focus Speed",
+            "Auto Focus Delay": "Controller|Configuration|Auto Focus|Auto Focus Delay",
+            "Enable Debug Color": "Controller|Configuration|Debugging|Enable Debug Color",
         }
         return properties[property]
 
     @staticmethod
-    def diffuse_global_illumination(property: str = 'name') -> str:
+    def diffuse_global_illumination(property: str = "name") -> str:
         """
         Diffuse Global Illumination level component properties.
         Controls global settings for Diffuse Probe Grid components.
@@ -507,13 +506,13 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Diffuse Global Illumination',
-            'Quality Level': 'Controller|Configuration|Quality Level'
+            "name": "Diffuse Global Illumination",
+            "Quality Level": "Controller|Configuration|Quality Level",
         }
         return properties[property]
 
     @staticmethod
-    def diffuse_probe_grid(property: str = 'name') -> str:
+    def diffuse_probe_grid(property: str = "name") -> str:
         """
         Diffuse Probe Grid component properties. Requires one of 'shapes'.
           - 'shapes' a list of supported shapes as component names.
@@ -529,21 +528,21 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Diffuse Probe Grid',
-            'shapes': ['Axis Aligned Box Shape', 'Box Shape'],
-            'Scrolling': 'Grid Settings|Scrolling',
-            'Show Inactive Probes': 'Visualization|Show Inactive Probes',
-            'Show Visualization': 'Visualization|Show Visualization',
-            'Visualization Sphere Radius': 'Visualization|Visualization Sphere Radius',
-            'Normal Bias': 'Grid Settings|Normal Bias',
-            'Ambient Multiplier': 'Grid Settings|Ambient Multiplier',
-            'View Bias': 'Grid Settings|View Bias',
-            'Number of Rays Per Probe': 'Grid Settings|Number of Rays Per Probe',
+            "name": "Diffuse Probe Grid",
+            "shapes": ["Axis Aligned Box Shape", "Box Shape"],
+            "Scrolling": "Grid Settings|Scrolling",
+            "Show Inactive Probes": "Visualization|Show Inactive Probes",
+            "Show Visualization": "Visualization|Show Visualization",
+            "Visualization Sphere Radius": "Visualization|Visualization Sphere Radius",
+            "Normal Bias": "Grid Settings|Normal Bias",
+            "Ambient Multiplier": "Grid Settings|Ambient Multiplier",
+            "View Bias": "Grid Settings|View Bias",
+            "Number of Rays Per Probe": "Grid Settings|Number of Rays Per Probe",
         }
         return properties[property]
 
     @staticmethod
-    def directional_light(property: str = 'name') -> str:
+    def directional_light(property: str = "name") -> str:
         """
         Directional Light component properties.
           - 'Camera' an EditorEntity.id reference to the Camera component that controls cascaded shadow view frustum.
@@ -600,37 +599,37 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Directional Light',
-            'Color': 'Controller|Configuration|Color',
-            'Intensity mode': 'Controller|Configuration|Intensity mode',
-            'Intensity': 'Controller|Configuration|Intensity',
-            'Angular diameter': 'Controller|Configuration|Angular diameter',
-            'Camera': 'Controller|Configuration|Shadow|Camera',
-            'Shadow far clip': 'Controller|Configuration|Shadow|Shadow far clip',
-            'Shadowmap size': 'Controller|Configuration|Shadow|Shadowmap size',
-            'Cascade count': 'Controller|Configuration|Shadow|Cascade count',
-            'Automatic splitting': 'Controller|Configuration|Shadow|Automatic splitting',
-            'Split ratio': 'Controller|Configuration|Shadow|Split ratio',
-            'Far depth cascade': 'Controller|Configuration|Shadow|Far depth cascade',
-            'Ground height': 'Controller|Configuration|Shadow|Ground height',
-            'Cascade correction': 'Controller|Configuration|Shadow|Cascade correction',
-            'Debug coloring': 'Controller|Configuration|Shadow|Debug coloring',
-            'Shadow filter method': 'Controller|Configuration|Shadow|Shadow filter method',
-            'Filtering sample count': 'Controller|Configuration|Shadow|Filtering sample count',
-            'Shadow Receiver Plane Bias Enable': 'Controller|Configuration|Shadow|Shadow Receiver Plane Bias Enable',
-            'Shadow Bias': 'Controller|Configuration|Shadow|Shadow Bias',
-            'Normal Shadow Bias': 'Controller|Configuration|Shadow|Normal Shadow Bias',
-            'Blend between cascades': 'Controller|Configuration|Shadow|Blend between cascades',
-            'Fullscreen Blur': 'Controller|Configuration|Shadow|Fullscreen Blur',
-            'Fullscreen Blur Strength': 'Controller|Configuration|Shadow|Fullscreen Blur Strength',
-            'Fullscreen Blur Sharpness': 'Controller|Configuration|Shadow|Fullscreen Blur Sharpness',
-            'Affects GI': 'Controller|Configuration|Global Illumination|Affects GI',
-            'Factor': 'Controller|Configuration|Global Illumination|Factor',
+            "name": "Directional Light",
+            "Color": "Controller|Configuration|Color",
+            "Intensity mode": "Controller|Configuration|Intensity mode",
+            "Intensity": "Controller|Configuration|Intensity",
+            "Angular diameter": "Controller|Configuration|Angular diameter",
+            "Camera": "Controller|Configuration|Shadow|Camera",
+            "Shadow far clip": "Controller|Configuration|Shadow|Shadow far clip",
+            "Shadowmap size": "Controller|Configuration|Shadow|Shadowmap size",
+            "Cascade count": "Controller|Configuration|Shadow|Cascade count",
+            "Automatic splitting": "Controller|Configuration|Shadow|Automatic splitting",
+            "Split ratio": "Controller|Configuration|Shadow|Split ratio",
+            "Far depth cascade": "Controller|Configuration|Shadow|Far depth cascade",
+            "Ground height": "Controller|Configuration|Shadow|Ground height",
+            "Cascade correction": "Controller|Configuration|Shadow|Cascade correction",
+            "Debug coloring": "Controller|Configuration|Shadow|Debug coloring",
+            "Shadow filter method": "Controller|Configuration|Shadow|Shadow filter method",
+            "Filtering sample count": "Controller|Configuration|Shadow|Filtering sample count",
+            "Shadow Receiver Plane Bias Enable": "Controller|Configuration|Shadow|Shadow Receiver Plane Bias Enable",
+            "Shadow Bias": "Controller|Configuration|Shadow|Shadow Bias",
+            "Normal Shadow Bias": "Controller|Configuration|Shadow|Normal Shadow Bias",
+            "Blend between cascades": "Controller|Configuration|Shadow|Blend between cascades",
+            "Fullscreen Blur": "Controller|Configuration|Shadow|Fullscreen Blur",
+            "Fullscreen Blur Strength": "Controller|Configuration|Shadow|Fullscreen Blur Strength",
+            "Fullscreen Blur Sharpness": "Controller|Configuration|Shadow|Fullscreen Blur Sharpness",
+            "Affects GI": "Controller|Configuration|Global Illumination|Affects GI",
+            "Factor": "Controller|Configuration|Global Illumination|Factor",
         }
         return properties[property]
 
     @staticmethod
-    def display_mapper(property: str = 'name') -> str:
+    def display_mapper(property: str = "name") -> str:
         """
         Display Mapper level component properties.
           - 'Type' specifies the Display Mapper type from atom_constants.py DISPLAY_MAPPER_OPERATION_TYPE
@@ -653,27 +652,27 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Display Mapper',
-            'Type': 'Controller|Configuration|Type',
-            'Enable LDR color grading LUT': 'Controller|Configuration|Enable LDR color grading LUT',
-            'LDR color Grading LUT': 'Controller|Configuration|LDR color Grading LUT',
-            'Override Defaults': 'Controller|Configuration|ACES Parameters|Override Defaults',
-            'Alter Surround': 'Controller|Configuration|ACES Parameters|Alter Surround',
-            'Alter Desaturation': 'Controller|Configuration|ACES Parameters|Alter Desaturation',
-            'Alter CAT D60 to D65': 'Controller|Configuration|ACES Parameters|Alter CAT D60 to D65',
-            'Preset Selection': 'Controller|Configuration|ACES Parameters|Load Preset|Preset Selection',
-            'Cinema Limit (black)': 'Controller|Configuration|ACES Parameters|Cinema Limit (black)',
-            'Cinema Limit (white)': 'Controller|Configuration|ACES Parameters|Cinema Limit (white)',
-            'Min Point (luminance)': 'Controller|Configuration|ACES Parameters|Min Point (luminance)',
-            'Mid Point (luminance)': 'Controller|Configuration|ACES Parameters|Mid Point (luminance)',
-            'Max Point (luminance)': 'Controller|Configuration|ACES Parameters|Max Point (luminance)',
-            'Surround Gamma': 'Controller|Configuration|ACES Parameters|Surround Gamma',
-            'Gamma': 'Controller|Configuration|ACES Parameters|Gamma',
+            "name": "Display Mapper",
+            "Type": "Controller|Configuration|Type",
+            "Enable LDR color grading LUT": "Controller|Configuration|Enable LDR color grading LUT",
+            "LDR color Grading LUT": "Controller|Configuration|LDR color Grading LUT",
+            "Override Defaults": "Controller|Configuration|ACES Parameters|Override Defaults",
+            "Alter Surround": "Controller|Configuration|ACES Parameters|Alter Surround",
+            "Alter Desaturation": "Controller|Configuration|ACES Parameters|Alter Desaturation",
+            "Alter CAT D60 to D65": "Controller|Configuration|ACES Parameters|Alter CAT D60 to D65",
+            "Preset Selection": "Controller|Configuration|ACES Parameters|Load Preset|Preset Selection",
+            "Cinema Limit (black)": "Controller|Configuration|ACES Parameters|Cinema Limit (black)",
+            "Cinema Limit (white)": "Controller|Configuration|ACES Parameters|Cinema Limit (white)",
+            "Min Point (luminance)": "Controller|Configuration|ACES Parameters|Min Point (luminance)",
+            "Mid Point (luminance)": "Controller|Configuration|ACES Parameters|Mid Point (luminance)",
+            "Max Point (luminance)": "Controller|Configuration|ACES Parameters|Max Point (luminance)",
+            "Surround Gamma": "Controller|Configuration|ACES Parameters|Surround Gamma",
+            "Gamma": "Controller|Configuration|ACES Parameters|Gamma",
         }
         return properties[property]
 
     @staticmethod
-    def entity_reference(property: str = 'name') -> str:
+    def entity_reference(property: str = "name") -> str:
         """
         Entity Reference component properties.
           - 'EntityIdReferences' component container of entityId references. Initially empty.
@@ -681,13 +680,13 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Entity Reference',
-            'EntityIdReferences': 'Controller|Configuration|EntityIdReferences',
+            "name": "Entity Reference",
+            "EntityIdReferences": "Controller|Configuration|EntityIdReferences",
         }
         return properties[property]
 
     @staticmethod
-    def exposure_control(property: str = 'name') -> str:
+    def exposure_control(property: str = "name") -> str:
         """
         Exposure Control component properties. Requires PostFX Layer component.
           - 'requires' a list of component names as strings required by this component.
@@ -712,29 +711,29 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Exposure Control',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'Enable': 'Controller|Configuration|Enable',
-            'Enabled Override': 'Controller|Configuration|Overrides|Enabled Override',
-            'ExposureControlType Override': 'Controller|Configuration|Overrides|ExposureControlType Override',
-            'ManualCompensation Override': 'Controller|Configuration|Overrides|ManualCompensation Override',
-            'EyeAdaptationExposureMin Override': 'Controller|Configuration|Overrides|EyeAdaptationExposureMin Override',
-            'EyeAdaptationExposureMax Override': 'Controller|Configuration|Overrides|EyeAdaptationExposureMax Override',
-            'EyeAdaptationSpeedUp Override': 'Controller|Configuration|Overrides|EyeAdaptationSpeedUp Override',
-            'EyeAdaptationSpeedDown Override': 'Controller|Configuration|Overrides|EyeAdaptationSpeedDown Override',
-            'HeatmapEnabled Override': 'Controller|Configuration|Overrides|HeatmapEnabled Override',
-            'Control Type': 'Controller|Configuration|Control Type',
-            'Manual Compensation': 'Controller|Configuration|Manual Compensation',
-            'Minimum Exposure': 'Controller|Configuration|Eye Adaptation|Minimum Exposure',
-            'Maximum Exposure': 'Controller|Configuration|Eye Adaptation|Maximum Exposure',
-            'Speed Up': 'Controller|Configuration|Eye Adaptation|Speed Up',
-            'Speed Down': 'Controller|Configuration|Eye Adaptation|Speed Down',
-            'Enable Heatmap': 'Controller|Configuration|Eye Adaptation|Enable Heatmap',
+            "name": "Exposure Control",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "Enable": "Controller|Configuration|Enable",
+            "Enabled Override": "Controller|Configuration|Overrides|Enabled Override",
+            "ExposureControlType Override": "Controller|Configuration|Overrides|ExposureControlType Override",
+            "ManualCompensation Override": "Controller|Configuration|Overrides|ManualCompensation Override",
+            "EyeAdaptationExposureMin Override": "Controller|Configuration|Overrides|EyeAdaptationExposureMin Override",
+            "EyeAdaptationExposureMax Override": "Controller|Configuration|Overrides|EyeAdaptationExposureMax Override",
+            "EyeAdaptationSpeedUp Override": "Controller|Configuration|Overrides|EyeAdaptationSpeedUp Override",
+            "EyeAdaptationSpeedDown Override": "Controller|Configuration|Overrides|EyeAdaptationSpeedDown Override",
+            "HeatmapEnabled Override": "Controller|Configuration|Overrides|HeatmapEnabled Override",
+            "Control Type": "Controller|Configuration|Control Type",
+            "Manual Compensation": "Controller|Configuration|Manual Compensation",
+            "Minimum Exposure": "Controller|Configuration|Eye Adaptation|Minimum Exposure",
+            "Maximum Exposure": "Controller|Configuration|Eye Adaptation|Maximum Exposure",
+            "Speed Up": "Controller|Configuration|Eye Adaptation|Speed Up",
+            "Speed Down": "Controller|Configuration|Eye Adaptation|Speed Down",
+            "Enable Heatmap": "Controller|Configuration|Eye Adaptation|Enable Heatmap",
         }
         return properties[property]
 
     @staticmethod
-    def global_skylight(property: str = 'name') -> str:
+    def global_skylight(property: str = "name") -> str:
         """
         Global Skylight (IBL) component properties.
           - 'Diffuse Image' Asset.id for the cubemap image for determining diffuse lighting.
@@ -744,15 +743,15 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Global Skylight (IBL)',
-            'Diffuse Image': 'Diffuse Image',
-            'Specular Image': 'Specular Image',
-            'Exposure': 'Exposure',
+            "name": "Global Skylight (IBL)",
+            "Diffuse Image": "Diffuse Image",
+            "Specular Image": "Specular Image",
+            "Exposure": "Exposure",
         }
         return properties[property]
 
     @staticmethod
-    def grid(property: str = 'name') -> str:
+    def grid(property: str = "name") -> str:
         """
         Grid component properties.
           - 'Grid Size': The size of the grid, default value is 32
@@ -767,18 +766,18 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Grid',
-            'Grid Size': 'Controller|Configuration|Grid Size',
-            'Axis Color': 'Controller|Configuration|Axis Color',
-            'Primary Grid Spacing': 'Controller|Configuration|Primary Grid Spacing',
-            'Primary Color': 'Controller|Configuration|Primary Color',
-            'Secondary Grid Spacing': 'Controller|Configuration|Secondary Grid Spacing',
-            'Secondary Color': 'Controller|Configuration|Secondary Color',
+            "name": "Grid",
+            "Grid Size": "Controller|Configuration|Grid Size",
+            "Axis Color": "Controller|Configuration|Axis Color",
+            "Primary Grid Spacing": "Controller|Configuration|Primary Grid Spacing",
+            "Primary Color": "Controller|Configuration|Primary Color",
+            "Secondary Grid Spacing": "Controller|Configuration|Secondary Grid Spacing",
+            "Secondary Color": "Controller|Configuration|Secondary Color",
         }
         return properties[property]
 
     @staticmethod
-    def hair(property: str = 'name') -> str:
+    def hair(property: str = "name") -> str:
         """
         Atom Hair component properties. Requires Actor component.
           - 'requires' a list of component names as strings required by this component.
@@ -844,70 +843,70 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Atom Hair',
-            'requires': [AtomComponentProperties.actor()],
-            'Hair Asset': 'Controller|Configuration|Hair Asset',
-            'Enable Area Lights': 'Controller|Configuration|Hair Global Settings|Enable Area Lights',
-            'Enable Azimuth': 'Controller|Configuration|Hair Global Settings|Enable Azimuth',
-            'Enable Directional Lights': 'Controller|Configuration|Hair Global Settings|Enable Directional Lights',
-            'Enable IBL': 'Controller|Configuration|Hair Global Settings|Enable IBL',
-            'Enable Longitude': 'Controller|Configuration|Hair Global Settings|Enable Longitude',
-            'Enable Marschner R': 'Controller|Configuration|Hair Global Settings|Enable Marschner R',
-            'Enable Marschner TRT': 'Controller|Configuration|Hair Global Settings|Enable Marschner TRT',
-            'Enable Marschner TT': 'Controller|Configuration|Hair Global Settings|Enable Marschner TT',
-            'Enable Punctual Lights': 'Controller|Configuration|Hair Global Settings|Enable Punctual Lights',
-            'Enable Shadows': 'Controller|Configuration|Hair Global Settings|Enable Shadows',
-            'Hair Lighting Model': 'Controller|Configuration|Hair Global Settings|Hair Lighting Model',
-            'Base Albedo Asset': 'Controller|Configuration|TressFX Render Settings|Base Albedo Asset',
-            'Base Color': 'Controller|Configuration|TressFX Render Settings|Base Color',
-            'Enable Hair LOD': 'Controller|Configuration|TressFX Render Settings|Enable Hair LOD',
-            'Enable Hair LOD(Shadow)': 'Controller|Configuration|TressFX Render Settings|Enable Hair LOD(Shadow)',
-            'Enable Strand Tangent': 'Controller|Configuration|TressFX Render Settings|Enable Strand Tangent',
-            'Enable Strand UV': 'Controller|Configuration|TressFX Render Settings|Enable Strand UV',
-            'Enable Thin Tip': 'Controller|Configuration|TressFX Render Settings|Enable Thin Tip',
-            'Fiber Radius': 'Controller|Configuration|TressFX Render Settings|Fiber Radius',
-            'Fiber Spacing': 'Controller|Configuration|TressFX Render Settings|Fiber Spacing',
-            'Fiber ratio': 'Controller|Configuration|TressFX Render Settings|Fiber ratio',
-            'Hair Cuticle Angle': 'Controller|Configuration|TressFX Render Settings|Hair Cuticle Angle',
-            'Hair Ex1': 'Controller|Configuration|TressFX Render Settings|Hair Ex1',
-            'Hair Ex2': 'Controller|Configuration|TressFX Render Settings|Hair Ex2',
-            'Hair Kdiffuse': 'Controller|Configuration|TressFX Render Settings|Hair Kdiffuse',
-            'Hair Ks1': 'Controller|Configuration|TressFX Render Settings|Hair Ks1',
-            'Hair Ks2': 'Controller|Configuration|TressFX Render Settings|Hair Ks2',
-            'Hair Roughness': 'Controller|Configuration|TressFX Render Settings|Hair Roughness',
-            'Hair Shadow Alpha': 'Controller|Configuration|TressFX Render Settings|Hair Shadow Alpha',
-            'LOD End Distance': 'Controller|Configuration|TressFX Render Settings|LOD End Distance',
-            'LOD Start Distance': 'Controller|Configuration|TressFX Render Settings|LOD Start Distance',
-            'Mat Tip Color': 'Controller|Configuration|TressFX Render Settings|Mat Tip Color',
-            'Max LOD Reduction': 'Controller|Configuration|TressFX Render Settings|Max LOD Reduction',
-            'Max LOD Strand Width Multiplier': 'Controller|Configuration|TressFX Render Settings|Max LOD Strand Width Multiplier',
-            'Max Shadow Fibers': 'Controller|Configuration|TressFX Render Settings|Max Shadow Fibers',
-            'Shadow LOD End Distance': 'Controller|Configuration|TressFX Render Settings|Shadow LOD End Distance',
-            'Shadow LOD Start Distance': 'Controller|Configuration|TressFX Render Settings|Shadow LOD Start Distance',
-            'Shadow Max LOD Reduction': 'Controller|Configuration|TressFX Render Settings|Shadow Max LOD Reduction',
-            'Shadow Max LOD Strand Width Multiplier': 'Controller|Configuration|TressFX Render Settings|Shadow Max LOD Strand Width Multiplier',
-            'Strand Albedo Asset': 'Controller|Configuration|TressFX Render Settings|Strand Albedo Asset',
-            'Strand UVTiling Factor': 'Controller|Configuration|TressFX Render Settings|Strand UVTiling Factor',
-            'Tip Percentage': 'Controller|Configuration|TressFX Render Settings|Tip Percentage',
-            'Clamp Velocity': 'Controller|Configuration|TressFX Sim Settings|Clamp Velocity',
-            'Damping': 'Controller|Configuration|TressFX Sim Settings|Damping',
-            'Global Constraint Range': 'Controller|Configuration|TressFX Sim Settings|Global Constraint Range',
-            'Global Constraint Stiffness': 'Controller|Configuration|TressFX Sim Settings|Global Constraint Stiffness',
-            'Gravity Magnitude': 'Controller|Configuration|TressFX Sim Settings|Gravity Magnitude',
-            'Length Constraint Iterations': 'Controller|Configuration|TressFX Sim Settings|Length Constraint Iterations',
-            'Local Constraint Iterations': 'Controller|Configuration|TressFX Sim Settings|Local Constraint Iterations',
-            'Local Constraint Stiffness': 'Controller|Configuration|TressFX Sim Settings|Local Constraint Stiffness',
-            'Tip Separation': 'Controller|Configuration|TressFX Sim Settings|Tip Separation',
-            'Vsp Accel Threshold': 'Controller|Configuration|TressFX Sim Settings|Vsp Accel Threshold',
-            'Vsp Coeffs': 'Controller|Configuration|TressFX Sim Settings|Vsp Coeffs',
-            'Wind Angle Radians': 'Controller|Configuration|TressFX Sim Settings|Wind Angle Radians',
-            'Wind Direction': 'Controller|Configuration|TressFX Sim Settings|Wind Direction',
-            'Wind Magnitude': 'Controller|Configuration|TressFX Sim Settings|Wind Magnitude',
+            "name": "Atom Hair",
+            "requires": [AtomComponentProperties.actor()],
+            "Hair Asset": "Controller|Configuration|Hair Asset",
+            "Enable Area Lights": "Controller|Configuration|Hair Global Settings|Enable Area Lights",
+            "Enable Azimuth": "Controller|Configuration|Hair Global Settings|Enable Azimuth",
+            "Enable Directional Lights": "Controller|Configuration|Hair Global Settings|Enable Directional Lights",
+            "Enable IBL": "Controller|Configuration|Hair Global Settings|Enable IBL",
+            "Enable Longitude": "Controller|Configuration|Hair Global Settings|Enable Longitude",
+            "Enable Marschner R": "Controller|Configuration|Hair Global Settings|Enable Marschner R",
+            "Enable Marschner TRT": "Controller|Configuration|Hair Global Settings|Enable Marschner TRT",
+            "Enable Marschner TT": "Controller|Configuration|Hair Global Settings|Enable Marschner TT",
+            "Enable Punctual Lights": "Controller|Configuration|Hair Global Settings|Enable Punctual Lights",
+            "Enable Shadows": "Controller|Configuration|Hair Global Settings|Enable Shadows",
+            "Hair Lighting Model": "Controller|Configuration|Hair Global Settings|Hair Lighting Model",
+            "Base Albedo Asset": "Controller|Configuration|TressFX Render Settings|Base Albedo Asset",
+            "Base Color": "Controller|Configuration|TressFX Render Settings|Base Color",
+            "Enable Hair LOD": "Controller|Configuration|TressFX Render Settings|Enable Hair LOD",
+            "Enable Hair LOD(Shadow)": "Controller|Configuration|TressFX Render Settings|Enable Hair LOD(Shadow)",
+            "Enable Strand Tangent": "Controller|Configuration|TressFX Render Settings|Enable Strand Tangent",
+            "Enable Strand UV": "Controller|Configuration|TressFX Render Settings|Enable Strand UV",
+            "Enable Thin Tip": "Controller|Configuration|TressFX Render Settings|Enable Thin Tip",
+            "Fiber Radius": "Controller|Configuration|TressFX Render Settings|Fiber Radius",
+            "Fiber Spacing": "Controller|Configuration|TressFX Render Settings|Fiber Spacing",
+            "Fiber ratio": "Controller|Configuration|TressFX Render Settings|Fiber ratio",
+            "Hair Cuticle Angle": "Controller|Configuration|TressFX Render Settings|Hair Cuticle Angle",
+            "Hair Ex1": "Controller|Configuration|TressFX Render Settings|Hair Ex1",
+            "Hair Ex2": "Controller|Configuration|TressFX Render Settings|Hair Ex2",
+            "Hair Kdiffuse": "Controller|Configuration|TressFX Render Settings|Hair Kdiffuse",
+            "Hair Ks1": "Controller|Configuration|TressFX Render Settings|Hair Ks1",
+            "Hair Ks2": "Controller|Configuration|TressFX Render Settings|Hair Ks2",
+            "Hair Roughness": "Controller|Configuration|TressFX Render Settings|Hair Roughness",
+            "Hair Shadow Alpha": "Controller|Configuration|TressFX Render Settings|Hair Shadow Alpha",
+            "LOD End Distance": "Controller|Configuration|TressFX Render Settings|LOD End Distance",
+            "LOD Start Distance": "Controller|Configuration|TressFX Render Settings|LOD Start Distance",
+            "Mat Tip Color": "Controller|Configuration|TressFX Render Settings|Mat Tip Color",
+            "Max LOD Reduction": "Controller|Configuration|TressFX Render Settings|Max LOD Reduction",
+            "Max LOD Strand Width Multiplier": "Controller|Configuration|TressFX Render Settings|Max LOD Strand Width Multiplier",
+            "Max Shadow Fibers": "Controller|Configuration|TressFX Render Settings|Max Shadow Fibers",
+            "Shadow LOD End Distance": "Controller|Configuration|TressFX Render Settings|Shadow LOD End Distance",
+            "Shadow LOD Start Distance": "Controller|Configuration|TressFX Render Settings|Shadow LOD Start Distance",
+            "Shadow Max LOD Reduction": "Controller|Configuration|TressFX Render Settings|Shadow Max LOD Reduction",
+            "Shadow Max LOD Strand Width Multiplier": "Controller|Configuration|TressFX Render Settings|Shadow Max LOD Strand Width Multiplier",
+            "Strand Albedo Asset": "Controller|Configuration|TressFX Render Settings|Strand Albedo Asset",
+            "Strand UVTiling Factor": "Controller|Configuration|TressFX Render Settings|Strand UVTiling Factor",
+            "Tip Percentage": "Controller|Configuration|TressFX Render Settings|Tip Percentage",
+            "Clamp Velocity": "Controller|Configuration|TressFX Sim Settings|Clamp Velocity",
+            "Damping": "Controller|Configuration|TressFX Sim Settings|Damping",
+            "Global Constraint Range": "Controller|Configuration|TressFX Sim Settings|Global Constraint Range",
+            "Global Constraint Stiffness": "Controller|Configuration|TressFX Sim Settings|Global Constraint Stiffness",
+            "Gravity Magnitude": "Controller|Configuration|TressFX Sim Settings|Gravity Magnitude",
+            "Length Constraint Iterations": "Controller|Configuration|TressFX Sim Settings|Length Constraint Iterations",
+            "Local Constraint Iterations": "Controller|Configuration|TressFX Sim Settings|Local Constraint Iterations",
+            "Local Constraint Stiffness": "Controller|Configuration|TressFX Sim Settings|Local Constraint Stiffness",
+            "Tip Separation": "Controller|Configuration|TressFX Sim Settings|Tip Separation",
+            "Vsp Accel Threshold": "Controller|Configuration|TressFX Sim Settings|Vsp Accel Threshold",
+            "Vsp Coeffs": "Controller|Configuration|TressFX Sim Settings|Vsp Coeffs",
+            "Wind Angle Radians": "Controller|Configuration|TressFX Sim Settings|Wind Angle Radians",
+            "Wind Direction": "Controller|Configuration|TressFX Sim Settings|Wind Direction",
+            "Wind Magnitude": "Controller|Configuration|TressFX Sim Settings|Wind Magnitude",
         }
         return properties[property]
 
     @staticmethod
-    def hdr_color_grading(property: str = 'name') -> str:
+    def hdr_color_grading(property: str = "name") -> str:
         """
         HDR Color Grading component properties. Requires PostFX Layer component.
           - 'requires' a list of component names as strings required by this component.
@@ -950,46 +949,46 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'HDR Color Grading',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'Enable HDR color grading': 'Controller|Configuration|Enable HDR color grading',
-            'Color Adjustment Weight': 'Controller|Configuration|Color Adjustment|Weight',
-            'Exposure': 'Controller|Configuration|Color Adjustment|Exposure',
-            'Contrast': 'Controller|Configuration|Color Adjustment|Contrast',
-            'Pre Saturation': 'Controller|Configuration|Color Adjustment|Pre Saturation',
-            'Filter Intensity': 'Controller|Configuration|Color Adjustment|Filter Intensity',
-            'Filter Multiply': 'Controller|Configuration|Color Adjustment|Filter Multiply',
-            'Filter Swatch': 'Controller|Configuration|Color Adjustment|Filter Swatch',
-            'White Balance Weight': 'Controller|Configuration|White Balance|Weight',
-            'Temperature': 'Controller|Configuration|White Balance|Temperature',
-            'Tint': 'Controller|Configuration|White Balance|Tint',
-            'Luminance Preservation': 'Controller|Configuration|White Balance|Luminance Preservation',
-            'Split Toning Weight': 'Controller|Configuration|Split Toning|Weight',
-            'Balance': 'Controller|Configuration|Split Toning|Balance',
-            'Split Toning Shadows Color': 'Controller|Configuration|Split Toning|Shadows Color',
-            'Split Toning Highlights Color': 'Controller|Configuration|Split Toning|Highlights Color',
-            'SMH Weight': 'Controller|Configuration|Shadow Midtones Highlights|Weight',
-            'Shadows Start': 'Controller|Configuration|Shadow Midtones Highlights|Shadows Start',
-            'Shadows End': 'Controller|Configuration|Shadow Midtones Highlights|Shadows End',
-            'Highlights Start': 'Controller|Configuration|Shadow Midtones Highlights|Highlights Start',
-            'Highlights End': 'Controller|Configuration|Shadow Midtones Highlights|Highlights End',
-            'SMH Shadows Color': 'Controller|Configuration|Shadow Midtones Highlights|Shadows Color',
-            'SMH Midtones Color': 'Controller|Configuration|Shadow Midtones Highlights|Midtones Color',
-            'SMH Highlights Color': 'Controller|Configuration|Shadow Midtones Highlights|Highlights Color',
-            'Channel Mixing Red': 'Controller|Configuration|Channel Mixing|Channel Mixing Red',
-            'Channel Mixing Green': 'Controller|Configuration|Channel Mixing|Channel Mixing Green',
-            'Channel Mixing Blue': 'Controller|Configuration|Channel Mixing|Channel Mixing Blue',
-            'Final Adjustment Weight': 'Controller|Configuration|Final Adjustment|Weight',
-            'Post Saturation': 'Controller|Configuration|Final Adjustment|Post Saturation',
-            'Hue Shift': 'Controller|Configuration|Final Adjustment|Hue Shift',
-            'LUT Resolution': 'Controller|Configuration|LUT Generation|LUT Resolution',
-            'Shaper Type': 'Controller|Configuration|LUT Generation|Shaper Type',
-            'Generated LUT Path': 'LUT Generation|Generated LUT Path',
+            "name": "HDR Color Grading",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "Enable HDR color grading": "Controller|Configuration|Enable HDR color grading",
+            "Color Adjustment Weight": "Controller|Configuration|Color Adjustment|Weight",
+            "Exposure": "Controller|Configuration|Color Adjustment|Exposure",
+            "Contrast": "Controller|Configuration|Color Adjustment|Contrast",
+            "Pre Saturation": "Controller|Configuration|Color Adjustment|Pre Saturation",
+            "Filter Intensity": "Controller|Configuration|Color Adjustment|Filter Intensity",
+            "Filter Multiply": "Controller|Configuration|Color Adjustment|Filter Multiply",
+            "Filter Swatch": "Controller|Configuration|Color Adjustment|Filter Swatch",
+            "White Balance Weight": "Controller|Configuration|White Balance|Weight",
+            "Temperature": "Controller|Configuration|White Balance|Temperature",
+            "Tint": "Controller|Configuration|White Balance|Tint",
+            "Luminance Preservation": "Controller|Configuration|White Balance|Luminance Preservation",
+            "Split Toning Weight": "Controller|Configuration|Split Toning|Weight",
+            "Balance": "Controller|Configuration|Split Toning|Balance",
+            "Split Toning Shadows Color": "Controller|Configuration|Split Toning|Shadows Color",
+            "Split Toning Highlights Color": "Controller|Configuration|Split Toning|Highlights Color",
+            "SMH Weight": "Controller|Configuration|Shadow Midtones Highlights|Weight",
+            "Shadows Start": "Controller|Configuration|Shadow Midtones Highlights|Shadows Start",
+            "Shadows End": "Controller|Configuration|Shadow Midtones Highlights|Shadows End",
+            "Highlights Start": "Controller|Configuration|Shadow Midtones Highlights|Highlights Start",
+            "Highlights End": "Controller|Configuration|Shadow Midtones Highlights|Highlights End",
+            "SMH Shadows Color": "Controller|Configuration|Shadow Midtones Highlights|Shadows Color",
+            "SMH Midtones Color": "Controller|Configuration|Shadow Midtones Highlights|Midtones Color",
+            "SMH Highlights Color": "Controller|Configuration|Shadow Midtones Highlights|Highlights Color",
+            "Channel Mixing Red": "Controller|Configuration|Channel Mixing|Channel Mixing Red",
+            "Channel Mixing Green": "Controller|Configuration|Channel Mixing|Channel Mixing Green",
+            "Channel Mixing Blue": "Controller|Configuration|Channel Mixing|Channel Mixing Blue",
+            "Final Adjustment Weight": "Controller|Configuration|Final Adjustment|Weight",
+            "Post Saturation": "Controller|Configuration|Final Adjustment|Post Saturation",
+            "Hue Shift": "Controller|Configuration|Final Adjustment|Hue Shift",
+            "LUT Resolution": "Controller|Configuration|LUT Generation|LUT Resolution",
+            "Shaper Type": "Controller|Configuration|LUT Generation|Shaper Type",
+            "Generated LUT Path": "LUT Generation|Generated LUT Path",
         }
         return properties[property]
 
     @staticmethod
-    def hdri_skybox(property: str = 'name') -> str:
+    def hdri_skybox(property: str = "name") -> str:
         """
         HDRi Skybox component properties.
           - 'Cubemap Texture': Asset.id for the texture used in cubemap rendering (File Type *.exr.streamingimage).
@@ -998,14 +997,14 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'HDRi Skybox',
-            'Cubemap Texture': 'Controller|Configuration|Cubemap Texture',
-            'Exposure': 'Controller|Configuration|Exposure',
+            "name": "HDRi Skybox",
+            "Cubemap Texture": "Controller|Configuration|Cubemap Texture",
+            "Exposure": "Controller|Configuration|Exposure",
         }
         return properties[property]
 
     @staticmethod
-    def light(property: str = 'name') -> str:
+    def light(property: str = "name") -> str:
         """
         Light component properties.
           - 'Light type' from atom_constants.py LIGHT_TYPES
@@ -1030,31 +1029,30 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Light',
-            'Light type': 'Controller|Configuration|Light type',
-            'Color': 'Controller|Configuration|Color',
-            'Intensity mode': 'Controller|Configuration|Intensity mode',
-            'Intensity': 'Controller|Configuration|Intensity',
-            'Attenuation radius Mode': 'Controller|Configuration|Attenuation radius|Mode',
-            'Attenuation radius Radius': 'Controller|Configuration|Attenuation radius|Radius',
-            'Enable shadow': 'Controller|Configuration|Shadows|Enable shadow',
-            'Shadows Bias': 'Controller|Configuration|Shadows|Bias',
-            'Normal shadow bias': 'Controller|Configuration|Shadows|Normal shadow bias',
-            'Shadowmap size': 'Controller|Configuration|Shadows|Shadowmap size',
-            'Shadow filter method': 'Controller|Configuration|Shadows|Shadow filter method',
-            'Filtering sample count': 'Controller|Configuration|Shadows|Filtering sample count',
-            'ESM exponent': 'Controller|Configuration|Shadows|ESM exponent',
-            'Enable shutters': 'Controller|Configuration|Shutters|Enable shutters',
-            'Inner angle': 'Controller|Configuration|Shutters|Inner angle',
-            'Outer angle': 'Controller|Configuration|Shutters|Outer angle',
-            'Both directions': 'Controller|Configuration|Both directions',
-            'Fast approximation': 'Controller|Configuration|Fast approximation',
-
+            "name": "Light",
+            "Light type": "Controller|Configuration|Light type",
+            "Color": "Controller|Configuration|Color",
+            "Intensity mode": "Controller|Configuration|Intensity mode",
+            "Intensity": "Controller|Configuration|Intensity",
+            "Attenuation radius Mode": "Controller|Configuration|Attenuation radius|Mode",
+            "Attenuation radius Radius": "Controller|Configuration|Attenuation radius|Radius",
+            "Enable shadow": "Controller|Configuration|Shadows|Enable shadow",
+            "Shadows Bias": "Controller|Configuration|Shadows|Bias",
+            "Normal shadow bias": "Controller|Configuration|Shadows|Normal shadow bias",
+            "Shadowmap size": "Controller|Configuration|Shadows|Shadowmap size",
+            "Shadow filter method": "Controller|Configuration|Shadows|Shadow filter method",
+            "Filtering sample count": "Controller|Configuration|Shadows|Filtering sample count",
+            "ESM exponent": "Controller|Configuration|Shadows|ESM exponent",
+            "Enable shutters": "Controller|Configuration|Shutters|Enable shutters",
+            "Inner angle": "Controller|Configuration|Shutters|Inner angle",
+            "Outer angle": "Controller|Configuration|Shutters|Outer angle",
+            "Both directions": "Controller|Configuration|Both directions",
+            "Fast approximation": "Controller|Configuration|Fast approximation",
         }
         return properties[property]
 
     @staticmethod
-    def look_modification(property: str = 'name') -> str:
+    def look_modification(property: str = "name") -> str:
         """
         Look Modification component properties. Requires PostFX Layer component.
           - 'requires' a list of component names as strings required by this component.
@@ -1068,18 +1066,18 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Look Modification',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'Enable look modification': 'Controller|Configuration|Enable look modification',
-            'Color Grading LUT': 'Controller|Configuration|Color Grading LUT',
-            'Shaper Type': 'Controller|Configuration|Shaper Type',
-            'LUT Intensity': 'Controller|Configuration|LUT Intensity',
-            'LUT Override': 'Controller|Configuration|LUT Override',
+            "name": "Look Modification",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "Enable look modification": "Controller|Configuration|Enable look modification",
+            "Color Grading LUT": "Controller|Configuration|Color Grading LUT",
+            "Shaper Type": "Controller|Configuration|Shaper Type",
+            "LUT Intensity": "Controller|Configuration|LUT Intensity",
+            "LUT Override": "Controller|Configuration|LUT Override",
         }
         return properties[property]
 
     @staticmethod
-    def material(property: str = 'name') -> str:
+    def material(property: str = "name") -> str:
         """
         Material component properties. Requires one of Actor OR Mesh component.
           - 'requires' a list of component names as strings required by this component.
@@ -1092,17 +1090,20 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Material',
-            'requires': [AtomComponentProperties.actor(), AtomComponentProperties.mesh()],
-            'Material Asset': 'Default Material|Material Asset',
-            'Enable LOD Materials': 'Enable LOD Materials',
-            'LOD Materials': 'LOD Materials',
-            'Model Materials': 'Model Materials',
+            "name": "Material",
+            "requires": [
+                AtomComponentProperties.actor(),
+                AtomComponentProperties.mesh(),
+            ],
+            "Material Asset": "Default Material|Material Asset",
+            "Enable LOD Materials": "Enable LOD Materials",
+            "LOD Materials": "LOD Materials",
+            "Model Materials": "Model Materials",
         }
         return properties[property]
 
     @staticmethod
-    def mesh(property: str = 'name') -> str:
+    def mesh(property: str = "name") -> str:
         """
         Mesh component properties.
           - 'Model Asset' Asset.id of the mesh model.
@@ -1122,23 +1123,23 @@ class AtomComponentProperties:
         :rtype: str
         """
         properties = {
-            'name': 'Mesh',
-            'Model Asset': 'Controller|Configuration|Model Asset',
-            'Mesh Asset': 'Controller|Configuration|Model Asset',
-            'Sort Key': 'Controller|Configuration|Sort Key',
-            'Use ray tracing': 'Controller|Configuration|Use ray tracing',
-            'Lod Type': 'Controller|Configuration|Lod Type',
-            'Exclude from reflection cubemaps': 'Controller|Configuration|Exclude from reflection cubemaps',
-            'Use Forward Pass IBL Specular': 'Controller|Configuration|Use Forward Pass IBL Specular',
-            'Minimum Screen Coverage': 'Controller|Configuration|Lod Configuration|Minimum Screen Coverage',
-            'Quality Decay Rate': 'Controller|Configuration|Lod Configuration|Quality Decay Rate',
-            'Lod Override': 'Controller|Configuration|Lod Configuration|Lod Override',
-            'Vertex Count LOD0': 'Model Stats|Mesh Stats|LOD 0|Vert Count'
+            "name": "Mesh",
+            "Model Asset": "Controller|Configuration|Model Asset",
+            "Mesh Asset": "Controller|Configuration|Model Asset",
+            "Sort Key": "Controller|Configuration|Sort Key",
+            "Use ray tracing": "Controller|Configuration|Use ray tracing",
+            "Lod Type": "Controller|Configuration|Lod Type",
+            "Exclude from reflection cubemaps": "Controller|Configuration|Exclude from reflection cubemaps",
+            "Use Forward Pass IBL Specular": "Controller|Configuration|Use Forward Pass IBL Specular",
+            "Minimum Screen Coverage": "Controller|Configuration|Lod Configuration|Minimum Screen Coverage",
+            "Quality Decay Rate": "Controller|Configuration|Lod Configuration|Quality Decay Rate",
+            "Lod Override": "Controller|Configuration|Lod Configuration|Lod Override",
+            "Vertex Count LOD0": "Model Stats|Mesh Stats|LOD 0|Vert Count",
         }
         return properties[property]
 
     @staticmethod
-    def occlusion_culling_plane(property: str = 'name') -> str:
+    def occlusion_culling_plane(property: str = "name") -> str:
         """
         Occlusion Culling Plane component properties.
           - 'Show Visualization' Toggles the visual display of the Occlusion Culling Plane in edit and game mode (bool)
@@ -1147,14 +1148,14 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Occlusion Culling Plane',
-            'Show Visualization': 'Controller|Configuration|Settings|Show Visualization',
-            'Transparent Visualization': 'Controller|Configuration|Settings|Transparent Visualization',
+            "name": "Occlusion Culling Plane",
+            "Show Visualization": "Controller|Configuration|Settings|Show Visualization",
+            "Transparent Visualization": "Controller|Configuration|Settings|Transparent Visualization",
         }
         return properties[property]
 
     @staticmethod
-    def physical_sky(property: str = 'name') -> str:
+    def physical_sky(property: str = "name") -> str:
         """
         Physical Sky component properties.
         - 'Intensity Mode' Specifying the light unit type (emum, Ev100, Nit, default Ev100).
@@ -1171,21 +1172,21 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Physical Sky',
-            'Intensity Mode': 'Controller|Configuration|Intensity Mode',
-            'Sky Intensity': 'Controller|Configuration|Sky Intensity',
-            'Sun Intensity': 'Controller|Configuration|Sun Intensity',
-            'Turbidity': 'Controller|Configuration|Turbidity',
-            'Sun Radius Factor': 'Controller|Configuration|Sun Radius Factor',
-            'Enable Fog': 'Controller|Configuration|Fog|Enable Fog',
-            'Fog Color': 'Controller|Configuration|Fog|Fog Color',
-            'Fog Top Height': 'Controller|Configuration|Fog|Fog Top Height',
-            'Fog Bottom Height': 'Controller|Configuration|Fog|Fog Bottom Height',
+            "name": "Physical Sky",
+            "Intensity Mode": "Controller|Configuration|Intensity Mode",
+            "Sky Intensity": "Controller|Configuration|Sky Intensity",
+            "Sun Intensity": "Controller|Configuration|Sun Intensity",
+            "Turbidity": "Controller|Configuration|Turbidity",
+            "Sun Radius Factor": "Controller|Configuration|Sun Radius Factor",
+            "Enable Fog": "Controller|Configuration|Fog|Enable Fog",
+            "Fog Color": "Controller|Configuration|Fog|Fog Color",
+            "Fog Top Height": "Controller|Configuration|Fog|Fog Top Height",
+            "Fog Bottom Height": "Controller|Configuration|Fog|Fog Bottom Height",
         }
         return properties[property]
 
     @staticmethod
-    def postfx_layer(property: str = 'name') -> str:
+    def postfx_layer(property: str = "name") -> str:
         """
         PostFX Layer component properties.
           - 'Layer Category' frequency at which the settings will be applied from atom_constants.py POSTFX_LAYER_CATEGORY
@@ -1199,17 +1200,17 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'PostFX Layer',
-            'Layer Category': 'Controller|Configuration|Layer Category',
-            'Priority': 'Controller|Configuration|Priority',
-            'Weight': 'Controller|Configuration|Weight',
-            'Select Camera Tags Only': 'Controller|Configuration|Select Camera Tags Only',
-            'Excluded Camera Tags': 'Controller|Configuration|Excluded Camera Tags',
+            "name": "PostFX Layer",
+            "Layer Category": "Controller|Configuration|Layer Category",
+            "Priority": "Controller|Configuration|Priority",
+            "Weight": "Controller|Configuration|Weight",
+            "Select Camera Tags Only": "Controller|Configuration|Select Camera Tags Only",
+            "Excluded Camera Tags": "Controller|Configuration|Excluded Camera Tags",
         }
         return properties[property]
 
     @staticmethod
-    def postfx_gradient(property: str = 'name') -> str:
+    def postfx_gradient(property: str = "name") -> str:
         """
         PostFX Gradient Weight Modifier component properties. Requires PostFX Layer component.
           - 'requires' a list of component names as strings required by this component.
@@ -1236,26 +1237,26 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'PostFX Gradient Weight Modifier',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'Gradient Entity Id': 'Controller|Configuration|Gradient Sampler|Gradient Entity Id',
-            'Opacity': 'Controller|Configuration|Gradient Sampler|Opacity',
-            'Invert Input': 'Controller|Configuration|Gradient Sampler|Advanced|Invert Input',
-            'Enable Levels': 'Controller|Configuration|Gradient Sampler|Enable Levels',
-            'Input Max': 'Controller|Configuration|Gradient Sampler|Enable Levels|Input Max',
-            'Input Min': 'Controller|Configuration|Gradient Sampler|Enable Levels|Input Min',
-            'Input Mid': 'Controller|Configuration|Gradient Sampler|Enable Levels|Input Mid',
-            'Output Max': 'Controller|Configuration|Gradient Sampler|Enable Levels|Output Max',
-            'Output Min': 'Controller|Configuration|Gradient Sampler|Enable Levels|Output Min',
-            'Enable Transform': 'Controller|Configuration|Gradient Sampler|Enable Transform',
-            'Scale': 'Controller|Configuration|Gradient Sampler|Enable Transform|Scale',
-            'Rotate': 'Controller|Configuration|Gradient Sampler|Enable Transform|Rotate',
-            'Translate': 'Controller|Configuration|Gradient Sampler|Enable Transform|Translate',
+            "name": "PostFX Gradient Weight Modifier",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "Gradient Entity Id": "Controller|Configuration|Gradient Sampler|Gradient Entity Id",
+            "Opacity": "Controller|Configuration|Gradient Sampler|Opacity",
+            "Invert Input": "Controller|Configuration|Gradient Sampler|Advanced|Invert Input",
+            "Enable Levels": "Controller|Configuration|Gradient Sampler|Enable Levels",
+            "Input Max": "Controller|Configuration|Gradient Sampler|Enable Levels|Input Max",
+            "Input Min": "Controller|Configuration|Gradient Sampler|Enable Levels|Input Min",
+            "Input Mid": "Controller|Configuration|Gradient Sampler|Enable Levels|Input Mid",
+            "Output Max": "Controller|Configuration|Gradient Sampler|Enable Levels|Output Max",
+            "Output Min": "Controller|Configuration|Gradient Sampler|Enable Levels|Output Min",
+            "Enable Transform": "Controller|Configuration|Gradient Sampler|Enable Transform",
+            "Scale": "Controller|Configuration|Gradient Sampler|Enable Transform|Scale",
+            "Rotate": "Controller|Configuration|Gradient Sampler|Enable Transform|Rotate",
+            "Translate": "Controller|Configuration|Gradient Sampler|Enable Transform|Translate",
         }
         return properties[property]
 
     @staticmethod
-    def postfx_radius(property: str = 'name') -> str:
+    def postfx_radius(property: str = "name") -> str:
         """
         PostFX Radius Weight Modifier component properties. Requires PostFX Layer component.
           - 'requires' a list of component names as strings required by this component.
@@ -1265,14 +1266,14 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'PostFX Radius Weight Modifier',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'Radius': 'Controller|Configuration|Radius',
+            "name": "PostFX Radius Weight Modifier",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "Radius": "Controller|Configuration|Radius",
         }
         return properties[property]
 
     @staticmethod
-    def postfx_shape(property: str = 'name') -> str:
+    def postfx_shape(property: str = "name") -> str:
         """
         PostFX Shape Weight Modifier component properties. Requires PostFX Layer and one of 'shapes' listed.
           - 'requires' a list of component names as strings required by this component.
@@ -1283,16 +1284,26 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'PostFX Shape Weight Modifier',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'shapes': ['Axis Aligned Box Shape', 'Box Shape', 'Capsule Shape', 'Compound Shape', 'Cylinder Shape',
-                       'Disk Shape', 'Polygon Prism Shape', 'Quad Shape', 'Sphere Shape', 'Shape Reference'],
-            'Fall-off Distance': 'Controller|Configuration|Fall-off Distance',
+            "name": "PostFX Shape Weight Modifier",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "shapes": [
+                "Axis Aligned Box Shape",
+                "Box Shape",
+                "Capsule Shape",
+                "Compound Shape",
+                "Cylinder Shape",
+                "Disk Shape",
+                "Polygon Prism Shape",
+                "Quad Shape",
+                "Sphere Shape",
+                "Shape Reference",
+            ],
+            "Fall-off Distance": "Controller|Configuration|Fall-off Distance",
         }
         return properties[property]
 
     @staticmethod
-    def reflection_probe(property: str = 'name') -> str:
+    def reflection_probe(property: str = "name") -> str:
         """
         Reflection Probe component properties. Requires one of 'shapes' listed.
           - 'shapes' a list of supported shapes as component names.
@@ -1310,23 +1321,23 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Reflection Probe',
-            'shapes': ['Axis Aligned Box Shape', 'Box Shape'],
-            'Bake Exposure': 'Cubemap Bake|Bake Exposure',
-            'Parallax Correction': 'Controller|Configuration|Settings|Parallax Correction',
-            'Show Visualization': 'Controller|Configuration|Settings|Show Visualization',
-            'Settings Exposure': 'Controller|Configuration|Settings|Exposure',
-            'Use Baked Cubemap': 'Cubemap|Use Baked Cubemap',
-            'Baked Cubemap Quality': 'Cubemap|Baked Cubemap Quality',
-            'Height': 'Controller|Configuration|Inner Extents|Height',
-            'Length': 'Controller|Configuration|Inner Extents|Length',
-            'Width': 'Controller|Configuration|Inner Extents|Width',
-            'Baked Cubemap Path': 'Cubemap|Baked Cubemap Path',
+            "name": "Reflection Probe",
+            "shapes": ["Axis Aligned Box Shape", "Box Shape"],
+            "Bake Exposure": "Cubemap Bake|Bake Exposure",
+            "Parallax Correction": "Controller|Configuration|Settings|Parallax Correction",
+            "Show Visualization": "Controller|Configuration|Settings|Show Visualization",
+            "Settings Exposure": "Controller|Configuration|Settings|Exposure",
+            "Use Baked Cubemap": "Cubemap|Use Baked Cubemap",
+            "Baked Cubemap Quality": "Cubemap|Baked Cubemap Quality",
+            "Height": "Controller|Configuration|Inner Extents|Height",
+            "Length": "Controller|Configuration|Inner Extents|Length",
+            "Width": "Controller|Configuration|Inner Extents|Width",
+            "Baked Cubemap Path": "Cubemap|Baked Cubemap Path",
         }
         return properties[property]
 
     @staticmethod
-    def sky_atmosphere(property: str = 'name') -> str:
+    def sky_atmosphere(property: str = "name") -> str:
         """
         Sky Atmosphere component properties
           - 'Ground albedo' Additional light from the surface of the ground (Vector3 float) default (0.0,0.0,0.0)
@@ -1361,40 +1372,40 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Sky Atmosphere',
-            'Ground albedo': 'Controller|Configuration|Planet|Ground albedo',
-            'Ground radius': 'Controller|Configuration|Planet|Ground radius',
-            'Origin': 'Controller|Configuration|Planet|Origin',
-            'Atmosphere height': 'Controller|Configuration|Atmosphere|Atmosphere height',
-            'Illuminance factor': 'Controller|Configuration|Atmosphere|Illuminance factor',
-            'Mie absorption scale': 'Controller|Configuration|Atmosphere|Mie absorption scale',
-            'Mie absorption': 'Controller|Configuration|Atmosphere|Mie absorption',
-            'Mie exponential distribution': 'Controller|Configuration|Atmosphere|Mie exponential distribution',
-            'Mie scattering scale': 'Controller|Configuration|Atmosphere|Mie scattering scale',
-            'Mie scattering': 'Controller|Configuration|Atmosphere|Mie scattering',
-            'Ozone absorption scale': 'Controller|Configuration|Atmosphere|Ozone absorption scale',
-            'Ozone absorption': 'Controller|Configuration|Atmosphere|Ozone absorption',
-            'Rayleigh exponential distribution': 'Controller|Configuration|Atmosphere|Rayleigh exponential distribution',
-            'Rayleigh scattering scale': 'Controller|Configuration|Atmosphere|Rayleigh scattering scale',
-            'Rayleigh scattering': 'Controller|Configuration|Atmosphere|Rayleigh scattering',
-            'Show sun': 'Controller|Configuration|Sun|Show sun',
-            'Sun color': 'Controller|Configuration|Sun|Sun color',
-            'Sun falloff factor': 'Controller|Configuration|Sun|Sun falloff factor',
-            'Sun limb color': 'Controller|Configuration|Sun|Sun limb color',
-            'Sun luminance factor': 'Controller|Configuration|Sun|Sun luminance factor',
-            'Sun orientation': 'Controller|Configuration|Sun|Sun orientation',
-            'Sun radius factor': 'Controller|Configuration|Sun|Sun radius factor',
-            'Enable shadows': 'Controller|Configuration|Advanced|Enable shadows',
-            'Fast sky': 'Controller|Configuration|Advanced|Fast sky',
-            'Max samples': 'Controller|Configuration|Advanced|Max samples',
-            'Min samples': 'Controller|Configuration|Advanced|Min samples',
-            'Near clip': 'Controller|Configuration|Advanced|Near clip',
-            'Near fade distance': 'Controller|Configuration|Advanced|Near fade distance',
+            "name": "Sky Atmosphere",
+            "Ground albedo": "Controller|Configuration|Planet|Ground albedo",
+            "Ground radius": "Controller|Configuration|Planet|Ground radius",
+            "Origin": "Controller|Configuration|Planet|Origin",
+            "Atmosphere height": "Controller|Configuration|Atmosphere|Atmosphere height",
+            "Illuminance factor": "Controller|Configuration|Atmosphere|Illuminance factor",
+            "Mie absorption scale": "Controller|Configuration|Atmosphere|Mie absorption scale",
+            "Mie absorption": "Controller|Configuration|Atmosphere|Mie absorption",
+            "Mie exponential distribution": "Controller|Configuration|Atmosphere|Mie exponential distribution",
+            "Mie scattering scale": "Controller|Configuration|Atmosphere|Mie scattering scale",
+            "Mie scattering": "Controller|Configuration|Atmosphere|Mie scattering",
+            "Ozone absorption scale": "Controller|Configuration|Atmosphere|Ozone absorption scale",
+            "Ozone absorption": "Controller|Configuration|Atmosphere|Ozone absorption",
+            "Rayleigh exponential distribution": "Controller|Configuration|Atmosphere|Rayleigh exponential distribution",
+            "Rayleigh scattering scale": "Controller|Configuration|Atmosphere|Rayleigh scattering scale",
+            "Rayleigh scattering": "Controller|Configuration|Atmosphere|Rayleigh scattering",
+            "Show sun": "Controller|Configuration|Sun|Show sun",
+            "Sun color": "Controller|Configuration|Sun|Sun color",
+            "Sun falloff factor": "Controller|Configuration|Sun|Sun falloff factor",
+            "Sun limb color": "Controller|Configuration|Sun|Sun limb color",
+            "Sun luminance factor": "Controller|Configuration|Sun|Sun luminance factor",
+            "Sun orientation": "Controller|Configuration|Sun|Sun orientation",
+            "Sun radius factor": "Controller|Configuration|Sun|Sun radius factor",
+            "Enable shadows": "Controller|Configuration|Advanced|Enable shadows",
+            "Fast sky": "Controller|Configuration|Advanced|Fast sky",
+            "Max samples": "Controller|Configuration|Advanced|Max samples",
+            "Min samples": "Controller|Configuration|Advanced|Min samples",
+            "Near clip": "Controller|Configuration|Advanced|Near clip",
+            "Near fade distance": "Controller|Configuration|Advanced|Near fade distance",
         }
         return properties[property]
 
     @staticmethod
-    def ssao(property: str = 'name') -> str:
+    def ssao(property: str = "name") -> str:
         """
         SSAO component properties. Requires PostFX Layer component.
           - 'requires' a list of component names as strings required by this component.
@@ -1419,29 +1430,29 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'SSAO',
-            'requires': [AtomComponentProperties.postfx_layer()],
-            'Enable SSAO': 'Controller|Configuration|Enable SSAO',
-            'SSAO Strength': 'Controller|Configuration|SSAO Strength',
-            'Sampling Radius': 'Controller|Configuration|Sampling Radius',
-            'Enable Blur': 'Controller|Configuration|Enable Blur',
-            'Blur Strength': 'Controller|Configuration|Blur Strength',
-            'Blur Edge Threshold': 'Controller|Configuration|Blur Edge Threshold',
-            'Blur Sharpness': 'Controller|Configuration|Blur Sharpness',
-            'Enable Downsample': 'Controller|Configuration|Enable Downsample',
-            'Enabled Override': 'Controller|Configuration|Overrides|Enabled Override',
-            'Strength Override': 'Controller|Configuration|Overrides|Strength Override',
-            'SamplingRadius Override': 'Controller|Configuration|Overrides|SamplingRadius Override',
-            'EnableBlur Override': 'Controller|Configuration|Overrides|EnableBlur Override',
-            'BlurConstFalloff Override': 'Controller|Configuration|Overrides|BlurConstFalloff Override',
-            'BlurDepthFalloffStrength Override': 'Controller|Configuration|Overrides|BlurDepthFalloffStrength Override',
-            'BlurDepthFalloffThreshold Override': 'Controller|Configuration|Overrides|BlurDepthFalloffThreshold Override',
-            'EnableDownsample Override': 'Controller|Configuration|Overrides|EnableDownsample Override',
+            "name": "SSAO",
+            "requires": [AtomComponentProperties.postfx_layer()],
+            "Enable SSAO": "Controller|Configuration|Enable SSAO",
+            "SSAO Strength": "Controller|Configuration|SSAO Strength",
+            "Sampling Radius": "Controller|Configuration|Sampling Radius",
+            "Enable Blur": "Controller|Configuration|Enable Blur",
+            "Blur Strength": "Controller|Configuration|Blur Strength",
+            "Blur Edge Threshold": "Controller|Configuration|Blur Edge Threshold",
+            "Blur Sharpness": "Controller|Configuration|Blur Sharpness",
+            "Enable Downsample": "Controller|Configuration|Enable Downsample",
+            "Enabled Override": "Controller|Configuration|Overrides|Enabled Override",
+            "Strength Override": "Controller|Configuration|Overrides|Strength Override",
+            "SamplingRadius Override": "Controller|Configuration|Overrides|SamplingRadius Override",
+            "EnableBlur Override": "Controller|Configuration|Overrides|EnableBlur Override",
+            "BlurConstFalloff Override": "Controller|Configuration|Overrides|BlurConstFalloff Override",
+            "BlurDepthFalloffStrength Override": "Controller|Configuration|Overrides|BlurDepthFalloffStrength Override",
+            "BlurDepthFalloffThreshold Override": "Controller|Configuration|Overrides|BlurDepthFalloffThreshold Override",
+            "EnableDownsample Override": "Controller|Configuration|Overrides|EnableDownsample Override",
         }
         return properties[property]
 
     @staticmethod
-    def stars(property: str = 'name') -> str:
+    def stars(property: str = "name") -> str:
         """
         Stars component properties
           - 'Stars Asset' Asset.id of the star asset file (default.star)
@@ -1452,11 +1463,11 @@ class AtomComponentProperties:
         :return: Full property path OR component name if no property specified.
         """
         properties = {
-            'name': 'Stars',
-            'Stars Asset': 'Controller|Configuration|Stars Asset',
-            'Exposure': 'Controller|Configuration|Exposure',
-            'Twinkle rate': 'Controller|Configuration|Twinkle rate',
-            'Radius factor': 'Controller|Configuration|Radius factor',
+            "name": "Stars",
+            "Stars Asset": "Controller|Configuration|Stars Asset",
+            "Exposure": "Controller|Configuration|Exposure",
+            "Twinkle rate": "Controller|Configuration|Twinkle rate",
+            "Radius factor": "Controller|Configuration|Radius factor",
         }
         return properties[property]
 
@@ -1465,6 +1476,7 @@ class AtomToolsDocumentRequestBusEvents(object):
     """
     Used to store string constants representing the bus options for azlmbr.bus.AtomToolsDocumentRequestBus
     """
+
     GET_ABSOLUTE_PATH = "GetAbsolutePath"
     OPEN = "Open"
     REOPEN = "Reopen"
@@ -1487,6 +1499,7 @@ class AtomToolsDocumentSystemRequestBusEvents(object):
     """
     Used to store string constants representing the bus options for azlmbr.bus.AtomToolsDocumentSystemRequestBus
     """
+
     CREATE_DOCUMENT_FROM_TYPE_NAME = "CreateDocumentFromTypeName"
     CREATE_DOCUMENT_FROM_FILE_TYPE = "CreateDocumentFromFileType"
     CREATE_DOCUMENT_FROM_FILE_PATH = "CreateDocumentFromFilePath"
@@ -1514,6 +1527,7 @@ class AtomToolsMainWindowRequestBusEvents(object):
     """
     Used to store string constants representing the bus options for azlmbr.bus.AtomToolsMainWindowRequestBus
     """
+
     ACTIVATE_WINDOW = "ActivateWindow"
     SET_DOCK_WIDGET_VISIBLE = "SetDockWidgetVisible"
     IS_DOCK_WIDGET_VISIBLE = "IsDockWidgetVisible"
@@ -1531,6 +1545,7 @@ class EntityPreviewViewportSettingsRequestBusEvents(object):
     """
     Used to store string constants representing the bus options for azlmbr.bus.EntityPreviewViewportSettingsRequestBus
     """
+
     SET_LIGHTING_PRESET = "SetLightingPreset"
     GET_LIGHTING_PRESET = "GetLightingPreset"
     GET_LAST_LIGHTING_PRESET_ASSET_ID = "GetLastLightingPresetAssetId"
@@ -1538,7 +1553,9 @@ class EntityPreviewViewportSettingsRequestBusEvents(object):
     LOAD_LIGHTING_PRESET = "LoadLightingPreset"
     LOAD_LIGHTING_PRESET_BY_ASSET_ID = "LoadLightingPresetByAssetId"
     GET_LAST_LIGHTING_PRESET_PATH = "GetLastLightingPresetPath"
-    GET_LAST_LIGHTING_PRESET_PATH_WITHOUT_ALIAS = "GetLastLightingPresetPathWithoutAlias"
+    GET_LAST_LIGHTING_PRESET_PATH_WITHOUT_ALIAS = (
+        "GetLastLightingPresetPathWithoutAlias"
+    )
     REGISTER_LIGHTING_PRESET_PATH = "RegisterLightingPresetPath"
     UNREGISTER_LIGHTING_PRESET_PATH = "UnregisterLightingPresetPath"
     GET_REGISTERED_LIGHTING_PRESET_PATHS = "GetRegisteredLightingPresetPaths"
@@ -1556,7 +1573,9 @@ class EntityPreviewViewportSettingsRequestBusEvents(object):
     LOAD_RENDER_PIPELINE = "LoadRenderPipeline"
     LOAD_RENDER_PIPELINE_BY_ASSET_ID = "LoadRenderPipelineByAssetId"
     GET_LAST_RENDER_PIPELINE_PATh = "GetLastRenderPipelinePath"
-    GET_LAST_RENDER_PIPELINE_PATH_WITHOUT_ALIAS = "GetLastRenderPipelinePathWithoutAlias"
+    GET_LAST_RENDER_PIPELINE_PATH_WITHOUT_ALIAS = (
+        "GetLastRenderPipelinePathWithoutAlias"
+    )
     REGISTER_RENDER_PIPELINE_PATH = "RegisterRenderPipelinePath"
     UNREGISTER_RENDER_PIPELINE_PATH = "UnregisterRenderPipelinePath"
     GET_REGISTERED_RENDER_PIPELINE_PATHS = "GetRegisteredRenderPipelinePaths"
@@ -1574,6 +1593,7 @@ class DynamicNodeManagerRequestBusEvents(object):
     """
     Used to store string constants representing the bus options for azlmbr.atomtools.DynamicNodeManagerRequestBus
     """
+
     LOAD_CONFIG_FILES = "LoadConfigFiles"
     REGISTER_CONFIG = "RegisterConfig"
     GET_CONFIG_BY_ID = "GetConfigById"
@@ -1586,6 +1606,7 @@ class GraphDocumentRequestBusEvents(object):
     """
     Used to store string constants representing the bus options for azlmbr.atomtools.GraphDocumentRequestBus
     """
+
     GET_GRAPH = "GetGraph"
     GET_GRAPH_ID = "GetGraphId"
     GET_GRAPH_NAME = "GetGraphName"
@@ -1600,6 +1621,7 @@ class GraphControllerRequestBusEvents(object):
     """
     Used to store string constants representing the bus options for azlmbr.editor.graph.GraphControllerRequestBus
     """
+
     ADD_NODE = "AddNode"
     REMOVE_NODE = "RemoveNode"
     GET_POSITION = "GetPosition"

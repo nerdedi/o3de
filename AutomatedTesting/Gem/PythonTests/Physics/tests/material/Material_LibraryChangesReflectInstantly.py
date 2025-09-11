@@ -192,6 +192,7 @@ def Material_LibraryChangesReflectInstantly():
     # Helper Functions
     class Entity:
         terrain_id = None
+
         def __init__(self, name, test_index):
             # Type (str, int, int, Entity) -> None
             self.id = general.find_game_entity(name)
@@ -205,11 +206,15 @@ def Material_LibraryChangesReflectInstantly():
 
         @property
         def position(self):
-            return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
+            return azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldTranslation", self.id
+            )
 
         @property
         def velocity(self):
-            return azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "GetLinearVelocity", self.id)
+            return azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "GetLinearVelocity", self.id
+            )
 
         @property
         def is_moving_up(self):
@@ -254,64 +259,89 @@ def Material_LibraryChangesReflectInstantly():
             # Type (Entity, Entity, Entity) -> None
             # Validates sphere is where it should be
             position_valid = terrain.position.z < sphere.position.z < trigger.position.z
-            initial_position = Tests.__dict__["{}_initial_position_{}".format(sphere.name, self.index)]
+            initial_position = Tests.__dict__[
+                "{}_initial_position_{}".format(sphere.name, self.index)
+            ]
             Report.critical_result(initial_position, position_valid)
 
         def verify_sphere_initial_velocity(self, sphere):
             # Type (Entity) -> None
             # Validates that sphere in moving in the correct direction
-            initial_velocity = Tests.__dict__["{}_initial_velocity_{}".format(sphere.name, self.index)]
+            initial_velocity = Tests.__dict__[
+                "{}_initial_velocity_{}".format(sphere.name, self.index)
+            ]
             Report.critical_result(initial_velocity, not sphere.is_moving_up)
 
         def verify_sphere_collision(self, sphere):
             # Type (Entity) -> None
             # Reports sphere collision, ends test if it hasn't occurred
-            collision = Tests.__dict__["{}_collision_{}".format(sphere.name, self.index)]
+            collision = Tests.__dict__[
+                "{}_collision_{}".format(sphere.name, self.index)
+            ]
             Report.critical_result(collision, sphere.collision_happened)
 
         def verify_sphere_final_velocity(self, sphere):
             # Type (Entity) -> None
             # Validates that sphere is moving in the correct direction
-            final_velocity = Tests.__dict__["{}_final_velocity_{}".format(sphere.name, self.index)]
+            final_velocity = Tests.__dict__[
+                "{}_final_velocity_{}".format(sphere.name, self.index)
+            ]
             Report.result(final_velocity, sphere.is_moving_up or sphere.is_not_moving)
 
         def verify_sphere_final_position(self, sphere, terrain):
             # Type (Entity, Entity) -> None
             # Validats that sphere is not where it shouldn't be
-            final_position = Tests.__dict__["{}_final_position_{}".format(sphere.name, self.index)]
+            final_position = Tests.__dict__[
+                "{}_final_position_{}".format(sphere.name, self.index)
+            ]
             Report.result(final_position, sphere.position.z > terrain.position.z)
 
         def verify_cube_initial_position(self, cube, block):
             # Type (Entity, Entity) -> None
             # Cube initially starts at a standstill
-            initial_position = Tests.__dict__["{}_initial_position_{}".format(cube.name, self.index)]
+            initial_position = Tests.__dict__[
+                "{}_initial_position_{}".format(cube.name, self.index)
+            ]
             Report.result(
                 initial_position,
-                cube.position.z > block.position.z and abs(cube.position.y - CUBE_Y_POSITION) < FLOAT_THRESHOLD,
+                cube.position.z > block.position.z
+                and abs(cube.position.y - CUBE_Y_POSITION) < FLOAT_THRESHOLD,
             )
 
         def verify_cube_initial_velocity(self, cube):
             # Type (Entity) -> None
             # Ensures that the cube starts not moving
-            initial_velocity = Tests.__dict__["{}_initial_velocity_{}".format(cube.name, self.index)]
-            Report.result(initial_velocity, cube.velocity.IsClose(CUBE_INITIAL_VELOCITY, 0.01))
+            initial_velocity = Tests.__dict__[
+                "{}_initial_velocity_{}".format(cube.name, self.index)
+            ]
+            Report.result(
+                initial_velocity, cube.velocity.IsClose(CUBE_INITIAL_VELOCITY, 0.01)
+            )
 
         def push_cubes(self, cube_list):
             # Type ([Entity]) -> None
             # Imparts a velocity into each cube in the y-direction
             for cube in cube_list:
-                azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "SetLinearVelocity", cube.id, CUBE_IMPULSE)
+                azlmbr.physics.RigidBodyRequestBus(
+                    azlmbr.bus.Event, "SetLinearVelocity", cube.id, CUBE_IMPULSE
+                )
 
         def verify_cube_final_velocity(self, cube):
             # Type (Entity) -> None
             # Ensures that cube has stopped moving
-            final_velocity = Tests.__dict__["{}_final_velocity_{}".format(cube.name, self.index)]
-            Report.result(final_velocity, cube.velocity.IsClose(CUBE_INITIAL_VELOCITY, 0.01))
+            final_velocity = Tests.__dict__[
+                "{}_final_velocity_{}".format(cube.name, self.index)
+            ]
+            Report.result(
+                final_velocity, cube.velocity.IsClose(CUBE_INITIAL_VELOCITY, 0.01)
+            )
 
         def verify_cube_final_position(self, cube, block):
             # Type (Entity, Entity) -> None
             # Validates that cube is not somewhere it shouldn't be
-            final_position = Tests.__dict__["{}_final_position_{}".format(cube.name, self.index)]
+            final_position = Tests.__dict__[
+                "{}_final_position_{}".format(cube.name, self.index)
+            ]
             Report.result(final_position, cube.position.z > block.position.z)
 
         def log_values(self, entity):
@@ -336,16 +366,24 @@ def Material_LibraryChangesReflectInstantly():
         # Type () -> bool
         # Uses a Physmaterial_Editor option to modify the material library associated with this level.
         # Changes are made to maximize the in level affect.
-        material_library = Physmaterial_Editor("c4044455_material_librarychangesinstantly.physmaterial")
-        dynamic_friction_modified = material_library.modify_material("to_change_dynamic_friction", "DynamicFriction", 10.0)
-        static_friction_modified = material_library.modify_material("to_change_static_friction", "StaticFriction", 10.0)
+        material_library = Physmaterial_Editor(
+            "c4044455_material_librarychangesinstantly.physmaterial"
+        )
+        dynamic_friction_modified = material_library.modify_material(
+            "to_change_dynamic_friction", "DynamicFriction", 10.0
+        )
+        static_friction_modified = material_library.modify_material(
+            "to_change_static_friction", "StaticFriction", 10.0
+        )
         friction_combine_modified = material_library.modify_material(
             "to_change_friction_combine", "FrictionCombine", "Maximum"
         )
         restitution_combine_modified = material_library.modify_material(
             "to_change_restitution_combine", "RestitutionCombine", "Maximum"
         )
-        restitution_modified = material_library.modify_material("to_change_restitution", "Restitution", 1.0)
+        restitution_modified = material_library.modify_material(
+            "to_change_restitution", "Restitution", 1.0
+        )
         material_deleted = material_library.delete_material("to_delete")
         material_library.save_changes()
         return (
@@ -406,10 +444,14 @@ def Material_LibraryChangesReflectInstantly():
             test.verify_cube_initial_velocity(cube)
 
         # 3) Wait for spheres to collide with terrain
-        helper.wait_for_condition(lambda: all([sphere.collision_happened for sphere in sphere_list]), TIMEOUT)
+        helper.wait_for_condition(
+            lambda: all([sphere.collision_happened for sphere in sphere_list]), TIMEOUT
+        )
 
         # 4) Wait for spheres to enter the trigger
-        helper.wait_for_condition(lambda: all([sphere.hit_trigger for sphere in sphere_list]), TIMEOUT)
+        helper.wait_for_condition(
+            lambda: all([sphere.hit_trigger for sphere in sphere_list]), TIMEOUT
+        )
         for sphere in sphere_list:
             test.log_values(sphere)
 
@@ -423,7 +465,9 @@ def Material_LibraryChangesReflectInstantly():
         test.push_cubes(cube_list)
 
         # 7) Wait for cubes to stop moving
-        helper.wait_for_condition(lambda: all([cube.is_not_moving for cube in cube_list]), TIMEOUT)
+        helper.wait_for_condition(
+            lambda: all([cube.is_not_moving for cube in cube_list]), TIMEOUT
+        )
 
         # 8) Log and validate cube results
         for cube in cube_list:
@@ -457,19 +501,38 @@ def Material_LibraryChangesReflectInstantly():
 
     # 6) Validate results
     # Restitution Modification Successful
-    Report.result(Tests.restitution, check_sphere(test_0.sphere_values, test_1.sphere_values, index=0))
+    Report.result(
+        Tests.restitution,
+        check_sphere(test_0.sphere_values, test_1.sphere_values, index=0),
+    )
     # Static Friction Modification Successful
-    Report.result(Tests.static_friction, check_static_friction(test_0.cube_distances, test_1.cube_distances))
+    Report.result(
+        Tests.static_friction,
+        check_static_friction(test_0.cube_distances, test_1.cube_distances),
+    )
     # Dynamic Friction Modification Successful
-    Report.result(Tests.dynamic_friction, check_dynamic_friction(test_0.cube_distances, test_1.cube_distances))
+    Report.result(
+        Tests.dynamic_friction,
+        check_dynamic_friction(test_0.cube_distances, test_1.cube_distances),
+    )
     # Friction Combine Modification Successful
-    Report.result(Tests.friction_combine, check_friction_combine(test_0.cube_distances, test_1.cube_distances))
+    Report.result(
+        Tests.friction_combine,
+        check_friction_combine(test_0.cube_distances, test_1.cube_distances),
+    )
     # Restitution Combine Modification Successful
-    Report.result(Tests.restitution_combine, check_sphere(test_0.sphere_values, test_1.sphere_values, index=1))
+    Report.result(
+        Tests.restitution_combine,
+        check_sphere(test_0.sphere_values, test_1.sphere_values, index=1),
+    )
     # Material Delete Successful
-    Report.result(Tests.delete_material, check_sphere(test_0.sphere_values, test_1.sphere_values, index=2))
+    Report.result(
+        Tests.delete_material,
+        check_sphere(test_0.sphere_values, test_1.sphere_values, index=2),
+    )
 
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_LibraryChangesReflectInstantly)

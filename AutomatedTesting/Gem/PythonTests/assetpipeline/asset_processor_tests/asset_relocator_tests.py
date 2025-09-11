@@ -26,7 +26,9 @@ from ly_test_tools.o3de import asset_processor as asset_processor_utils
 # Import fixtures
 from ..ap_fixtures.asset_processor_fixture import asset_processor as asset_processor
 from ..ap_fixtures.ap_setup_fixture import ap_setup_fixture as ap_setup_fixture
-from ..ap_fixtures.clear_testingAssets_dir import clear_testingAssets_dir as clear_testingAssets_dir
+from ..ap_fixtures.clear_testingAssets_dir import (
+    clear_testingAssets_dir as clear_testingAssets_dir,
+)
 
 # Import LyShared
 import ly_test_tools.o3de.pipeline_utils as utils
@@ -44,7 +46,6 @@ targetProjects = ["AutomatedTesting"]
 def local_resources(request, workspace, ap_setup_fixture):
     # Test-level asset folder. Directory contains a subfolder for each test (i.e. C1234567)
     ap_setup_fixture["tests_dir"] = os.path.dirname(os.path.realpath(__file__))
-
 
 
 @pytest.mark.usefixtures("asset_processor")
@@ -74,9 +75,17 @@ class TestsAssetRelocator_WindowsAndMac(object):
             ("C21968350", False, True, True),
         ],
     )
-    def test_WindowsMacPlatforms_RelocatorMoveFileWithConfirm_MoveSuccess(self, request, workspace, asset_processor,
-                                                                          ap_setup_fixture, testId, readonly, confirm,
-                                                                          success):
+    def test_WindowsMacPlatforms_RelocatorMoveFileWithConfirm_MoveSuccess(
+        self,
+        request,
+        workspace,
+        asset_processor,
+        ap_setup_fixture,
+        testId,
+        readonly,
+        confirm,
+        success,
+    ):
         """
         Tests whether tests with Move File Confirm are successful
 
@@ -90,7 +99,7 @@ class TestsAssetRelocator_WindowsAndMac(object):
            * Else: Validate move was not successful
         """
         env = ap_setup_fixture
-        copied_asset = ''
+        copied_asset = ""
 
         def teardown():
             # Delete files created during test
@@ -102,7 +111,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
 
         # testFile.txt is copied to the root of the dev/AutomatedTesting folder
         file_name = "testFile.txt"
-        source_folder, _ = asset_processor.prepare_test_environment(env["tests_dir"], "C21968345")
+        source_folder, _ = asset_processor.prepare_test_environment(
+            env["tests_dir"], "C21968345"
+        )
 
         copied_asset = os.path.join(source_folder, file_name)
         assert os.path.exists(copied_asset), f"{copied_asset} does not exist"
@@ -119,27 +130,34 @@ class TestsAssetRelocator_WindowsAndMac(object):
         moved_file = os.path.join(move_dir, file_name)
 
         # Command '--move' will create the MoveOutput directory for test when called
-        relative_move_str = f"{os.path.join(prefix, file_name)},{os.path.join(prefix, moved_file)}"
+        relative_move_str = (
+            f"{os.path.join(prefix, file_name)},{os.path.join(prefix, moved_file)}"
+        )
 
         extraParams = [f"--move={relative_move_str}"]
 
         # Set the '--confirm' flag based on test case
         if confirm:
-            extraParams = extraParams +["--confirm"]
+            extraParams = extraParams + ["--confirm"]
 
         asset_processor.batch_process(extra_params=extraParams)
 
         # Assert success based on expected results from individual test cases
         if success:
-            assert os.path.exists(os.path.join(source_folder, move_dir, file_name)), "The file was not moved when it was expected to"
+            assert os.path.exists(os.path.join(source_folder, move_dir, file_name)), (
+                "The file was not moved when it was expected to"
+            )
 
         else:
-            assert not os.path.exists(os.path.join(source_folder, move_dir, file_name)), "The file was expected to not move but was moved anyway"
+            assert not os.path.exists(
+                os.path.join(source_folder, move_dir, file_name)
+            ), "The file was expected to not move but was moved anyway"
 
     @pytest.mark.test_case_id("C21968385")
     @pytest.mark.assetpipeline
-    def test_WindowsMacPlatforms_LeaveEmptyFoldersWithoutCommands_RelocatorWarnsCommandsNeeded(self, asset_processor,
-                                                                                               ap_setup_fixture):
+    def test_WindowsMacPlatforms_LeaveEmptyFoldersWithoutCommands_RelocatorWarnsCommandsNeeded(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         Run the Asset Processor Batch command with the '--LeaveEmptyFolders' flag
         User should be warned that LeaveEmptyFolders needs to be used with the move or delete command
@@ -152,21 +170,28 @@ class TestsAssetRelocator_WindowsAndMac(object):
         3. Verify user is given a message that command requires to be used with --move or --delete
         """
         env = ap_setup_fixture
-        expected_message = "Command --leaveEmptyFolders must be used with command --move or --delete"
+        expected_message = (
+            "Command --leaveEmptyFolders must be used with command --move or --delete"
+        )
         unexpected_message = "RELOCATION REPORT"
 
         asset_processor.prepare_test_environment(env["tests_dir"], "C21968385")
 
         # AssetProcessorBatch --LeaveEmptyFolders
-        result, ap_batch_output = asset_processor.batch_process(capture_output=True, extra_params=[ "--LeaveEmptyFolders"])
+        result, ap_batch_output = asset_processor.batch_process(
+            capture_output=True, extra_params=["--LeaveEmptyFolders"]
+        )
 
         # Verify expected and unexpected messages in log
-        utils.validate_log_output(ap_batch_output, [expected_message], [unexpected_message])
+        utils.validate_log_output(
+            ap_batch_output, [expected_message], [unexpected_message]
+        )
 
     @pytest.mark.test_case_id("C21968388")
     @pytest.mark.assetpipeline
-    def test_WindowsMacPlatforms_MoveCorruptedPrefabFile_MoveSuccess(self, request, workspace, ap_setup_fixture,
-                                                                    asset_processor):
+    def test_WindowsMacPlatforms_MoveCorruptedPrefabFile_MoveSuccess(
+        self, request, workspace, ap_setup_fixture, asset_processor
+    ):
         """
         Asset with UUID/AssetId reference in non-standard format is
         successfully scanned and relocated to the MoveOutput folder.
@@ -181,7 +206,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
         env = ap_setup_fixture
 
         asset_folder = "C21968388"
-        source_dir, _ = asset_processor.prepare_test_environment(env["tests_dir"], asset_folder)
+        source_dir, _ = asset_processor.prepare_test_environment(
+            env["tests_dir"], asset_folder
+        )
 
         filename = "DependencyScannerAsset.prefab"
         file_path = os.path.join(source_dir, filename)
@@ -198,14 +225,21 @@ class TestsAssetRelocator_WindowsAndMac(object):
         fs.unlock_file(file_path)
 
         # Construct asset processor batch command
-        extraParams = [f"--move={os.path.join(asset_folder, filename)},{os.path.join(asset_folder, dst_rel_path)}", "--confirm"]
+        extraParams = [
+            f"--move={os.path.join(asset_folder, filename)},{os.path.join(asset_folder, dst_rel_path)}",
+            "--confirm",
+        ]
         result, _ = asset_processor.batch_process(extra_params=extraParams)
         assert result, "AP Batch failed"
-        assert os.path.exists(dst_full_path), f"{filename} was not found in MoveOutput. Expected {dst_full_path}"
+        assert os.path.exists(dst_full_path), (
+            f"{filename} was not found in MoveOutput. Expected {dst_full_path}"
+        )
 
     @pytest.mark.test_case_id("C21968365")
     @pytest.mark.assetpipeline
-    def test_WindowsMacPlatforms_UpdateReferences_MoveCommandMessage(self, ap_setup_fixture, asset_processor):
+    def test_WindowsMacPlatforms_UpdateReferences_MoveCommandMessage(
+        self, ap_setup_fixture, asset_processor
+    ):
         """
         UpdateReferences without move or delete
 
@@ -222,15 +256,20 @@ class TestsAssetRelocator_WindowsAndMac(object):
 
         # Build and run the AP Batch command: UpdateReferences without move or delete
         extraParams = ["--UpdateReferences", "--confirm"]
-        result, ap_batch_output = asset_processor.batch_process(capture_output=True, extra_params=extraParams)
+        result, ap_batch_output = asset_processor.batch_process(
+            capture_output=True, extra_params=extraParams
+        )
 
         # Verify expected and unexpected messages in log
-        utils.validate_log_output(ap_batch_output, [expected_message], [unexpected_message])
+        utils.validate_log_output(
+            ap_batch_output, [expected_message], [unexpected_message]
+        )
 
     @pytest.mark.test_case_id("C21968374")
     @pytest.mark.assetpipeline
-    def test_WindowsMacPlatforms_AllowBrokenDependenciesWithoutMoveDelete_RelocatorWarnsUser(self, asset_processor,
-                                                                                             ap_setup_fixture):
+    def test_WindowsMacPlatforms_AllowBrokenDependenciesWithoutMoveDelete_RelocatorWarnsUser(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         When running the relocator command --AllowBrokenDependencies without the move or delete flags, the user should
         be warned that the flags are necessary for the functionality to be used
@@ -249,13 +288,22 @@ class TestsAssetRelocator_WindowsAndMac(object):
 
         # AssetProcessorBatch --AllowBrokenDependencies --confirm
         extraParams = ["--AllowBrokenDependencies", "--confirm"]
-        result, ap_batch_output = asset_processor.batch_process(capture_output=True, extra_params=extraParams)
+        result, ap_batch_output = asset_processor.batch_process(
+            capture_output=True, extra_params=extraParams
+        )
 
         # Look for expected message inside the log and verify that no move or delete occurs in the log
-        utils.validate_log_output(ap_batch_output, [expected_message], [unexpected_message])
+        utils.validate_log_output(
+            ap_batch_output, [expected_message], [unexpected_message]
+        )
 
-    @pytest.mark.skipif(ly_test_tools.WINDOWS, reason="https://github.com/o3de/o3de/issues/14514")
-    @pytest.mark.skipif(ly_test_tools.LINUX, reason="Python based file locking does not function on Linux")
+    @pytest.mark.skipif(
+        ly_test_tools.WINDOWS, reason="https://github.com/o3de/o3de/issues/14514"
+    )
+    @pytest.mark.skipif(
+        ly_test_tools.LINUX,
+        reason="Python based file locking does not function on Linux",
+    )
     @pytest.mark.test_case_id("C21968355")
     @pytest.mark.test_case_id("C21968356")
     @pytest.mark.test_case_id("C21968359")
@@ -287,7 +335,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
                     "read_only": False,
                     "confirm": False,
                     "expect_success": False,
-                    "expected_queries": ["Preview file delete.  Run again with --confirm to actually make changes"],
+                    "expected_queries": [
+                        "Preview file delete.  Run again with --confirm to actually make changes"
+                    ],
                     "unexpected_queries": [["SourceFileRelocator", "Error"]],
                 },
                 {
@@ -296,7 +346,11 @@ class TestsAssetRelocator_WindowsAndMac(object):
                     "confirm": True,
                     "expect_success": False,
                     "expected_queries": [
-                        ["SourceFileRelocator", "Error: operation failed for file", "File is read-only."],
+                        [
+                            "SourceFileRelocator",
+                            "Error: operation failed for file",
+                            "File is read-only.",
+                        ],
                         "SUCCESS COUNT: 0",
                         "FAILURE COUNT: 1",
                     ],
@@ -325,7 +379,7 @@ class TestsAssetRelocator_WindowsAndMac(object):
         expect_success,
         expected_queries,
         unexpected_queries,
-        project
+        project,
     ):
         """
         Dynamic data test  for deleting a file with Asset Relocator:
@@ -348,7 +402,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
 
         # Copy test asset to project folder and verify the copy
 
-        source_dir, _ = asset_processor.prepare_test_environment(env["tests_dir"], "C21968355")
+        source_dir, _ = asset_processor.prepare_test_environment(
+            env["tests_dir"], "C21968355"
+        )
         project_asset = os.path.join(source_dir, test_file)
         assert os.path.exists(project_asset), f"{project_asset} does not exist"
 
@@ -361,8 +417,13 @@ class TestsAssetRelocator_WindowsAndMac(object):
         # Build and run the AP Batch --delete command with parameters
         test_file_relative_path = os.path.join("C21968355", test_file)
 
-        extraParams = [f"--delete={test_file_relative_path}", f"{'--confirm' if confirm else ''}"]
-        result, ap_batch_output = asset_processor.batch_process(capture_output=True, extra_params=extraParams)
+        extraParams = [
+            f"--delete={test_file_relative_path}",
+            f"{'--confirm' if confirm else ''}",
+        ]
+        result, ap_batch_output = asset_processor.batch_process(
+            capture_output=True, extra_params=extraParams
+        )
 
         # Assert file existence or nonexistence based on the test case
         if expect_success:
@@ -372,7 +433,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
 
         # Validate the relocation report based on expected and unexpected messages
         if expected_queries or unexpected_queries:
-            utils.validate_log_output(ap_batch_output, expected_queries, unexpected_queries)
+            utils.validate_log_output(
+                ap_batch_output, expected_queries, unexpected_queries
+            )
 
     @pytest.mark.skip(reason="https://github.com/o3de/o3de/issues/14514")
     @pytest.mark.test_case_id("C21968381")
@@ -461,7 +524,7 @@ class TestsAssetRelocator_WindowsAndMac(object):
         leave_empty,
         folder_should_remain,
         expect_relocate_or_delete,
-        project
+        project,
     ):
         """
         Test the LeaveEmptyFolders flag in various configurations
@@ -479,7 +542,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
         """
         # # Start test setup # #
         env = ap_setup_fixture
-        source_dir, _ = asset_processor.prepare_test_environment(env["tests_dir"], test_id)
+        source_dir, _ = asset_processor.prepare_test_environment(
+            env["tests_dir"], test_id
+        )
         assets_name = "testingAssets"
         test_assets_zip = f"""{os.path.join(workspace.paths.project(), "TestAssets", assets_name)}.zip"""
         destination_path = source_dir
@@ -513,16 +578,19 @@ class TestsAssetRelocator_WindowsAndMac(object):
         if leave_empty:
             extraParams += [leave_empty_flag]
 
-
         # # Run the command # #
         asset_processor.batch_process(extra_params=extraParams)
 
         # # Check the results of the commands # #
         # Verify the original assets folder still exists
         if folder_should_remain:
-            assert os.path.exists(unzipped_assets_path), "The directory was expected to still exist but was removed"
+            assert os.path.exists(unzipped_assets_path), (
+                "The directory was expected to still exist but was removed"
+            )
         else:
-            assert not os.path.exists(unzipped_assets_path), "The directory was supposed to be removed but was not"
+            assert not os.path.exists(unzipped_assets_path), (
+                "The directory was supposed to be removed but was not"
+            )
 
         # Verify the files successfully moved to new location
         if expect_relocate_or_delete == "relocate":
@@ -548,18 +616,28 @@ class TestsAssetRelocator_WindowsAndMac(object):
 
         # Verify the files have not been deleted or moved from original location
         if expect_relocate_or_delete is None:
-            assert not os.path.exists(move_dir_path), "The move directory exists when it was not expected to"
-            assert os.path.exists(unzipped_assets_path), "The original directory was unexpectedly deleted"
+            assert not os.path.exists(move_dir_path), (
+                "The move directory exists when it was not expected to"
+            )
+            assert os.path.exists(unzipped_assets_path), (
+                "The original directory was unexpectedly deleted"
+            )
 
             new_files_to_check = utils.get_relative_file_paths(unzipped_assets_path)
-            assert utils.compare_lists(new_files_to_check, original_files), "Files did not match the original list"
+            assert utils.compare_lists(new_files_to_check, original_files), (
+                "Files did not match the original list"
+            )
 
     @pytest.mark.test_case_id("C21968373")
     @pytest.mark.assetpipeline
     @pytest.mark.parametrize("test_file_name", ["ReadOnly.txt", "Writable.txt"])
-    @pytest.mark.skipif(not utils.check_for_perforce(error_on_no_perforce=False), reason="Perforce not enabled")
-    def test_WindowsMacPlatforms_EnableSCM_RelocatorFails(self, workspace, ap_setup_fixture, test_file_name,
-                                                          asset_processor):
+    @pytest.mark.skipif(
+        not utils.check_for_perforce(error_on_no_perforce=False),
+        reason="Perforce not enabled",
+    )
+    def test_WindowsMacPlatforms_EnableSCM_RelocatorFails(
+        self, workspace, ap_setup_fixture, test_file_name, asset_processor
+    ):
         """
         The test will attempt to move test assets that are not tracked under P4 source control using the EnableSCM flag
         Because the files are not tracked by source control, the relocation should fail
@@ -586,7 +664,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
         # Note that using asset_processor.prepare_test_environment for this test causes
         # the test to hang when run in pycharm due to an issue with p4.exe stdout pipe not closing
         # when p4.exe terminates.
-        source_files = utils.prepare_test_assets(env["tests_dir"], "C21968373", test_assets_dir)
+        source_files = utils.prepare_test_assets(
+            env["tests_dir"], "C21968373", test_assets_dir
+        )
         asset_processor.add_scan_folder(test_assets_dir)
 
         # fmt:off
@@ -602,14 +682,15 @@ class TestsAssetRelocator_WindowsAndMac(object):
         else:
             fs.unlock_file(file)
 
-
         # # Generate and run the enableSCM command # #
         src_rel_path = os.path.join(test_assets_dir, test_file_name)
         dst_rel_path = os.path.join("MoveOutput", test_file_name)
         move_flag = f"--move={src_rel_path},{dst_rel_path}"
 
         extraParams = [f"{move_flag}", "--confirm", "--updateReferences", "--enableSCM"]
-        result, ap_batch_output = asset_processor.batch_process(capture_output=True, extra_params=extraParams)
+        result, ap_batch_output = asset_processor.batch_process(
+            capture_output=True, extra_params=extraParams
+        )
 
         # # Verify the move failed and expected messages are present # #
         # fmt:off
@@ -618,15 +699,21 @@ class TestsAssetRelocator_WindowsAndMac(object):
         # fmt:on
 
         expected_log_strings = ["Error: operation failed for file", "FAILURE COUNT: 1"]
-        utils.validate_log_output(ap_batch_output, expected_log_strings, [],
-                                  asset_processor_utils.print_tail_lines(ap_batch_output, 100))
+        utils.validate_log_output(
+            ap_batch_output,
+            expected_log_strings,
+            [],
+            asset_processor_utils.print_tail_lines(ap_batch_output, 100),
+        )
 
     tests = [
         pytest.param(
             {
                 # UpdateReferences with move and confirm - one file
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "Prefabs", "TestA.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "Prefabs", "TestA.prefab"
+                ),
                 "secondary": "UpdateReferences",
                 "confirm": True,
                 "expected_messages": ["SUCCESS COUNT: 1", "FAILURE COUNT: 0"],
@@ -639,7 +726,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # UpdateReferences with move and confirm - file group (file type provided)
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "OtherPrefabs", "TestA",  "*.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "OtherPrefabs", "TestA", "*.prefab"
+                ),
                 "secondary": "UpdateReferences",
                 "confirm": True,
                 "expected_messages": [
@@ -647,7 +736,7 @@ class TestsAssetRelocator_WindowsAndMac(object):
                     "FAILURE COUNT: 0",
                     "SUCCESSFULLY UPDATED: 0",
                     "FAILED TO UPDATE: 1",
-                    "The following files have a product dependency on one or more of the products generated by this file"
+                    "The following files have a product dependency on one or more of the products generated by this file",
                 ],
                 "unexpected_messages": [
                     ["SourceFileRelocator", "Error"],
@@ -655,13 +744,20 @@ class TestsAssetRelocator_WindowsAndMac(object):
                 ],
             },
             id="C21968362_2",
-            marks=[pytest.mark.test_case_id("C21968362"), pytest.mark.skip(reason="Need a file type that supports sequence reference types.")],
+            marks=[
+                pytest.mark.test_case_id("C21968362"),
+                pytest.mark.skip(
+                    reason="Need a file type that supports sequence reference types."
+                ),
+            ],
         ),
         pytest.param(
             {
                 # UpdateReferences with move and confirm - file group (partial file name provided)
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "OtherPrefabs", "TestB", "Test*"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "OtherPrefabs", "TestB", "Test*"
+                ),
                 "secondary": "UpdateReferences",
                 "confirm": True,
                 "expected_messages": [
@@ -700,13 +796,20 @@ class TestsAssetRelocator_WindowsAndMac(object):
                 ],
             },
             id="C21968362_4",
-            marks=[pytest.mark.test_case_id("C21968362"), pytest.mark.skip(reason="Need a file type that supports sequence reference types.")],
+            marks=[
+                pytest.mark.test_case_id("C21968362"),
+                pytest.mark.skip(
+                    reason="Need a file type that supports sequence reference types."
+                ),
+            ],
         ),
         pytest.param(
             {
                 # UpdateReferences with move and without confirm - one file
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "Prefabs", "TestA.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "Prefabs", "TestA.prefab"
+                ),
                 "secondary": "UpdateReferences",
                 "confirm": False,
                 "expected_messages": "Preview file move.  Run again with --confirm to actually make changes",
@@ -719,7 +822,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # UpdateReferences with move and without confirm - file group (file type provided)
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "OtherPrefabs", "TestA", "*.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "OtherPrefabs", "TestA", "*.prefab"
+                ),
                 "secondary": "UpdateReferences",
                 "confirm": False,
                 "expected_messages": [
@@ -741,10 +846,8 @@ class TestsAssetRelocator_WindowsAndMac(object):
                 "expected_messages": [
                     "Preview file move.  Run again with --confirm to actually make changes",
                     "The following files have a source / job dependency on this file, we will attempt to fix the references but they may still break:",
-                    ],
-                "unexpected_messages": [
-                    ["SourceFileRelocator", "Error"]
                 ],
+                "unexpected_messages": [["SourceFileRelocator", "Error"]],
             },
             id="C21968363_3",
             marks=[pytest.mark.test_case_id("C21968363")],
@@ -769,7 +872,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # UpdateReferences with delete - one file
                 "primary": "delete",
-                "src_rel_path": os.path.join("testingAssets", "Prefabs", "TestA.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "Prefabs", "TestA.prefab"
+                ),
                 "secondary": "UpdateReferences",
                 "confirm": False,
                 "expected_messages": "Command --updateReferences must be used with command --move",
@@ -795,7 +900,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # UpdateReferences with delete - one file
                 "primary": "delete",
-                "src_rel_path": os.path.join("testingAssets", "Prefabs", "TestA.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "Prefabs", "TestA.prefab"
+                ),
                 "secondary": "UpdateReferences",
                 "confirm": True,
                 "expected_messages": "Command --updateReferences must be used with command --move",
@@ -847,7 +954,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # AllowBrokenDependencies with move and confirm - one file
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "OtherPrefabs", "TestA", "TestAChild.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "OtherPrefabs", "TestA", "TestAChild.prefab"
+                ),
                 "secondary": "AllowBrokenDependencies",
                 "confirm": True,
                 "expected_messages": ["SUCCESS COUNT: 1", "FAILURE COUNT: 0"],
@@ -863,7 +972,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # AllowBrokenDependencies with move and confirm - file group (file type provided)
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "OtherPrefabs", "TestA", "*.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "OtherPrefabs", "TestA", "*.prefab"
+                ),
                 "secondary": "AllowBrokenDependencies",
                 "confirm": True,
                 "expected_messages": [
@@ -891,7 +1002,10 @@ class TestsAssetRelocator_WindowsAndMac(object):
                     "FAILURE COUNT: 0",
                     "The following files have a source / job dependency on this file and will break:",
                 ],
-                "unexpected_messages": [["SourceFileRelocator", "Error"], ["Updated", "TestB.prefab", "SUCCESS"]],
+                "unexpected_messages": [
+                    ["SourceFileRelocator", "Error"],
+                    ["Updated", "TestB.prefab", "SUCCESS"],
+                ],
             },
             id="C21968370_3",
             marks=[pytest.mark.test_case_id("C21968370")],
@@ -921,7 +1035,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # AllowBrokenDependencies with move and without confirm - one file
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "OtherPrefabs", "TestA", "TestAChild.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "OtherPrefabs", "TestA", "TestAChild.prefab"
+                ),
                 "secondary": "AllowBrokenDependencies",
                 "confirm": False,
                 "expected_messages": "Preview file move.  Run again with --confirm to actually make changes",
@@ -934,7 +1050,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # AllowBrokenDependencies with move and without confirm - file group (file type provided)
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "OtherPrefabs", "TestA", "*.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "OtherPrefabs", "TestA", "*.prefab"
+                ),
                 "secondary": "AllowBrokenDependencies",
                 "confirm": False,
                 "expected_messages": [
@@ -950,7 +1068,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # AllowBrokenDependencies with move and without confirm - file group (partial file name provided)
                 "primary": "move",
-                "src_rel_path": os.path.join("testingAssets", "OtherPrefabs", "TestB", "Test*"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "OtherPrefabs", "TestB", "Test*"
+                ),
                 "secondary": "AllowBrokenDependencies",
                 "confirm": False,
                 "expected_messages": [
@@ -982,7 +1102,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # AllowBrokenDependencies with delete - one file
                 "primary": "delete",
-                "src_rel_path": os.path.join("testingAssets", "Prefabs", "TestA.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "Prefabs", "TestA.prefab"
+                ),
                 "secondary": "AllowBrokenDependencies",
                 "confirm": False,
                 "expected_messages": "Preview file delete.  Run again with --confirm to actually make changes",
@@ -1014,7 +1136,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # AllowBrokenDependencies with delete - one file
                 "primary": "delete",
-                "src_rel_path": os.path.join("testingAssets", "Prefabs", "TestA.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "Prefabs", "TestA.prefab"
+                ),
                 "secondary": "AllowBrokenDependencies",
                 "confirm": True,
                 "expected_messages": ["SUCCESS COUNT: 1", "FAILURE COUNT: 0"],
@@ -1030,7 +1154,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
             {
                 # AllowBrokenDependencies with delete - file group (file type provided)
                 "primary": "delete",
-                "src_rel_path": os.path.join("testingAssets", "OtherPrefabs", "TestB", "*.prefab"),
+                "src_rel_path": os.path.join(
+                    "testingAssets", "OtherPrefabs", "TestB", "*.prefab"
+                ),
                 "secondary": "AllowBrokenDependencies",
                 "confirm": True,
                 "expected_messages": [
@@ -1080,8 +1206,9 @@ class TestsAssetRelocator_WindowsAndMac(object):
     ]
 
     @pytest.mark.parametrize("test", tests)
-    def test_WindowsAndMac_UpdateReferencesAllowBrokenDependencies_PathExistenceAndMessage(self, ap_setup_fixture,
-                                                                                           asset_processor, test):
+    def test_WindowsAndMac_UpdateReferencesAllowBrokenDependencies_PathExistenceAndMessage(
+        self, ap_setup_fixture, asset_processor, test
+    ):
         """
         C21968362 UpdateReferences with move and confirm
         C21968363 UpdateReferences with move and without confirm
@@ -1113,30 +1240,51 @@ class TestsAssetRelocator_WindowsAndMac(object):
         ]
 
         asset_processor.create_temp_asset_root(False)
-        source_folder, _ = asset_processor.prepare_test_environment(env["tests_dir"], "assets_with_dependencies", add_scan_folder=False, use_current_root=True)
+        source_folder, _ = asset_processor.prepare_test_environment(
+            env["tests_dir"],
+            "assets_with_dependencies",
+            add_scan_folder=False,
+            use_current_root=True,
+        )
         asset_processor.add_scan_folder(source_folder)
 
         # Extract testingAssets.zip to the project folder
-        assets_src = os.path.join(env["tests_dir"], "assets", "assets_with_dependencies", "testingAssets.zip")
+        assets_src = os.path.join(
+            env["tests_dir"], "assets", "assets_with_dependencies", "testingAssets.zip"
+        )
         fs.unzip(source_folder, assets_src)
 
         # Validate and process assets
         testingAssets_dir = os.path.join(source_folder, "testingAssets")
-        assert utils.compare_lists(utils.get_relative_file_paths(testingAssets_dir), all_test_asset_rel_paths)
+        assert utils.compare_lists(
+            utils.get_relative_file_paths(testingAssets_dir), all_test_asset_rel_paths
+        )
 
         # Build and verify source paths
         test_assets_initial = utils.get_relative_file_paths(testingAssets_dir)
-        src_path_root = os.path.join(source_folder, os.path.split(test["src_rel_path"])[0:-1][0])
+        src_path_root = os.path.join(
+            source_folder, os.path.split(test["src_rel_path"])[0:-1][0]
+        )
         src_path_end = os.path.split(test["src_rel_path"])[-1]
 
         if "*" in src_path_end:  # Handle path with wildcard
-            src_full_paths_targeted = utils.get_paths_from_wildcard(src_path_root, src_path_end)
+            src_full_paths_targeted = utils.get_paths_from_wildcard(
+                src_path_root, src_path_end
+            )
         else:  # Handle path without wildcard
             src_full_paths_targeted = [os.path.join(src_path_root, src_path_end)]
-        src_rel_paths_targeted = [os.path.relpath(item, testingAssets_dir) for item in src_full_paths_targeted]
+        src_rel_paths_targeted = [
+            os.path.relpath(item, testingAssets_dir) for item in src_full_paths_targeted
+        ]
         lowercase_targets = [item.lower() for item in src_rel_paths_targeted]
-        src_assets_untargeted = [item for item in test_assets_initial if item.lower() not in lowercase_targets]
-        assert len(src_assets_untargeted) + len(src_rel_paths_targeted) == len(test_assets_initial), "Targetting failed"
+        src_assets_untargeted = [
+            item
+            for item in test_assets_initial
+            if item.lower() not in lowercase_targets
+        ]
+        assert len(src_assets_untargeted) + len(src_rel_paths_targeted) == len(
+            test_assets_initial
+        ), "Targetting failed"
 
         for item in src_full_paths_targeted:
             assert os.path.exists(item), f"Source file not found: {item}"
@@ -1144,39 +1292,58 @@ class TestsAssetRelocator_WindowsAndMac(object):
         # Build primary AP Batch parameter value and destination paths
         param_val = test["src_rel_path"]
         if test["primary"] == "move":
-            output_assets_targeted = [os.path.split(item)[-1] for item in src_full_paths_targeted]
+            output_assets_targeted = [
+                os.path.split(item)[-1] for item in src_full_paths_targeted
+            ]
             dst_rel_path = os.path.join("MoveOutput", src_path_end)
             dst_path_root = os.path.join(source_folder, "MoveOutput")
             param_val = f"{test['src_rel_path']},{dst_rel_path}"
 
         # Build and run the AP Batch command with parameters
         extraParams = [f"--{test['primary']}={param_val}", f"--{test['secondary']}"]
-        if test['confirm']:
+        if test["confirm"]:
             extraParams += ["--confirm"]
 
-        result, ap_batch_output = asset_processor.batch_process(capture_output=True, extra_params=extraParams)
+        result, ap_batch_output = asset_processor.batch_process(
+            capture_output=True, extra_params=extraParams
+        )
 
         # Validate resulting file paths in source and output directories
         src_assets_final = utils.get_relative_file_paths(testingAssets_dir)
         src_unchanged = utils.compare_lists(src_assets_final, test_assets_initial)
-        untargeted_assets_remain = utils.compare_lists(src_assets_final, src_assets_untargeted)
+        untargeted_assets_remain = utils.compare_lists(
+            src_assets_final, src_assets_untargeted
+        )
 
         if test["primary"] == "move":
-            output_assets_actual = [os.path.split(item)[-1] for item in utils.get_relative_file_paths(dst_path_root)]
+            output_assets_actual = [
+                os.path.split(item)[-1]
+                for item in utils.get_relative_file_paths(dst_path_root)
+            ]
             if test["confirm"]:  # Handle move with confirm
-                targeted_assets_moved = utils.compare_lists(output_assets_actual, output_assets_targeted)
+                targeted_assets_moved = utils.compare_lists(
+                    output_assets_actual, output_assets_targeted
+                )
                 # fmt:off
                 assert (untargeted_assets_remain and targeted_assets_moved), \
                     f"Move with confirm unexpectedly failed on {test['src_rel_path']}"
                 # fmt:on
             else:  # Handle move without confirm
                 dst_empty = output_assets_actual == []
-                assert src_unchanged and dst_empty, f"Move without confirm unexpectedly handled {test['src_rel_path']}"
+                assert src_unchanged and dst_empty, (
+                    f"Move without confirm unexpectedly handled {test['src_rel_path']}"
+                )
         elif test["primary"] == "delete":
-            if test["secondary"] == "AllowBrokenDependencies" and test["confirm"]:  # Expect deletion
-                assert untargeted_assets_remain, f"Delete with confirm unexpectedly failed on {test['src_rel_path']}"
+            if (
+                test["secondary"] == "AllowBrokenDependencies" and test["confirm"]
+            ):  # Expect deletion
+                assert untargeted_assets_remain, (
+                    f"Delete with confirm unexpectedly failed on {test['src_rel_path']}"
+                )
             else:  # Do not expect deletion
-                assert src_unchanged, f"Delete unexpectedly handled {test['src_rel_path']}"
+                assert src_unchanged, (
+                    f"Delete unexpectedly handled {test['src_rel_path']}"
+                )
 
         # Validate the log based on expected and unexpected messages
         if test["expected_messages"] or test["unexpected_messages"]:
@@ -1185,127 +1352,120 @@ class TestsAssetRelocator_WindowsAndMac(object):
             )
 
     tests = [
-                pytest.param(
-                    {
-                        "primary": "move",
-                        "src_rel_path": os.path.join("TestBChild.prefab"),
-                        "excludeMetaDataFiles": False,
-                        "confirm": True,
-                        "expected_messages": [
-                            "SUCCESS COUNT: 1",
-                            "FAILURE COUNT: 0"],
-                        "unexpected_messages": [["SourceFileRelocator", "Error"]],
-                    },
-                    id="C30936451_1",
-                    marks=[pytest.mark.test_case_id("C30936451")],
-                ),
-                pytest.param(
-                    {
-                        "primary": "move",
-                        "src_rel_path": os.path.join("*.prefab"),
-                        "excludeMetaDataFiles": False,
-                        "confirm": True,
-                        "expected_messages": [
-                            "SUCCESS COUNT: 2",
-                            "FAILURE COUNT: 0"],
-                        "unexpected_messages": [["SourceFileRelocator", "Error"]],
-                    },
-                    id="C30936451_2",
-                    marks=[pytest.mark.test_case_id("C30936451")],
-                ),
-                pytest.param(
-                    {
-                        "primary": "move",
-                        "src_rel_path": os.path.join("TestBChild.prefab"),
-                        "excludeMetaDataFiles": True,
-                        "confirm": True,
-                        "expected_messages": [
-                            "SUCCESS COUNT: 1",
-                            "FAILURE COUNT: 0",
-                        ],
-                        "unexpected_messages": [["SourceFileRelocator", "Error"]],
-                    },
-                    id="C30936451_3",
-                    marks=[pytest.mark.test_case_id("C30936451")],
-                ),
-                pytest.param(
-                    {
-                        "primary": "move",
-                        "src_rel_path": os.path.join("*.prefab"),
-                        "excludeMetaDataFiles": True,
-                        "confirm": True,
-                        "expected_messages": [
-                            "SUCCESS COUNT: 2",
-                            "FAILURE COUNT: 0",
-                        ],
-                        "unexpected_messages": [["SourceFileRelocator", "Error"]],
-                    },
-                    id="C30936451_4",
-                    marks=[pytest.mark.test_case_id("C30936451")],
-                ),
-                pytest.param(
-                    {
-                        "primary": "delete",
-                        "src_rel_path": os.path.join("TestBChild.prefab"),
-                        "excludeMetaDataFiles": False,
-                        "confirm": True,
-                        "expected_messages": [
-                            "SUCCESS COUNT: 1",
-                            "FAILURE COUNT: 0"],
-                        "unexpected_messages": [["SourceFileRelocator", "Error"]],
-                    },
-                    id="C30936451_5",
-                    marks=[pytest.mark.test_case_id("C30936451")],
-                ),
-                pytest.param(
-                    {
-                        "primary": "delete",
-                        "src_rel_path": os.path.join("*.prefab"),
-                        "excludeMetaDataFiles": False,
-                        "confirm": True,
-                        "expected_messages": [
-                            "SUCCESS COUNT: 2",
-                            "FAILURE COUNT: 0"],
-                        "unexpected_messages": [["SourceFileRelocator", "Error"]],
-                    },
-                    id="C30936451_6",
-                    marks=[pytest.mark.test_case_id("C30936451")],
-                ),
-                pytest.param(
-                    {
-                        "primary": "delete",
-                        "src_rel_path": os.path.join("TestBChild.prefab"),
-                        "excludeMetaDataFiles": True,
-                        "confirm": True,
-                        "expected_messages": [
-                            "SUCCESS COUNT: 1",
-                            "FAILURE COUNT: 0",
-                        ],
-                        "unexpected_messages": [["SourceFileRelocator", "Error"]],
-                    },
-                    id="C30936451_7",
-                    marks=[pytest.mark.test_case_id("C30936451")],
-                ),
-                pytest.param(
-                    {
-                        "primary": "delete",
-                        "src_rel_path": os.path.join("*.prefab"),
-                        "excludeMetaDataFiles": True,
-                        "confirm": True,
-                        "expected_messages": [
-                            "SUCCESS COUNT: 2",
-                            "FAILURE COUNT: 0",
-                        ],
-                        "unexpected_messages": [["SourceFileRelocator", "Error"]],
-                    },
-                    id="C30936451_8",
-                    marks=[pytest.mark.test_case_id("C30936451")],
-                ),
+        pytest.param(
+            {
+                "primary": "move",
+                "src_rel_path": os.path.join("TestBChild.prefab"),
+                "excludeMetaDataFiles": False,
+                "confirm": True,
+                "expected_messages": ["SUCCESS COUNT: 1", "FAILURE COUNT: 0"],
+                "unexpected_messages": [["SourceFileRelocator", "Error"]],
+            },
+            id="C30936451_1",
+            marks=[pytest.mark.test_case_id("C30936451")],
+        ),
+        pytest.param(
+            {
+                "primary": "move",
+                "src_rel_path": os.path.join("*.prefab"),
+                "excludeMetaDataFiles": False,
+                "confirm": True,
+                "expected_messages": ["SUCCESS COUNT: 2", "FAILURE COUNT: 0"],
+                "unexpected_messages": [["SourceFileRelocator", "Error"]],
+            },
+            id="C30936451_2",
+            marks=[pytest.mark.test_case_id("C30936451")],
+        ),
+        pytest.param(
+            {
+                "primary": "move",
+                "src_rel_path": os.path.join("TestBChild.prefab"),
+                "excludeMetaDataFiles": True,
+                "confirm": True,
+                "expected_messages": [
+                    "SUCCESS COUNT: 1",
+                    "FAILURE COUNT: 0",
+                ],
+                "unexpected_messages": [["SourceFileRelocator", "Error"]],
+            },
+            id="C30936451_3",
+            marks=[pytest.mark.test_case_id("C30936451")],
+        ),
+        pytest.param(
+            {
+                "primary": "move",
+                "src_rel_path": os.path.join("*.prefab"),
+                "excludeMetaDataFiles": True,
+                "confirm": True,
+                "expected_messages": [
+                    "SUCCESS COUNT: 2",
+                    "FAILURE COUNT: 0",
+                ],
+                "unexpected_messages": [["SourceFileRelocator", "Error"]],
+            },
+            id="C30936451_4",
+            marks=[pytest.mark.test_case_id("C30936451")],
+        ),
+        pytest.param(
+            {
+                "primary": "delete",
+                "src_rel_path": os.path.join("TestBChild.prefab"),
+                "excludeMetaDataFiles": False,
+                "confirm": True,
+                "expected_messages": ["SUCCESS COUNT: 1", "FAILURE COUNT: 0"],
+                "unexpected_messages": [["SourceFileRelocator", "Error"]],
+            },
+            id="C30936451_5",
+            marks=[pytest.mark.test_case_id("C30936451")],
+        ),
+        pytest.param(
+            {
+                "primary": "delete",
+                "src_rel_path": os.path.join("*.prefab"),
+                "excludeMetaDataFiles": False,
+                "confirm": True,
+                "expected_messages": ["SUCCESS COUNT: 2", "FAILURE COUNT: 0"],
+                "unexpected_messages": [["SourceFileRelocator", "Error"]],
+            },
+            id="C30936451_6",
+            marks=[pytest.mark.test_case_id("C30936451")],
+        ),
+        pytest.param(
+            {
+                "primary": "delete",
+                "src_rel_path": os.path.join("TestBChild.prefab"),
+                "excludeMetaDataFiles": True,
+                "confirm": True,
+                "expected_messages": [
+                    "SUCCESS COUNT: 1",
+                    "FAILURE COUNT: 0",
+                ],
+                "unexpected_messages": [["SourceFileRelocator", "Error"]],
+            },
+            id="C30936451_7",
+            marks=[pytest.mark.test_case_id("C30936451")],
+        ),
+        pytest.param(
+            {
+                "primary": "delete",
+                "src_rel_path": os.path.join("*.prefab"),
+                "excludeMetaDataFiles": True,
+                "confirm": True,
+                "expected_messages": [
+                    "SUCCESS COUNT: 2",
+                    "FAILURE COUNT: 0",
+                ],
+                "unexpected_messages": [["SourceFileRelocator", "Error"]],
+            },
+            id="C30936451_8",
+            marks=[pytest.mark.test_case_id("C30936451")],
+        ),
     ]
 
     @pytest.mark.parametrize("test", tests)
-    def test_WindowsAndMac_MoveMetadataFiles_PathExistenceAndMessage(self, workspace, request, ap_setup_fixture,
-                                                                     asset_processor, test):
+    def test_WindowsAndMac_MoveMetadataFiles_PathExistenceAndMessage(
+        self, workspace, request, ap_setup_fixture, asset_processor, test
+    ):
         """
         Tests whether moving metadata files can be moved
 
@@ -1333,30 +1493,51 @@ class TestsAssetRelocator_WindowsAndMac(object):
         request.addfinalizer(teardown)
 
         asset_processor.create_temp_asset_root(False)
-        source_folder, _ = asset_processor.prepare_test_environment(env["tests_dir"], "C30936451", use_current_root=True,
-                                                                    add_scan_folder=False)
+        source_folder, _ = asset_processor.prepare_test_environment(
+            env["tests_dir"], "C30936451", use_current_root=True, add_scan_folder=False
+        )
         asset_processor.add_scan_folder(source_folder)
 
-        src_rel_paths_initial = ["TestAChild.prefab", "TestBChild.prefab", "TestBChild.prefab.exportsettings"]
+        src_rel_paths_initial = [
+            "TestAChild.prefab",
+            "TestBChild.prefab",
+            "TestBChild.prefab.exportsettings",
+        ]
 
-        src_path_root = os.path.join(source_folder, os.path.split(test["src_rel_path"])[0:-1][0])
+        src_path_root = os.path.join(
+            source_folder, os.path.split(test["src_rel_path"])[0:-1][0]
+        )
         src_path_end = os.path.split(test["src_rel_path"])[-1]
         if "*" in src_path_end:  # Handle path with wildcard
-            src_full_paths_targeted = utils.get_paths_from_wildcard(src_path_root, src_path_end)
+            src_full_paths_targeted = utils.get_paths_from_wildcard(
+                src_path_root, src_path_end
+            )
         else:  # Handle path without wildcard
             src_full_paths_targeted = [os.path.join(src_path_root, src_path_end)]
-        src_rel_paths_targeted = [os.path.relpath(item, source_folder) for item in src_full_paths_targeted]
+        src_rel_paths_targeted = [
+            os.path.relpath(item, source_folder) for item in src_full_paths_targeted
+        ]
 
         if not test["excludeMetaDataFiles"]:
             # if we are here, we need to add metadata files as well
             for src_full_path in src_full_paths_targeted:
                 imageMetadataFile = src_full_path + ".exportsettings"
                 if os.path.exists(imageMetadataFile):
-                    src_rel_paths_targeted.append(os.path.relpath(imageMetadataFile, source_folder))
-        src_rel_paths_targeted_lowercase = [item.lower() for item in src_rel_paths_targeted]
-        src_assets_untargeted = [item for item in src_rel_paths_initial if item.lower() not in src_rel_paths_targeted_lowercase]
+                    src_rel_paths_targeted.append(
+                        os.path.relpath(imageMetadataFile, source_folder)
+                    )
+        src_rel_paths_targeted_lowercase = [
+            item.lower() for item in src_rel_paths_targeted
+        ]
+        src_assets_untargeted = [
+            item
+            for item in src_rel_paths_initial
+            if item.lower() not in src_rel_paths_targeted_lowercase
+        ]
 
-        assert len(src_assets_untargeted) + len(src_rel_paths_targeted) == len(src_rel_paths_initial), "Targetting failed"
+        assert len(src_assets_untargeted) + len(src_rel_paths_targeted) == len(
+            src_rel_paths_initial
+        ), "Targetting failed"
 
         for item in src_full_paths_targeted:
             assert os.path.exists(item), f"Source file not found: {item}"
@@ -1372,22 +1553,28 @@ class TestsAssetRelocator_WindowsAndMac(object):
         # Build and run the AP Batch command with parameters
         extraParams = [f"--{test['primary']}={param_val}"]
         if test["excludeMetaDataFiles"]:
-            extraParams = extraParams + ['--excludeMetadatafiles']
+            extraParams = extraParams + ["--excludeMetadatafiles"]
 
         if test["confirm"]:
-            extraParams = extraParams + ['--confirm']
+            extraParams = extraParams + ["--confirm"]
 
-        result, ap_batch_output = asset_processor.batch_process(capture_output=True, extra_params=extraParams)
+        result, ap_batch_output = asset_processor.batch_process(
+            capture_output=True, extra_params=extraParams
+        )
 
         # Validate resulting file paths in source and output directories
-        if test["primary"] =="move":
+        if test["primary"] == "move":
             src_assets_unchanged = utils.get_relative_file_paths(source_folder)
             utils.compare_lists(src_assets_unchanged, src_rel_paths_initial)
-            assert src_assets_unchanged.sort() == src_assets_untargeted.sort(), "Asset relocator moved an unexpected asset"
+            assert src_assets_unchanged.sort() == src_assets_untargeted.sort(), (
+                "Asset relocator moved an unexpected asset"
+            )
 
             src_assets_changed = utils.get_relative_file_paths(dst_path_root)
 
-            assert src_assets_changed.sort() == src_rel_paths_targeted.sort(), "Asset relocator did not move an expected asset"
+            assert src_assets_changed.sort() == src_rel_paths_targeted.sort(), (
+                "Asset relocator did not move an expected asset"
+            )
         elif test["primary"] == "delete":
             if test["confirm"]:  # Expect deletion
                 for item in src_full_paths_targeted:
@@ -1403,7 +1590,6 @@ class TestsAssetRelocator_WindowsAndMac(object):
             )
 
 
-
 @dataclass
 class MoveTest:
     description: str  # test case title
@@ -1415,9 +1601,13 @@ class MoveTest:
     files_that_stay: List[str] = field(default_factory=lambda: [])
     output_messages: List[str] = field(default_factory=lambda: [])
     step: str = None  # the step of the test from test repository
-    prefix_commands: List[str] = field(default_factory=lambda: ["AssetProcessorBatch", "--zeroAnalysisMode"])
+    prefix_commands: List[str] = field(
+        default_factory=lambda: ["AssetProcessorBatch", "--zeroAnalysisMode"]
+    )
     suffix_commands: List[str] = field(default_factory=lambda: ["--confirm"])
-    env: dict = field(init=False, default=None)  # inject the ap_setup_fixture at runtime
+    env: dict = field(
+        init=False, default=None
+    )  # inject the ap_setup_fixture at runtime
     test_files: List[str] = field(init=False, default_factory=lambda: [])
     files_that_move: List[str] = field(init=False, default_factory=lambda: [])
     expected_filepaths: List[str] = field(init=False, default_factory=lambda: [])
@@ -1426,15 +1616,23 @@ class MoveTest:
 
     def command(self) -> List[str]:
         decoded_command = self._decode(self.encoded_command)
-        if ("," not in decoded_command) or (decoded_command[-1] == ",") or (decoded_command[0] == ","):
+        if (
+            ("," not in decoded_command)
+            or (decoded_command[-1] == ",")
+            or (decoded_command[0] == ",")
+        ):
             # C21968353 and C21968354 (negative tests)
             move_command = "--move=" + self._normalize_move_target(decoded_command)
         else:
             # correctly formed move command
             self.source = self._normalize_move_target(decoded_command.split(",")[0])
-            self.destination = self._normalize_move_target(decoded_command.split(",")[1])
+            self.destination = self._normalize_move_target(
+                decoded_command.split(",")[1]
+            )
             move_command = "--move=" + self.source + "," + self.destination
-        self.prefix_commands[0] = os.path.join(os.fspath(pathlib.Path(self.env["bin_dir"])), self.prefix_commands[0])
+        self.prefix_commands[0] = os.path.join(
+            os.fspath(pathlib.Path(self.env["bin_dir"])), self.prefix_commands[0]
+        )
         command = [move_command, *self.suffix_commands]
         logger.info(f"The command is:\n{command}")
         return command
@@ -1467,7 +1665,11 @@ class MoveTest:
         self.env = env
         self.env["project_test_assets_dir"] = source_dir
         self.env["project_dir"] = base_a
-        self.test_files = os.listdir(os.path.join(pathlib.Path(self.env["tests_dir"]), "assets", self.asset_folder))
+        self.test_files = os.listdir(
+            os.path.join(
+                pathlib.Path(self.env["tests_dir"]), "assets", self.asset_folder
+            )
+        )
         self.test_file_paths = [
             os.path.join(source_dir, file) for file in self.test_files
         ]
@@ -1475,21 +1677,30 @@ class MoveTest:
             self.files_that_stay = self.test_files
         if self.files_that_stay:
             # a set is safe here because there cannot be identically named files in directory
-            self.files_that_move = set(self.test_files).difference(set(self.files_that_stay))
+            self.files_that_move = set(self.test_files).difference(
+                set(self.files_that_stay)
+            )
         else:
             self.files_that_move = self.test_files
         logger.info(f"files that will move {self.files_that_move}")
         logger.info(f"files that will stay {self.files_that_stay}")
         origin_dir = source_dir
-        output_dir = (self._decode(self.encoded_output_dir))
+        output_dir = self._decode(self.encoded_output_dir)
         for file in self.files_that_move:
-            destination_folder = self._decode(self.encoded_output_dir).split(base_a)[1].strip("\\").replace("\\", "/")
+            destination_folder = (
+                self._decode(self.encoded_output_dir)
+                .split(base_a)[1]
+                .strip("\\")
+                .replace("\\", "/")
+            )
             if self.name_change_map:
                 if file in self.name_change_map:
                     self.output_to_check.append(
                         f"CURRENT PATH: {base_b}/{file}, NEW PATH: {destination_folder}/{self.name_change_map[file]}"
                     )
-                    self.expected_filepaths.append(os.path.join(output_dir, self.name_change_map[file]))
+                    self.expected_filepaths.append(
+                        os.path.join(output_dir, self.name_change_map[file])
+                    )
             else:
                 self.output_to_check.append(
                     f"CURRENT PATH: {base_b}/{file}, NEW PATH: {destination_folder}/{file}"
@@ -1571,7 +1782,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="partial filename",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462755_1",
         marks=pytest.mark.test_case_id("C19462755"),
@@ -1584,7 +1797,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="no filename",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462755_2",
         marks=pytest.mark.test_case_id("C19462755"),
@@ -1597,7 +1812,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="wildcard on a folder",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462755_3",
         marks=pytest.mark.test_case_id("C19462755"),
@@ -1610,7 +1827,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="partial filename",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462757_1",
         marks=pytest.mark.test_case_id("C19462757"),
@@ -1623,7 +1842,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="no filename",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462757_2",
         marks=pytest.mark.test_case_id("C19462757"),
@@ -1636,7 +1857,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="wildcard on a folder",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462757_3",
         marks=pytest.mark.test_case_id("C19462757"),
@@ -1672,7 +1895,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="wildcard on folder",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462759_3",
         marks=pytest.mark.test_case_id("C19462759"),
@@ -1708,7 +1933,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="wildcard on folder",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462760_3",
         marks=pytest.mark.test_case_id("C19462760"),
@@ -1856,7 +2083,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveFile\\",
             move_successful=False,
             step="Move with Wildcard on File to a wildcard before the folder declaration",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462767_1",
         marks=[pytest.mark.test_case_id("C19462767")],
@@ -1917,7 +2146,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveFile\\",
             move_successful=False,
             step="Move with Wildcard on File to a wildcard before the folder declaration",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462768_1",
         marks=[pytest.mark.test_case_id("C19462768")],
@@ -2123,7 +2354,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="Move files with partial file name",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462781_1",
         marks=[pytest.mark.test_case_id("C19462781")],
@@ -2136,7 +2369,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="Move files with no file name",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462781_2",
         marks=[pytest.mark.test_case_id("C19462781")],
@@ -2149,7 +2384,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="Move with Wildcard on Folder",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462781_3",
         marks=[pytest.mark.test_case_id("C19462781")],
@@ -2162,7 +2399,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="Move files with partial file name",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462783_1",
         marks=[pytest.mark.test_case_id("C19462783")],
@@ -2175,7 +2414,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="Move files with no file name",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462783_2",
         marks=[pytest.mark.test_case_id("C19462783")],
@@ -2188,7 +2429,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="Move with Wildcard on Folder",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462783_3",
         marks=[pytest.mark.test_case_id("C19462783")],
@@ -2201,7 +2444,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="Move with Wildcard on Folder",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462785_1",
         marks=[pytest.mark.test_case_id("C19462785")],
@@ -2237,7 +2482,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
             step="Move with Wildcard on Folder",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462786_1",
         marks=[pytest.mark.test_case_id("C19462786")],
@@ -2408,7 +2655,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveFile\\",
             move_successful=False,
             step="Move with Wildcard on File to a wildcard before the folder declaration",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462793_1",
         marks=[pytest.mark.test_case_id("C19462793")],
@@ -2469,7 +2718,9 @@ move_a_file_tests = [
             encoded_output_dir="project_test_assets_dir\\MoveFile\\",
             move_successful=False,
             step="Move with Wildcard on File to a wildcard before the folder declaration",
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
         ),
         id="C19462794_1",
         marks=[pytest.mark.test_case_id("C19462794")],
@@ -2632,7 +2883,9 @@ move_a_file_tests = [
             encoded_command=",one_txt_file\\MoveOutput\\ferg.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Invalid format for move command.  Expected format is move=<source>,<destination>"],
+            output_messages=[
+                "Invalid format for move command.  Expected format is move=<source>,<destination>"
+            ],
         ),
         id="C21968351",
         marks=pytest.mark.test_case_id("C21968351"),
@@ -2644,7 +2897,9 @@ move_a_file_tests = [
             encoded_command="wildcard_files\\testFile.txt,",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Invalid format for move command.  Expected format is move=<source>,<destination>"],
+            output_messages=[
+                "Invalid format for move command.  Expected format is move=<source>,<destination>"
+            ],
         ),
         id="C21968352",
         marks=pytest.mark.test_case_id("C21968352"),
@@ -2715,7 +2970,9 @@ move_a_folder_tests = [
             encoded_command="project_test_assets_dir\\*,project_test_assets_dir\\MoveOutput\\testOutput.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="1",
         ),
         id="C19462729_1",
@@ -2741,7 +2998,9 @@ move_a_folder_tests = [
             encoded_command="project_dir\\wildcard_file*\\*,project_test_assets_dir\\MoveOutput\\testOutput.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="3",
         ),
         id="C19462729_3",
@@ -2754,7 +3013,9 @@ move_a_folder_tests = [
             encoded_command="project_test_assets_dir\\*,wildcard_files\\MoveOutput\\testOutput.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="1",
         ),
         id="C19462731_1",
@@ -2780,7 +3041,9 @@ move_a_folder_tests = [
             encoded_command="project_dir\\wildcard_file*\\*,wildcard_files\\MoveOutput\\testOutput.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="3",
         ),
         id="C19462731_3",
@@ -2806,7 +3069,9 @@ move_a_folder_tests = [
             encoded_command="project_dir\\wildcard_file*\\*,project_test_assets_dir\\MoveOutput\\",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="2",
         ),
         id="C19462733_2",
@@ -2843,7 +3108,9 @@ move_a_folder_tests = [
             encoded_command="project_dir\\wildcard_file*\\*,wildcard_files\\MoveOutput\\",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="2",
         ),
         id="C19462734_2",
@@ -2906,7 +3173,9 @@ move_a_folder_tests = [
             encoded_command="project_dir\\wildcard_file*\\*,project_test_assets_dir\\MoveOutput\\test*.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="1",
         ),
         id="C19462735_1",
@@ -2919,7 +3188,9 @@ move_a_folder_tests = [
             encoded_command="project_dir\\wildcard_file*\\*,project_test_assets_dir\\MoveOutput\\*.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="2",
         ),
         id="C19462735_2",
@@ -2983,7 +3254,9 @@ move_a_folder_tests = [
             encoded_command="project_dir\\wildcard_file*\\*,ap_test_asset\\MoveOutput\\*.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="2",
         ),
         id="C19462737_2",
@@ -3047,7 +3320,9 @@ move_a_folder_tests = [
             encoded_command="project_dir\\wildcard_file*\\*,project_test_assets_dir\\MoveOutput\\*",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="2",
         ),
         id="C19462739_2",
@@ -3095,7 +3370,9 @@ move_a_folder_tests = [
             encoded_command="project_dir\\wildcard_file*\\*,wildcard_files\\MoveOutput\\*",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step="2",
         ),
         id="C19462740_2",
@@ -3228,7 +3505,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_file*\\*,project_test_assets_dir\\MoveOutput\\testOutput.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step=3,
         ),
         id="C19462808_3",
@@ -3241,7 +3520,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_files\\*,ap_tests_assets\\MoveOutput\\testOutput.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step=1,
         ),
         id="C19462810_1",
@@ -3267,7 +3548,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_file*\\*,ap_tests_assets\\MoveOutput\\testOutput.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step=3,
         ),
         id="C19462810_3",
@@ -3293,7 +3576,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_file*\\*,project_test_assets_dir\\MoveOutput\\",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step=2,
         ),
         id="C19462812_2",
@@ -3317,7 +3602,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_file*\\*,wildcard_files\\MoveOutput\\",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step=1,
         ),
         id="C19462813_1",
@@ -3419,7 +3706,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_file*\\*,project_test_assets_dir\\MoveOutput\\*.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step=2,
         ),
         id="C19462816_2",
@@ -3483,7 +3772,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_file*\\*,wildcard_files\\MoveOutput\\*.txt",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step=2,
         ),
         id="C19462818_2",
@@ -3547,7 +3838,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_file*\\*,project_test_assets_dir\\MoveOutput\\*",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step=2,
         ),
         id="C19462820_2",
@@ -3595,7 +3888,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_file*\\*,wildcard_files\\MoveOutput\\*",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Source and destination paths must have the same number of wildcards."],
+            output_messages=[
+                "Source and destination paths must have the same number of wildcards."
+            ],
             step=2,
         ),
         id="C19462821_2",
@@ -3682,7 +3977,9 @@ move_a_folder_tests = [
             encoded_command=",wildcard_files\\MoveOutput\\*",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Invalid format for move command.  Expected format is move=<source>,<destination>"],
+            output_messages=[
+                "Invalid format for move command.  Expected format is move=<source>,<destination>"
+            ],
         ),
         id="C21968353",
         marks=[pytest.mark.test_case_id("C21968353")],
@@ -3694,7 +3991,9 @@ move_a_folder_tests = [
             encoded_command="wildcard_files\\MoveOutput\\*,",
             encoded_output_dir="project_test_assets_dir\\MoveOutput\\",
             move_successful=False,
-            output_messages=["Invalid format for move command.  Expected format is move=<source>,<destination>"],
+            output_messages=[
+                "Invalid format for move command.  Expected format is move=<source>,<destination>"
+            ],
         ),
         id="C21968354",
         marks=[pytest.mark.test_case_id("C21968354")],
@@ -3776,15 +4075,19 @@ move_a_folder_tests = [
 @pytest.mark.assetpipeline
 @pytest.mark.SUITE_periodic
 class TestsAssetProcessorMove_WindowsAndMac:
-
     # run one test:
     # -k C19462747_1
     # run all the tests for a test case:
     # -k C19462747
 
-    @pytest.mark.skipif(sys.platform.startswith('linux'), reason="https://github.com/o3de/o3de/issues/14514")
+    @pytest.mark.skipif(
+        sys.platform.startswith("linux"),
+        reason="https://github.com/o3de/o3de/issues/14514",
+    )
     @pytest.mark.parametrize("test", move_a_file_tests + move_a_folder_tests)
-    def test_WindowsMacPlatforms_MoveCommand_CommandResult(self, asset_processor, ap_setup_fixture, test: MoveTest, project):
+    def test_WindowsMacPlatforms_MoveCommand_CommandResult(
+        self, asset_processor, ap_setup_fixture, test: MoveTest, project
+    ):
         """
 
         Test Steps:
@@ -3797,12 +4100,18 @@ class TestsAssetProcessorMove_WindowsAndMac:
         7. Validate move status according to the test data
         """
 
-        source_folder, _ = asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], test.asset_folder)
+        source_folder, _ = asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"], test.asset_folder
+        )
         test.map_env(ap_setup_fixture, source_folder)
         # validate the tests assets are correct
         # hard coding the expected assets so if they change the test fails
-        bad_file_path = os.path.join(test.env["tests_dir"], "assets", "bad_file", "badfile.bad")
-        one_file_path = os.path.join(test.env["tests_dir"], "assets", "one_txt_file", "testFile.txt")
+        bad_file_path = os.path.join(
+            test.env["tests_dir"], "assets", "bad_file", "badfile.bad"
+        )
+        one_file_path = os.path.join(
+            test.env["tests_dir"], "assets", "one_txt_file", "testFile.txt"
+        )
         wildcard_files = [
             "imightstay.txt",
             "testFile.txt",
@@ -3811,36 +4120,71 @@ class TestsAssetProcessorMove_WindowsAndMac:
             "testFile - Copy (3).txt",
             "testFile - Copy (4).txt",
         ]
-        assert os.path.exists(bad_file_path), f"no file exists at the following path but it should: {bad_file_path}"
-        assert os.path.exists(one_file_path), f"no file exists at the following path but it should: {one_file_path}"
+        assert os.path.exists(bad_file_path), (
+            f"no file exists at the following path but it should: {bad_file_path}"
+        )
+        assert os.path.exists(one_file_path), (
+            f"no file exists at the following path but it should: {one_file_path}"
+        )
         for file in wildcard_files:
             path = os.path.join(test.env["tests_dir"], "assets", "wildcard_files", file)
-            assert os.path.exists(path), f"no file exists at the following path but it should: {path}"
+            assert os.path.exists(path), (
+                f"no file exists at the following path but it should: {path}"
+            )
         # validate only these files exist
         assert (
-            len([name for name in os.listdir(os.path.join(test.env["tests_dir"], "assets", "bad_file"))]) == 1
+            len(
+                [
+                    name
+                    for name in os.listdir(
+                        os.path.join(test.env["tests_dir"], "assets", "bad_file")
+                    )
+                ]
+            )
+            == 1
         ), "extra files or directories are in assets/bad_file"
         assert (
-            len([name for name in os.listdir(os.path.join(test.env["tests_dir"], "assets", "one_txt_file"))]) == 1
+            len(
+                [
+                    name
+                    for name in os.listdir(
+                        os.path.join(test.env["tests_dir"], "assets", "one_txt_file")
+                    )
+                ]
+            )
+            == 1
         ), "extra files or directories are in assets/one_txt_file"
         assert len(
-            [name for name in os.listdir(os.path.join(test.env["tests_dir"], "assets", "wildcard_files"))]
-        ) == len(wildcard_files), "extra files or directories are in assets/wildcard_files"
+            [
+                name
+                for name in os.listdir(
+                    os.path.join(test.env["tests_dir"], "assets", "wildcard_files")
+                )
+            ]
+        ) == len(wildcard_files), (
+            "extra files or directories are in assets/wildcard_files"
+        )
 
         # validate the test assets are in the project folder (validate test_assets fixture works)
         for filepath in test.test_file_paths:
-            assert os.path.exists(os.path.join(source_folder, filepath)), f"Test asset is missing: {filepath}"
-        result, command_output = asset_processor.batch_process(extra_params=test.command(), capture_output=True)
+            assert os.path.exists(os.path.join(source_folder, filepath)), (
+                f"Test asset is missing: {filepath}"
+            )
+        result, command_output = asset_processor.batch_process(
+            extra_params=test.command(), capture_output=True
+        )
         lowercase_output = str(list(map(str.lower, command_output)))
         for path in test.expected_filepaths:
             assert os.path.exists(path), f"file should be found at path: {path}"
         for path in test.unexpected_filepaths:
-            assert not os.path.exists(path), f"file should NOT be found at path: {filepath}"
+            assert not os.path.exists(path), (
+                f"file should NOT be found at path: {filepath}"
+            )
         if test.output_messages:
             for message in test.output_messages:
-                assert (
-                    message.lower() in lowercase_output
-                ), f"{message.lower()} not in command output\n{lowercase_output}"
+                assert message.lower() in lowercase_output, (
+                    f"{message.lower()} not in command output\n{lowercase_output}"
+                )
         if test.move_successful:
             for line in test.output_to_check:
                 assert line.lower() in lowercase_output

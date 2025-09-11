@@ -44,11 +44,14 @@ def local_resources(request, workspace, ap_setup_fixture):
     ap_setup_fixture["tests_dir"] = os.path.dirname(os.path.realpath(__file__))
 
 
-def run_and_check_output(workspace, project, error_expected, error_search_terms, platform=None):
+def run_and_check_output(
+    workspace, project, error_expected, error_search_terms, platform=None
+):
     # Capture AP Batch Console Output
     ap_batch_output = asset_processor_utils.assetprocessorbatch_check_output(
-        workspace, project, platform, log_info=True)
-    ap_batch_output = [line.decode('utf-8') for line in ap_batch_output]
+        workspace, project, platform, log_info=True
+    )
+    ap_batch_output = [line.decode("utf-8") for line in ap_batch_output]
 
     # Check for error in output
     if error_expected:
@@ -74,7 +77,11 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         Tests Basic parsing with APOutputParser
         """
 
-        lines = ['first line', 'asset_processor: second line test', 'asset_processor: third line']
+        lines = [
+            "first line",
+            "asset_processor: second line test",
+            "asset_processor: third line",
+        ]
         log = APOutputParser(lines)
         for _ in log.get_lines(-1, ["second", "test"]):
             second_line_found = True
@@ -95,8 +102,6 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         result, _ = asset_processor.batch_process()
         assert result, "AP Batch failed"
 
-
-
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
     def test_RunAPBatch_TwoPlatforms_ExitCodeZero(self, asset_processor):
@@ -114,11 +119,12 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         result, _ = asset_processor.batch_process()
         assert result, "AP Batch failed"
 
-
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    @pytest.mark.test_case_id('C1571826')
-    def test_RunAPBatch_OnlyIncludeInvalidAssets_NoAssetsAdded(self, asset_processor, ap_setup_fixture):
+    @pytest.mark.test_case_id("C1571826")
+    def test_RunAPBatch_OnlyIncludeInvalidAssets_NoAssetsAdded(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         Tests processing invalid assets and validating that no assets were moved to the cache
 
@@ -127,18 +133,24 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         2. Run asset processor
         3. Validate that no assets were found in the cache
         """
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "test_ProcessAssets_OnlyIncludeInvalidAssets_NoAssetsAdded")
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"],
+            "test_ProcessAssets_OnlyIncludeInvalidAssets_NoAssetsAdded",
+        )
 
         result, _ = asset_processor.batch_process()
         assert result, "AP Batch failed"
         _, existing_assets = asset_processor.compare_assets_with_cache()
-        assert not existing_assets, 'Following assets were found in cache: {}'.format(existing_assets)
-
+        assert not existing_assets, "Following assets were found in cache: {}".format(
+            existing_assets
+        )
 
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    @pytest.mark.test_case_id('C1587615')
-    def test_ProcessAndDeleteCache_APBatchShouldReprocess(self, asset_processor, ap_setup_fixture):
+    @pytest.mark.test_case_id("C1587615")
+    def test_ProcessAndDeleteCache_APBatchShouldReprocess(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         Tests processing once, deleting the generated cache, then processing again and validates the cache is created
 
@@ -153,34 +165,47 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         # Deleting assets from Cache will make them re-processed in AP (after start)
 
         # Copying test assets to project folder and deleting them from cache to make sure APBatch will process them
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], os.path.join( "TestAssets", "single_working_prefab"))
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"],
+            os.path.join("TestAssets", "single_working_prefab"),
+        )
 
         # Calling AP first time and checking whether desired assets were processed
         result, _ = asset_processor.batch_process()
         assert result, "AP Batch failed"
         missing_assets, _ = asset_processor.compare_assets_with_cache()
-        assert not missing_assets, 'Following assets were not found in cache {}.  Cache location: {}.'.format(
-            missing_assets, ap_setup_fixture['cache_test_assets'])
+        assert not missing_assets, (
+            "Following assets were not found in cache {}.  Cache location: {}.".format(
+                missing_assets, ap_setup_fixture["cache_test_assets"]
+            )
+        )
 
         # Deleting cache for processed assets and checking that they're no longer in cache
         asset_processor.delete_temp_cache()
         _, existing_assets = asset_processor.compare_assets_with_cache()
-        assert not existing_assets, 'Following assets were found in cache {}.  Cache location: {}.'.format(
-            existing_assets, ap_setup_fixture['cache_test_assets'])
+        assert not existing_assets, (
+            "Following assets were found in cache {}.  Cache location: {}.".format(
+                existing_assets, ap_setup_fixture["cache_test_assets"]
+            )
+        )
 
         # Starting AP Batch again to and checking if assets are back in cache. Turn off fast scan because it only scans
         # source files for changes, and not the cache.
         result, _ = asset_processor.batch_process(fastscan=False)
         assert result, "AP Batch failed"
         missing_assets, _ = asset_processor.compare_assets_with_cache()
-        assert not missing_assets, 'Following assets were not found in cache {}.  Cache location: {}.'.format(
-            missing_assets, ap_setup_fixture['cache_test_assets'])
-
+        assert not missing_assets, (
+            "Following assets were not found in cache {}.  Cache location: {}.".format(
+                missing_assets, ap_setup_fixture["cache_test_assets"]
+            )
+        )
 
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    @pytest.mark.test_case_id('C1591564')
-    def test_ProcessAndChangeSource_APBatchShouldReprocess(self, asset_processor, ap_setup_fixture):
+    @pytest.mark.test_case_id("C1591564")
+    def test_ProcessAndChangeSource_APBatchShouldReprocess(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         Tests reprocessing of a modified asset and verifies that it was reprocessed
 
@@ -196,20 +221,37 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         # AP Batch Processing changed files (after start)
 
         # Copying test assets to project folder and deleting them from cache to make sure APBatch will process them
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], os.path.join("TestAssets", "single_working_prefab"))
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"],
+            os.path.join("TestAssets", "single_working_prefab"),
+        )
         source_asset = os.listdir(asset_processor.project_test_source_folder())[0]
-        asset_path = os.path.join(asset_processor.project_test_source_folder(), source_asset)
+        asset_path = os.path.join(
+            asset_processor.project_test_source_folder(), source_asset
+        )
 
         # Calling AP first time and checking whether desired assets were processed
         batch_success, output = asset_processor.batch_process(capture_output=True)
         assert batch_success, f"AP Batch failed with output: {output}"
         missing_assets, _ = asset_processor.compare_assets_with_cache()
 
-        assert not missing_assets, 'Following assets were not found in cache {}. AP Batch Output {}'.format(
-            missing_assets, output)
+        assert not missing_assets, (
+            "Following assets were not found in cache {}. AP Batch Output {}".format(
+                missing_assets, output
+            )
+        )
 
         # Copy a file with a slight change in it, so the asset will be re-processed.
-        shutil.copyfile(os.path.join(ap_setup_fixture["tests_dir"], "assets", "TestAssets", "single_working_prefab_override", "working_prefab.prefab"), asset_path)
+        shutil.copyfile(
+            os.path.join(
+                ap_setup_fixture["tests_dir"],
+                "assets",
+                "TestAssets",
+                "single_working_prefab_override",
+                "working_prefab.prefab",
+            ),
+            asset_path,
+        )
 
         # Reprocessing and getting number of successfully processed assets from output
         batch_success, output = asset_processor.batch_process(capture_output=True)
@@ -221,14 +263,16 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
             for output_line in output:
                 logger.info(f"{output_line}\n")
 
-        assert num_processed_assets == 1, \
-            f'Wrong number of successfully processed assets found in output. Expected: 1 Found: {num_processed_assets}'
-
+        assert num_processed_assets == 1, (
+            f"Wrong number of successfully processed assets found in output. Expected: 1 Found: {num_processed_assets}"
+        )
 
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
     @pytest.mark.SUITE_periodic
-    def test_ProcessByBothApAndBatch_Md5ShouldMatch(self, asset_processor, ap_setup_fixture):
+    def test_ProcessByBothApAndBatch_Md5ShouldMatch(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         Tests that a cache generated by AP GUI is the same as AP Batch
 
@@ -244,13 +288,17 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         # AP Batch and AP app processed assets MD5 sums should be the same
 
         # Copying test assets to project folder and deleting them from cache to make sure APBatch will process them
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "test_ProcessByBothApAndBatch_Md5ShouldMatch")
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"], "test_ProcessByBothApAndBatch_Md5ShouldMatch"
+        )
 
         # Calling APbatch and calculating checksums for processed files
         result, _ = asset_processor.batch_process()
         assert result, "AP Batch failed"
 
-        checksum_apbatch = utils.get_files_hashsum(asset_processor.project_test_cache_folder())
+        checksum_apbatch = utils.get_files_hashsum(
+            asset_processor.project_test_cache_folder()
+        )
 
         # Deleting processed and source assets, running APBatch to clear asset database
         asset_processor.delete_temp_cache()
@@ -259,20 +307,25 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         assert result, "AP Batch failed"
 
         # Copying test assets once again
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "test_ProcessByBothApAndBatch_Md5ShouldMatch")
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"], "test_ProcessByBothApAndBatch_Md5ShouldMatch"
+        )
 
         result, _ = asset_processor.gui_process()
         assert result, "AP GUI failed"
 
-        checksum_assetprocessor = utils.get_files_hashsum(asset_processor.project_test_cache_folder())
+        checksum_assetprocessor = utils.get_files_hashsum(
+            asset_processor.project_test_cache_folder()
+        )
 
-        assert checksum_apbatch == checksum_assetprocessor, 'md5 sums are not identical'
-
+        assert checksum_apbatch == checksum_assetprocessor, "md5 sums are not identical"
 
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    @pytest.mark.test_case_id('C1612446')
-    def test_AddSameAssetsDifferentNames_ShouldProcess(self, asset_processor, ap_setup_fixture):
+    @pytest.mark.test_case_id("C1612446")
+    def test_AddSameAssetsDifferentNames_ShouldProcess(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         Tests Asset Processing of duplicate assets with different names and verifies that both assets are processed
 
@@ -286,14 +339,19 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         # Feed two similar prefabs with different names - should process without any issues
 
         # Copying test assets to project folder and deleting them from cache to make sure APBatch will process them
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], os.path.join("TestAssets", "multiple_working_prefab"))
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"],
+            os.path.join("TestAssets", "multiple_working_prefab"),
+        )
 
         # Launching AP, capturing output and asserting on number of processed assets
         result, output = asset_processor.batch_process(capture_output=True)
         assert result, "Asset processor batch failed"
 
-        num_failed_assets = asset_processor_utils.get_num_failed_processed_assets(output)
-        assert num_failed_assets == 0, 'Wrong number of failed assets'
+        num_failed_assets = asset_processor_utils.get_num_failed_processed_assets(
+            output
+        )
+        assert num_failed_assets == 0, "Wrong number of failed assets"
 
         # Checking if number of jobs were two after reprocessing the prefabs
         #    There are possible asset updates we should allow such as bootstrap.cfg for the branch token
@@ -303,16 +361,22 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         #    or an expected behavior has changed.  Processing bootstrap.cfg sometimes but not other times should not
         #    cause a failure in this test.
         num_processed_assets = asset_processor_utils.get_num_processed_assets(output)
-        assert num_processed_assets >= 2, 'Wrong number of successfully processed assets found in output: '\
-                                          '{num_processed_assets}'
+        assert num_processed_assets >= 2, (
+            "Wrong number of successfully processed assets found in output: "
+            "{num_processed_assets}"
+        )
 
         missing_assets, _ = asset_processor.compare_assets_with_cache()
-        assert not missing_assets, 'Following assets are missing in cache: {}'.format(missing_assets)
+        assert not missing_assets, "Following assets are missing in cache: {}".format(
+            missing_assets
+        )
 
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    @pytest.mark.test_case_id('C1612448')
-    def test_TwoAssetsWithSameProductName_ShouldProcessAfterRename(self, asset_processor, ap_setup_fixture):
+    @pytest.mark.test_case_id("C1612448")
+    def test_TwoAssetsWithSameProductName_ShouldProcessAfterRename(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         GHI - https://github.com/o3de/o3de/issues/15250
 
@@ -331,11 +395,11 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
 
         def run_ap_reprocess_and_skip_atom_output(asset_processor):
             source_folder = asset_processor.project_test_source_folder()
-            [os.path.join(source_folder, "a.fbx"),
-                                   os.path.join(source_folder, "b.fbx")]
+            [os.path.join(source_folder, "a.fbx"), os.path.join(source_folder, "b.fbx")]
 
-            result, output = asset_processor.batch_process(capture_output=True,
-                                                           skip_atom_output=True)
+            result, output = asset_processor.batch_process(
+                capture_output=True, skip_atom_output=True
+            )
 
             # If the test fails, it's helpful to have the output from asset processor in the logs, to track the failure down.
             if not result:
@@ -343,36 +407,58 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
             return result, output
 
         # Copying test assets to project folder
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "test_TwoAssetsWithSameProductName_ShouldProcessAfterRename")
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"],
+            "test_TwoAssetsWithSameProductName_ShouldProcessAfterRename",
+        )
 
         # Launching AP, verify it is failing
         result, output = run_ap_reprocess_and_skip_atom_output(asset_processor)
-        assert not result, \
-            'AssetProcessorBatch should have failed because the generated output products should share the same name.'
+        assert not result, (
+            "AssetProcessorBatch should have failed because the generated output products should share the same name."
+        )
 
         # Renaming output files so they won't collide in cache after second processing
         asset_info_file = os.path.join(
             asset_processor.temp_asset_root(),
-            "AutomatedTesting", "test_TwoAssetsWithSameProductName_ShouldProcessAfterRename", "a.fbx.assetinfo"
+            "AutomatedTesting",
+            "test_TwoAssetsWithSameProductName_ShouldProcessAfterRename",
+            "a.fbx.assetinfo",
         )
         data_for_rename = os.path.join(
             asset_processor.temp_asset_root(),
-            "AutomatedTesting", "test_TwoAssetsWithSameProductName_ShouldProcessAfterRename", "rename.txt"
+            "AutomatedTesting",
+            "test_TwoAssetsWithSameProductName_ShouldProcessAfterRename",
+            "rename.txt",
         )
 
-        waiter.wait_for(lambda: file_system.delete(asset_info_file, True, False), timeout=CONSTANTS.TIMEOUT_5)
-        waiter.wait_for(lambda: file_system.rename(data_for_rename, asset_info_file), timeout=CONSTANTS.TIMEOUT_5)
+        waiter.wait_for(
+            lambda: file_system.delete(asset_info_file, True, False),
+            timeout=CONSTANTS.TIMEOUT_5,
+        )
+        waiter.wait_for(
+            lambda: file_system.rename(data_for_rename, asset_info_file),
+            timeout=CONSTANTS.TIMEOUT_5,
+        )
 
         # Reprocessing files and making sure there are no failed jobs
         result, output = run_ap_reprocess_and_skip_atom_output(asset_processor)
-        assert result, "AssetProcessorBatch failed when it should have succeeded after renaming output."
+        assert result, (
+            "AssetProcessorBatch failed when it should have succeeded after renaming output."
+        )
 
-        num_failed_assets = asset_processor_utils.get_num_failed_processed_assets(output)
-        assert num_failed_assets == 0, 'Expected no failed assets.'
+        num_failed_assets = asset_processor_utils.get_num_failed_processed_assets(
+            output
+        )
+        assert num_failed_assets == 0, "Expected no failed assets."
 
-        expected_assets = ['a.actor', 'b.actor']
-        missing_assets, _ = utils.compare_assets_with_cache(expected_assets, asset_processor.project_test_cache_folder())
-        assert not missing_assets, f"The following assets were expected, but not found in cache {missing_assets}."
+        expected_assets = ["a.actor", "b.actor"]
+        missing_assets, _ = utils.compare_assets_with_cache(
+            expected_assets, asset_processor.project_test_cache_folder()
+        )
+        assert not missing_assets, (
+            f"The following assets were expected, but not found in cache {missing_assets}."
+        )
 
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
@@ -389,18 +475,27 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
 
         asset_processor.create_temp_asset_root()
         # Launching AP and making sure that the warning exists
-        result, output = asset_processor.batch_process(capture_output=True, extra_params=[
-            CONSTANTS.ASSET_CACHE_INVALID_SERVER_ADDRESS, CONSTANTS.ASSET_CACHE_SERVER_MODE])
-        assert result, "AssetProcessorBatch failed when it should have had a warning and no failure"
+        result, output = asset_processor.batch_process(
+            capture_output=True,
+            extra_params=[
+                CONSTANTS.ASSET_CACHE_INVALID_SERVER_ADDRESS,
+                CONSTANTS.ASSET_CACHE_SERVER_MODE,
+            ],
+        )
+        assert result, (
+            "AssetProcessorBatch failed when it should have had a warning and no failure"
+        )
 
-        assert asset_processor_utils.has_invalid_server_address(output, CONSTANTS.INVALID_SERVER_ADDRESS), \
-            'Invalid server address warning not present.'
-
+        assert asset_processor_utils.has_invalid_server_address(
+            output, CONSTANTS.INVALID_SERVER_ADDRESS
+        ), "Invalid server address warning not present."
 
     @pytest.mark.test_case_id("C1571774")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    def test_AllSupportedPlatforms_IncludeValidAssets_AssetsProcessed(self, asset_processor, ap_setup_fixture):
+    def test_AllSupportedPlatforms_IncludeValidAssets_AssetsProcessed(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         AssetProcessorBatch is successfully processing newly added assets
 
@@ -413,7 +508,9 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         env = ap_setup_fixture
 
         # Prepare test assets and start Asset Processor Batch
-        asset_processor.prepare_test_environment(env["tests_dir"], os.path.join("TestAssets", "Working_Prefab"))
+        asset_processor.prepare_test_environment(
+            env["tests_dir"], os.path.join("TestAssets", "Working_Prefab")
+        )
         result, output_list = asset_processor.batch_process(capture_output=True)
         assert result, f"AP Batch failed with output: {output_list}"
 
@@ -424,12 +521,16 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
 
         if missing_assets:
             logger.info(f"Missing asset Failure log was {output_list}")
-        assert not missing_assets, f"Following assets were not found in cache: {missing_assets}, found was: {found_assets}"
+        assert not missing_assets, (
+            f"Following assets were not found in cache: {missing_assets}, found was: {found_assets}"
+        )
 
     @pytest.mark.test_case_id("C1568831")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    def test_AllSupportedPlatforms_DeletedAssets_DeletedFromCache(self, asset_processor, ap_setup_fixture):
+    def test_AllSupportedPlatforms_DeletedAssets_DeletedFromCache(
+        self, asset_processor, ap_setup_fixture
+    ):
         """
         AssetProcessor successfully deletes cached items when removed from project
 
@@ -444,7 +545,9 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         env = ap_setup_fixture
 
         # Copying test assets to project folder and deleting them from cache to make sure APBatch will process them
-        test_assets_folder, cache_folder = asset_processor.prepare_test_environment(env["tests_dir"], "C1568831")
+        test_assets_folder, cache_folder = asset_processor.prepare_test_environment(
+            env["tests_dir"], "C1568831"
+        )
 
         assert asset_processor.batch_process(), "First AP Batch Failed"
 
@@ -471,7 +574,9 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
     @pytest.mark.test_case_id("C1564051")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    def test_AllSupportedPlatforms_RunAPBatch_StartsAndProcessesAssets(self, asset_processor):
+    def test_AllSupportedPlatforms_RunAPBatch_StartsAndProcessesAssets(
+        self, asset_processor
+    ):
         """
         Tests that when cache is deleted (no cache) and AssetProcessorBatch runs,
         it successfully starts and processes assets.
@@ -491,8 +596,9 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
     # fmt:off
-    def test_AllSupportedPlatforms_RunAPBatch_DeletedAssetRecovery(self, asset_processor,
-                                                                   ap_setup_fixture):
+    def test_AllSupportedPlatforms_RunAPBatch_DeletedAssetRecovery(
+        self, asset_processor, ap_setup_fixture
+    ):
         # fmt:on
         """
         AssetProcessor successfully recovers assets from cache when deleted.
@@ -508,13 +614,17 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         env = ap_setup_fixture
 
         # Add assets to test asset directory
-        test_assets_folder, cache_folder = asset_processor.prepare_test_environment(env["tests_dir"], os.path.join("TestAssets", "single_working_prefab"))
+        test_assets_folder, cache_folder = asset_processor.prepare_test_environment(
+            env["tests_dir"], os.path.join("TestAssets", "single_working_prefab")
+        )
 
         # Run batch to ensure everything is processed
         assert asset_processor.batch_process(), "First AP Batch failed"
 
         # Make sure folder got created
-        assert os.path.exists(test_assets_folder), f"Test assets folder was not created {test_assets_folder}"
+        assert os.path.exists(test_assets_folder), (
+            f"Test assets folder was not created {test_assets_folder}"
+        )
 
         # fmt:off
         assert os.path.exists(cache_folder), \
@@ -529,13 +639,17 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
 
         missing_assets, _ = asset_processor.compare_assets_with_cache()
 
-        assert not missing_assets, f"The following assets were not found in the cache {missing_assets}"
+        assert not missing_assets, (
+            f"The following assets were not found in the cache {missing_assets}"
+        )
 
     @pytest.mark.test_case_id("C3635833")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
     # fmt:off
-    def test_AllSupportedPlatforms_RunFastScanOnEmptyCache_FullScanRuns(self, ap_setup_fixture, asset_processor):
+    def test_AllSupportedPlatforms_RunFastScanOnEmptyCache_FullScanRuns(
+        self, ap_setup_fixture, asset_processor
+    ):
         """
         Tests fast scan processing on an empty cache and verifies that a full analyis will be peformed
 
@@ -553,14 +667,18 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         #    If exists: will cast to True, if not: will cast to False
         line_found = bool(log.runs[-1]["Full Analysis"])
 
-        assert line_found, "Full analysis was not performed when asset cache and first scan was performed."
+        assert line_found, (
+            "Full analysis was not performed when asset cache and first scan was performed."
+        )
 
     @pytest.mark.test_case_id("C1564055")
     @pytest.mark.test_case_id("C1564056")
     @pytest.mark.BAT
     @pytest.mark.BVT
     @pytest.mark.assetpipeline
-    def test_AllSupportedPlatforms_RunAPBatchAndGUI_JobLogsExist(self, ap_setup_fixture, asset_processor, workspace):
+    def test_AllSupportedPlatforms_RunAPBatchAndGUI_JobLogsExist(
+        self, ap_setup_fixture, asset_processor, workspace
+    ):
         """
         After running the APBatch and AP GUI, Logs directory should exist (C1564055),
         JobLogs, Batch log, and GUI log should exist in the logs directory (C1564056)
@@ -574,7 +692,7 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         asset_processor.create_temp_log_root()
         LOG_PATH = {
             "batch_log": workspace.paths.ap_batch_log(),
-            "gui_log": workspace.paths.ap_gui_log()
+            "gui_log": workspace.paths.ap_gui_log(),
         }
 
         class LogTimes:
@@ -601,9 +719,13 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         def update_time(path_key, key):
             if os.path.exists(LOG_PATH[path_key]):
                 if not LogTimes.__dict__[path_key + key]:
-                    setattr(LogTimes, path_key + key, os.stat(LOG_PATH[path_key]).st_mtime)
+                    setattr(
+                        LogTimes, path_key + key, os.stat(LOG_PATH[path_key]).st_mtime
+                    )
                 else:
-                    setattr(LogTimes, path_key + key, os.stat(LOG_PATH[path_key]).st_mtime)
+                    setattr(
+                        LogTimes, path_key + key, os.stat(LOG_PATH[path_key]).st_mtime
+                    )
 
         def update_times(key):
             for path_key in LOG_PATH.keys():
@@ -611,13 +733,17 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
             LogTimes.Report()
 
         def check_existence(name, path):
-            assert os.path.exists(path), f"{name} could not be located {path} after running the AP."
+            assert os.path.exists(path), (
+                f"{name} could not be located {path} after running the AP."
+            )
 
         # Check if log files previously exist and grab their modification times
         update_times("_start_time")
 
         # Run the Batch process
-        assert asset_processor.batch_process(create_temp_log=False), "Batch process failed to successfully terminate"
+        assert asset_processor.batch_process(create_temp_log=False), (
+            "Batch process failed to successfully terminate"
+        )
 
         asset_processor.gui_process(quitonidle=True, create_temp_log=False)
 
@@ -632,12 +758,13 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
                 f"The {key} log was not modified during the run."
             # fmt: on
 
-
     @pytest.mark.test_case_id("C1564073")
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
     # fmt:off
-    def test_AllSupportedPlatforms_CorruptPrefab_BatchReportsProcessingFail(self, asset_processor, ap_setup_fixture):
+    def test_AllSupportedPlatforms_CorruptPrefab_BatchReportsProcessingFail(
+        self, asset_processor, ap_setup_fixture
+    ):
         # fmt:on
         """
         Utilizing corrupted test assets, run the batch process to verify the
@@ -652,17 +779,25 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         error_line_found = False
 
         # Import pre-corrupted test assets
-        asset_processor.prepare_test_environment(env["tests_dir"], "TestAssets/single_corrupted_prefab")
-        success, output = asset_processor.batch_process(capture_output=True, expect_failure=True)
+        asset_processor.prepare_test_environment(
+            env["tests_dir"], "TestAssets/single_corrupted_prefab"
+        )
+        success, output = asset_processor.batch_process(
+            capture_output=True, expect_failure=True
+        )
         log = APOutputParser(output)
         for _ in log.get_lines(-1, ["Createjobs Failed", "corrupted_prefab.prefab"]):
             error_line_found = True
 
-        assert error_line_found, "The error could not be found in the newest run of the AP Batch log."
+        assert error_line_found, (
+            "The error could not be found in the newest run of the AP Batch log."
+        )
 
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    def test_validateDirectPreloadDependency_Found(self, asset_processor, ap_setup_fixture, workspace):
+    def test_validateDirectPreloadDependency_Found(
+        self, asset_processor, ap_setup_fixture, workspace
+    ):
         """
         Tests processing an asset with a circular dependency and verifies that Asset Processor will return an error
         notifying the user about a circular dependency.
@@ -675,22 +810,32 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         env = ap_setup_fixture
         error_line_found = False
 
-        asset_processor.prepare_test_environment(env["tests_dir"], "assets_with_direct_preload_dependency")
+        asset_processor.prepare_test_environment(
+            env["tests_dir"], "assets_with_direct_preload_dependency"
+        )
 
-        success, output = asset_processor.batch_process(capture_output=True, expect_failure=False)
+        success, output = asset_processor.batch_process(
+            capture_output=True, expect_failure=False
+        )
         log = APOutputParser(output)
-        for _ in log.get_lines(-1, ["Preload circular dependency detected", "testb.auto_test_asset"]):
+        for _ in log.get_lines(
+            -1, ["Preload circular dependency detected", "testb.auto_test_asset"]
+        ):
             error_line_found = True
 
         if not error_line_found:
             for line in output:
                 print(line)
 
-        assert error_line_found, "The error could not be found in the newest run of the AP Batch log."
+        assert error_line_found, (
+            "The error could not be found in the newest run of the AP Batch log."
+        )
 
     @pytest.mark.BAT
     @pytest.mark.assetpipeline
-    def test_validateNestedPreloadDependency_Found(self, asset_processor, ap_setup_fixture, workspace):
+    def test_validateNestedPreloadDependency_Found(
+        self, asset_processor, ap_setup_fixture, workspace
+    ):
         """
         Tests processing of a nested preload circular dependency and verifies that Asset Processor will return an error
         notifying the user about a circular dependency.
@@ -704,25 +849,40 @@ class TestsAssetProcessorBatch_AllPlatforms(object):
         env = ap_setup_fixture
         error_line_found = False
 
-        asset_processor.prepare_test_environment(env["tests_dir"], "assets_with_nested_preload_dependency")
+        asset_processor.prepare_test_environment(
+            env["tests_dir"], "assets_with_nested_preload_dependency"
+        )
 
-        success, output = asset_processor.batch_process(capture_output=True, expect_failure=False)
+        success, output = asset_processor.batch_process(
+            capture_output=True, expect_failure=False
+        )
         log = APOutputParser(output)
-        for _ in log.get_lines(-1, ["Preload circular dependency detected", "testa.auto_test_asset"]):
+        for _ in log.get_lines(
+            -1, ["Preload circular dependency detected", "testa.auto_test_asset"]
+        ):
             error_line_found = True
 
         if not error_line_found:
             for line in output:
                 print(line)
 
-
-        assert error_line_found, "The error could not be found in the newest run of the AP Batch log."
+        assert error_line_found, (
+            "The error could not be found in the newest run of the AP Batch log."
+        )
 
     @pytest.mark.assetpipeline
-    def test_AssetProcessor_Log_On_Failure(self, asset_processor, ap_setup_fixture, workspace):
-        asset_processor.prepare_test_environment(ap_setup_fixture["tests_dir"], "test_AP_Logs")
-        result, output = asset_processor.batch_process(expect_failure=True, capture_output=True)
-        assert not result, f'AssetProcessorBatch should have failed because there is a bad asset, output was {output}'
+    def test_AssetProcessor_Log_On_Failure(
+        self, asset_processor, ap_setup_fixture, workspace
+    ):
+        asset_processor.prepare_test_environment(
+            ap_setup_fixture["tests_dir"], "test_AP_Logs"
+        )
+        result, output = asset_processor.batch_process(
+            expect_failure=True, capture_output=True
+        )
+        assert not result, (
+            f"AssetProcessorBatch should have failed because there is a bad asset, output was {output}"
+        )
 
         jobLogs = listdir(workspace.paths.ap_job_logs() + "/test_AP_Logs")
-        assert not len(jobLogs) == 0, 'No job logs where output during failure.'
+        assert not len(jobLogs) == 0, "No job logs where output during failure."
