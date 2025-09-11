@@ -64,6 +64,7 @@ class Tests:
     concrete_material_changed        = ("Concrete material changed correctly",           "Concrete didn't react correctly")
 # fmt: on
 
+
 def Material_DefaultMaterialLibraryChangesWork():
     """
     Summary: Runs an automated test to verify that material selected in the default material library is applied to PhysX
@@ -105,8 +106,6 @@ def Material_DefaultMaterialLibraryChangesWork():
     6) Exit Game Mode
     """
 
-
-
     from editor_python_test_tools.utils import Report
     from editor_python_test_tools.utils import TestHelper as helper
     import azlmbr.legacy.general as general
@@ -136,17 +135,26 @@ def Material_DefaultMaterialLibraryChangesWork():
             if Entity.current_test == 0 and self.id.IsValid():
                 self.found_in_before_test = True
             elif Entity.current_test == 1:
-                Report.critical_result(get_test(self.name, "_found"), self.id.IsValid() and self.found_in_before_test)
+                Report.critical_result(
+                    get_test(self.name, "_found"),
+                    self.id.IsValid() and self.found_in_before_test,
+                )
             else:
-                helper.fail_fast("{} was not found in test {}".format(self.name, Entity.current_test))
+                helper.fail_fast(
+                    "{} was not found in test {}".format(self.name, Entity.current_test)
+                )
 
         @property
         def position(self):
-            return azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
+            return azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldTranslation", self.id
+            )
 
         @property
         def velocity(self):
-            return azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "GetLinearVelocity", self.id)
+            return azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "GetLinearVelocity", self.id
+            )
 
     class Collider(Entity):
         def __init__(self, name, target):
@@ -164,10 +172,14 @@ def Material_DefaultMaterialLibraryChangesWork():
             # Watch target for collision with collider
             self.collision_handler = azlmbr.physics.CollisionNotificationBusHandler()
             self.collision_handler.connect(self.id)
-            self.collision_handler.add_callback("OnCollisionBegin", self.detect_collision_target)
+            self.collision_handler.add_callback(
+                "OnCollisionBegin", self.detect_collision_target
+            )
 
         def activate_trigger(self):
-            azlmbr.entity.GameEntityContextRequestBus(azlmbr.bus.Broadcast, "ActivateGameEntity", self.trigger.id)
+            azlmbr.entity.GameEntityContextRequestBus(
+                azlmbr.bus.Broadcast, "ActivateGameEntity", self.trigger.id
+            )
             Report.info("{} activated".format(self.trigger.name))
 
         # Sets up trigger and activates it post-collision with target
@@ -182,39 +194,70 @@ def Material_DefaultMaterialLibraryChangesWork():
             self.trigger.handler.add_callback("OnTriggerEnter", self.on_trigger_enter)
 
         def on_trigger_enter(self, args):
-            if self.id.equal(args[0]) and not getattr(self, "hit_trigger_{}".format(Entity.current_test)):
-                Report.info("{} entered {} in test {}".format(self.name, self.trigger.name, Entity.current_test))
+            if self.id.equal(args[0]) and not getattr(
+                self, "hit_trigger_{}".format(Entity.current_test)
+            ):
+                Report.info(
+                    "{} entered {} in test {}".format(
+                        self.name, self.trigger.name, Entity.current_test
+                    )
+                )
                 setattr(self, "hit_trigger_{}".format(Entity.current_test), True)
 
         def detect_collision_target(self, args):
             print("Collision_going_on")
-            if self.target.id.equal(args[0]) and not getattr(self, "collided_with_target_{}".format(Entity.current_test)):
+            if self.target.id.equal(args[0]) and not getattr(
+                self, "collided_with_target_{}".format(Entity.current_test)
+            ):
                 Report.info("{} collided with {}".format(self.name, self.target.name))
-                setattr(self, "collided_with_target_{}".format(Entity.current_test), True)
+                setattr(
+                    self, "collided_with_target_{}".format(Entity.current_test), True
+                )
                 self.setup_trigger()
 
     def edit_material_library():
         # Flips the  Restitution values of rubber and concrete
         material_library = Physmaterial_Editor("all_ones_1.physmaterial")
-        rubber_restitution = material_library.modify_material("rubber", "Restitution", 0)
-        rubber_restitution_combine = material_library.modify_material("rubber", "RestitutionCombine", "Multiply")
-        concrete_restitution = material_library.modify_material("concrete", "Restitution", 1)
-        concrete_restitution_combine = material_library.modify_material("concrete", "RestitutionCombine", "Average")
+        rubber_restitution = material_library.modify_material(
+            "rubber", "Restitution", 0
+        )
+        rubber_restitution_combine = material_library.modify_material(
+            "rubber", "RestitutionCombine", "Multiply"
+        )
+        concrete_restitution = material_library.modify_material(
+            "concrete", "Restitution", 1
+        )
+        concrete_restitution_combine = material_library.modify_material(
+            "concrete", "RestitutionCombine", "Average"
+        )
 
         material_library.save_changes()
-        return rubber_restitution and rubber_restitution_combine and concrete_restitution and concrete_restitution_combine
+        return (
+            rubber_restitution
+            and rubber_restitution_combine
+            and concrete_restitution
+            and concrete_restitution_combine
+        )
 
     def check_rubber_material_updated(rubber_colliders):
         # Checks that all rubber colliders hit the trigger on test 0 and not on test 1
-        before_test_passed = all([collider.hit_trigger_0 for collider in rubber_colliders])
-        after_test_passed = all([not collider.hit_trigger_1 for collider in rubber_colliders])
+        before_test_passed = all(
+            [collider.hit_trigger_0 for collider in rubber_colliders]
+        )
+        after_test_passed = all(
+            [not collider.hit_trigger_1 for collider in rubber_colliders]
+        )
 
         return before_test_passed and after_test_passed
 
     def check_concrete_material_updated(concrete_colliders):
         # Checks that all concrete colliders didn't hit the trigger on test 0 and did on test 1
-        before_test_passed = all([not collider.hit_trigger_0 for collider in concrete_colliders])
-        after_test_passed = all([collider.hit_trigger_1 for collider in concrete_colliders])
+        before_test_passed = all(
+            [not collider.hit_trigger_0 for collider in concrete_colliders]
+        )
+        after_test_passed = all(
+            [collider.hit_trigger_1 for collider in concrete_colliders]
+        )
 
         return before_test_passed and after_test_passed
 
@@ -234,12 +277,33 @@ def Material_DefaultMaterialLibraryChangesWork():
             collider.setup_target()
 
         # 4) Wait for Collision, Report Results
-        if not helper.wait_for_condition(lambda: all([getattr(collider, "collided_with_target_{}".format(index)) for collider in all_colliders]), TIME_OUT):
-            failed_colliders = ", ".join([collider.name for collider in all_colliders if not getattr(collider, "collided_with_target_{}".format(index))])
-            helper.fail_fast("A collision with target did not occur for these colliders: {}".format(failed_colliders))
+        if not helper.wait_for_condition(
+            lambda: all(
+                [
+                    getattr(collider, "collided_with_target_{}".format(index))
+                    for collider in all_colliders
+                ]
+            ),
+            TIME_OUT,
+        ):
+            failed_colliders = ", ".join(
+                [
+                    collider.name
+                    for collider in all_colliders
+                    if not getattr(collider, "collided_with_target_{}".format(index))
+                ]
+            )
+            helper.fail_fast(
+                "A collision with target did not occur for these colliders: {}".format(
+                    failed_colliders
+                )
+            )
         elif index == 1:
             for collider in all_colliders:
-                Report.result(get_test(collider.name, "_collided"), collider.collided_with_target_0 and collider.collided_with_target_1)
+                Report.result(
+                    get_test(collider.name, "_collided"),
+                    collider.collided_with_target_0 and collider.collided_with_target_1,
+                )
 
         # 5) Allow time to hit trigger
         general.idle_wait_frames(PROPAGATION_FRAMES)
@@ -253,21 +317,33 @@ def Material_DefaultMaterialLibraryChangesWork():
     helper.open_level("Physics", "Material_DefaultMaterialLibraryChangesWork")
 
     # 2) Setup targets and colliders
-    terrain                   = Entity("terrain")
-    target_character_rubber   = Entity("target_character_rubber")
+    terrain = Entity("terrain")
+    target_character_rubber = Entity("target_character_rubber")
     target_character_concrete = Entity("target_character_concrete")
 
-    rubber_sphere      = Collider(name="rubber_sphere",      target=terrain)
-    concrete_sphere    = Collider(name="concrete_sphere",    target=terrain)
-    character_rubber   = Collider(name="character_rubber",   target=target_character_rubber)
-    character_concrete = Collider(name="character_concrete", target=target_character_concrete)
-    terrain_rubber     = Collider(name="terrain_rubber",     target=terrain)
-    terrain_concrete   = Collider(name="terrain_concrete",   target=terrain)
-    ragdoll_rubber     = Collider(name="ragdoll_rubber",     target=terrain)
-    ragdoll_concrete   = Collider(name="ragdoll_concrete",   target=terrain)
+    rubber_sphere = Collider(name="rubber_sphere", target=terrain)
+    concrete_sphere = Collider(name="concrete_sphere", target=terrain)
+    character_rubber = Collider(name="character_rubber", target=target_character_rubber)
+    character_concrete = Collider(
+        name="character_concrete", target=target_character_concrete
+    )
+    terrain_rubber = Collider(name="terrain_rubber", target=terrain)
+    terrain_concrete = Collider(name="terrain_concrete", target=terrain)
+    ragdoll_rubber = Collider(name="ragdoll_rubber", target=terrain)
+    ragdoll_concrete = Collider(name="ragdoll_concrete", target=terrain)
 
-    rubber_test_entities = [rubber_sphere, character_rubber, terrain_rubber, ragdoll_rubber]
-    concrete_test_entities = [concrete_sphere, character_concrete, terrain_concrete, ragdoll_concrete]
+    rubber_test_entities = [
+        rubber_sphere,
+        character_rubber,
+        terrain_rubber,
+        ragdoll_rubber,
+    ]
+    concrete_test_entities = [
+        concrete_sphere,
+        character_concrete,
+        terrain_concrete,
+        ragdoll_concrete,
+    ]
     test_entities = rubber_test_entities + concrete_test_entities
 
     # 3) Run test 0
@@ -283,11 +359,17 @@ def Material_DefaultMaterialLibraryChangesWork():
     test_run(index=1, all_colliders=test_entities)
 
     # 6) Validate Results
-    Report.result(Tests.concrete_material_changed, check_concrete_material_updated(concrete_test_entities))
-    Report.result(Tests.rubber_material_changed, check_rubber_material_updated(rubber_test_entities))
-
+    Report.result(
+        Tests.concrete_material_changed,
+        check_concrete_material_updated(concrete_test_entities),
+    )
+    Report.result(
+        Tests.rubber_material_changed,
+        check_rubber_material_updated(rubber_test_entities),
+    )
 
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(Material_DefaultMaterialLibraryChangesWork)

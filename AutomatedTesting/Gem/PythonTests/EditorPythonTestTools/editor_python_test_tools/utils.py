@@ -14,6 +14,7 @@ from typing import Callable, Tuple
 from enum import Enum
 
 import azlmbr
+
 try:
     import azlmbr.atomtools.general as general  # Standard MaterialEditor or similar executable test.
 except ModuleNotFoundError:  # azlmbr.atomtools is not yet available in the Editor
@@ -21,7 +22,7 @@ except ModuleNotFoundError:  # azlmbr.atomtools is not yet available in the Edit
 
 try:
     import azlmbr.multiplayer as multiplayer
-except ModuleNotFoundError: # Not all projects enable the Multiplayer Gem.
+except ModuleNotFoundError:  # Not all projects enable the Multiplayer Gem.
     pass
 
 import azlmbr.debug
@@ -39,10 +40,12 @@ import ly_test_tools.environment.process_utils as process_utils
 # wait time that could be failing just because it's a busy machine.
 MULIPLAYER_SERVER_RECONNECT_ATTEMPTS = 35
 
+
 class FailFast(Exception):
     """
     Raise to stop proceeding through test steps.
     """
+
     pass
 
 
@@ -67,8 +70,14 @@ class TestHelper:
         terrain_texture_resolution = 4096
         use_terrain = False
 
-        result = general.create_level_no_prompt(template_name, level_name, heightmap_resolution, heightmap_meters_per_pixel,
-                                                terrain_texture_resolution, use_terrain)
+        result = general.create_level_no_prompt(
+            template_name,
+            level_name,
+            heightmap_resolution,
+            heightmap_meters_per_pixel,
+            terrain_texture_resolution,
+            use_terrain,
+        )
 
         # Result codes are ECreateLevelResult defined in CryEdit.h
         if result == 1:
@@ -85,7 +94,7 @@ class TestHelper:
         return result == 0
 
     @staticmethod
-    def open_level(directory : str, level : str, no_prompt: bool = True):
+    def open_level(directory: str, level: str, no_prompt: bool = True):
         # type: (str, str) -> None
         """
         :param level: the name of the level folder in AutomatedTesting\\Physics\\
@@ -95,8 +104,10 @@ class TestHelper:
         # Make sure we are not in game mode
         if general.is_in_game_mode():
             general.exit_game_mode()
-            TestHelper.wait_for_condition(lambda : not general.is_in_game_mode(), 1.0)
-            assert not general.is_in_game_mode(), "Editor was in gamemode when opening the level and was unable to exit from it"
+            TestHelper.wait_for_condition(lambda: not general.is_in_game_mode(), 1.0)
+            assert not general.is_in_game_mode(), (
+                "Editor was in gamemode when opening the level and was unable to exit from it"
+            )
 
         Report.info("Open level {}/{}".format(directory, level))
         if no_prompt:
@@ -109,7 +120,11 @@ class TestHelper:
             if open_level_name == level:
                 Report.info("{} was already opened".format(level))
             else:
-                assert False, "Failed to open level: {} does not exist or is invalid".format(level)
+                assert False, (
+                    "Failed to open level: {} does not exist or is invalid".format(
+                        level
+                    )
+                )
 
         # FIX-ME: Expose call for checking when has been finished loading and change this frame waiting
         # Jira: LY-113761
@@ -125,7 +140,7 @@ class TestHelper:
         Report.info("Entering game mode")
         general.enter_game_mode()
 
-        TestHelper.wait_for_condition(lambda : general.is_in_game_mode(), 1.0)
+        TestHelper.wait_for_condition(lambda: general.is_in_game_mode(), 1.0)
         Report.critical_result(msgtuple_success_fail, general.is_in_game_mode())
 
     @staticmethod
@@ -154,8 +169,13 @@ class TestHelper:
 
         :return: No return value, but if the message is found, a successful critical result is reported; otherwise failure.
         """
-        TestHelper.wait_for_condition(lambda : TestHelper.find_line(window, line, print_infos), time_out)
-        Report.critical_result(("Found expected line: " + line, "Failed to find expected line: " + line), TestHelper.find_line(window, line, print_infos))
+        TestHelper.wait_for_condition(
+            lambda: TestHelper.find_line(window, line, print_infos), time_out
+        )
+        Report.critical_result(
+            ("Found expected line: " + line, "Failed to find expected line: " + line),
+            TestHelper.find_line(window, line, print_infos),
+        )
 
     @staticmethod
     def fail_if_log_line_found(window, line, print_infos, time_out):
@@ -168,8 +188,13 @@ class TestHelper:
 
         :return: No return value, but if the line is found, a failed critical result is reported; otherwise success.
         """
-        TestHelper.wait_for_condition(lambda : TestHelper.find_line(window, line, print_infos), time_out)
-        Report.critical_result(("Unexpected line not found: " + line, "Unexpected line found: " + line), not TestHelper.find_line(window, line, print_infos))
+        TestHelper.wait_for_condition(
+            lambda: TestHelper.find_line(window, line, print_infos), time_out
+        )
+        Report.critical_result(
+            ("Unexpected line not found: " + line, "Unexpected line found: " + line),
+            not TestHelper.find_line(window, line, print_infos),
+        )
 
     @staticmethod
     def all_expected_log_lines_found(section_tracer, lines):
@@ -195,11 +220,12 @@ class TestHelper:
 
         return matching_lines >= expected_lines
 
-
-    EditorServerMode = Enum('EditorServerMode', ['DEDICATED_SERVER', 'CLIENT_SERVER'])
+    EditorServerMode = Enum("EditorServerMode", ["DEDICATED_SERVER", "CLIENT_SERVER"])
 
     @staticmethod
-    def multiplayer_enter_game_mode(msgtuple_success_fail: Tuple[str, str], editor_server_mode: EditorServerMode) -> None:
+    def multiplayer_enter_game_mode(
+        msgtuple_success_fail: Tuple[str, str], editor_server_mode: EditorServerMode
+    ) -> None:
         """
         :param msgtuple_success_fail: The tuple with the expected/unexpected messages for entering game mode.
 
@@ -210,42 +236,100 @@ class TestHelper:
         with MultiplayerHelper() as multiplayer_helper:
             # enter game-mode.
             # game-mode in multiplayer will also launch ServerLauncher.exe and connect to the editor
-            general.set_cvar_integer('editorsv_max_connection_attempts', MULIPLAYER_SERVER_RECONNECT_ATTEMPTS)
+            general.set_cvar_integer(
+                "editorsv_max_connection_attempts", MULIPLAYER_SERVER_RECONNECT_ATTEMPTS
+            )
 
             # The editor waits 1 additional second between each retry, meaning the total time is the sum of the first n natural numbers, which
             # solves as n(n+1)/2.
-            wait_duration = MULIPLAYER_SERVER_RECONNECT_ATTEMPTS * (MULIPLAYER_SERVER_RECONNECT_ATTEMPTS + 1.0) / 2.0
+            wait_duration = (
+                MULIPLAYER_SERVER_RECONNECT_ATTEMPTS
+                * (MULIPLAYER_SERVER_RECONNECT_ATTEMPTS + 1.0)
+                / 2.0
+            )
 
-            general.set_cvar_string('editorsv_clientserver', 'true' if editor_server_mode == TestHelper.EditorServerMode.CLIENT_SERVER else 'false')
+            general.set_cvar_string(
+                "editorsv_clientserver",
+                "true"
+                if editor_server_mode == TestHelper.EditorServerMode.CLIENT_SERVER
+                else "false",
+            )
 
             multiplayer.PythonEditorFuncs_enter_game_mode()
 
             if editor_server_mode == TestHelper.EditorServerMode.DEDICATED_SERVER:
                 # note that this next line merely waits for the editor say that it has asked the server to launch, not that it did actually launch.
-                TestHelper.wait_for_condition(lambda : multiplayer_helper.serverLaunched, 20.0)
+                TestHelper.wait_for_condition(
+                    lambda: multiplayer_helper.serverLaunched, 20.0
+                )
 
                 # note that this next line ensures that the process is running, not that it is connected to the editor.
-                waiter.wait_for(lambda: process_utils.process_exists("AutomatedTesting.ServerLauncher", ignore_extensions=True), timeout=5.0, exc=AssertionError("AutomatedTesting.ServerLauncher process is not running!"), interval=1.0)
-                Report.critical_result(("AutomatedTesting.ServerLauncher process successfully launched", "AutomatedTesting.ServerLauncher process failed to launch"), process_utils.process_exists("AutomatedTesting.ServerLauncher", ignore_extensions=True))
+                waiter.wait_for(
+                    lambda: process_utils.process_exists(
+                        "AutomatedTesting.ServerLauncher", ignore_extensions=True
+                    ),
+                    timeout=5.0,
+                    exc=AssertionError(
+                        "AutomatedTesting.ServerLauncher process is not running!"
+                    ),
+                    interval=1.0,
+                )
+                Report.critical_result(
+                    (
+                        "AutomatedTesting.ServerLauncher process successfully launched",
+                        "AutomatedTesting.ServerLauncher process failed to launch",
+                    ),
+                    process_utils.process_exists(
+                        "AutomatedTesting.ServerLauncher", ignore_extensions=True
+                    ),
+                )
 
                 # note that this line waits for the editor to say that it has attempted to connect to the server at least once, not that it has actually connected.
-                TestHelper.wait_for_condition(lambda : multiplayer_helper.editorConnectionAttemptCount > 0, 10.0)
-                Report.critical_result(("Multiplayer Editor attempting server connection.", "Multiplayer Editor never tried connecting to the server."), multiplayer_helper.editorConnectionAttemptCount > 0)
+                TestHelper.wait_for_condition(
+                    lambda: multiplayer_helper.editorConnectionAttemptCount > 0, 10.0
+                )
+                Report.critical_result(
+                    (
+                        "Multiplayer Editor attempting server connection.",
+                        "Multiplayer Editor never tried connecting to the server.",
+                    ),
+                    multiplayer_helper.editorConnectionAttemptCount > 0,
+                )
 
                 # between the previous step and this one, the editor has to use up all its connection attempts, and be successfully connected, which can take a while
                 # since the server process has to actually start up, load all its dynamic libraries, assets, etc.
                 # so it has to wait at least wait_duration seconds or else the test will fail prematurely
-                TestHelper.wait_for_condition(lambda : multiplayer_helper.editorSendingLevelData, wait_duration)
-                Report.critical_result(("Multiplayer Editor sent level data to the server.", "Multiplayer Editor never sent the level to the server."), multiplayer_helper.editorSendingLevelData)
+                TestHelper.wait_for_condition(
+                    lambda: multiplayer_helper.editorSendingLevelData, wait_duration
+                )
+                Report.critical_result(
+                    (
+                        "Multiplayer Editor sent level data to the server.",
+                        "Multiplayer Editor never sent the level to the server.",
+                    ),
+                    multiplayer_helper.editorSendingLevelData,
+                )
 
-                TestHelper.wait_for_condition(lambda : multiplayer_helper.connectToSimulationSuccess, 20.0)
-                Report.critical_result(("Multiplayer Editor successfully connected to server network simuluation.", "Multiplayer Editor failed to connected to server network simuluation."), multiplayer_helper.connectToSimulationSuccess)
+                TestHelper.wait_for_condition(
+                    lambda: multiplayer_helper.connectToSimulationSuccess, 20.0
+                )
+                Report.critical_result(
+                    (
+                        "Multiplayer Editor successfully connected to server network simuluation.",
+                        "Multiplayer Editor failed to connected to server network simuluation.",
+                    ),
+                    multiplayer_helper.connectToSimulationSuccess,
+                )
 
-        TestHelper.wait_for_condition(lambda : multiplayer.PythonEditorFuncs_is_in_game_mode(), 10.0)
-        Report.critical_result(msgtuple_success_fail, multiplayer.PythonEditorFuncs_is_in_game_mode())
+        TestHelper.wait_for_condition(
+            lambda: multiplayer.PythonEditorFuncs_is_in_game_mode(), 10.0
+        )
+        Report.critical_result(
+            msgtuple_success_fail, multiplayer.PythonEditorFuncs_is_in_game_mode()
+        )
 
     @staticmethod
-    def exit_game_mode(msgtuple_success_fail : Tuple[str, str]):
+    def exit_game_mode(msgtuple_success_fail: Tuple[str, str]):
         # type: (tuple) -> None
         """
         :param msgtuple_success_fail: The tuple with the expected/unexpected messages for exiting game mode.
@@ -255,7 +339,7 @@ class TestHelper:
         Report.info("Exiting game mode")
         general.exit_game_mode()
 
-        TestHelper.wait_for_condition(lambda : not general.is_in_game_mode(), 1.0)
+        TestHelper.wait_for_condition(lambda: not general.is_in_game_mode(), 1.0)
         Report.critical_result(msgtuple_success_fail, not general.is_in_game_mode())
 
     @staticmethod
@@ -299,7 +383,9 @@ class TestHelper:
 
                 ret = function()
                 if not isinstance(ret, bool):
-                    raise TypeError("return value for wait_for_condition function must be a bool")
+                    raise TypeError(
+                        "return value for wait_for_condition function must be a bool"
+                    )
                 if ret:
                     return True
 
@@ -355,7 +441,7 @@ class Report:
     _exception = None
 
     @staticmethod
-    def start_test(test_function : Callable):
+    def start_test(test_function: Callable):
         """
         Runs the test, outputs the report and asserts in case of failure.
         @param: The test function to execute
@@ -376,7 +462,7 @@ class Report:
         assert success, f"Test {test_function.__name__} failed"
 
     @staticmethod
-    def get_report(test_function : Callable) -> (bool, str):
+    def get_report(test_function: Callable) -> (bool, str):
         """
         Outputs infomation on the editor console for the test
         @param msg: message to output
@@ -386,8 +472,10 @@ class Report:
         report = f"Test {test_function.__name__} finished.\nReport:\n"
         # report_dict is a JSON that can be used to parse test run information from a external runner
         # The regular report string is intended to be used for manual debugging
-        filename = os.path.splitext(os.path.basename(test_function.__code__.co_filename))[0]
-        report_dict = {'name' : filename, 'success' : True, 'exception' : None}
+        filename = os.path.splitext(
+            os.path.basename(test_function.__code__.co_filename)
+        )[0]
+        report_dict = {"name": filename, "success": True, "exception": None}
         for result in Report._results:
             passed, info = result
             success = success and passed
@@ -400,18 +488,18 @@ class Report:
         if Report._exception:
             exception_str = Report._exception[:-1].replace("\n", "\n  ")
             report += "EXCEPTION raised:\n  %s\n" % exception_str
-            report_dict['exception'] = exception_str
+            report_dict["exception"] = exception_str
             success = False
         report += "Test result:  " + ("SUCCESS" if success else "FAILURE")
-        report_dict['success'] = success
-        report_dict['output'] = report
+        report_dict["success"] = success
+        report_dict["output"] = report
         report_json_str = json.dumps(report_dict)
         # For helping parsing, the json will be always contained between JSON_START JSON_END
         report += f"\nJSON_START({report_json_str})JSON_END\n"
         return success, report
 
     @staticmethod
-    def info(msg : str):
+    def info(msg: str):
         """
         Outputs infomation on the editor console for the test
         @param msg: message to output
@@ -419,7 +507,7 @@ class Report:
         print("Info: {}".format(msg))
 
     @staticmethod
-    def success(msgtuple_success_fail : Tuple[str, str]):
+    def success(msgtuple_success_fail: Tuple[str, str]):
         """
         Given a test string tuple (success_string, failure_string), registers the test result as success
         @param msgtuple_success_fail: Two element tuple of success and failure strings
@@ -429,7 +517,7 @@ class Report:
         Report._results.append((True, outcome))
 
     @staticmethod
-    def failure(msgtuple_success_fail : Tuple[str, str]):
+    def failure(msgtuple_success_fail: Tuple[str, str]):
         """
         Given a test string tuple (success_string, failure_string), registers the test result as failed
         @param msgtuple_success_fail: Two element tuple of success and failure strings
@@ -439,7 +527,7 @@ class Report:
         Report._results.append((False, outcome))
 
     @staticmethod
-    def result(msgtuple_success_fail : Tuple[str, str], outcome : bool):
+    def result(msgtuple_success_fail: Tuple[str, str], outcome: bool):
         """
         Given a test string tuple (success_string, failure_string), registers the test result based on the
         given outcome
@@ -456,7 +544,11 @@ class Report:
         return outcome
 
     @staticmethod
-    def critical_result(msgtuple_success_fail : Tuple[str, str], outcome : bool, fast_fail_message : str = None):
+    def critical_result(
+        msgtuple_success_fail: Tuple[str, str],
+        outcome: bool,
+        fast_fail_message: str = None,
+    ):
         # type: (tuple, bool, str) -> None
         """
         if outcome is False we will fail fast
@@ -473,7 +565,9 @@ class Report:
 
     # DEPRECATED: Use vector3_str()
     @staticmethod
-    def info_vector3(vector3 : azlmbr.math.Vector3, label : str ="", magnitude : float =None):
+    def info_vector3(
+        vector3: azlmbr.math.Vector3, label: str = "", magnitude: float = None
+    ):
         # type: (azlmbr.math.Vector3, str, float) -> None
         """
         prints the vector to the Report.info log. If applied, label will print first,
@@ -488,12 +582,14 @@ class Report:
         """
         if label != "":
             Report.info(label)
-        Report.info("   x: {:.2f}, y: {:.2f}, z: {:.2f}".format(vector3.x, vector3.y, vector3.z))
+        Report.info(
+            "   x: {:.2f}, y: {:.2f}, z: {:.2f}".format(vector3.x, vector3.y, vector3.z)
+        )
         if magnitude is not None:
             Report.info("   magnitude: {:.2f}".format(magnitude))
 
 
-'''
+"""
 Utility for scope tracing errors and warnings.
 Usage:
 
@@ -504,7 +600,9 @@ Usage:
 
     Report.result(Tests.warnings_not_found_in_section, not section_tracer.has_warnings)
 
-'''
+"""
+
+
 class Tracer:
     def __init__(self):
         self.warnings = []
@@ -552,7 +650,9 @@ class Tracer:
             self.message = args[3]
 
         def __str__(self):
-            return f"Assert: [{self.filename}:{self.function}:{self.line}]: {self.message}"
+            return (
+                f"Assert: [{self.filename}:{self.function}:{self.line}]: {self.message}"
+            )
 
         def __repr__(self):
             return f"[Assert: {self.message}]"
@@ -579,7 +679,15 @@ class Tracer:
     def _on_assert(self, args):
         assertInfo = Tracer.AssertInfo(args)
         self.asserts.append(assertInfo)
-        Report.info("Tracer caught Assert: %s:%i[%s] \"%s\"" % (assertInfo.filename, assertInfo.line, assertInfo.function, assertInfo.message))
+        Report.info(
+            'Tracer caught Assert: %s:%i[%s] "%s"'
+            % (
+                assertInfo.filename,
+                assertInfo.line,
+                assertInfo.function,
+                assertInfo.message,
+            )
+        )
         self.has_asserts = True
         return False
 
@@ -632,9 +740,12 @@ class AngleHelper:
         :param tolerance: the tolerance to define close
         :return: bool
         """
-        return AngleHelper.is_angle_close(math.radians(x_deg), math.radians(y_deg), tolerance)
+        return AngleHelper.is_angle_close(
+            math.radians(x_deg), math.radians(y_deg), tolerance
+        )
 
-'''
+
+"""
 Utility for receiving Multiplayer Editor notifications.
 Usage:
 
@@ -643,7 +754,9 @@ Usage:
         # section were we are interested in capturing multiplayer editor notifications
         TestHelper.wait_for_condition(lambda : multiplayer_helper.serverLaunched, 10.0)
         ...
-'''
+"""
+
+
 class MultiplayerHelper:
     def __init__(self):
         self.handler = None
@@ -653,12 +766,20 @@ class MultiplayerHelper:
         self.connectToSimulationSuccess = False
 
     def __enter__(self):
-        self.handler = azlmbr.multiplayer.MultiplayerEditorServerNotificationBusHandler()
+        self.handler = (
+            azlmbr.multiplayer.MultiplayerEditorServerNotificationBusHandler()
+        )
         self.handler.connect()
         self.handler.add_callback("OnServerLaunched", self._on_server_launched)
-        self.handler.add_callback("OnEditorConnectionAttempt", self._on_editor_connection_attempt)
-        self.handler.add_callback("OnEditorSendingLevelData", self._on_editor_sending_level_data)
-        self.handler.add_callback("OnConnectToSimulationSuccess", self._on_connect_to_simulation_success)
+        self.handler.add_callback(
+            "OnEditorConnectionAttempt", self._on_editor_connection_attempt
+        )
+        self.handler.add_callback(
+            "OnEditorSendingLevelData", self._on_editor_sending_level_data
+        )
+        self.handler.add_callback(
+            "OnConnectToSimulationSuccess", self._on_connect_to_simulation_success
+        )
         return self
 
     def __exit__(self, type, value, traceback):
@@ -681,6 +802,7 @@ class MultiplayerHelper:
     def _on_connect_to_simulation_success(self, args):
         self.connectToSimulationSuccess = True
         return False
+
 
 def vector3_str(vector3):
     return "(x: {:.2f}, y: {:.2f}, z: {:.2f})".format(vector3.x, vector3.y, vector3.z)
