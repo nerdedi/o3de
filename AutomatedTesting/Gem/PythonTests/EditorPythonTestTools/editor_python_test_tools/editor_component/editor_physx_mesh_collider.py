@@ -9,8 +9,10 @@ import azlmbr.math as math
 import azlmbr.asset as azasset
 
 from editor_python_test_tools.editor_entity_utils import EditorEntity
-from editor_python_test_tools.editor_component.editor_component_validation import \
-    (_validate_xyz_is_float, _validate_property_visibility)
+from editor_python_test_tools.editor_component.editor_component_validation import (
+    _validate_xyz_is_float,
+    _validate_property_visibility,
+)
 from editor_python_test_tools.asset_utils import Asset
 
 from consts.physics import PHYSX_MESH_COLLIDER
@@ -24,6 +26,7 @@ class EditorPhysxMeshCollider:
     The EditorPhysxMeshCollider object stores a reference to an EditorComponent and is created by passing an EditorEntity to the
     EditorPhysxMeshCollider object constructor EditorPhysxMeshCollider(EditorEntity).
     """
+
     def __init__(self, editor_entity: EditorEntity) -> None:
         self.component = editor_entity.add_component(PHYSX_MESH_COLLIDER)
 
@@ -33,24 +36,27 @@ class EditorPhysxMeshCollider:
             calling self.component.get_property_type_visibility() which will also return the expected data type
             and visibility.
         """
-        class PhysicsAsset:
-            BASE = 'Shape Configuration|Asset'
-            PHYSX_MESH = 'Shape Configuration|Asset|PhysX Mesh'
-            ASSET_SCALE = 'Shape Configuration|Asset|Configuration|Asset Scale'
-            PHYSICS_MATERIALS_FROM_ASSET = 'Shape Configuration|Asset|Configuration|Physics materials from asset'
 
-        COLLISION_LAYER = 'Collider Configuration|Collision Layer'
-        COLLIDES_WITH = 'Collider Configuration|Collides With'
-        TRIGGER = 'Collider Configuration|Trigger'
-        SIMULATED = 'Collider Configuration|Simulated'
-        IN_SCENE_QUERIES = 'Collider Configuration|In Scene Queries'
-        OFFSET = 'Collider Configuration|Offset'
-        ROTATION = 'Collider Configuration|Rotation'
-        PHYSX_MATERIAL_ASSET = ']|'  # o3de/o3de#12503 Needs a better property path
-        TAG = 'Collider Configuration|Tag'
-        RESET_OFFSET = 'Collider Configuration|Rest offset'
-        CONTACT_OFFSET = 'Collider Configuration|Contact offset'
-        DRAW_COLLIDER = 'Debug draw settings|Draw collider'
+        class PhysicsAsset:
+            BASE = "Shape Configuration|Asset"
+            PHYSX_MESH = "Shape Configuration|Asset|PhysX Mesh"
+            ASSET_SCALE = "Shape Configuration|Asset|Configuration|Asset Scale"
+            PHYSICS_MATERIALS_FROM_ASSET = (
+                "Shape Configuration|Asset|Configuration|Physics materials from asset"
+            )
+
+        COLLISION_LAYER = "Collider Configuration|Collision Layer"
+        COLLIDES_WITH = "Collider Configuration|Collides With"
+        TRIGGER = "Collider Configuration|Trigger"
+        SIMULATED = "Collider Configuration|Simulated"
+        IN_SCENE_QUERIES = "Collider Configuration|In Scene Queries"
+        OFFSET = "Collider Configuration|Offset"
+        ROTATION = "Collider Configuration|Rotation"
+        PHYSX_MATERIAL_ASSET = "]|"  # o3de/o3de#12503 Needs a better property path
+        TAG = "Collider Configuration|Tag"
+        RESET_OFFSET = "Collider Configuration|Rest offset"
+        CONTACT_OFFSET = "Collider Configuration|Contact offset"
+        DRAW_COLLIDER = "Debug draw settings|Draw collider"
 
     # General Properties
     # o3de/o3de#12632 - Figure out how to set dropdowns for Collison Layer and Collides With
@@ -109,9 +115,13 @@ class EditorPhysxMeshCollider:
 
         Used to set the PhysX Mesh Collider's Offset Property.
         """
-        _validate_xyz_is_float(x, y, z, f"One of the offset inputs are not a float - X: {x}, Y: {y}, Z {z}")
+        _validate_xyz_is_float(
+            x, y, z, f"One of the offset inputs are not a float - X: {x}, Y: {y}, Z {z}"
+        )
 
-        self.component.set_component_property_value(self.Path.OFFSET, math.Vector3(x, y, z))
+        self.component.set_component_property_value(
+            self.Path.OFFSET, math.Vector3(x, y, z)
+        )
 
     def get_offset(self) -> math.Vector3:
         """
@@ -127,7 +137,12 @@ class EditorPhysxMeshCollider:
 
         Used to set the PhysX Mesh Collider's Rotation Property.
         """
-        _validate_xyz_is_float(x, y, z, f"One of the rotation inputs are not a float - X: {x}, Y: {y}, Z {z}")
+        _validate_xyz_is_float(
+            x,
+            y,
+            z,
+            f"One of the rotation inputs are not a float - X: {x}, Y: {y}, Z {z}",
+        )
 
         rotation = math.Quaternion()
         rotation.SetFromEulerDegrees(math.Vector3(x, y, z))
@@ -168,7 +183,9 @@ class EditorPhysxMeshCollider:
 
         NOTE: Rest Offset Must be LESS-THAN Contact Offset.
         """
-        assert isinstance(rest_offset, float), f"The value passed to Rest Offset \"{rest_offset}\" is not a float."
+        assert isinstance(rest_offset, float), (
+            f'The value passed to Rest Offset "{rest_offset}" is not a float.'
+        )
 
         self.component.set_component_property_value(self.Path.RESET_OFFSET, rest_offset)
 
@@ -188,9 +205,13 @@ class EditorPhysxMeshCollider:
 
         NOTE: Contact Offset Must be GREATER-THAN Rest Offset.
         """
-        assert isinstance(contact_offset, float), f"The value passed to Contact Offset \"{contact_offset}\" is not a float."
+        assert isinstance(contact_offset, float), (
+            f'The value passed to Contact Offset "{contact_offset}" is not a float.'
+        )
 
-        self.component.set_component_property_value(self.Path.CONTACT_OFFSET, contact_offset)
+        self.component.set_component_property_value(
+            self.Path.CONTACT_OFFSET, contact_offset
+        )
 
     def get_contact_offset(self) -> float:
         """
@@ -225,10 +246,14 @@ class EditorPhysxMeshCollider:
         """
         # o3de/o3de#12503 PhysX Mesh Collider Component's Physic Material field(s) return unintuitive property tree paths.
         assert NotImplementedError
-        _validate_property_visibility(self.component, self.Path.PHYSX_MATERIAL_ASSET, PropertyVisibility.VISIBLE)
+        _validate_property_visibility(
+            self.component, self.Path.PHYSX_MATERIAL_ASSET, PropertyVisibility.VISIBLE
+        )
 
         px_material = Asset.find_asset_by_path(asset_product_path)
-        self.component.set_component_property_value(self.Path.PHYSX_MATERIAL_ASSET, px_material.id)
+        self.component.set_component_property_value(
+            self.Path.PHYSX_MATERIAL_ASSET, px_material.id
+        )
 
     def get_physx_material(self) -> Asset:
         """
@@ -239,7 +264,9 @@ class EditorPhysxMeshCollider:
         # o3de/o3de#12503 PhysX Mesh Collider Component's Physic Material field(s) return unintuitive property tree paths.
         assert NotImplementedError
 
-        return self.component.get_component_property_value(self.Path.PHYSX_MATERIAL_ASSET)
+        return self.component.get_component_property_value(
+            self.Path.PHYSX_MATERIAL_ASSET
+        )
 
     def set_physx_mesh(self, asset_product_path: str) -> None:
         """
@@ -247,10 +274,16 @@ class EditorPhysxMeshCollider:
 
         Used to set the PhysX Mesh Collider's PhysicsAsset Shape's PhysX Mesh from a user provided asset product path.
         """
-        _validate_property_visibility(self.component, self.Path.PhysicsAsset.PHYSX_MESH, PropertyVisibility.VISIBLE)
+        _validate_property_visibility(
+            self.component,
+            self.Path.PhysicsAsset.PHYSX_MESH,
+            PropertyVisibility.VISIBLE,
+        )
 
         px_asset = Asset.find_asset_by_path(asset_product_path)
-        self.component.set_component_property_value(self.Path.PhysicsAsset.PHYSX_MESH, px_asset.id)
+        self.component.set_component_property_value(
+            self.Path.PhysicsAsset.PHYSX_MESH, px_asset.id
+        )
 
     def get_physx_mesh(self) -> azasset.AssetId:
         """
@@ -260,8 +293,14 @@ class EditorPhysxMeshCollider:
 
         return: This will return the Asset ID and will need to use Asset(id) to be manipulate the asset.
         """
-        _validate_property_visibility(self.component, self.Path.PhysicsAsset.PHYSX_MESH, PropertyVisibility.VISIBLE)
-        return self.component.get_component_property_value(self.Path.PhysicsAsset.PHYSX_MESH)
+        _validate_property_visibility(
+            self.component,
+            self.Path.PhysicsAsset.PHYSX_MESH,
+            PropertyVisibility.VISIBLE,
+        )
+        return self.component.get_component_property_value(
+            self.Path.PhysicsAsset.PHYSX_MESH
+        )
 
     def set_physx_mesh_asset_scale(self, x: float, y: float, z: float) -> None:
         """
@@ -269,12 +308,22 @@ class EditorPhysxMeshCollider:
 
         Used to set the PhysX Mesh Collider's PhysX Mesh Asset Scale.
         """
-        _validate_xyz_is_float(x, y, z,
-                               f"One of the Physx Mesh Asset Scale inputs are not a float - X: {x}, Y: {y}, Z {z}")
-        _validate_property_visibility(self.component, self.Path.PhysicsAsset.ASSET_SCALE, PropertyVisibility.VISIBLE)
+        _validate_xyz_is_float(
+            x,
+            y,
+            z,
+            f"One of the Physx Mesh Asset Scale inputs are not a float - X: {x}, Y: {y}, Z {z}",
+        )
+        _validate_property_visibility(
+            self.component,
+            self.Path.PhysicsAsset.ASSET_SCALE,
+            PropertyVisibility.VISIBLE,
+        )
 
-        self.component.set_component_property_value(self.Path.PhysicsAsset.ASSET_SCALE,
-                                                    math.Vector3(float(x), float(y), float(z)))
+        self.component.set_component_property_value(
+            self.Path.PhysicsAsset.ASSET_SCALE,
+            math.Vector3(float(x), float(y), float(z)),
+        )
 
     def get_physx_mesh_asset_scale(self) -> None:
         """
@@ -282,8 +331,14 @@ class EditorPhysxMeshCollider:
 
         Used to get the PhysX Mesh Collider's PhysX Mesh Asset Scale.
         """
-        _validate_property_visibility(self.component, self.Path.PhysicsAsset.ASSET_SCALE, PropertyVisibility.VISIBLE)
-        return self.component.get_component_property_value(self.Path.PhysicsAsset.ASSET_SCALE)
+        _validate_property_visibility(
+            self.component,
+            self.Path.PhysicsAsset.ASSET_SCALE,
+            PropertyVisibility.VISIBLE,
+        )
+        return self.component.get_component_property_value(
+            self.Path.PhysicsAsset.ASSET_SCALE
+        )
 
     def set_use_physics_materials_from_asset(self, value: bool) -> None:
         """
@@ -293,10 +348,15 @@ class EditorPhysxMeshCollider:
             using the asset provided PhysX Materials, or to override them using the PhysX Mesh Collider's PhysX Materials
             property.
         """
-        _validate_property_visibility(self.component, self.Path.PhysicsAsset.PHYSICS_MATERIALS_FROM_ASSET,
-                                      PropertyVisibility.VISIBLE)
+        _validate_property_visibility(
+            self.component,
+            self.Path.PhysicsAsset.PHYSICS_MATERIALS_FROM_ASSET,
+            PropertyVisibility.VISIBLE,
+        )
 
-        self.component.set_component_property_value(self.Path.PhysicsAsset.PHYSICS_MATERIALS_FROM_ASSET, value)
+        self.component.set_component_property_value(
+            self.Path.PhysicsAsset.PHYSICS_MATERIALS_FROM_ASSET, value
+        )
 
     def get_use_physics_materials_from_asset(self) -> bool:
         """
@@ -304,7 +364,12 @@ class EditorPhysxMeshCollider:
 
         Used to get the PhysX Mesh Collider's Draw Collider Property value.
         """
-        _validate_property_visibility(self.component, self.Path.PhysicsAsset.PHYSICS_MATERIALS_FROM_ASSET,
-                                      PropertyVisibility.VISIBLE)
+        _validate_property_visibility(
+            self.component,
+            self.Path.PhysicsAsset.PHYSICS_MATERIALS_FROM_ASSET,
+            PropertyVisibility.VISIBLE,
+        )
 
-        return self.component.get_component_property_value(self.Path.PhysicsAsset.PHYSICS_MATERIALS_FROM_ASSET)
+        return self.component.get_component_property_value(
+            self.Path.PhysicsAsset.PHYSICS_MATERIALS_FROM_ASSET
+        )
