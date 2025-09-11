@@ -11,7 +11,6 @@ SPDX-License-Identifier: Apache-2.0 OR MIT
 # Title : Verify that SetKinematicTarget on PhysX rigid body updates transform for kinematic entities and vice versa
 
 
-
 # fmt: off
 class Tests:
     enter_game_mode              = ("Entered game mode",                                                  "Failed to enter game mode")
@@ -106,13 +105,19 @@ def ScriptCanvas_SetKinematicTargetTransform():
             Report.critical_result(self.found_valid_test, self.id.IsValid())
 
         def is_gravity_disabled(self):
-            return not azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "IsGravityEnabled", self.id)
+            return not azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "IsGravityEnabled", self.id
+            )
 
         def is_kinematic(self):
-            return azlmbr.physics.RigidBodyRequestBus(azlmbr.bus.Event, "IsKinematic", self.id)
+            return azlmbr.physics.RigidBodyRequestBus(
+                azlmbr.bus.Event, "IsKinematic", self.id
+            )
 
         def get_world_transform(self):
-            transform = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTM", self.id)
+            transform = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldTM", self.id
+            )
             Report.info_vector3(transform.position, "{}'s position:".format(self.name))
             Report.info_vector3(transform.basisX, "{}'s basisX:".format(self.name))
             Report.info_vector3(transform.basisY, "{}'s basisY:".format(self.name))
@@ -120,17 +125,23 @@ def ScriptCanvas_SetKinematicTargetTransform():
             return transform
 
         def get_world_translation(self):
-            translation = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldTranslation", self.id)
+            translation = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldTranslation", self.id
+            )
             Report.info_vector3(translation, "{}'s Translation:".format(self.name))
             return translation
 
         def get_world_rotation(self):
-            rotation = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldRotation", self.id)
+            rotation = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldRotation", self.id
+            )
             Report.info_vector3(rotation, "{}'s Rotation:".format(self.name))
             return rotation
 
         def get_world_scale(self):
-            scale = azlmbr.components.TransformBus(azlmbr.bus.Event, "GetWorldScale", self.id)
+            scale = azlmbr.components.TransformBus(
+                azlmbr.bus.Event, "GetWorldScale", self.id
+            )
             Report.info_vector3(scale, "{}'s Scale:".format(self.name))
             return scale
 
@@ -183,30 +194,47 @@ def ScriptCanvas_SetKinematicTargetTransform():
     Report.critical_result(Tests.sphere_kinematic, sphere.is_kinematic())
 
     # 5) Check that each entity except the signal has a different initial translation
-    Report.critical_result(Tests.entity_translations_differ, entities_translations_differ(non_signal_entities))
+    Report.critical_result(
+        Tests.entity_translations_differ,
+        entities_translations_differ(non_signal_entities),
+    )
 
     # 6) Check that each entity except the signal has a different initial rotation
-    Report.critical_result(Tests.entity_rotations_differ, entities_rotations_differ(non_signal_entities))
+    Report.critical_result(
+        Tests.entity_rotations_differ, entities_rotations_differ(non_signal_entities)
+    )
 
     # 7) Check that each entity except the signal has a different initial scale
-    Report.critical_result(Tests.entity_scales_differ, entities_scales_differ(non_signal_entities))
+    Report.critical_result(
+        Tests.entity_scales_differ, entities_scales_differ(non_signal_entities)
+    )
 
     # 8) Activate the signal entity to trigger the Set Kinematic Target node in Script Canvas
-    azlmbr.entity.GameEntityContextRequestBus(azlmbr.bus.Broadcast, "ActivateGameEntity", signal.id)
+    azlmbr.entity.GameEntityContextRequestBus(
+        azlmbr.bus.Broadcast, "ActivateGameEntity", signal.id
+    )
 
     # 9) Wait one frame and check that the sphere's translation has updated to that of Kinematic_Target
     general.idle_wait_frames(1)
-    Report.result(Tests.sphere_translation_1_valid, sphere.translation_matches(kinematic_target))
+    Report.result(
+        Tests.sphere_translation_1_valid, sphere.translation_matches(kinematic_target)
+    )
 
     # 10) Check that the sphere's rotation has updated to that of Kinematic_Target
     # NOTE: This test currently fails due to a known bug (LY-107723)
-    Report.result(Tests.sphere_rotation_1_valid, sphere.rotation_matches(kinematic_target))
+    Report.result(
+        Tests.sphere_rotation_1_valid, sphere.rotation_matches(kinematic_target)
+    )
 
     # 11) Deactivate the signal entity to trigger the Set World Transform node in Script Canvas
-    azlmbr.entity.GameEntityContextRequestBus(azlmbr.bus.Broadcast, "DeactivateGameEntity", signal.id)
+    azlmbr.entity.GameEntityContextRequestBus(
+        azlmbr.bus.Broadcast, "DeactivateGameEntity", signal.id
+    )
 
     # 12) Check that the sphere's transform has updated to that of Transform_Target
-    Report.result(Tests.sphere_transform_2_valid, sphere.transform_matches(transform_target))
+    Report.result(
+        Tests.sphere_transform_2_valid, sphere.transform_matches(transform_target)
+    )
 
     # 13) Exit game mode and close editor
     helper.exit_game_mode(Tests.exit_game_mode)
@@ -214,4 +242,5 @@ def ScriptCanvas_SetKinematicTargetTransform():
 
 if __name__ == "__main__":
     from editor_python_test_tools.utils import Report
+
     Report.start_test(ScriptCanvas_SetKinematicTargetTransform)
