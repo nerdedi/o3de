@@ -35,10 +35,11 @@ TODO- Create several test files from different DCC Applications with different m
 
 Reading FBX file information (might come in handy later)
 -- Materials information can be extracted from ASCII fbx pretty easily, binary is possible but more difficult
--- FBX files could be exported as ASCII files and I could use regex there to extract material information 
+-- FBX files could be exported as ASCII files and I could use regex there to extract material information
 -- I couldn't get pyfbx_i42 to work, but purportedly it can extract information from binary files. You may just have
 to use the specified python versions
 """
+
 import logging
 import subprocess
 import json
@@ -62,19 +63,23 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         self.app = QtWidgets.QApplication.instance()
         self.setWindowFlags(QtCore.Qt.Window)
         self.setGeometry(50, 50, 800, 520)
-        self.setObjectName('MaterialsToLumberyard')
-        self.setWindowTitle(' ')
+        self.setObjectName("MaterialsToLumberyard")
+        self.setWindowTitle(" ")
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMinMaxButtonsHint)
         self.isTopLevel()
 
-        self.desktop_location = os.path.join(os.path.expanduser('~'), 'Desktop')
+        self.desktop_location = os.path.join(os.path.expanduser("~"), "Desktop")
         self.directory_path = os.path.dirname(os.path.abspath(__file__))
-        self.lumberyard_materials_directory = os.path.join(self.desktop_location, 'LumberyardMaterials')
-        self.mayapy_path = os.path.abspath("C:/Program Files/Autodesk/Maya2020/bin/mayapy.exe")
+        self.lumberyard_materials_directory = os.path.join(
+            self.desktop_location, "LumberyardMaterials"
+        )
+        self.mayapy_path = os.path.abspath(
+            "C:/Program Files/Autodesk/Maya2020/bin/mayapy.exe"
+        )
         self.blender_path = self.get_blender_path()
-        self.bold_font_large = QtGui.QFont('Helvetica', 7, QtGui.QFont.Bold)
-        self.medium_font = QtGui.QFont('Helvetica', 7, QtGui.QFont.Normal)
-        self.blessed_file_extensions = 'ma mb fbx max blend'.split(' ')
+        self.bold_font_large = QtGui.QFont("Helvetica", 7, QtGui.QFont.Bold)
+        self.medium_font = QtGui.QFont("Helvetica", 7, QtGui.QFont.Normal)
+        self.blessed_file_extensions = "ma mb fbx max blend".split(" ")
 
         self.dcc_materials_dictionary = {}
         self.lumberyard_materials_dictionary = {}
@@ -100,7 +105,7 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         self.header_bar_layout = QtWidgets.QHBoxLayout()
         self.lumberyard_logo_layout = QtWidgets.QHBoxLayout()
         self.lumberyard_logo_layout.setAlignment(QtCore.Qt.AlignLeft)
-        logo_path = os.path.join(self.directory_path, 'img/lumberyard_logo.png')
+        logo_path = os.path.join(self.directory_path, "img/lumberyard_logo.png")
         logo_pixmap = QtGui.QPixmap(logo_path)
         self.lumberyard_logo = QtWidgets.QLabel()
         self.lumberyard_logo.setPixmap(logo_pixmap)
@@ -112,8 +117,13 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         self.switch_layout_combobox = QtWidgets.QComboBox()
         self.set_combobox_items_accessibility()
         self.switch_layout_combobox.setFixedSize(250, 30)
-        self.combobox_items = ['Add Source Files', 'Source File List', 'DCC Material Values', 'Export Materials']
-        self.switch_layout_combobox.setStyleSheet('QComboBox {padding-left:6px;}')
+        self.combobox_items = [
+            "Add Source Files",
+            "Source File List",
+            "DCC Material Values",
+            "Export Materials",
+        ]
+        self.switch_layout_combobox.setStyleSheet("QComboBox {padding-left:6px;}")
         self.switch_layout_combobox.addItems(self.combobox_items)
         self.switch_combobox_layout.addWidget(self.switch_layout_combobox)
         self.header_bar_layout.addLayout(self.switch_combobox_layout)
@@ -127,15 +137,19 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
 
         self.content_stacked_layout = QtWidgets.QStackedLayout()
         self.content_layout.addLayout(self.content_stacked_layout)
-        self.switch_layout_combobox.currentIndexChanged.connect(self.layout_combobox_changed)
+        self.switch_layout_combobox.currentIndexChanged.connect(
+            self.layout_combobox_changed
+        )
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # ---->> Add Source Files
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-        frame_color_value = '75,75,75'
-        highlight_color_value = '20,106,30'
-        self.drag_and_drop_widget = DragAndDrop(frame_color_value, highlight_color_value)
+        frame_color_value = "75,75,75"
+        highlight_color_value = "20,106,30"
+        self.drag_and_drop_widget = DragAndDrop(
+            frame_color_value, highlight_color_value
+        )
         self.drag_and_drop_widget.drop_update.connect(self.drag_and_drop_file_update)
         self.drag_and_drop_widget.drop_over.connect(self.drag_and_drop_over)
         self.drag_and_drop_layout = QtWidgets.QVBoxLayout()
@@ -143,15 +157,17 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         self.drag_and_drop_layout.setAlignment(QtCore.Qt.AlignCenter)
         self.drag_and_drop_widget.setLayout(self.drag_and_drop_layout)
 
-        start_message = 'Drag source files here, or use file browser button below to get started.'
+        start_message = (
+            "Drag source files here, or use file browser button below to get started."
+        )
         self.drag_and_drop_label = QtWidgets.QLabel(start_message)
-        self.drag_and_drop_label.setStyleSheet('color: white;')
+        self.drag_and_drop_label.setStyleSheet("color: white;")
         self.drag_and_drop_layout.addWidget(self.drag_and_drop_label)
         self.drag_and_drop_layout.addSpacing(10)
 
         self.select_files_button_layout = QtWidgets.QHBoxLayout()
         self.select_files_button_layout.setAlignment(QtCore.Qt.AlignCenter)
-        self.select_files_button = QtWidgets.QPushButton('Select Files')
+        self.select_files_button = QtWidgets.QPushButton("Select Files")
         self.select_files_button_layout.addWidget(self.select_files_button)
         self.select_files_button.clicked.connect(self.select_files_button_clicked)
         self.select_files_button.setFixedSize(80, 35)
@@ -166,8 +182,10 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         self.target_files_table.setFocusPolicy(QtCore.Qt.NoFocus)
         self.target_files_table.setColumnCount(2)
         self.target_files_table.setAlternatingRowColors(True)
-        self.target_files_table.setHorizontalHeaderLabels(['File List', ''])
-        self.target_files_table.horizontalHeader().setStyleSheet('QHeaderView::section {background-color: rgb(220, 220, 220); padding-top:7px; padding-left:5px;}')
+        self.target_files_table.setHorizontalHeaderLabels(["File List", ""])
+        self.target_files_table.horizontalHeader().setStyleSheet(
+            "QHeaderView::section {background-color: rgb(220, 220, 220); padding-top:7px; padding-left:5px;}"
+        )
         self.target_files_table.verticalHeader().hide()
         files_header = self.target_files_table.horizontalHeader()
         files_header.setFixedHeight(30)
@@ -176,7 +194,9 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         files_header.setDefaultSectionSize(60)
         files_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         files_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
-        self.target_files_table.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.target_files_table.setSelectionMode(
+            QtWidgets.QAbstractItemView.NoSelection
+        )
         self.content_stacked_layout.addWidget(self.target_files_table)
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -184,8 +204,10 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         self.material_tree_view = QtWidgets.QTreeView()
-        self.headers = ['Key', 'Value']
-        self.material_tree_view.setStyleSheet('QTreeView::item {height:25px;} QHeaderView::section {background-color: rgb(220, 220, 220); height:30px; padding-left:10px}')
+        self.headers = ["Key", "Value"]
+        self.material_tree_view.setStyleSheet(
+            "QTreeView::item {height:25px;} QHeaderView::section {background-color: rgb(220, 220, 220); height:30px; padding-left:10px}"
+        )
         self.material_tree_view.setFocusPolicy(QtCore.Qt.NoFocus)
         self.material_tree_view.setAlternatingRowColors(True)
         self.material_tree_view.setUniformRowHeights(True)
@@ -196,22 +218,36 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         self.lumberyard_material_definitions_widget = QtWidgets.QWidget()
-        self.lumberyard_material_definitions_layout = QtWidgets.QHBoxLayout(self.lumberyard_material_definitions_widget)
+        self.lumberyard_material_definitions_layout = QtWidgets.QHBoxLayout(
+            self.lumberyard_material_definitions_widget
+        )
         self.lumberyard_material_definitions_layout.setSpacing(0)
         self.lumberyard_material_definitions_layout.setContentsMargins(0, 0, 0, 0)
-        self.lumberyard_material_definitions_frame = QtWidgets.QFrame(self.lumberyard_material_definitions_widget)
+        self.lumberyard_material_definitions_frame = QtWidgets.QFrame(
+            self.lumberyard_material_definitions_widget
+        )
         self.lumberyard_material_definitions_frame.setGeometry(0, 0, 5000, 5000)
-        self.lumberyard_material_definitions_frame.setStyleSheet('background-color:rgb(75,75,75);')
+        self.lumberyard_material_definitions_frame.setStyleSheet(
+            "background-color:rgb(75,75,75);"
+        )
         self.lumberyard_material_definitions_scroller = QtWidgets.QScrollArea()
         self.scroller_widget = QtWidgets.QWidget()
         self.scroller_layout = QtWidgets.QVBoxLayout()
         self.scroller_widget.setLayout(self.scroller_layout)
-        self.lumberyard_material_definitions_scroller.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.lumberyard_material_definitions_scroller.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.lumberyard_material_definitions_scroller.setVerticalScrollBarPolicy(
+            QtCore.Qt.ScrollBarAlwaysOn
+        )
+        self.lumberyard_material_definitions_scroller.setHorizontalScrollBarPolicy(
+            QtCore.Qt.ScrollBarAlwaysOff
+        )
         self.lumberyard_material_definitions_scroller.setWidgetResizable(True)
         self.lumberyard_material_definitions_scroller.setWidget(self.scroller_widget)
-        self.lumberyard_material_definitions_layout.addWidget(self.lumberyard_material_definitions_scroller)
-        self.content_stacked_layout.addWidget(self.lumberyard_material_definitions_widget)
+        self.lumberyard_material_definitions_layout.addWidget(
+            self.lumberyard_material_definitions_scroller
+        )
+        self.content_stacked_layout.addWidget(
+            self.lumberyard_material_definitions_widget
+        )
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # ---->> File processing buttons
@@ -219,7 +255,7 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
 
         self.process_files_layout = QtWidgets.QHBoxLayout()
         self.content_layout.addLayout(self.process_files_layout)
-        self.process_files_button = QtWidgets.QPushButton('Process Added Files')
+        self.process_files_button = QtWidgets.QPushButton("Process Added Files")
         self.process_files_button.setFixedHeight(50)
         self.process_files_button.clicked.connect(self.process_listed_files_clicked)
         self.process_files_layout.addWidget(self.process_files_button)
@@ -231,11 +267,11 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         # TODO- Move all processing of files to another thread and display progress with loader
 
         self.status_bar = QtWidgets.QStatusBar()
-        self.status_bar.setStyleSheet('background-color: rgb(220, 220, 220);')
+        self.status_bar.setStyleSheet("background-color: rgb(220, 220, 220);")
         self.status_bar.setContentsMargins(0, 0, 0, 0)
         self.status_bar.setSizeGripEnabled(False)
-        self.message_readout_label = QtWidgets.QLabel('Ready.')
-        self.message_readout_label.setStyleSheet('padding-left: 10px')
+        self.message_readout_label = QtWidgets.QLabel("Ready.")
+        self.message_readout_label.setStyleSheet("padding-left: 10px")
         self.status_bar.addWidget(self.message_readout_label)
 
         self.progress_bar = QtWidgets.QProgressBar()
@@ -266,9 +302,9 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         for index, entry in enumerate(self.target_file_list):
             entry = entry[1] if type(entry) == list else entry
             self.target_files_table.insertRow(index)
-            item = QtWidgets.QTableWidgetItem('  {}'.format(entry))
+            item = QtWidgets.QTableWidgetItem("  {}".format(entry))
             self.target_files_table.setRowHeight(index, 45)
-            remove_button = QtWidgets.QPushButton('Remove')
+            remove_button = QtWidgets.QPushButton("Remove")
             remove_button.setFixedWidth(60)
             remove_button.clicked.connect(self.remove_source_file_clicked)
             self.target_files_table.setItem(index, 0, item)
@@ -295,7 +331,9 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         """
         self.reset_export_materials_description()
         for count, value in enumerate(self.lumberyard_materials_dictionary):
-            material_definition_node = MaterialNode([value, self.lumberyard_materials_dictionary[value]], count)
+            material_definition_node = MaterialNode(
+                [value, self.lumberyard_materials_dictionary[value]], count
+            )
             self.lumberyard_material_nodes.append(material_definition_node)
             self.scroller_layout.addWidget(material_definition_node)
             self.scroller_layout.addLayout(self.create_separator_line())
@@ -313,7 +351,7 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         Maya (.ma, .mb, .fbx), 3dsMax(.max), Blender(.blend)
         :return:
         """
-        files_dict = {'maya': [], 'max': [], 'blender': [], 'na': []}
+        files_dict = {"maya": [], "max": [], "blender": [], "na": []}
         for file_location in self.target_file_list:
             file_name = os.path.basename(str(file_location))
             file_extension = os.path.splitext(file_name)[1]
@@ -323,17 +361,17 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
 
         for key, values in files_dict.items():
             try:
-                if key == 'maya' and len(values):
+                if key == "maya" and len(values):
                     self.get_maya_material_values(values)
-                elif key == 'max' and len(values):
+                elif key == "max" and len(values):
                     self.get_max_material_values(values)
-                elif key == 'blender' and len(values):
+                elif key == "blender" and len(values):
                     self.get_blender_material_values(values)
                 else:
                     pass
             except Exception as e:
                 # TODO- Allow corrective actions or some display of errors if this fails?
-                logging.warning('Could not process files. Error: {}'.format(e))
+                logging.warning("Could not process files. Error: {}".format(e))
 
         if self.dcc_materials_dictionary:
             self.set_transfer_status(self.dcc_materials_dictionary)
@@ -345,7 +383,7 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
             self.populate_export_materials_list()
             self.switch_layout_combobox.setCurrentIndex(3)
             self.set_ui_buttons()
-            self.message_readout_label.setText('Ready.')
+            self.message_readout_label.setText("Ready.")
 
     def reset_export_materials_description(self):
         pass
@@ -354,7 +392,7 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         pass
 
     def create_separator_line(self):
-        """ Convenience function for adding separation line to the UI. """
+        """Convenience function for adding separation line to the UI."""
         layout = QtWidgets.QHBoxLayout()
         line = QtWidgets.QLabel()
         line.setFrameStyle(QtWidgets.QFrame.HLine | QtWidgets.QFrame.Sunken)
@@ -375,9 +413,14 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
 
         for node in self.lumberyard_material_nodes:
             if node.material_name_checkbox.isChecked():
-                output = os.path.join(self.lumberyard_materials_directory, '{}.material'.format(node.material_name))
-                with open(output, 'w', encoding='utf-8') as material_file:
-                    json.dump(node.material_info, material_file, ensure_ascii=False, indent=4)
+                output = os.path.join(
+                    self.lumberyard_materials_directory,
+                    "{}.material".format(node.material_name),
+                )
+                with open(output, "w", encoding="utf-8") as material_file:
+                    json.dump(
+                        node.material_info, material_file, ensure_ascii=False, indent=4
+                    )
 
     ############################
     # Getters/Setters ##########
@@ -390,8 +433,14 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         :param file_extension: Passed file extension used to determine DCC Application it originated from.
         :return: Returns the application corresponding to the extension if found- otherwise returns a Boolean None
         """
-        app_extensions = {'maya': ['.ma', '.mb', '.fbx'], 'max': ['.max'], 'blender': ['.blend']}
-        target_dcc_application = [key for key, values in app_extensions.items() if file_extension in values]
+        app_extensions = {
+            "maya": [".ma", ".mb", ".fbx"],
+            "max": [".max"],
+            "blender": [".blend"],
+        }
+        target_dcc_application = [
+            key for key, values in app_extensions.items() if file_extension in values
+        ]
         if target_dcc_application:
             return target_dcc_application[0]
         return None
@@ -406,13 +455,18 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         :param shader_type: The type of Lumberyard shader to pair material attributes to (i.e. PBR Shader)
         :return: File dictionary of the available boilerplate Lumberyard shader settings.
         """
-        definitions = os.path.join(os.path.dirname(os.path.abspath(__file__)), '{}.material'.format(shader_type))
+        definitions = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "{}.material".format(shader_type),
+        )
         if os.path.exists(definitions):
             with open(definitions) as f:
                 return json.load(f)
 
     @staticmethod
-    def get_lumberyard_material_properties(name, dcc_app, material_type, file_connections):
+    def get_lumberyard_material_properties(
+        name, dcc_app, material_type, file_connections
+    ):
         """
         This system will probably need rethinking if DCCs and compatible materials grow. I've tried to keep this
         flexible so that it can be expanded with more apps and materials.
@@ -424,12 +478,18 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         """
 
         material_properties = {}
-        if dcc_app == 'Maya':
-            material_properties = mat_map.get_maya_material_mapping(name, material_type, file_connections)
-        elif dcc_app == 'Blender':
-            material_properties = mat_map.get_blender_material_mapping(name, material_type, file_connections)
-        elif dcc_app == '3dsMax':
-            material_properties = mat_map.get_max_material_mapping(name, material_type, file_connections)
+        if dcc_app == "Maya":
+            material_properties = mat_map.get_maya_material_mapping(
+                name, material_type, file_connections
+            )
+        elif dcc_app == "Blender":
+            material_properties = mat_map.get_blender_material_mapping(
+                name, material_type, file_connections
+            )
+        elif dcc_app == "3dsMax":
+            material_properties = mat_map.get_max_material_mapping(
+                name, material_type, file_connections
+            )
         else:
             pass
         return material_properties
@@ -443,12 +503,12 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         one to any encountered, or adds an "_1" if passed name is the first duplicate encountered.
         :return: The adjusted name with a unique incremental value.
         """
-        last_number = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
+        last_number = re.compile(r"(?:[^\d]*(\d+)[^\d]*)+")
         number_found = last_number.search(name)
         if number_found:
             next_number = str(int(number_found.group(1)) + 1)
             start, end = number_found.span(1)
-            name = name[:max(end - len(next_number), start)] + next_number + name[end:]
+            name = name[: max(end - len(next_number), start)] + next_number + name[end:]
         return name
 
     def get_maya_material_values(self, target_files):
@@ -464,42 +524,55 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         # TODO- Set load process to a separate thread and wire load progress bar up
 
         try:
-            script_path = str(os.path.join(self.directory_path, 'maya_materials.py'))
+            script_path = str(os.path.join(self.directory_path, "maya_materials.py"))
             target_files.append(self.total_materials)
             runtime_env = os.environ.copy()
-            runtime_env['MAYA_LOCATION'] = os.path.dirname(self.mayapy_path)
-            runtime_env['PYTHONPATH'] = os.path.dirname(self.mayapy_path)
+            runtime_env["MAYA_LOCATION"] = os.path.dirname(self.mayapy_path)
+            runtime_env["PYTHONPATH"] = os.path.dirname(self.mayapy_path)
             command = f'{self.mayapy_path} "{script_path}"'
             for file in target_files:
                 command += f' "{file}"'
-            p = subprocess.Popen(command, shell=False, env=runtime_env, stdout=subprocess.PIPE)
+            p = subprocess.Popen(
+                command, shell=False, env=runtime_env, stdout=subprocess.PIPE
+            )
             output = p.communicate()[0]
             self.set_material_dictionary(json.loads(output))
         except Exception as e:
-            logging.warning('maya error: {}'.format(e))
+            logging.warning("maya error: {}".format(e))
 
     def get_max_material_values(self, target_files):
-        logging.debug('Max Target file: {}'.format(target_files))
+        logging.debug("Max Target file: {}".format(target_files))
 
     def get_blender_material_values(self, target_files):
-        logging.debug('Blender Target file: {}'.format(target_files))
+        logging.debug("Blender Target file: {}".format(target_files))
 
-        script_path = str(os.path.join(self.directory_path, 'blender_materials.py'))
+        script_path = str(os.path.join(self.directory_path, "blender_materials.py"))
         # command = f'{self.blender_path} "{script_path}" "{target_files}" "{self.total_materials}"'
         # p = subprocess.Popen(command, shell=True, env=runtime_env, stdout=subprocess.PIPE)
 
         target_files.append(self.total_materials)
 
-        p = subprocess.Popen([self.blender_path, '--background', '--python', script_path, '--', target_files])
+        p = subprocess.Popen(
+            [
+                self.blender_path,
+                "--background",
+                "--python",
+                script_path,
+                "--",
+                target_files,
+            ]
+        )
         output = p.communicate()[0]
         self.set_material_dictionary(json.loads(output))
 
     def get_blender_path(self):
-        blender_base_directory = os.path.join(os.path.join('C:\\', 'Program Files', 'Blender Foundation'))
+        blender_base_directory = os.path.join(
+            os.path.join("C:\\", "Program Files", "Blender Foundation")
+        )
         blender_versions_found = []
-        for (dirpath, dirnames, filenames) in os.walk(blender_base_directory):
+        for dirpath, dirnames, filenames in os.walk(blender_base_directory):
             for filename in filenames:
-                if filename == 'blender.exe':
+                if filename == "blender.exe":
                     blender_versions_found.append(os.path.join(dirpath, filename))
 
         if blender_versions_found:
@@ -529,20 +602,28 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         for row in range(self.target_files_table.rowCount()):
             for key, values in transfer_info.items():
                 row_path = self.target_files_table.item(row, 0).text().strip()
-                scene_processed = {x for x in transfer_info if values['SceneName'] == row_path}
+                scene_processed = {
+                    x for x in transfer_info if values["SceneName"] == row_path
+                }
                 if scene_processed:
-                    self.target_files_table.item(row, 0).setBackground(QtGui.QColor(192, 255, 171))
+                    self.target_files_table.item(row, 0).setBackground(
+                        QtGui.QColor(192, 255, 171)
+                    )
                     break
                 else:
-                    self.target_files_table.item(row, 0).setBackground(QtGui.QColor(255, 177, 171))
+                    self.target_files_table.item(row, 0).setBackground(
+                        QtGui.QColor(255, 177, 171)
+                    )
 
     def set_export_materials_description(self):
         root = self.model.rootItem
         for row in range(self.model.rowCount()):
-            source_file = self.model.get_attribute_value('SceneName', root.child(row))
-            name = self.model.get_attribute_value('MaterialName', root.child(row))
-            material_type = self.model.get_attribute_value('MaterialType', root.child(row))
-            dcc_app = self.model.get_attribute_value('DccApplication', root.child(row))
+            source_file = self.model.get_attribute_value("SceneName", root.child(row))
+            name = self.model.get_attribute_value("MaterialName", root.child(row))
+            material_type = self.model.get_attribute_value(
+                "MaterialType", root.child(row)
+            )
+            dcc_app = self.model.get_attribute_value("DccApplication", root.child(row))
             file_connections = {}
             shader_attributes = {}
 
@@ -550,11 +631,17 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
                 child_item = root.child(row).child(childIndex)
                 child_value = child_item.itemData
                 if child_item.childCount():
-                    target_dict = file_connections if child_value[0] == 'FileConnections' else shader_attributes
+                    target_dict = (
+                        file_connections
+                        if child_value[0] == "FileConnections"
+                        else shader_attributes
+                    )
                     for subChildIndex in range(child_item.childCount()):
                         sub_child_data = child_item.child(subChildIndex).itemData
                         target_dict[sub_child_data[0]] = sub_child_data[1]
-            self.set_material_description(source_file, name, dcc_app, material_type, file_connections)
+            self.set_material_description(
+                source_file, name, dcc_app, material_type, file_connections
+            )
 
     def set_material_dictionary(self, dcc_dictionary):
         """
@@ -564,7 +651,7 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         return analyzed values
         :return:
         """
-        logging.debug('DCC Dictionary: {}'.format(json.dumps(dcc_dictionary, indent=4)))
+        logging.debug("DCC Dictionary: {}".format(json.dumps(dcc_dictionary, indent=4)))
         self.total_materials += len(dcc_dictionary)
         self.dcc_materials_dictionary.update(dcc_dictionary)
 
@@ -592,7 +679,7 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         """
         display_index = self.content_stacked_layout.currentIndex()
         self.switch_layout_combobox.setEnabled(True)
-        self.process_files_button.setText('Process Listed Files')
+        self.process_files_button.setText("Process Listed Files")
         # Add Source Files Layout ------------------------------->>
         if display_index == 0:
             self.process_files_button.setEnabled(True)
@@ -607,11 +694,13 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
 
         # Export Materials Layout ------------------------------->>
         else:
-            self.process_files_button.setText('Export Selected Materials')
+            self.process_files_button.setText("Export Selected Materials")
             if self.lumberyard_materials_dictionary:
                 self.process_files_button.setEnabled(True)
 
-    def set_material_description(self, source_file, name, dcc_app, material_type, file_connections):
+    def set_material_description(
+        self, source_file, name, dcc_app, material_type, file_connections
+    ):
         """
         Build dictionary for material description based on extracted values
 
@@ -623,15 +712,22 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         :return:
         """
 
-        default_settings = self.get_lumberyard_material_template('pbr')
-        material = {'sourceFile': source_file,
-                    'description': name,
-                    'materialType': default_settings.get('materialType'),
-                    'parentMaterial': default_settings.get('parentMaterial'),
-                    'materialTypeVersion': default_settings.get('materialTypeVersion'),
-                    'properties': self.get_lumberyard_material_properties(name, dcc_app, material_type, file_connections)}
-        self.lumberyard_materials_dictionary[name if name not in self.lumberyard_materials_dictionary.keys() else
-                                             self.get_filename_increment(name)] = material
+        default_settings = self.get_lumberyard_material_template("pbr")
+        material = {
+            "sourceFile": source_file,
+            "description": name,
+            "materialType": default_settings.get("materialType"),
+            "parentMaterial": default_settings.get("parentMaterial"),
+            "materialTypeVersion": default_settings.get("materialTypeVersion"),
+            "properties": self.get_lumberyard_material_properties(
+                name, dcc_app, material_type, file_connections
+            ),
+        }
+        self.lumberyard_materials_dictionary[
+            name
+            if name not in self.lumberyard_materials_dictionary.keys()
+            else self.get_filename_increment(name)
+        ] = material
 
     ############################
     # Button Actions ###########
@@ -659,8 +755,8 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         # TODO- Need to decide how the materials are going to be routed. At this stage they will just be saved to the
         #   desktop, but I assume that we want these files to be saved to an associated project folder
 
-        if self.sender().text() == 'Process Added Files':
-            self.message_readout_label.setText('Gathering Material Information...')
+        if self.sender().text() == "Process Added Files":
+            self.message_readout_label.setText("Gathering Material Information...")
             self.app.processEvents()
             self.process_file_list()
         else:
@@ -675,11 +771,13 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         # TODO- Eventually it might be worth it to allow files from multiple locations to be selected. Currently
         #  this only allows single/multiple files from a single directory to be selected.
 
-        dialog = QtWidgets.QFileDialog(self, 'Shift-Select Target Files', self.desktop_location)
+        dialog = QtWidgets.QFileDialog(
+            self, "Shift-Select Target Files", self.desktop_location
+        )
         dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
-        dialog.setNameFilter('Compatible Files (*.ma *.mb *.fbx *.max *.blend)')
+        dialog.setNameFilter("Compatible Files (*.ma *.mb *.fbx *.max *.blend)")
         dialog.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, True)
-        file_view = dialog.findChild(QtWidgets.QListView, 'listView')
+        file_view = dialog.findChild(QtWidgets.QListView, "listView")
 
         # Workaround for selecting multiple files with File Dialog
         if file_view:
@@ -699,7 +797,9 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
         Handles main window layout combobox index change.
         :return:
         """
-        self.content_stacked_layout.setCurrentIndex(self.switch_layout_combobox.currentIndex())
+        self.content_stacked_layout.setCurrentIndex(
+            self.switch_layout_combobox.currentIndex()
+        )
         self.set_ui_buttons()
 
     def reset_clicked(self):
@@ -716,19 +816,21 @@ class MaterialsToLumberyard(QtWidgets.QWidget):
     @Slot(list)
     def drag_and_drop_file_update(self, file_list):
         for file in file_list:
-            if os.path.basename(file).split('.')[-1] in self.blessed_file_extensions:
+            if os.path.basename(file).split(".")[-1] in self.blessed_file_extensions:
                 self.target_file_list.append(file)
         self.drag_and_drop_widget.urls.clear()
         self.populate_source_files_table()
-        self.message_readout_label.setText('Source files added: {}'.format(len(self.target_file_list)))
-        self.drag_and_drop_label.setStyleSheet('color: white;')
+        self.message_readout_label.setText(
+            "Source files added: {}".format(len(self.target_file_list))
+        )
+        self.drag_and_drop_label.setStyleSheet("color: white;")
 
     @Slot(bool)
     def drag_and_drop_over(self, is_over):
         if is_over:
-            self.drag_and_drop_label.setStyleSheet('color: rgb(0, 255, 0);')
+            self.drag_and_drop_label.setStyleSheet("color: rgb(0, 255, 0);")
         else:
-            self.drag_and_drop_label.setStyleSheet('color: white;')
+            self.drag_and_drop_label.setStyleSheet("color: white;")
 
 
 class MaterialNode(QtWidgets.QWidget):
@@ -748,7 +850,7 @@ class MaterialNode(QtWidgets.QWidget):
 
         self.background_frame = QtWidgets.QFrame(self)
         self.background_frame.setGeometry(0, 0, 5000, 5000)
-        self.background_frame.setStyleSheet('background-color:rgb(220, 220, 220);')
+        self.background_frame.setStyleSheet("background-color:rgb(220, 220, 220);")
 
         # ########################
         #  Title Bar
@@ -760,24 +862,26 @@ class MaterialNode(QtWidgets.QWidget):
         self.title_bar_layout.setAlignment(QtCore.Qt.AlignTop)
         self.title_bar_frame = QtWidgets.QFrame(self.title_bar_widget)
         self.title_bar_frame.setGeometry(0, 0, 5000, 40)
-        self.title_bar_frame.setStyleSheet('background-color:rgb(193,154,255);')
+        self.title_bar_frame.setStyleSheet("background-color:rgb(193,154,255);")
         self.main_layout.addWidget(self.title_bar_widget)
         self.material_name_checkbox = QtWidgets.QCheckBox(self.material_name)
         self.material_name_checkbox.setFixedHeight(35)
-        self.material_name_checkbox.setStyleSheet('spacing:10px; color:white')
+        self.material_name_checkbox.setStyleSheet("spacing:10px; color:white")
         self.material_name_checkbox.setFont(self.bold_font)
         self.material_name_checkbox.setChecked(True)
         self.title_bar_layout.addWidget(self.material_name_checkbox)
 
         self.material_file_layout = QtWidgets.QHBoxLayout()
         self.material_file_layout.setAlignment(QtCore.Qt.AlignRight)
-        self.source_file = QtWidgets.QLabel(os.path.basename(self.material_info['sourceFile']))
-        self.source_file.setStyleSheet('color:white;')
+        self.source_file = QtWidgets.QLabel(
+            os.path.basename(self.material_info["sourceFile"])
+        )
+        self.source_file.setStyleSheet("color:white;")
         self.source_file.setFont(self.small_font)
         self.material_file_layout.addWidget(self.source_file)
         self.material_file_layout.addSpacing(10)
 
-        self.edit_button = QtWidgets.QPushButton('Edit')
+        self.edit_button = QtWidgets.QPushButton("Edit")
         self.edit_button.clicked.connect(self.edit_button_clicked)
         self.edit_button.setFixedWidth(55)
         self.material_file_layout.addWidget(self.edit_button)
@@ -795,31 +899,41 @@ class MaterialNode(QtWidgets.QWidget):
         self.details_layout.setAlignment(QtCore.Qt.AlignTop)
         self.details_groupbox = QtWidgets.QGroupBox("Details")
         self.details_groupbox.setFixedWidth(200)
-        self.details_groupbox.setStyleSheet("QGroupBox {font:bold; border: 1px solid silver; "
-                                            "margin-top: 6px;} QGroupBox::title { color: rgb(150, 150, 150); "
-                                            "subcontrol-position: top left;}")
+        self.details_groupbox.setStyleSheet(
+            "QGroupBox {font:bold; border: 1px solid silver; "
+            "margin-top: 6px;} QGroupBox::title { color: rgb(150, 150, 150); "
+            "subcontrol-position: top left;}"
+        )
         self.details_layout.addSpacing(15)
-        self.material_type_label = QtWidgets.QLabel('Material Type')
-        self.material_type_label.setStyleSheet('padding-left: 6px; color: white; background-color:rgb(175, 175, 175);')
+        self.material_type_label = QtWidgets.QLabel("Material Type")
+        self.material_type_label.setStyleSheet(
+            "padding-left: 6px; color: white; background-color:rgb(175, 175, 175);"
+        )
         self.material_type_label.setFixedHeight(25)
         self.material_type_label.setFont(self.bold_font)
         self.details_layout.addWidget(self.material_type_label)
 
         self.material_type_combobox = QtWidgets.QComboBox()
         self.material_type_combobox.setFixedHeight(30)
-        self.material_type_combobox.setStyleSheet('QCombobox QAbstractItemView { padding-left: 15px; }')
-        material_type_items = ['  Standard PBR']
+        self.material_type_combobox.setStyleSheet(
+            "QCombobox QAbstractItemView { padding-left: 15px; }"
+        )
+        material_type_items = ["  Standard PBR"]
         self.material_type_combobox.addItems(material_type_items)
         self.details_layout.addWidget(self.material_type_combobox)
         self.details_layout.addSpacing(10)
 
-        self.description_label = QtWidgets.QLabel('Description')
-        self.description_label.setStyleSheet('padding-left: 6px; color: white; background-color:rgb(175, 175, 175);')
+        self.description_label = QtWidgets.QLabel("Description")
+        self.description_label.setStyleSheet(
+            "padding-left: 6px; color: white; background-color:rgb(175, 175, 175);"
+        )
         self.description_label.setFixedHeight(25)
         self.description_label.setFont(self.bold_font)
         self.details_layout.addWidget(self.description_label)
 
-        self.description_box = QtWidgets.QTextEdit('This space is reserved for additional information.')
+        self.description_box = QtWidgets.QTextEdit(
+            "This space is reserved for additional information."
+        )
         self.details_layout.addWidget(self.description_box)
         self.information_layout.addWidget(self.details_groupbox)
         self.details_groupbox.setLayout(self.details_layout)
@@ -832,14 +946,26 @@ class MaterialNode(QtWidgets.QWidget):
         self.properties_layout.setAlignment(QtCore.Qt.AlignTop)
         self.properties_groupbox = QtWidgets.QGroupBox("Properties")
         self.properties_groupbox.setFixedWidth(150)
-        self.properties_groupbox.setStyleSheet("QGroupBox {font:bold; border: 1px solid silver; "
-                                               "margin-top: 6px;} QGroupBox::title { color: rgb(150, 150, 150); "
-                                               "subcontrol-position: top left;}")
+        self.properties_groupbox.setStyleSheet(
+            "QGroupBox {font:bold; border: 1px solid silver; "
+            "margin-top: 6px;} QGroupBox::title { color: rgb(150, 150, 150); "
+            "subcontrol-position: top left;}"
+        )
         self.properties_list_widget = QtWidgets.QListWidget()
-        self.material_properties = ['ambientOcclusion', 'baseColor', 'emissive', 'metallic', 'roughness', 'specularF0',
-                                    'normal', 'opacity']
+        self.material_properties = [
+            "ambientOcclusion",
+            "baseColor",
+            "emissive",
+            "metallic",
+            "roughness",
+            "specularF0",
+            "normal",
+            "opacity",
+        ]
         self.properties_list_widget.addItems(self.material_properties)
-        self.properties_list_widget.itemSelectionChanged.connect(self.property_selection_changed)
+        self.properties_list_widget.itemSelectionChanged.connect(
+            self.property_selection_changed
+        )
         self.properties_layout.addSpacing(15)
         self.properties_layout.addWidget(self.properties_list_widget)
         self.information_layout.addWidget(self.properties_groupbox)
@@ -852,24 +978,30 @@ class MaterialNode(QtWidgets.QWidget):
         self.attributes_layout = QtWidgets.QVBoxLayout()
         self.attributes_layout.setAlignment(QtCore.Qt.AlignTop)
         self.attributes_groupbox = QtWidgets.QGroupBox("Attributes")
-        self.attributes_groupbox.setStyleSheet("QGroupBox {font:bold; border: 1px solid silver; "
-                                               "margin-top: 6px;} QGroupBox::title { color: rgb(150, 150, 150); "
-                                               "subcontrol-position: top left;}")
+        self.attributes_groupbox.setStyleSheet(
+            "QGroupBox {font:bold; border: 1px solid silver; "
+            "margin-top: 6px;} QGroupBox::title { color: rgb(150, 150, 150); "
+            "subcontrol-position: top left;}"
+        )
         self.information_layout.addWidget(self.attributes_groupbox)
         self.attributes_layout.addSpacing(15)
         self.attributes_table = QtWidgets.QTableWidget()
         self.attributes_table.setFocusPolicy(QtCore.Qt.NoFocus)
         self.attributes_table.setColumnCount(2)
         self.attributes_table.setAlternatingRowColors(True)
-        self.attributes_table.setHorizontalHeaderLabels(['Attribute', 'Value'])
+        self.attributes_table.setHorizontalHeaderLabels(["Attribute", "Value"])
         self.attributes_table.verticalHeader().hide()
         attributes_table_header = self.attributes_table.horizontalHeader()
-        attributes_table_header.setStyleSheet('QHeaderView::section {background-color: rgb(220, 220, 220);}')
+        attributes_table_header.setStyleSheet(
+            "QHeaderView::section {background-color: rgb(220, 220, 220);}"
+        )
         attributes_table_header.setDefaultAlignment(QtCore.Qt.AlignLeft)
         attributes_table_header.setContentsMargins(10, 10, 0, 0)
         attributes_table_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         attributes_table_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        attributes_table_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Interactive)
+        attributes_table_header.setSectionResizeMode(
+            0, QtWidgets.QHeaderView.Interactive
+        )
         self.attributes_layout.addWidget(self.attributes_table)
         self.attributes_groupbox.setLayout(self.attributes_layout)
 
@@ -882,13 +1014,15 @@ class MaterialNode(QtWidgets.QWidget):
         :return:
         """
         for material_property in self.material_properties:
-            if material_property in self.material_info.get('properties'):
-                self.property_settings[material_property] = self.material_info['properties'].get(material_property)
+            if material_property in self.material_info.get("properties"):
+                self.property_settings[material_property] = self.material_info[
+                    "properties"
+                ].get(material_property)
                 current_row = self.material_properties.index(material_property)
                 current_item = self.properties_list_widget.takeItem(current_row)
                 self.properties_list_widget.insertItem(0, current_item)
             else:
-                self.property_settings[material_property] = 'inactive'
+                self.property_settings[material_property] = "inactive"
                 current_row = self.material_properties.index(material_property)
                 item = self.properties_list_widget.item(current_row)
                 item.setFlags(item.flags() & ~QtCore.Qt.ItemIsEnabled)
@@ -936,7 +1070,7 @@ class MaterialNode(QtWidgets.QWidget):
         table where values can be added, removed or changed within the final material definition.
         :return:
         """
-        logging.debug('Edit button clicked')
+        logging.debug("Edit button clicked")
 
     def property_selection_changed(self):
         """
@@ -946,9 +1080,8 @@ class MaterialNode(QtWidgets.QWidget):
         self.set_attributes_table(self.get_selected_property())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     materials_to_lumberyard = MaterialsToLumberyard()
     materials_to_lumberyard.show()
     sys.exit(app.exec_())
-
