@@ -10,6 +10,7 @@ import json
 import azlmbr.scene as sceneApi
 from enum import IntEnum
 
+
 # Wraps the AZ.SceneAPI.Containers.SceneGraph.NodeIndex internal class
 class SceneGraphNodeIndex:
     def __init__(self, scene_graph_node_index) -> None:
@@ -145,7 +146,7 @@ class DecompositionMode(IntEnum):
 # Contains a dictionary to contain and export AZ.SceneAPI.Containers.SceneManifest
 class SceneManifest:
     def __init__(self):
-        self.manifest = {'values': []}
+        self.manifest = {"values": []}
 
     def add_mesh_group(self, name: str) -> dict:
         """Adds a Mesh Group to the scene manifest.
@@ -154,7 +155,7 @@ class SceneManifest:
         ----------
         name :
             Name of the mesh group.  This will become a file on disk and be usable as a Mesh in the editor.
-            
+
 
         Returns
         -------
@@ -163,12 +164,12 @@ class SceneManifest:
 
         """
         mesh_group = {
-            '$type': '{07B356B7-3635-40B5-878A-FAC4EFD5AD86} MeshGroup',
-            'name': name,
-            'nodeSelectionList': {'selectedNodes': [], 'unselectedNodes': []},
-            'rules': {'rules': [{'$type': 'MaterialRule'}]}
+            "$type": "{07B356B7-3635-40B5-878A-FAC4EFD5AD86} MeshGroup",
+            "name": name,
+            "nodeSelectionList": {"selectedNodes": [], "unselectedNodes": []},
+            "rules": {"rules": [{"$type": "MaterialRule"}]},
         }
-        self.manifest['values'].append(mesh_group)
+        self.manifest["values"].append(mesh_group)
         return mesh_group
 
     def add_prefab_group(self, name: str, id: str, json: dict) -> dict:
@@ -182,7 +183,7 @@ class SceneManifest:
             Unique ID for this prefab group.
         json :
             The prefab template data.
-            
+
 
         Returns
         -------
@@ -191,22 +192,22 @@ class SceneManifest:
 
         """
         prefab_group = {
-            '$type': '{99FE3C6F-5B55-4D8B-8013-2708010EC715} PrefabGroup',
-            'name': name,
-            'id': id,
-            'prefabDomData': json
+            "$type": "{99FE3C6F-5B55-4D8B-8013-2708010EC715} PrefabGroup",
+            "name": name,
+            "id": id,
+            "prefabDomData": json,
         }
-        self.manifest['values'].append(prefab_group)
+        self.manifest["values"].append(prefab_group)
         return prefab_group
 
     def add_actor_group(self, group) -> dict:
         groupDict = group.to_dict()
-        self.manifest['values'].append(groupDict)
+        self.manifest["values"].append(groupDict)
         return groupDict
 
     def add_motion_group(self, group) -> dict:
         groupDict = group.to_dict()
-        self.manifest['values'].append(groupDict)
+        self.manifest["values"].append(groupDict)
         return groupDict
 
     def mesh_group_select_node(self, mesh_group: dict, node_name: str) -> None:
@@ -220,7 +221,7 @@ class SceneManifest:
             Path of the node.
 
         """
-        mesh_group['nodeSelectionList']['selectedNodes'].append(node_name)
+        mesh_group["nodeSelectionList"]["selectedNodes"].append(node_name)
 
     def mesh_group_unselect_node(self, mesh_group: dict, node_name: str) -> None:
         """Adds a node as an unselected node.
@@ -233,13 +234,16 @@ class SceneManifest:
             Path of the node.
 
         """
-        mesh_group['nodeSelectionList']['unselectedNodes'].append(node_name)
+        mesh_group["nodeSelectionList"]["unselectedNodes"].append(node_name)
 
-    def mesh_group_add_advanced_coordinate_system(self, mesh_group: dict,
-                                                  origin_node_name: str = '',
-                                                  translation: typing.Optional[object] = None,
-                                                  rotation: typing.Optional[object] = None,
-                                                  scale: float = 1.0) -> None:
+    def mesh_group_add_advanced_coordinate_system(
+        self,
+        mesh_group: dict,
+        origin_node_name: str = "",
+        translation: typing.Optional[object] = None,
+        rotation: typing.Optional[object] = None,
+        scale: float = 1.0,
+    ) -> None:
         """Adds an Advanced Coordinate System rule which modifies the target coordinate system,
         applying a transformation to all data (transforms and vertex data if it exists).
 
@@ -258,17 +262,17 @@ class SceneManifest:
 
         """
         origin_rule = {
-            '$type': 'CoordinateSystemRule',
-            'useAdvancedData': True,
-            'originNodeName': self.__default_or_value(origin_node_name, '')
+            "$type": "CoordinateSystemRule",
+            "useAdvancedData": True,
+            "originNodeName": self.__default_or_value(origin_node_name, ""),
         }
         if translation is not None:
-            origin_rule['translation'] = translation
+            origin_rule["translation"] = translation
         if rotation is not None:
-            origin_rule['rotation'] = rotation
+            origin_rule["rotation"] = rotation
         if scale != 1.0:
-            origin_rule['scale'] = scale
-        mesh_group['rules']['rules'].append(origin_rule)
+            origin_rule["scale"] = scale
+        mesh_group["rules"]["rules"].append(origin_rule)
 
     def mesh_group_add_comment(self, mesh_group: dict, comment: str) -> None:
         """Adds a Comment rule.
@@ -279,26 +283,26 @@ class SceneManifest:
             Mesh group to add the comment rule to.
         comment :
             Text for the comment rule.
-            
+
         """
-        comment_rule = {
-            '$type': 'CommentRule',
-            'comment': comment
-        }
-        mesh_group['rules']['rules'].append(comment_rule)
+        comment_rule = {"$type": "CommentRule", "comment": comment}
+        mesh_group["rules"]["rules"].append(comment_rule)
 
     def __default_or_value(self, val, default):
         return default if val is None else val
 
-    def mesh_group_add_cloth_rule(self, mesh_group: dict,
-                                  cloth_node_name: str,
-                                  inverse_masses_stream_name: typing.Optional[str],
-                                  inverse_masses_channel: typing.Optional[ColorChannel],
-                                  motion_constraints_stream_name: typing.Optional[str],
-                                  motion_constraints_channel: typing.Optional[ColorChannel],
-                                  backstop_stream_name: typing.Optional[str],
-                                  backstop_offset_channel: typing.Optional[ColorChannel],
-                                  backstop_radius_channel: typing.Optional[ColorChannel]) -> None:
+    def mesh_group_add_cloth_rule(
+        self,
+        mesh_group: dict,
+        cloth_node_name: str,
+        inverse_masses_stream_name: typing.Optional[str],
+        inverse_masses_channel: typing.Optional[ColorChannel],
+        motion_constraints_stream_name: typing.Optional[str],
+        motion_constraints_channel: typing.Optional[ColorChannel],
+        backstop_stream_name: typing.Optional[str],
+        backstop_offset_channel: typing.Optional[ColorChannel],
+        backstop_radius_channel: typing.Optional[ColorChannel],
+    ) -> None:
         """Adds a Cloth rule.
 
         Parameters
@@ -324,22 +328,28 @@ class SceneManifest:
 
         """
         cloth_rule = {
-            '$type': 'ClothRule',
-            'meshNodeName': cloth_node_name,
-            'inverseMassesStreamName': self.__default_or_value(inverse_masses_stream_name, 'Default: 1.0')
+            "$type": "ClothRule",
+            "meshNodeName": cloth_node_name,
+            "inverseMassesStreamName": self.__default_or_value(
+                inverse_masses_stream_name, "Default: 1.0"
+            ),
         }
 
         if inverse_masses_channel is not None:
-            cloth_rule['inverseMassesChannel'] = int(inverse_masses_channel)
-        cloth_rule['motionConstraintsStreamName'] = self.__default_or_value(motion_constraints_stream_name, 'Default: 1.0')
+            cloth_rule["inverseMassesChannel"] = int(inverse_masses_channel)
+        cloth_rule["motionConstraintsStreamName"] = self.__default_or_value(
+            motion_constraints_stream_name, "Default: 1.0"
+        )
         if motion_constraints_channel is not None:
-            cloth_rule['motionConstraintsChannel'] = int(motion_constraints_channel)
-        cloth_rule['backstopStreamName'] = self.__default_or_value(backstop_stream_name, 'None')
+            cloth_rule["motionConstraintsChannel"] = int(motion_constraints_channel)
+        cloth_rule["backstopStreamName"] = self.__default_or_value(
+            backstop_stream_name, "None"
+        )
         if backstop_offset_channel is not None:
-            cloth_rule['backstopOffsetChannel'] = int(backstop_offset_channel)
+            cloth_rule["backstopOffsetChannel"] = int(backstop_offset_channel)
         if backstop_radius_channel is not None:
-            cloth_rule['backstopRadiusChannel'] = int(backstop_radius_channel)
-        mesh_group['rules']['rules'].append(cloth_rule)
+            cloth_rule["backstopRadiusChannel"] = int(backstop_radius_channel)
+        mesh_group["rules"]["rules"].append(cloth_rule)
 
     def mesh_group_add_lod_rule(self, mesh_group: dict) -> dict:
         """Adds an LOD rule.
@@ -357,11 +367,11 @@ class SceneManifest:
 
         """
         lod_rule = {
-            '$type': '{6E796AC8-1484-4909-860A-6D3F22A7346F} LodRule',
-            'nodeSelectionList': []
+            "$type": "{6E796AC8-1484-4909-860A-6D3F22A7346F} LodRule",
+            "nodeSelectionList": [],
         }
 
-        mesh_group['rules']['rules'].append(lod_rule)
+        mesh_group["rules"]["rules"].append(lod_rule)
         return lod_rule
 
     def lod_rule_add_lod(self, lod_rule: dict) -> dict:
@@ -371,7 +381,7 @@ class SceneManifest:
         ----------
         lod_rule :
             LOD rule to add the LOD level to.
-            
+
 
         Returns
         -------
@@ -379,8 +389,8 @@ class SceneManifest:
             LOD level.
 
         """
-        lod = {'selectedNodes': [], 'unselectedNodes': []}
-        lod_rule['nodeSelectionList'].append(lod)
+        lod = {"selectedNodes": [], "unselectedNodes": []}
+        lod_rule["nodeSelectionList"].append(lod)
         return lod
 
     def lod_select_node(self, lod: dict, selected_node: str) -> None:
@@ -394,7 +404,7 @@ class SceneManifest:
             Path of the node.
 
         """
-        lod['selectedNodes'].append(selected_node)
+        lod["selectedNodes"].append(selected_node)
 
     def lod_unselect_node(self, lod: dict, unselected_node: str) -> None:
         """Adds a node as an unselected node.
@@ -407,13 +417,16 @@ class SceneManifest:
             Path of the node.
 
         """
-        lod['unselectedNodes'].append(unselected_node)
+        lod["unselectedNodes"].append(unselected_node)
 
-    def mesh_group_add_advanced_mesh_rule(self, mesh_group: dict,
-                                          use_32bit_vertices: bool = False,
-                                          merge_meshes: bool = True,
-                                          use_custom_normals: bool = True,
-                                          vertex_color_stream: typing.Optional[str] = None) -> None:
+    def mesh_group_add_advanced_mesh_rule(
+        self,
+        mesh_group: dict,
+        use_32bit_vertices: bool = False,
+        merge_meshes: bool = True,
+        use_custom_normals: bool = True,
+        vertex_color_stream: typing.Optional[str] = None,
+    ) -> None:
         """Adds an Advanced Mesh rule.
 
         Parameters
@@ -431,18 +444,23 @@ class SceneManifest:
 
         """
         rule = {
-            '$type': 'StaticMeshAdvancedRule',
-            'use32bitVertices': use_32bit_vertices,
-            'mergeMeshes': merge_meshes,
-            'useCustomNormals': use_custom_normals
+            "$type": "StaticMeshAdvancedRule",
+            "use32bitVertices": use_32bit_vertices,
+            "mergeMeshes": merge_meshes,
+            "useCustomNormals": use_custom_normals,
         }
 
         if vertex_color_stream is not None:
-            rule['vertexColorStreamName'] = vertex_color_stream
+            rule["vertexColorStreamName"] = vertex_color_stream
 
-        mesh_group['rules']['rules'].append(rule)
+        mesh_group["rules"]["rules"].append(rule)
 
-    def mesh_group_add_skin_rule(self, mesh_group: dict, max_weights_per_vertex: int = 4, weight_threshold: float = 0.001) -> None:
+    def mesh_group_add_skin_rule(
+        self,
+        mesh_group: dict,
+        max_weights_per_vertex: int = 4,
+        weight_threshold: float = 0.001,
+    ) -> None:
         """Adds a Skin rule.
 
         Parameters
@@ -456,16 +474,19 @@ class SceneManifest:
 
         """
         rule = {
-            '$type': 'SkinRule',
-            'maxWeightsPerVertex': max_weights_per_vertex,
-            'weightThreshold': weight_threshold
+            "$type": "SkinRule",
+            "maxWeightsPerVertex": max_weights_per_vertex,
+            "weightThreshold": weight_threshold,
         }
 
-        mesh_group['rules']['rules'].append(rule)
+        mesh_group["rules"]["rules"].append(rule)
 
-    def mesh_group_add_tangent_rule(self, mesh_group: dict,
-                                    tangent_space: TangentSpaceSource = TangentSpaceSource.SCENE,
-                                    tspace_method: TangentSpaceMethod = TangentSpaceMethod.TSPACE) -> None:
+    def mesh_group_add_tangent_rule(
+        self,
+        mesh_group: dict,
+        tangent_space: TangentSpaceSource = TangentSpaceSource.SCENE,
+        tspace_method: TangentSpaceMethod = TangentSpaceMethod.TSPACE,
+    ) -> None:
         """Adds a Tangent rule to control tangent space generation.
 
         Parameters
@@ -479,50 +500,52 @@ class SceneManifest:
 
         """
         rule = {
-            '$type': 'TangentsRule',
-            'tangentSpace': int(tangent_space),
-            'tSpaceMethod': int(tspace_method)
+            "$type": "TangentsRule",
+            "tangentSpace": int(tangent_space),
+            "tSpaceMethod": int(tspace_method),
         }
 
-        mesh_group['rules']['rules'].append(rule)
+        mesh_group["rules"]["rules"].append(rule)
 
-    def __add_physx_base_mesh_group(self, name: str, physics_material_asset_hint: typing.Optional[str] = None) -> dict:
-        import azlmbr.math
+    def __add_physx_base_mesh_group(
+        self, name: str, physics_material_asset_hint: typing.Optional[str] = None
+    ) -> dict:
+
         group = {
-            '$type': '{5B03C8E6-8CEE-4DA0-A7FA-CD88689DD45B} MeshGroup',
-            'name': name,
-            'NodeSelectionList': {
-                'selectedNodes': [],
-                'unselectedNodes': []
-            },
+            "$type": "{5B03C8E6-8CEE-4DA0-A7FA-CD88689DD45B} MeshGroup",
+            "name": name,
+            "NodeSelectionList": {"selectedNodes": [], "unselectedNodes": []},
             "PhysicsMaterialSlots": {
                 "Slots": [
                     {
                         "Name": "",
                         "MaterialAsset": {
-                            "assetHint": self.__default_or_value(physics_material_asset_hint, "")
-                        }
+                            "assetHint": self.__default_or_value(
+                                physics_material_asset_hint, ""
+                            )
+                        },
                     }
                 ]
             },
-            "rules": {
-                "rules": []
-            }
+            "rules": {"rules": []},
         }
-        self.manifest['values'].append(group)
+        self.manifest["values"].append(group)
 
         return group
 
-    def add_physx_triangle_mesh_group(self, name: str,
-                                      merge_meshes: bool = True,
-                                      weld_vertices: bool = False,
-                                      disable_clean_mesh: bool = False,
-                                      force_32bit_indices: bool = False,
-                                      suppress_triangle_mesh_remap_table: bool = False,
-                                      build_triangle_adjacencies: bool = False,
-                                      mesh_weld_tolerance: float = 0.0,
-                                      num_tris_per_leaf: int = 4,
-                                      physics_material_asset_hint: typing.Optional[str] = None) -> dict:
+    def add_physx_triangle_mesh_group(
+        self,
+        name: str,
+        merge_meshes: bool = True,
+        weld_vertices: bool = False,
+        disable_clean_mesh: bool = False,
+        force_32bit_indices: bool = False,
+        suppress_triangle_mesh_remap_table: bool = False,
+        build_triangle_adjacencies: bool = False,
+        mesh_weld_tolerance: float = 0.0,
+        num_tris_per_leaf: int = 4,
+        physics_material_asset_hint: typing.Optional[str] = None,
+    ) -> dict:
         """Adds a Triangle type PhysX Mesh Group to the scene.
 
         Parameters
@@ -570,20 +593,25 @@ class SceneManifest:
             "SuppressTriangleMeshRemapTable": suppress_triangle_mesh_remap_table,
             "BuildTriangleAdjacencies": build_triangle_adjacencies,
             "MeshWeldTolerance": mesh_weld_tolerance,
-            "NumTrisPerLeaf": num_tris_per_leaf
+            "NumTrisPerLeaf": num_tris_per_leaf,
         }
 
         return group
 
-    def add_physx_convex_mesh_group(self, name: str, area_test_epsilon: float = 0.059, plane_tolerance: float = 0.0006,
-                                    use_16bit_indices: bool = False,
-                                    check_zero_area_triangles: bool = False,
-                                    quantize_input: bool = False,
-                                    use_plane_shifting: bool = False,
-                                    shift_vertices: bool = False,
-                                    gauss_map_limit: int = 32,
-                                    build_gpu_data: bool = False,
-                                    physics_material_asset_hint: typing.Optional[str] = None) -> dict:
+    def add_physx_convex_mesh_group(
+        self,
+        name: str,
+        area_test_epsilon: float = 0.059,
+        plane_tolerance: float = 0.0006,
+        use_16bit_indices: bool = False,
+        check_zero_area_triangles: bool = False,
+        quantize_input: bool = False,
+        use_plane_shifting: bool = False,
+        shift_vertices: bool = False,
+        gauss_map_limit: int = 32,
+        build_gpu_data: bool = False,
+        physics_material_asset_hint: typing.Optional[str] = None,
+    ) -> dict:
         """Adds a Convex type PhysX Mesh Group to the scene.
 
         Parameters
@@ -639,15 +667,18 @@ class SceneManifest:
             "UsePlaneShifting": use_plane_shifting,
             "ShiftVertices": shift_vertices,
             "GaussMapLimit": gauss_map_limit,
-            "BuildGpuData": build_gpu_data
+            "BuildGpuData": build_gpu_data,
         }
 
         return group
 
-    def add_physx_primitive_mesh_group(self, name: str,
-                                       primitive_shape_target: PrimitiveShape = PrimitiveShape.BEST_FIT,
-                                       volume_term_coefficient: float = 0.0,
-                                       physics_material_asset_hint: typing.Optional[str] = None) -> dict:
+    def add_physx_primitive_mesh_group(
+        self,
+        name: str,
+        primitive_shape_target: PrimitiveShape = PrimitiveShape.BEST_FIT,
+        volume_term_coefficient: float = 0.0,
+        physics_material_asset_hint: typing.Optional[str] = None,
+    ) -> dict:
         """Adds a Primitive Shape type PhysX Mesh Group to the scene
 
         Parameters
@@ -674,23 +705,27 @@ class SceneManifest:
         group["export method"] = 2
         group["PrimitiveAssetParams"] = {
             "PrimitiveShapeTarget": int(primitive_shape_target),
-            "VolumeTermCoefficient": volume_term_coefficient
+            "VolumeTermCoefficient": volume_term_coefficient,
         }
 
         return group
 
-    def physx_mesh_group_decompose_meshes(self, mesh_group: dict, max_convex_hulls: int = 1024,
-                                          max_num_vertices_per_convex_hull: int = 64,
-                                          concavity: float = .001,
-                                          resolution: float = 100000,
-                                          mode: DecompositionMode = DecompositionMode.VOXEL,
-                                          alpha: float = .05,
-                                          beta: float = .05,
-                                          min_volume_per_convex_hull: float = 0.0001,
-                                          plane_downsampling: int = 4,
-                                          convex_hull_downsampling: int = 4,
-                                          pca: bool = False,
-                                          project_hull_vertices: bool = True) -> None:
+    def physx_mesh_group_decompose_meshes(
+        self,
+        mesh_group: dict,
+        max_convex_hulls: int = 1024,
+        max_num_vertices_per_convex_hull: int = 64,
+        concavity: float = 0.001,
+        resolution: float = 100000,
+        mode: DecompositionMode = DecompositionMode.VOXEL,
+        alpha: float = 0.05,
+        beta: float = 0.05,
+        min_volume_per_convex_hull: float = 0.0001,
+        plane_downsampling: int = 4,
+        convex_hull_downsampling: int = 4,
+        pca: bool = False,
+        project_hull_vertices: bool = True,
+    ) -> None:
         """Enables and configures mesh decomposition for a PhysX Mesh Group.
         Only valid for convex or primitive mesh types.
 
@@ -726,8 +761,8 @@ class SceneManifest:
             Project the output convex hull vertices onto the original source mesh to increase
             the floating point accuracy of the results.
         """
-        mesh_group['DecomposeMeshes'] = True
-        mesh_group['ConvexDecompositionParams'] = {
+        mesh_group["DecomposeMeshes"] = True
+        mesh_group["ConvexDecompositionParams"] = {
             "MaxConvexHulls": max_convex_hulls,
             "MaxNumVerticesPerConvexHull": max_num_vertices_per_convex_hull,
             "Concavity": concavity,
@@ -739,7 +774,7 @@ class SceneManifest:
             "PlaneDownsampling": plane_downsampling,
             "ConvexHullDownsampling": convex_hull_downsampling,
             "PCA": pca,
-            "ProjectHullVertices": project_hull_vertices
+            "ProjectHullVertices": project_hull_vertices,
         }
 
     def physx_mesh_group_add_selected_node(self, mesh_group: dict, node: str) -> None:
@@ -752,7 +787,7 @@ class SceneManifest:
         node :
             Node path to add.
         """
-        mesh_group['NodeSelectionList']['selectedNodes'].append(node)
+        mesh_group["NodeSelectionList"]["selectedNodes"].append(node)
 
     def physx_mesh_group_add_unselected_node(self, mesh_group: dict, node: str) -> None:
         """Adds a node to the unselected nodes list
@@ -764,10 +799,11 @@ class SceneManifest:
         node :
             Node path to add.
         """
-        mesh_group['NodeSelectionList']['unselectedNodes'].append(node)
+        mesh_group["NodeSelectionList"]["unselectedNodes"].append(node)
 
-    def physx_mesh_group_add_selected_unselected_nodes(self, mesh_group: dict, selected: typing.List[str],
-                                                       unselected: typing.List[str]) -> None:
+    def physx_mesh_group_add_selected_unselected_nodes(
+        self, mesh_group: dict, selected: typing.List[str], unselected: typing.List[str]
+    ) -> None:
         """Adds a set of nodes to the selected/unselected node lists
 
         Parameters
@@ -779,8 +815,8 @@ class SceneManifest:
         unselected :
             List of node paths to add to the unselected list.
         """
-        mesh_group['NodeSelectionList']['selectedNodes'].extend(selected)
-        mesh_group['NodeSelectionList']['unselectedNodes'].extend(unselected)
+        mesh_group["NodeSelectionList"]["selectedNodes"].extend(selected)
+        mesh_group["NodeSelectionList"]["unselectedNodes"].extend(unselected)
 
     def physx_mesh_group_add_comment(self, mesh_group: dict, comment: str) -> None:
         """Adds a comment rule
@@ -792,11 +828,8 @@ class SceneManifest:
         comment :
             Comment string.
         """
-        rule = {
-            "$type": "CommentRule",
-            "comment": comment
-        }
-        mesh_group['rules']['rules'].append(rule)
+        rule = {"$type": "CommentRule", "comment": comment}
+        mesh_group["rules"]["rules"].append(rule)
 
     def export(self):
         return json.dumps(self.manifest)
